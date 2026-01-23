@@ -78,6 +78,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/barang/laporan', \App\Livewire\Barang\Laporan::class)->name('barang.laporan');
         Route::get('/barang/penyusutan', \App\Livewire\Barang\Penyusutan::class)->name('barang.penyusutan');
         
+        // Penghapusan Aset
+        Route::get('/barang/penghapusan', \App\Livewire\Barang\Penghapusan\Index::class)->name('barang.penghapusan.index');
+        Route::get('/barang/penghapusan/create', \App\Livewire\Barang\Penghapusan\Create::class)->name('barang.penghapusan.create');
+
         Route::get('/barang', \App\Livewire\Barang\Index::class)->name('barang.index');
         Route::get('/barang/create', \App\Livewire\Barang\Create::class)->name('barang.create');
         // Opname Routes

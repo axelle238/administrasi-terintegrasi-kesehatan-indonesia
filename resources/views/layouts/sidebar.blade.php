@@ -145,6 +145,10 @@
                 <x-nav-link-sidebar :href="route('barang.penyusutan')" :active="request()->routeIs('barang.penyusutan')" icon="trending-down">
                     Penyusutan Aset
                 </x-nav-link-sidebar>
+
+                <x-nav-link-sidebar :href="route('barang.penghapusan.index')" :active="request()->routeIs('barang.penghapusan.*')" icon="trash">
+                    Penghapusan Aset
+                </x-nav-link-sidebar>
             @endif
 
             {{-- ADMINISTRASI --}}
@@ -364,6 +368,10 @@
 
                 <x-nav-link-sidebar :href="route('barang.penyusutan')" :active="request()->routeIs('barang.penyusutan')" icon="trending-down">
                     Penyusutan Aset
+                </x-nav-link-sidebar>
+
+                <x-nav-link-sidebar :href="route('barang.penghapusan.index')" :active="request()->routeIs('barang.penghapusan.*')" icon="trash">
+                    Penghapusan Aset
                 </x-nav-link-sidebar>
             @endif
 

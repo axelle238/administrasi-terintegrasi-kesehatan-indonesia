@@ -42,7 +42,7 @@
         <h3 class="text-lg font-bold text-gray-800 mb-4">Opsi Ukuran Kecil (QR Style)</h3>
         <div class="flex gap-4">
             <div class="border border-gray-300 rounded p-2 w-48 h-24 flex items-center gap-2 bg-white">
-                <div class="bg-black w-16 h-16 flex-shrink-0"></div> <!-- QR Placeholder -->
+                <div id="qrcode-small" class="flex-shrink-0"></div>
                 <div class="flex-1 overflow-hidden">
                     <p class="text-[10px] font-bold truncate">{{ $barang->kode_barang }}</p>
                     <p class="text-[9px] leading-tight line-clamp-2">{{ $barang->nama_barang }}</p>
@@ -51,4 +51,16 @@
         </div>
     </div>
 
+    <!-- QR Generation Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        new QRCode(document.getElementById("qrcode-small"), {
+            text: "{{ route('barang.show', $barang->id) }}",
+            width: 64,
+            height: 64,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+    </script>
 </div>
