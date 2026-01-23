@@ -76,7 +76,7 @@
     </div>
 
     <!-- Modal Form -->
-    <x-modal name="supplier-modal" :show="$showModal" focusable>
+    <x-modal wire:model="showModal" name="supplier-modal" focusable>
         <div class="p-6">
             <h2 class="text-lg font-medium text-gray-900 mb-4">
                 {{ $supplierId ? 'Edit Supplier' : 'Tambah Supplier Baru' }}
@@ -140,7 +140,7 @@
     </x-modal>
 
     <!-- Delete Confirmation Modal -->
-    <x-modal name="delete-supplier-modal" :show="$showDeleteModal" focusable>
+    <x-modal wire:model="showDeleteModal" name="delete-supplier-modal" focusable>
         <div class="p-6">
             <h2 class="text-lg font-medium text-gray-900">
                 Konfirmasi Hapus
