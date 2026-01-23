@@ -76,6 +76,7 @@ Route::middleware('auth')->group(function () {
         // Inventory Dashboard
         Route::get('/barang/dashboard', \App\Livewire\Barang\Dashboard::class)->name('barang.dashboard');
         Route::get('/barang/laporan', \App\Livewire\Barang\Laporan::class)->name('barang.laporan');
+        Route::get('/barang/penyusutan', \App\Livewire\Barang\Penyusutan::class)->name('barang.penyusutan');
         
         Route::get('/barang', \App\Livewire\Barang\Index::class)->name('barang.index');
         Route::get('/barang/create', \App\Livewire\Barang\Create::class)->name('barang.create');
