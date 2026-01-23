@@ -88,6 +88,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/barang/opname', \App\Livewire\Barang\OpnameIndex::class)->name('barang.opname.index');
         Route::get('/barang/opname/create', \App\Livewire\Barang\OpnameCreate::class)->name('barang.opname.create');
         
+        Route::get('/barang/print-labels', \App\Livewire\Barang\PrintLabelsBulk::class)->name('barang.print-labels-bulk');
         Route::get('/barang/{barang}/print', \App\Livewire\Barang\PrintLabel::class)->name('barang.print-label');
         Route::get('/barang/{barang}', \App\Livewire\Barang\Show::class)->name('barang.show'); 
         Route::get('/barang/{barang}/edit', \App\Livewire\Barang\Edit::class)->name('barang.edit');

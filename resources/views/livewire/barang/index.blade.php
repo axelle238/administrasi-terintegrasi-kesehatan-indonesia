@@ -12,12 +12,25 @@
                 Kelola seluruh aset, barang inventaris, dan stok logistik sistem SATRIA.
             </p>
         </div>
-        <a href="{{ route('barang.create') }}" wire:navigate class="inline-flex items-center px-5 py-2.5 bg-teal-600 text-white rounded-xl font-semibold text-sm shadow-lg hover:bg-teal-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-all duration-200 transform hover:-translate-y-0.5">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            Tambah Aset
-        </a>
+        <div class="flex items-center gap-2">
+            <button wire:click="exportCsv" wire:loading.attr="disabled" class="inline-flex items-center px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-xl font-semibold text-sm shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-all duration-200">
+                <svg wire:loading.remove xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                <svg wire:loading wire:target="exportCsv" class="animate-spin h-5 w-5 mr-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Export CSV
+            </button>
+            
+            <a href="{{ route('barang.create') }}" wire:navigate class="inline-flex items-center px-5 py-2.5 bg-teal-600 text-white rounded-xl font-semibold text-sm shadow-lg hover:bg-teal-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-all duration-200 transform hover:-translate-y-0.5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Tambah Aset
+            </a>
+        </div>
     </div>
 
     <!-- Filters & Search -->
@@ -31,7 +44,28 @@
             <input wire:model.live.debounce.300ms="search" type="text" class="pl-10 w-full rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500 transition-shadow" placeholder="Cari nama barang, kode, atau merk..." />
         </div>
 
-        <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+        <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center">
+            @if(count($selected) > 0)
+                <div class="flex items-center gap-2 animate-fade-in-up">
+                    <span class="text-sm text-gray-600 font-medium">{{ count($selected) }} dipilih</span>
+                    
+                    <button wire:click="printSelected" class="inline-flex items-center px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-200 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                        </svg>
+                        Cetak Label
+                    </button>
+
+                    <button wire:click="deleteSelected" wire:confirm="Yakin ingin menghapus data yang dipilih?" class="inline-flex items-center px-3 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-semibold hover:bg-red-100 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Hapus
+                    </button>
+                </div>
+                <div class="h-8 w-px bg-gray-200 hidden sm:block"></div>
+            @endif
+
             <select wire:model.live="filterKategori" class="rounded-xl border-gray-200 text-sm focus:border-teal-500 focus:ring-teal-500 cursor-pointer hover:bg-gray-50">
                 <option value="">Semua Kategori</option>
                 @foreach($kategoris as $kat)
@@ -54,6 +88,9 @@
             <table class="min-w-full divide-y divide-gray-100">
                 <thead class="bg-gray-50/50">
                     <tr>
+                        <th class="px-6 py-4 text-left">
+                             <input type="checkbox" wire:model.live="selectAll" class="rounded border-gray-300 text-teal-600 shadow-sm focus:border-teal-300 focus:ring focus:ring-teal-200 focus:ring-opacity-50">
+                        </th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Informasi Barang</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider hidden md:table-cell">Kategori & Lokasi</th>
                         <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Stok</th>
@@ -63,7 +100,10 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-100">
                     @forelse ($barangs as $barang)
-                        <tr class="hover:bg-gray-50/80 transition duration-150 ease-in-out group">
+                        <tr class="hover:bg-gray-50/80 transition duration-150 ease-in-out group {{ in_array($barang->id, $selected) ? 'bg-teal-50/30' : '' }}">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <input type="checkbox" wire:model.live="selected" value="{{ $barang->id }}" class="rounded border-gray-300 text-teal-600 shadow-sm focus:border-teal-300 focus:ring focus:ring-teal-200 focus:ring-opacity-50">
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center gap-4">
                                     <div class="flex-shrink-0 h-12 w-12 flex items-center justify-center rounded-xl bg-teal-50 text-teal-600 font-bold text-lg border border-teal-100 group-hover:scale-105 transition-transform duration-200">
@@ -133,7 +173,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center">
+                            <td colspan="6" class="px-6 py-12 text-center">
                                 <div class="flex flex-col items-center justify-center max-w-sm mx-auto">
                                     <div class="p-4 bg-gray-50 rounded-full mb-4">
                                         <svg class="h-10 w-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
