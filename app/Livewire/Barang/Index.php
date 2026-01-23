@@ -143,7 +143,7 @@ class Index extends Component
 
     public function render()
     {
-        $barangs = Barang::with('kategori')
+        $barangs = Barang::with(['kategori', 'ruangan'])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('nama_barang', 'like', '%' . $this->search . '%')

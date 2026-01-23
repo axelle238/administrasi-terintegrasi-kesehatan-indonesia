@@ -46,9 +46,13 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center text-sm text-gray-600">
-                                    <span class="px-2 py-1 bg-gray-100 rounded text-xs">{{ $m->lokasi_asal }}</span>
+                                    <span class="px-2 py-1 bg-gray-100 rounded text-xs">
+                                        {{ $m->ruanganAsal ? $m->ruanganAsal->nama_ruangan : $m->lokasi_asal }}
+                                    </span>
                                     <svg class="w-4 h-4 mx-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                                    <span class="px-2 py-1 bg-teal-50 text-teal-700 font-bold rounded text-xs">{{ $m->lokasi_tujuan }}</span>
+                                    <span class="px-2 py-1 bg-teal-50 text-teal-700 font-bold rounded text-xs">
+                                        {{ $m->ruanganTujuan ? $m->ruanganTujuan->nama_ruangan : $m->lokasi_tujuan }}
+                                    </span>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center font-bold text-gray-900">
@@ -81,9 +85,9 @@
                         </span>
                     </div>
                     <div class="flex items-center text-xs text-gray-600 mt-3 bg-gray-50 p-2 rounded-lg">
-                        <span class="font-medium">{{ $m->lokasi_asal }}</span>
+                        <span class="font-medium">{{ $m->ruanganAsal ? $m->ruanganAsal->nama_ruangan : $m->lokasi_asal }}</span>
                         <svg class="w-3 h-3 mx-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                        <span class="font-bold text-teal-700">{{ $m->lokasi_tujuan }}</span>
+                        <span class="font-bold text-teal-700">{{ $m->ruanganTujuan ? $m->ruanganTujuan->nama_ruangan : $m->lokasi_tujuan }}</span>
                     </div>
                     <div class="mt-2 text-xs text-gray-400 text-right">
                         PJ: {{ $m->penanggung_jawab }}
@@ -134,8 +138,13 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Lokasi Tujuan</label>
-                                <input type="text" wire:model="lokasi_tujuan" class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm" placeholder="Contoh: Poli Gigi">
-                                @error('lokasi_tujuan') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                <select wire:model.live="ruangan_id_tujuan" class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm">
+                                    <option value="">-- Pilih Ruangan --</option>
+                                    @foreach($ruangans as $r)
+                                        <option value="{{ $r->id }}">{{ $r->nama_ruangan }}</option>
+                                    @endforeach
+                                </select>
+                                @error('ruangan_id_tujuan') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
                         </div>
 

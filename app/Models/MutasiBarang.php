@@ -14,14 +14,30 @@ class MutasiBarang extends Model
         'barang_id',
         'lokasi_asal',
         'lokasi_tujuan',
+        'ruangan_id_asal',
+        'ruangan_id_tujuan',
         'jumlah',
         'tanggal_mutasi',
         'penanggung_jawab',
         'keterangan'
     ];
 
+    protected $casts = [
+        'tanggal_mutasi' => 'date',
+    ];
+
     public function barang(): BelongsTo
     {
         return $this->belongsTo(Barang::class);
+    }
+
+    public function ruanganAsal(): BelongsTo
+    {
+        return $this->belongsTo(Ruangan::class, 'ruangan_id_asal');
+    }
+
+    public function ruanganTujuan(): BelongsTo
+    {
+        return $this->belongsTo(Ruangan::class, 'ruangan_id_tujuan');
     }
 }

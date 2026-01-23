@@ -5,6 +5,8 @@ namespace App\Livewire\Barang;
 use App\Models\Barang;
 use App\Models\KategoriBarang;
 use App\Models\RiwayatBarang;
+use App\Models\Ruangan;
+use App\Models\Supplier;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -18,7 +20,22 @@ class Create extends Component
     public $satuan;
     public $kondisi = 'Baik';
     public $tanggal_pengadaan;
-    public $lokasi_penyimpanan;
+    public $lokasi_penyimpanan; // Deprecated, kept for legacy or quick text
+    public $ruangan_id;
+    public $supplier_id;
+    
+    // Asset Details
+    public $is_asset = false;
+    public $spesifikasi;
+    public $nomor_seri;
+    public $nomor_pabrik;
+    public $nomor_registrasi;
+    public $sumber_dana;
+    public $harga_perolehan = 0;
+    public $nilai_buku = 0;
+    public $masa_manfaat = 0;
+    public $nilai_residu = 0;
+    public $keterangan;
 
     protected $rules = [
         'kategori_barang_id' => 'required|exists:kategori_barangs,id',
@@ -29,7 +46,13 @@ class Create extends Component
         'satuan' => 'required|string',
         'kondisi' => 'required|string',
         'tanggal_pengadaan' => 'required|date',
-        'lokasi_penyimpanan' => 'nullable|string',
+        'ruangan_id' => 'nullable|exists:ruangans,id',
+        'supplier_id' => 'nullable|exists:suppliers,id',
+        'is_asset' => 'boolean',
+        'spesifikasi' => 'nullable|string',
+        'nomor_seri' => 'nullable|string',
+        'harga_perolehan' => 'nullable|numeric|min:0',
+        'sumber_dana' => 'nullable|string',
     ];
 
     public function mount()
@@ -37,6 +60,12 @@ class Create extends Component
         $this->tanggal_pengadaan = now()->format('Y-m-d');
         // Generate Auto Code Suggestion (Optional)
         $this->kode_barang = 'BRG-' . strtoupper(uniqid());
+    }
+
+    public function updatedHargaPerolehan()
+    {
+        // Auto set Nilai Buku = Harga Perolehan initially
+        $this->nilai_buku = $this->harga_perolehan;
     }
 
     public function save()
@@ -54,7 +83,20 @@ class Create extends Component
                 'satuan' => $this->satuan,
                 'kondisi' => $this->kondisi,
                 'tanggal_pengadaan' => $this->tanggal_pengadaan,
-                'lokasi_penyimpanan' => $this->lokasi_penyimpanan,
+                // Location logic: prefer ruangan_id, fallback to text if needed (or keep both synced)
+                'ruangan_id' => $this->ruangan_id,
+                'supplier_id' => $this->supplier_id,
+                'is_asset' => $this->is_asset,
+                'spesifikasi' => $this->spesifikasi,
+                'nomor_seri' => $this->nomor_seri,
+                'nomor_pabrik' => $this->nomor_pabrik,
+                'nomor_registrasi' => $this->nomor_registrasi,
+                'sumber_dana' => $this->sumber_dana,
+                'harga_perolehan' => $this->harga_perolehan ?: 0,
+                'nilai_buku' => $this->nilai_buku ?: 0,
+                'masa_manfaat' => $this->masa_manfaat ?: 0,
+                'nilai_residu' => $this->nilai_residu ?: 0,
+                'keterangan' => $this->keterangan,
             ]);
             
             // Log Initial Stock
@@ -81,7 +123,9 @@ class Create extends Component
     public function render()
     {
         return view('livewire.barang.create', [
-            'kategoris' => KategoriBarang::all()
+            'kategoris' => KategoriBarang::all(),
+            'ruangans' => Ruangan::orderBy('nama_ruangan')->get(),
+            'suppliers' => Supplier::orderBy('nama_supplier')->get(),
         ])->layout('layouts.app', ['header' => 'Tambah Barang Baru']);
     }
 }

@@ -27,13 +27,21 @@
             <!-- Left Panel: Identitas Barang -->
             <div class="lg:col-span-2 space-y-6">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex items-center gap-3">
-                        <div class="p-2 bg-blue-100 rounded-lg">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
-                            </svg>
+                    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-blue-100 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900">Identitas Barang</h3>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-900">Identitas Barang</h3>
+                        
+                        <label class="inline-flex items-center cursor-pointer">
+                            <input type="checkbox" wire:model.live="is_asset" class="sr-only peer">
+                            <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
+                            <span class="ms-3 text-sm font-medium text-gray-900">Aset Tetap?</span>
+                        </label>
                     </div>
                     
                     <div class="p-6 space-y-6">
@@ -84,12 +92,22 @@
                                 <x-input-error :messages="$errors->get('merk')" class="mt-2" />
                             </div>
                             
-                             <!-- Note: Assuming 'spesifikasi' is available based on Index.php logic, though not in original create.blade.php. Adding it for completeness as it was in Index.php rules -->
-                             <!-- If 'spesifikasi' isn't in Create.php public properties, this might fail. I checked Create.php earlier, it DID NOT have spesifikasi. I should check Create.php again or stick to original fields. -->
-                             <!-- Create.php: $merk is there. $spesifikasi is NOT in Create.php public properties list I read earlier. Wait, let me re-read Create.php. -->
-                             <!-- Create.php content: public $kategori_barang_id, $kode_barang, $nama_barang, $merk, $stok, $satuan, $kondisi, $tanggal_pengadaan, $lokasi_penyimpanan. NO $spesifikasi. -->
-                             <!-- I will skip Spesifikasi to avoid errors, or I should update Create.php as well. The user asked for UI update, but adding fields might break saving if not handled. I will stick to existing fields but display them better. -->
+                            <div>
+                                <x-input-label for="nomor_seri" value="Nomor Seri / SN" class="mb-2" />
+                                <x-text-input wire:model="nomor_seri" id="nomor_seri" class="block w-full" type="text" placeholder="SN12345678" />
+                                <x-input-error :messages="$errors->get('nomor_seri')" class="mt-2" />
+                            </div>
                         </div>
+
+                        @if($is_asset)
+                        <div class="grid grid-cols-1 gap-6" x-transition>
+                             <div>
+                                <x-input-label for="spesifikasi" value="Spesifikasi Detail" class="mb-2" />
+                                <textarea wire:model="spesifikasi" id="spesifikasi" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm" rows="3" placeholder="Warna, Ukuran, Bahan, Processor, RAM, dll."></textarea>
+                                <x-input-error :messages="$errors->get('spesifikasi')" class="mt-2" />
+                            </div>
+                        </div>
+                        @endif
                     </div>
                 </div>
 
@@ -106,10 +124,19 @@
                     </div>
                     <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <x-input-label for="lokasi_penyimpanan" value="Lokasi Penyimpanan" class="mb-2" />
-                            <x-text-input wire:model="lokasi_penyimpanan" id="lokasi_penyimpanan" class="block w-full" type="text" placeholder="Gudang A, Rak 3, R. Poli Umum..." />
-                            <p class="text-xs text-gray-500 mt-1">Jelaskan lokasi fisik barang agar mudah ditemukan.</p>
-                            <x-input-error :messages="$errors->get('lokasi_penyimpanan')" class="mt-2" />
+                            <x-input-label for="ruangan_id" value="Lokasi Ruangan" class="mb-2" />
+                             <div class="relative">
+                                <select wire:model="ruangan_id" id="ruangan_id" class="appearance-none w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block p-3 pr-8 transition duration-150 ease-in-out hover:bg-white">
+                                    <option value="">-- Pilih Ruangan --</option>
+                                    @foreach($ruangans as $ruangan)
+                                        <option value="{{ $ruangan->id }}">{{ $ruangan->nama_ruangan }}</option>
+                                    @endforeach
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
+                            <x-input-error :messages="$errors->get('ruangan_id')" class="mt-2" />
                         </div>
                         <div>
                             <x-input-label for="kondisi" value="Kondisi Saat Ini" class="mb-2" />
@@ -137,6 +164,36 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Asset Financials (If Is Asset) -->
+                @if($is_asset)
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden" x-transition>
+                    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex items-center gap-3">
+                         <div class="p-2 bg-yellow-100 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900">Nilai Aset</h3>
+                    </div>
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <x-input-label for="sumber_dana" value="Sumber Dana" class="mb-2" />
+                            <select wire:model="sumber_dana" id="sumber_dana" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm">
+                                <option value="">-- Pilih Sumber --</option>
+                                <option value="APBD">APBD</option>
+                                <option value="BLUD">BLUD</option>
+                                <option value="DAK">DAK</option>
+                                <option value="Hibah">Hibah</option>
+                            </select>
+                        </div>
+                        <div>
+                            <x-input-label for="harga_perolehan" value="Harga Perolehan (Rp)" class="mb-2" />
+                            <x-text-input wire:model.live="harga_perolehan" id="harga_perolehan" class="block w-full" type="number" min="0" placeholder="0" />
+                        </div>
+                    </div>
+                </div>
+                @endif
             </div>
 
             <!-- Right Panel: Stok & Pengadaan -->
@@ -170,6 +227,17 @@
                             <x-input-label for="satuan" value="Satuan Unit" class="mb-2" />
                             <x-text-input wire:model="satuan" id="satuan" class="block w-full" type="text" placeholder="Pcs, Unit, Box, Lembar..." required />
                             <x-input-error :messages="$errors->get('satuan')" class="mt-2" />
+                        </div>
+
+                        <div>
+                            <x-input-label for="supplier_id" value="Supplier / Vendor" class="mb-2" />
+                            <select wire:model="supplier_id" id="supplier_id" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm">
+                                <option value="">-- Pilih Supplier --</option>
+                                @foreach($suppliers as $sup)
+                                    <option value="{{ $sup->id }}">{{ $sup->nama_supplier }}</option>
+                                @endforeach
+                            </select>
+                            <x-input-error :messages="$errors->get('supplier_id')" class="mt-2" />
                         </div>
 
                         <div>

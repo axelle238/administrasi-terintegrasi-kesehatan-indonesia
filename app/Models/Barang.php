@@ -38,6 +38,8 @@ class Barang extends Model
         'nilai_residu',
         'keterangan',
         'is_asset',
+        'ruangan_id',
+        'supplier_id',
     ];
 
     protected $casts = [
@@ -61,5 +63,15 @@ class Barang extends Model
     public function kategori()
     {
         return $this->belongsTo(KategoriBarang::class, 'kategori_barang_id');
+    }
+
+    public function ruangan()
+    {
+        return $this->belongsTo(Ruangan::class);
+    }
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
     }
 }

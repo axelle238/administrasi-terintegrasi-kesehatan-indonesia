@@ -4,6 +4,7 @@ namespace App\Livewire\Barang;
 
 use App\Models\Barang;
 use App\Models\MutasiBarang;
+use App\Models\Ruangan;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
@@ -14,8 +15,10 @@ class Mutasi extends Component
     use WithPagination;
 
     public $barang_id;
-    public $lokasi_asal;
-    public $lokasi_tujuan;
+    public $lokasi_asal; // String (Legacy/Display)
+    public $lokasi_tujuan; // String (Legacy/Display)
+    public $ruangan_id_asal;
+    public $ruangan_id_tujuan;
     public $jumlah;
     public $tanggal_mutasi;
     public $keterangan;
@@ -29,16 +32,26 @@ class Mutasi extends Component
 
     public function create()
     {
-        $this->reset(['barang_id', 'lokasi_asal', 'lokasi_tujuan', 'jumlah', 'keterangan']);
+        $this->reset(['barang_id', 'lokasi_asal', 'lokasi_tujuan', 'ruangan_id_asal', 'ruangan_id_tujuan', 'jumlah', 'keterangan']);
         $this->tanggal_mutasi = date('Y-m-d');
         $this->isOpen = true;
     }
 
     public function updatedBarangId($value)
     {
-        $barang = Barang::find($value);
+        $barang = Barang::with('ruangan')->find($value);
         if ($barang) {
-            $this->lokasi_asal = $barang->lokasi_penyimpanan; // Auto-fill current location
+            $this->ruangan_id_asal = $barang->ruangan_id;
+            // Use Ruangan name if available, otherwise legacy string
+            $this->lokasi_asal = $barang->ruangan ? $barang->ruangan->nama_ruangan : $barang->lokasi_penyimpanan;
+        }
+    }
+
+    public function updatedRuanganIdTujuan($value)
+    {
+        $ruangan = Ruangan::find($value);
+        if ($ruangan) {
+            $this->lokasi_tujuan = $ruangan->nama_ruangan;
         }
     }
 
@@ -46,28 +59,42 @@ class Mutasi extends Component
     {
         $this->validate([
             'barang_id' => 'required|exists:barangs,id',
-            'lokasi_asal' => 'required|string',
-            'lokasi_tujuan' => 'required|string',
+            'ruangan_id_tujuan' => 'required|exists:ruangans,id',
             'jumlah' => 'required|numeric|min:1',
             'tanggal_mutasi' => 'required|date',
         ]);
+
+        // If ruangan_id_asal is missing (legacy item), try to find it or just leave null
+        // Ensure lokasi_tujuan string is set
+        if (!$this->lokasi_tujuan && $this->ruangan_id_tujuan) {
+             $r = Ruangan::find($this->ruangan_id_tujuan);
+             $this->lokasi_tujuan = $r->nama_ruangan;
+        }
 
         DB::transaction(function () {
             // 1. Create Mutasi Record
             MutasiBarang::create([
                 'barang_id' => $this->barang_id,
-                'lokasi_asal' => $this->lokasi_asal,
+                'lokasi_asal' => $this->lokasi_asal ?: '-', // Fallback
                 'lokasi_tujuan' => $this->lokasi_tujuan,
+                'ruangan_id_asal' => $this->ruangan_id_asal,
+                'ruangan_id_tujuan' => $this->ruangan_id_tujuan,
                 'jumlah' => $this->jumlah,
                 'tanggal_mutasi' => $this->tanggal_mutasi,
                 'penanggung_jawab' => Auth::user()->name,
                 'keterangan' => $this->keterangan
             ]);
 
-            // 2. If it's an Asset (Aset Tetap), update its current location master data
+            // 2. Update Barang Location (Master Data)
             $barang = Barang::find($this->barang_id);
-            if ($barang && $barang->is_asset) {
-                $barang->update(['lokasi_penyimpanan' => $this->lokasi_tujuan]);
+            if ($barang) {
+                // We update location regardless of 'is_asset' because even consumables move
+                // But for consumables, usually we just track stock. 
+                // However, the request implies tracking location.
+                $barang->update([
+                    'ruangan_id' => $this->ruangan_id_tujuan,
+                    'lokasi_penyimpanan' => $this->lokasi_tujuan // Sync legacy string
+                ]);
             }
         });
 
@@ -78,8 +105,9 @@ class Mutasi extends Component
     public function render()
     {
         return view('livewire.barang.mutasi', [
-            'mutasis' => MutasiBarang::with('barang')->latest()->paginate(10),
-            'barangs' => Barang::orderBy('nama_barang')->get()
+            'mutasis' => MutasiBarang::with(['barang', 'ruanganAsal', 'ruanganTujuan'])->latest()->paginate(10),
+            'barangs' => Barang::orderBy('nama_barang')->get(),
+            'ruangans' => Ruangan::orderBy('nama_ruangan')->get(),
         ])->layout('layouts.app', ['header' => 'Mutasi & Distribusi Aset']);
     }
 }

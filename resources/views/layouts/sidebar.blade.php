@@ -122,6 +122,14 @@
                     Kategori Aset
                 </x-nav-link-sidebar>
 
+                <x-nav-link-sidebar :href="route('ruangan.index')" :active="request()->routeIs('ruangan.index')" icon="office-building">
+                    Data Ruangan
+                </x-nav-link-sidebar>
+
+                <x-nav-link-sidebar :href="route('supplier.index')" :active="request()->routeIs('supplier.index')" icon="truck">
+                    Data Supplier
+                </x-nav-link-sidebar>
+
                 <x-nav-link-sidebar :href="route('barang.maintenance')" :active="request()->routeIs('barang.maintenance')" icon="tool">
                     Pemeliharaan
                 </x-nav-link-sidebar>
@@ -328,6 +336,14 @@
 
                 <x-nav-link-sidebar :href="route('kategori-barang.index')" :active="request()->routeIs('kategori-barang.*')" icon="tag">
                     Kategori Aset
+                </x-nav-link-sidebar>
+
+                <x-nav-link-sidebar :href="route('ruangan.index')" :active="request()->routeIs('ruangan.index')" icon="office-building">
+                    Data Ruangan
+                </x-nav-link-sidebar>
+
+                <x-nav-link-sidebar :href="route('supplier.index')" :active="request()->routeIs('supplier.index')" icon="truck">
+                    Data Supplier
                 </x-nav-link-sidebar>
 
                 <x-nav-link-sidebar :href="route('barang.maintenance')" :active="request()->routeIs('barang.maintenance')" icon="tool">
