@@ -44,7 +44,8 @@ class Index extends Component
     {
         $this->resetForm();
         $this->showModal = true;
-        $this->dispatch('open-modal', 'ruangan-modal');
+        // Dispatch event for modal just in case, but Livewire re-render should handle it via x-data initialization if wired correctly.
+        $this->dispatch('open-modal', 'ruangan-modal'); 
     }
 
     public function edit(Ruangan $ruangan)
