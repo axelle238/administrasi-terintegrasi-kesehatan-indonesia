@@ -1,0 +1,55 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+
+@theme {
+    --font-sans: "Inter", "Figtree", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    
+    /* Puskesmas Brand Colors */
+    --color-primary-50: #f0fdfa;
+    --color-primary-100: #ccfbf1;
+    --color-primary-200: #99f6e4;
+    --color-primary-300: #5eead4;
+    --color-primary-400: #2dd4bf;
+    --color-primary-500: #14b8a6;
+    --color-primary-600: #0d9488;
+    --color-primary-700: #0f766e;
+    --color-primary-800: #115e59;
+    --color-primary-900: #134e4a;
+    --color-primary-950: #042f2e;
+}
+
+/* Custom Components */
+@layer components {
+    .btn-primary {
+        @apply inline-flex items-center px-4 py-2 bg-primary-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-primary-700 focus:bg-primary-700 active:bg-primary-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition ease-in-out duration-150 shadow-sm;
+    }
+
+    .btn-secondary {
+        @apply inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150;
+    }
+
+    .btn-danger {
+        @apply inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150 shadow-sm;
+    }
+
+    .card {
+        @apply bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-100;
+    }
+
+    .table-head {
+        @apply bg-gray-50 text-gray-500 uppercase tracking-wider text-xs font-semibold;
+    }
+    
+    .badge {
+        @apply px-2.5 py-0.5 rounded-full text-xs font-bold inline-flex items-center;
+    }
+    
+    .badge-success { @apply bg-green-100 text-green-800; }
+    .badge-warning { @apply bg-yellow-100 text-yellow-800; }
+    .badge-danger { @apply bg-red-100 text-red-800; }
+    .badge-info { @apply bg-blue-100 text-blue-800; }
+    
+    .input-field {
+        @apply border-gray-300 focus:border-primary-500 focus:ring-primary-500 rounded-lg shadow-sm w-full transition duration-150 ease-in-out;
+    }
+}

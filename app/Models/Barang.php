@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
+
+class Barang extends Model
+{
+    use HasFactory, LogsActivity;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logFillable()->logOnlyDirty();
+    }
+
+    protected $fillable = [
+        'kategori_barang_id',
+        'kode_barang',
+        'nama_barang',
+        'gambar',
+        'merk',
+        'stok',
+        'satuan',
+        'kondisi',
+        'lokasi_penyimpanan',
+        'tanggal_pengadaan',
+        'spesifikasi',
+        'nomor_seri',
+        'nomor_pabrik',
+        'nomor_registrasi',
+        'sumber_dana',
+        'harga_perolehan',
+        'nilai_buku',
+        'masa_manfaat',
+        'nilai_residu',
+        'keterangan',
+        'is_asset',
+    ];
+
+    protected $casts = [
+        'is_asset' => 'boolean',
+        'harga_perolehan' => 'decimal:2',
+        'nilai_buku' => 'decimal:2',
+        'nilai_residu' => 'decimal:2',
+        'tanggal_pengadaan' => 'date',
+    ];
+
+    public function scopeAsset($query)
+    {
+        return $query->where('is_asset', true);
+    }
+
+    public function scopeConsumable($query)
+    {
+        return $query->where('is_asset', false);
+    }
+
+    public function kategori()
+    {
+        return $this->belongsTo(KategoriBarang::class, 'kategori_barang_id');
+    }
+}
