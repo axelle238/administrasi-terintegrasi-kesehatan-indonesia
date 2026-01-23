@@ -46,6 +46,7 @@ class Index extends Component
     {
         $this->resetForm();
         $this->showModal = true;
+        $this->dispatch('open-modal', 'supplier-modal');
     }
 
     public function edit(Supplier $supplier)
@@ -60,6 +61,7 @@ class Index extends Component
         $this->alamat = $supplier->alamat;
         $this->keterangan = $supplier->keterangan;
         $this->showModal = true;
+        $this->dispatch('open-modal', 'supplier-modal');
     }
 
     public function store()

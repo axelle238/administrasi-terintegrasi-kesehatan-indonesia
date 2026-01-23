@@ -44,6 +44,7 @@ class Index extends Component
     {
         $this->resetForm();
         $this->showModal = true;
+        $this->dispatch('open-modal', 'ruangan-modal');
     }
 
     public function edit(Ruangan $ruangan)
@@ -56,6 +57,7 @@ class Index extends Component
         $this->penanggung_jawab = $ruangan->penanggung_jawab;
         $this->keterangan = $ruangan->keterangan;
         $this->showModal = true;
+        $this->dispatch('open-modal', 'ruangan-modal');
     }
 
     public function store()

@@ -15,8 +15,12 @@ class Penyusutan extends Component
 
     public function recalculate()
     {
-        Artisan::call('asset:calculate-depreciation');
-        $this->dispatch('notify', message: 'Nilai buku aset berhasil diperbarui.');
+        try {
+            Artisan::call('asset:calculate-depreciation');
+            $this->dispatch('notify', 'success', 'Nilai buku aset berhasil diperbarui.');
+        } catch (\Exception $e) {
+            $this->dispatch('notify', 'error', 'Gagal menghitung penyusutan: ' . $e->getMessage());
+        }
     }
 
     public function render()
