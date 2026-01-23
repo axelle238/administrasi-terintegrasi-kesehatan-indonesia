@@ -23,34 +23,76 @@
                 <h3 class="text-lg font-bold text-gray-900">Detail Permintaan</h3>
             </div>
             
-            <div class="p-6">
-                <div class="mb-6">
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Keterangan / Alasan Pengadaan</label>
-                    <textarea wire:model="keterangan" rows="2" class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm" placeholder="Contoh: Stok menipis, kebutuhan poli gigi..."></textarea>
+            <div class="p-6 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Supplier / Vendor (Opsional)</label>
+                        <select wire:model="supplier_id" class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm">
+                            <option value="">-- Pilih Supplier --</option>
+                            @foreach($suppliers as $sup)
+                                <option value="{{ $sup->id }}">{{ $sup->nama_supplier }}</option>
+                            @endforeach
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1">Jika kosong, bagian pengadaan akan menentukan supplier.</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Keterangan / Alasan Pengadaan</label>
+                        <textarea wire:model="keterangan" rows="2" class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm" placeholder="Contoh: Stok menipis, kebutuhan poli gigi..."></textarea>
+                    </div>
                 </div>
 
                 <div class="space-y-4">
+                    <h4 class="font-bold text-gray-800">Daftar Barang</h4>
                     @foreach($items as $index => $item)
-                        <div class="flex flex-col md:flex-row gap-4 p-4 border border-gray-200 rounded-xl bg-gray-50 items-start md:items-center relative">
-                            <div class="flex-1 w-full">
-                                <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Nama Barang</label>
-                                <select wire:model="items.{{ $index }}.barang_id" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm">
-                                    <option value="">-- Pilih Barang --</option>
-                                    @foreach($barangs as $b)
-                                        <option value="{{ $b->id }}">{{ $b->kode_barang }} - {{ $b->nama_barang }}</option>
-                                    @endforeach
+                        <div class="flex flex-col lg:flex-row gap-4 p-4 border border-gray-200 rounded-xl bg-gray-50 items-start lg:items-center relative" wire:key="item-{{ $index }}">
+                            
+                            <!-- Type Selection -->
+                            <div class="w-full lg:w-32">
+                                <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Tipe</label>
+                                <select wire:model.live="items.{{ $index }}.type" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm">
+                                    <option value="existing">Barang Lama</option>
+                                    <option value="new">Barang Baru</option>
                                 </select>
-                                @error('items.'.$index.'.barang_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                             </div>
 
-                            <div class="w-full md:w-32">
+                            <!-- Item Selection / Input -->
+                            <div class="flex-1 w-full">
+                                <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">
+                                    {{ $items[$index]['type'] === 'existing' ? 'Pilih Barang' : 'Nama Barang Baru' }}
+                                </label>
+                                
+                                @if($items[$index]['type'] === 'existing')
+                                    <select wire:model.live="items.{{ $index }}.barang_id" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm">
+                                        <option value="">-- Pilih Barang --</option>
+                                        @foreach($barangs as $b)
+                                            <option value="{{ $b->id }}">{{ $b->kode_barang }} - {{ $b->nama_barang }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('items.'.$index.'.barang_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                @else
+                                    <input type="text" wire:model="items.{{ $index }}.nama_barang" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm" placeholder="Nama barang...">
+                                    @error('items.'.$index.'.nama_barang') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                @endif
+                            </div>
+
+                            <!-- Qty -->
+                            <div class="w-full lg:w-24">
                                 <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Jumlah</label>
                                 <input type="number" wire:model="items.{{ $index }}.jumlah_permintaan" min="1" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm text-center">
                                 @error('items.'.$index.'.jumlah_permintaan') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                             </div>
 
-                            <div class="w-full md:w-48">
-                                <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Est. Harga (Satuan)</label>
+                            <!-- Satuan -->
+                            <div class="w-full lg:w-24">
+                                <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Satuan</label>
+                                <input type="text" wire:model="items.{{ $index }}.satuan" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm" {{ $items[$index]['type'] === 'existing' ? 'readonly' : '' }}>
+                                @error('items.'.$index.'.satuan') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                            </div>
+
+                            <!-- Est Price -->
+                            <div class="w-full lg:w-40">
+                                <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Est. Harga @</label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <span class="text-gray-500 sm:text-sm">Rp</span>
@@ -60,7 +102,7 @@
                             </div>
 
                             @if(count($items) > 1)
-                                <button type="button" wire:click="removeItem({{ $index }})" class="text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 md:mt-6">
+                                <button type="button" wire:click="removeItem({{ $index }})" class="text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 lg:mt-6 self-end lg:self-auto">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                 </button>
                             @endif
@@ -78,7 +120,7 @@
         </div>
 
         <div class="flex justify-end">
-            <button type="submit" class="px-6 py-3 bg-teal-600 text-white rounded-xl font-bold shadow-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-all transform hover:-translate-y-0.5">
+            <button type="submit" class="w-full md:w-auto px-6 py-3 bg-teal-600 text-white rounded-xl font-bold shadow-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-all transform hover:-translate-y-0.5">
                 Kirim Pengajuan
             </button>
         </div>

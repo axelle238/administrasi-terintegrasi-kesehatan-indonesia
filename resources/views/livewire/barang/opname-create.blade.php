@@ -15,8 +15,17 @@
                 </p>
             </div>
             
-            <div class="flex gap-4 items-end">
-                <div>
+            <div class="flex flex-col sm:flex-row gap-4 items-end">
+                <div class="w-full sm:w-auto">
+                    <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Lokasi Ruangan</label>
+                    <select wire:model.live="ruangan_id" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm">
+                        <option value="">Semua Ruangan</option>
+                        @foreach($ruangans as $r)
+                            <option value="{{ $r->id }}">{{ $r->nama_ruangan }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="w-full sm:w-auto">
                     <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Tanggal Opname</label>
                     <input type="date" wire:model="tanggal" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm">
                 </div>
@@ -30,8 +39,8 @@
 
     <!-- Mobile View (Cards) -->
     <div class="md:hidden space-y-4">
-        @foreach($items as $item)
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 relative overflow-hidden" 
+        @forelse($items as $item)
+            <div wire:key="mobile-item-{{ $item->id }}" class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 relative overflow-hidden" 
                  x-data="{ fisik: @entangle('physicalStocks.'.$item->id) }"
                  :class="fisik != {{ $item->stok }} ? 'border-l-4 border-l-yellow-400' : 'border-l-4 border-l-green-400'">
                 
@@ -63,7 +72,11 @@
                     <input type="text" wire:model.blur="itemNotes.{{ $item->id }}" class="block w-full text-xs border-gray-200 rounded-md focus:border-teal-500 focus:ring-teal-500" placeholder="Catatan item...">
                 </div>
             </div>
-        @endforeach
+        @empty
+            <div class="text-center py-10 bg-white rounded-xl text-gray-500">
+                Tidak ada barang ditemukan.
+            </div>
+        @endforelse
     </div>
 
     <!-- Desktop View (Table) -->
@@ -80,8 +93,8 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 bg-white">
-                    @foreach($items as $item)
-                        <tr class="hover:bg-gray-50 transition-colors" x-data="{ fisik: @entangle('physicalStocks.'.$item->id) }">
+                    @forelse($items as $item)
+                        <tr wire:key="desktop-item-{{ $item->id }}" class="hover:bg-gray-50 transition-colors" x-data="{ fisik: @entangle('physicalStocks.'.$item->id) }">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-bold text-gray-900">{{ $item->nama_barang }}</div>
                                 <div class="text-xs text-gray-500 font-mono">{{ $item->kode_barang }}</div>
@@ -103,7 +116,13 @@
                                 <input type="text" wire:model.blur="itemNotes.{{ $item->id }}" class="block w-full text-sm border-gray-200 rounded-lg focus:border-teal-500 focus:ring-teal-500" placeholder="Keterangan...">
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                         <tr>
+                            <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                                Tidak ada barang ditemukan di lokasi ini.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

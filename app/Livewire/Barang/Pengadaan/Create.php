@@ -4,14 +4,16 @@ namespace App\Livewire\Barang\Pengadaan;
 
 use App\Models\PengadaanBarang;
 use App\Models\Barang;
+use App\Models\Supplier;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class Create extends Component
 {
-    public $items = []; // [ ['barang_id' => '', 'jumlah' => 1, 'estimasi' => 0] ]
+    public $supplier_id;
     public $keterangan;
+    public $items = []; // [ ['type' => 'existing', 'barang_id' => '', 'nama_barang' => '', 'jumlah_permintaan' => 1, 'satuan' => '', 'estimasi_harga_satuan' => 0] ]
 
     public function mount()
     {
@@ -20,7 +22,14 @@ class Create extends Component
 
     public function addItem()
     {
-        $this->items[] = ['barang_id' => '', 'jumlah_permintaan' => 1, 'estimasi_harga_satuan' => 0];
+        $this->items[] = [
+            'type' => 'existing', // existing | new
+            'barang_id' => '',
+            'nama_barang' => '', // For new items
+            'jumlah_permintaan' => 1,
+            'satuan' => 'Unit', // Default, editable for new items
+            'estimasi_harga_satuan' => 0
+        ];
     }
 
     public function removeItem($index)
@@ -29,11 +38,31 @@ class Create extends Component
         $this->items = array_values($this->items);
     }
 
+    public function updatedItems($value, $key)
+    {
+        // Auto-fill satuan if existing barang selected
+        $parts = explode('.', $key);
+        if (count($parts) === 3 && $parts[2] === 'barang_id') {
+            $index = $parts[1];
+            if ($this->items[$index]['type'] === 'existing' && !empty($value)) {
+                $barang = Barang::find($value);
+                if ($barang) {
+                    $this->items[$index]['satuan'] = $barang->satuan;
+                    $this->items[$index]['nama_barang'] = $barang->nama_barang; // Fallback name
+                }
+            }
+        }
+    }
+
     public function save()
     {
         $this->validate([
-            'items.*.barang_id' => 'required',
+            'supplier_id' => 'nullable|exists:suppliers,id',
+            'items.*.type' => 'required|in:existing,new',
+            'items.*.barang_id' => 'required_if:items.*.type,existing',
+            'items.*.nama_barang' => 'required_if:items.*.type,new',
             'items.*.jumlah_permintaan' => 'required|numeric|min:1',
+            'items.*.satuan' => 'required|string',
         ]);
 
         try {
@@ -43,19 +72,20 @@ class Create extends Component
                 'nomor_pengajuan' => 'REQ-' . date('YmdHis'),
                 'tanggal_pengajuan' => now(),
                 'pemohon_id' => Auth::id(),
+                'supplier_id' => $this->supplier_id,
                 'status' => 'Pending',
                 'keterangan' => $this->keterangan
             ]);
 
             foreach ($this->items as $item) {
-                // Check if new or existing (for simplicity assuming existing from master)
-                $barang = Barang::find($item['barang_id']);
-                
                 DB::table('pengadaan_barang_details')->insert([
                     'pengadaan_barang_id' => $pengadaan->id,
-                    'barang_id' => $item['barang_id'],
+                    'barang_id' => $item['type'] === 'existing' ? $item['barang_id'] : null,
+                    'nama_barang' => $item['type'] === 'existing' 
+                        ? (Barang::find($item['barang_id'])->nama_barang ?? '-') 
+                        : $item['nama_barang'],
                     'jumlah_permintaan' => $item['jumlah_permintaan'],
-                    'satuan' => $barang->satuan ?? 'Unit',
+                    'satuan' => $item['satuan'],
                     'estimasi_harga_satuan' => $item['estimasi_harga_satuan'],
                     'created_at' => now(),
                     'updated_at' => now(),
@@ -75,7 +105,8 @@ class Create extends Component
     public function render()
     {
         return view('livewire.barang.pengadaan.create', [
-            'barangs' => Barang::orderBy('nama_barang')->get()
+            'barangs' => Barang::orderBy('nama_barang')->get(),
+            'suppliers' => Supplier::orderBy('nama_supplier')->get(),
         ])->layout('layouts.app', ['header' => 'Buat Pengajuan Barang']);
     }
 }

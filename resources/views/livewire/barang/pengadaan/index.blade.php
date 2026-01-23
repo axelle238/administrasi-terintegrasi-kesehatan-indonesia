@@ -29,6 +29,7 @@
                         <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">No. Pengajuan</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Tanggal</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Pemohon</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider hidden md:table-cell">Supplier</th>
                         <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
                         <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Aksi</th>
                     </tr>
@@ -50,6 +51,9 @@
                                     </div>
                                     <span class="text-sm text-gray-700">{{ $pengadaan->pemohon->name ?? 'Unknown' }}</span>
                                 </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                                <span class="text-sm text-gray-600">{{ $pengadaan->supplier->nama_supplier ?? '-' }}</span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
                                 @php

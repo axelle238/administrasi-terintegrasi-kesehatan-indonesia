@@ -9,7 +9,7 @@ class Opname extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['tanggal', 'user_id', 'keterangan', 'status'];
+    protected $fillable = ['tanggal', 'user_id', 'ruangan_id', 'keterangan', 'status'];
 
     protected $casts = [
         'tanggal' => 'date',
@@ -23,5 +23,10 @@ class Opname extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function ruangan()
+    {
+        return $this->belongsTo(Ruangan::class);
     }
 }

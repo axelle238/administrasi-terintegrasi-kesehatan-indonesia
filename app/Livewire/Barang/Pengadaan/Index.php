@@ -37,7 +37,7 @@ class Index extends Component
 
     public function render()
     {
-        $pengadaans = PengadaanBarang::with('pemohon')
+        $pengadaans = PengadaanBarang::with(['pemohon', 'supplier'])
             ->where('nomor_pengajuan', 'like', '%' . $this->search . '%')
             ->latest('tanggal_pengajuan')
             ->paginate(10);
