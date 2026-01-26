@@ -77,6 +77,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/system/backup', \App\Livewire\System\Backup::class)->name('system.backup');
     });
 
+    // MASYARAKAT
+    Route::middleware('can:admin')->group(function () {
+        Route::get('/masyarakat', \App\Livewire\Masyarakat\Index::class)->name('masyarakat.index');
+    });
+
     // UKM & Lainnya (Bisa diakses Staf/Kapus)
     Route::middleware('can:tata_usaha')->group(function () {
         Route::get('/ukm', \App\Livewire\Ukm\Index::class)->name('ukm.index');

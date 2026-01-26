@@ -113,6 +113,21 @@
     Pengajuan Cuti
 </x-nav-link-sidebar>
 
+<!-- Masyarakat -->
+@if(Auth::user()->role === 'admin' || Auth::user()->role === 'tata_usaha')
+    <div class="mt-8 mb-2 px-4">
+        <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Masyarakat</p>
+    </div>
+
+    <x-nav-link-sidebar :href="route('masyarakat.index')" :active="request()->routeIs('masyarakat.*')" icon="user-group" color="orange">
+        Layanan Masyarakat
+    </x-nav-link-sidebar>
+    
+    <x-nav-link-sidebar :href="route('survey.create')" :active="request()->routeIs('survey.create')" icon="thumb-up" color="orange">
+        Survei Kepuasan
+    </x-nav-link-sidebar>
+@endif
+
 <!-- Aset -->
 @if(Auth::user()->role === 'admin' || Auth::user()->role === 'staf')
      <div class="mt-8 mb-2 px-4">
