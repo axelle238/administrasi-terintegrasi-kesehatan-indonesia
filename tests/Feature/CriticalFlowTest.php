@@ -145,10 +145,10 @@ class CriticalFlowTest extends TestCase
 
         // Test Create Surat Masuk
         Livewire::test(\App\Livewire\Surat\Create::class)
+            ->set('jenis_surat', 'Masuk')
             ->set('nomor_surat', 'SRT/001/2026')
             ->set('tanggal_surat', '2026-01-20')
             ->set('perihal', 'Undangan Rapat')
-            ->set('jenis_surat', 'Masuk')
             ->set('pengirim', 'Dinas Kesehatan')
             ->set('status_disposisi', 'Pending')
             ->call('save')
