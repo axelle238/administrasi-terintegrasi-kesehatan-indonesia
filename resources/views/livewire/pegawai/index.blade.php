@@ -173,6 +173,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex justify-end gap-3">
+                                    <button wire:click="showDetail({{ $pegawai->id }})" class="text-blue-600 hover:text-blue-900 font-semibold text-xs bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition">Detail</button>
                                     <a href="{{ route('pegawai.edit', $pegawai->id) }}" wire:navigate class="text-indigo-600 hover:text-indigo-900 font-semibold text-xs bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition">Edit</a>
                                     <button wire:click="delete({{ $pegawai->id }})" wire:confirm="Hapus pegawai ini?" class="text-red-600 hover:text-red-900 font-semibold text-xs bg-red-50 px-3 py-1.5 rounded-lg hover:bg-red-100 transition">Hapus</button>
                                 </div>
@@ -193,4 +194,94 @@
             {{ $pegawais->links() }}
         </div>
     </div>
+
+    <!-- Modal Detail Pegawai -->
+    @if($detailOpen && $selectedPegawai)
+    <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" wire:click="closeDetail"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <span class="text-indigo-600 font-bold text-lg">{{ substr($selectedPegawai->user->name, 0, 1) }}</span>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">{{ $selectedPegawai->user->name }}</h3>
+                            <div class="mt-2 text-sm text-gray-500">
+                                <div class="grid grid-cols-2 gap-4 text-left">
+                                    <div>
+                                        <span class="block text-xs uppercase text-gray-400 font-bold">NIP</span>
+                                        <span class="font-mono text-gray-800">{{ $selectedPegawai->nip }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="block text-xs uppercase text-gray-400 font-bold">Jabatan</span>
+                                        <span class="text-gray-800">{{ $selectedPegawai->jabatan }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="block text-xs uppercase text-gray-400 font-bold">Unit/Poli</span>
+                                        <span class="text-gray-800">{{ $selectedPegawai->poli->nama_poli ?? '-' }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="block text-xs uppercase text-gray-400 font-bold">Status</span>
+                                        <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800">{{ $selectedPegawai->status_kepegawaian }}</span>
+                                    </div>
+                                    <div class="col-span-2">
+                                        <span class="block text-xs uppercase text-gray-400 font-bold">Kontak & Alamat</span>
+                                        <span class="block text-gray-800">{{ $selectedPegawai->no_telepon }}</span>
+                                        <span class="block text-gray-600">{{ $selectedPegawai->alamat }}</span>
+                                    </div>
+                                </div>
+
+                                @if($selectedPegawai->user->role == 'dokter' || $selectedPegawai->user->role == 'perawat' || $selectedPegawai->user->role == 'apoteker')
+                                <div class="mt-4 pt-4 border-t border-gray-100">
+                                    <h4 class="font-bold text-gray-700 mb-2">Lisensi & Izin Praktik</h4>
+                                    <div class="grid grid-cols-2 gap-4 text-left">
+                                        <div class="bg-gray-50 p-2 rounded border {{ \Carbon\Carbon::parse($selectedPegawai->masa_berlaku_str)->isPast() ? 'border-red-300 bg-red-50' : 'border-gray-200' }}">
+                                            <span class="block text-xs uppercase font-bold text-gray-500">No. STR</span>
+                                            <span class="block font-mono font-bold">{{ $selectedPegawai->no_str ?? '-' }}</span>
+                                            <span class="text-xs {{ \Carbon\Carbon::parse($selectedPegawai->masa_berlaku_str)->isPast() ? 'text-red-600 font-bold' : 'text-gray-500' }}">
+                                                Exp: {{ $selectedPegawai->masa_berlaku_str ? \Carbon\Carbon::parse($selectedPegawai->masa_berlaku_str)->format('d M Y') : '-' }}
+                                            </span>
+                                            @if($selectedPegawai->file_str)
+                                                <a href="{{ asset('storage/'.$selectedPegawai->file_str) }}" target="_blank" class="block mt-1 text-xs text-indigo-600 hover:underline">Lihat Dokumen</a>
+                                            @endif
+                                        </div>
+                                        <div class="bg-gray-50 p-2 rounded border {{ \Carbon\Carbon::parse($selectedPegawai->masa_berlaku_sip)->isPast() ? 'border-red-300 bg-red-50' : 'border-gray-200' }}">
+                                            <span class="block text-xs uppercase font-bold text-gray-500">No. SIP</span>
+                                            <span class="block font-mono font-bold">{{ $selectedPegawai->no_sip ?? '-' }}</span>
+                                            <span class="text-xs {{ \Carbon\Carbon::parse($selectedPegawai->masa_berlaku_sip)->isPast() ? 'text-red-600 font-bold' : 'text-gray-500' }}">
+                                                Exp: {{ $selectedPegawai->masa_berlaku_sip ? \Carbon\Carbon::parse($selectedPegawai->masa_berlaku_sip)->format('d M Y') : '-' }}
+                                            </span>
+                                            @if($selectedPegawai->file_sip)
+                                                <a href="{{ asset('storage/'.$selectedPegawai->file_sip) }}" target="_blank" class="block mt-1 text-xs text-indigo-600 hover:underline">Lihat Dokumen</a>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                                @endif
+
+                                @if($selectedPegawai->file_ijazah)
+                                <div class="mt-4 pt-4 border-t border-gray-100 text-left">
+                                    <h4 class="font-bold text-gray-700 mb-2">Arsip Lainnya</h4>
+                                    <a href="{{ asset('storage/'.$selectedPegawai->file_ijazah) }}" target="_blank" class="inline-flex items-center px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs hover:bg-gray-200">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                        Ijazah Terakhir
+                                    </a>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" wire:click="closeDetail" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>

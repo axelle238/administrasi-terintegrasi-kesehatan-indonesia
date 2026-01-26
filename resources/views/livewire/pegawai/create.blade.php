@@ -87,34 +87,74 @@
                     </div>
 
                     <!-- Fields Khusus Medis -->
-                    <div x-show="$wire.role === 'dokter' || $wire.role === 'perawat' || $wire.role === 'apoteker'" class="pt-4 border-t">
-                        <h4 class="text-md font-medium text-gray-700 mb-3">Detail Izin Praktik (Khusus Medis)</h4>
+                    <div x-show="$wire.role === 'dokter' || $wire.role === 'perawat' || $wire.role === 'apoteker' || $wire.role === 'bidan'" class="pt-4 border-t space-y-4" x-transition>
+                        <h4 class="text-md font-bold text-indigo-700 bg-indigo-50 p-2 rounded-lg">Detail Profesi & Izin Praktik</h4>
+
+                        <!-- Poli Selection -->
+                        <div>
+                            <x-input-label for="poli_id" value="Unit Layanan / Poli" />
+                            <select wire:model="poli_id" id="poli_id" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-1 w-full">
+                                <option value="">-- Pilih Poli --</option>
+                                @foreach($polis as $poli)
+                                    <option value="{{ $poli->id }}">{{ $poli->nama_poli }}</option>
+                                @endforeach
+                            </select>
+                            <p class="text-xs text-gray-500 mt-1">Wajib diisi untuk Dokter/Perawat agar muncul di jadwal.</p>
+                            <x-input-error :messages="$errors->get('poli_id')" class="mt-2" />
+                        </div>
                         
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <x-input-label for="no_str" value="No. STR" />
-                                <x-text-input wire:model="no_str" id="no_str" class="block mt-1 w-full" type="text" />
-                                <x-input-error :messages="$errors->get('no_str')" class="mt-2" />
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- STR -->
+                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                                <h5 class="font-bold text-gray-700 text-sm mb-2">Surat Tanda Registrasi (STR)</h5>
+                                <div class="space-y-3">
+                                    <div>
+                                        <x-input-label for="no_str" value="Nomor STR" />
+                                        <x-text-input wire:model="no_str" id="no_str" class="block mt-1 w-full text-sm" type="text" />
+                                    </div>
+                                    <div>
+                                        <x-input-label for="masa_berlaku_str" value="Berlaku Hingga" />
+                                        <x-text-input wire:model="masa_berlaku_str" id="masa_berlaku_str" class="block mt-1 w-full text-sm" type="date" />
+                                    </div>
+                                    <div>
+                                        <x-input-label for="file_str" value="Upload Dokumen STR (PDF/Img)" />
+                                        <input type="file" wire:model="file_str" id="file_str" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 mt-1"/>
+                                        <x-input-error :messages="$errors->get('file_str')" class="mt-1" />
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <x-input-label for="masa_berlaku_str" value="Masa Berlaku STR" />
-                                <x-text-input wire:model="masa_berlaku_str" id="masa_berlaku_str" class="block mt-1 w-full" type="date" />
-                                <x-input-error :messages="$errors->get('masa_berlaku_str')" class="mt-2" />
+
+                            <!-- SIP -->
+                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                                <h5 class="font-bold text-gray-700 text-sm mb-2">Surat Izin Praktik (SIP)</h5>
+                                <div class="space-y-3">
+                                    <div>
+                                        <x-input-label for="no_sip" value="Nomor SIP" />
+                                        <x-text-input wire:model="no_sip" id="no_sip" class="block mt-1 w-full text-sm" type="text" />
+                                    </div>
+                                    <div>
+                                        <x-input-label for="masa_berlaku_sip" value="Berlaku Hingga" />
+                                        <x-text-input wire:model="masa_berlaku_sip" id="masa_berlaku_sip" class="block mt-1 w-full text-sm" type="date" />
+                                    </div>
+                                    <div>
+                                        <x-input-label for="file_sip" value="Upload Dokumen SIP (PDF/Img)" />
+                                        <input type="file" wire:model="file_sip" id="file_sip" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 mt-1"/>
+                                        <x-input-error :messages="$errors->get('file_sip')" class="mt-1" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <x-input-label for="no_sip" value="No. SIP" />
-                                <x-text-input wire:model="no_sip" id="no_sip" class="block mt-1 w-full" type="text" />
-                                <x-input-error :messages="$errors->get('no_sip')" class="mt-2" />
-                            </div>
-                            <div>
-                                <x-input-label for="masa_berlaku_sip" value="Masa Berlaku SIP" />
-                                <x-text-input wire:model="masa_berlaku_sip" id="masa_berlaku_sip" class="block mt-1 w-full" type="date" />
-                                <x-input-error :messages="$errors->get('masa_berlaku_sip')" class="mt-2" />
+                        <!-- Ijazah -->
+                        <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                             <h5 class="font-bold text-gray-700 text-sm mb-2">Dokumen Pendidikan</h5>
+                             <div>
+                                <x-input-label for="file_ijazah" value="Upload Ijazah Terakhir (PDF/Img)" />
+                                <input type="file" wire:model="file_ijazah" id="file_ijazah" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 mt-1"/>
+                                <x-input-error :messages="$errors->get('file_ijazah')" class="mt-1" />
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>

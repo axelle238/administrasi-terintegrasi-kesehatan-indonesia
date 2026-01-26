@@ -87,9 +87,21 @@
                     </div>
 
                     <!-- Fields Khusus Medis -->
-                    <div x-show="$wire.role === 'dokter' || $wire.role === 'perawat' || $wire.role === 'apoteker'" class="pt-4 border-t">
-                        <h4 class="text-md font-medium text-gray-700 mb-3">Detail Izin Praktik (Khusus Medis)</h4>
+                    <div x-show="$wire.role === 'dokter' || $wire.role === 'perawat' || $wire.role === 'apoteker'" class="pt-4 border-t space-y-4">
+                        <h4 class="text-md font-medium text-gray-700 bg-indigo-50 p-2 rounded-lg">Detail Izin Praktik (Khusus Medis)</h4>
                         
+                        <!-- Poli Selection -->
+                        <div>
+                            <x-input-label for="poli_id" value="Unit Layanan / Poli" />
+                            <select wire:model="poli_id" id="poli_id" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-1 w-full">
+                                <option value="">-- Pilih Poli --</option>
+                                @foreach($polis as $poli)
+                                    <option value="{{ $poli->id }}">{{ $poli->nama_poli }}</option>
+                                @endforeach
+                            </select>
+                            <x-input-error :messages="$errors->get('poli_id')" class="mt-2" />
+                        </div>
+
                         <div class="grid grid-cols-2 gap-4 mb-4">
                             <div>
                                 <x-input-label for="no_str" value="No. STR" />

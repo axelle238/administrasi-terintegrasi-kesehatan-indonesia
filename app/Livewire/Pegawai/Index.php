@@ -17,6 +17,10 @@ class Index extends Component
     public $filterRole = ''; // all, dokter, perawat, apoteker, staf
     public $filterStatus = ''; // ews_str, ews_sip (filter by expired warning)
 
+    // Modal Detail
+    public $detailOpen = false;
+    public $selectedPegawai;
+
     protected $queryString = [
         'search' => ['except' => ''],
         'filterRole' => ['except' => ''],
@@ -37,6 +41,18 @@ class Index extends Component
     {
         // Mock Sync
         $this->dispatch('notify', 'success', 'Sinkronisasi data dokter BPJS berhasil.');
+    }
+
+    public function showDetail($id)
+    {
+        $this->selectedPegawai = Pegawai::with('user', 'poli')->find($id);
+        $this->detailOpen = true;
+    }
+
+    public function closeDetail()
+    {
+        $this->detailOpen = false;
+        $this->selectedPegawai = null;
     }
 
     public function delete($id)

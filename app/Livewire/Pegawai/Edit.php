@@ -11,6 +11,8 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
 
+use App\Models\Poli;
+
 class Edit extends Component
 {
     use WithFileUploads;
@@ -26,6 +28,7 @@ class Edit extends Component
     // Pegawai fields
     public $nip;
     public $jabatan;
+    public $poli_id;
     public $no_telepon;
     public $alamat;
     public $status_kepegawaian;
@@ -52,6 +55,7 @@ class Edit extends Component
         // Load Pegawai Data
         $this->nip = $pegawai->nip;
         $this->jabatan = $pegawai->jabatan;
+        $this->poli_id = $pegawai->poli_id;
         $this->no_telepon = $pegawai->no_telepon;
         $this->alamat = $pegawai->alamat;
         $this->status_kepegawaian = $pegawai->status_kepegawaian;
@@ -71,6 +75,7 @@ class Edit extends Component
             'role' => 'required|in:admin,dokter,apoteker,perawat,staf',
             'nip' => ['required', 'string', Rule::unique('pegawais', 'nip')->ignore($this->pegawai->id)],
             'jabatan' => 'required|string',
+            'poli_id' => 'nullable|exists:polis,id',
             'no_telepon' => 'required|string',
             'alamat' => 'required|string',
             'status_kepegawaian' => 'required|string',
@@ -104,6 +109,7 @@ class Edit extends Component
             $updateData = [
                 'nip' => $this->nip,
                 'jabatan' => $this->jabatan,
+                'poli_id' => $this->poli_id,
                 'no_telepon' => $this->no_telepon,
                 'alamat' => $this->alamat,
                 'status_kepegawaian' => $this->status_kepegawaian,
@@ -140,6 +146,8 @@ class Edit extends Component
 
     public function render()
     {
-        return view('livewire.pegawai.edit')->layout('layouts.app', ['header' => 'Edit Data Pegawai']);
+        return view('livewire.pegawai.edit', [
+            'polis' => Poli::all()
+        ])->layout('layouts.app', ['header' => 'Edit Data Pegawai']);
     }
 }
