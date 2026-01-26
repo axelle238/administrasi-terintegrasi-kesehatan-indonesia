@@ -46,6 +46,24 @@
             </div>
             <span class="font-bold text-gray-800 group-hover:text-orange-600 transition-colors">Isi Survei Kepuasan</span>
         </a>
+
+        <a href="{{ route('antrean.monitor') }}" target="_blank" class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:border-orange-200 hover:shadow-md transition-all group flex flex-col justify-center items-center text-center cursor-pointer">
+            <div class="p-3 bg-blue-50 text-blue-600 rounded-full mb-3 group-hover:scale-110 transition-transform">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+            </div>
+            <span class="font-bold text-gray-800 group-hover:text-blue-600 transition-colors">Monitor Antrean Live</span>
+        </a>
+
+        <a href="{{ route('pengaduan.public') }}" class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:border-orange-200 hover:shadow-md transition-all group flex flex-col justify-center items-center text-center cursor-pointer">
+            <div class="p-3 bg-red-50 text-red-600 rounded-full mb-3 group-hover:scale-110 transition-transform">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+            </div>
+            <span class="font-bold text-gray-800 group-hover:text-red-600 transition-colors">Kirim Pengaduan Baru</span>
+        </a>
     </div>
 
     <!-- Grid Kegiatan -->
