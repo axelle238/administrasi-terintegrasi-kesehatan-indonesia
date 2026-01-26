@@ -15,6 +15,7 @@ use App\Models\Pembayaran;
 use App\Models\Maintenance;
 use App\Models\Penggajian;
 use App\Models\Setting;
+use App\Models\Pengaduan;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
@@ -50,6 +51,10 @@ class Dashboard extends Component
 
             // Administrasi
             'suratMasuk' => Surat::where('jenis_surat', 'Masuk')->count(),
+            
+            // Masyarakat
+            'pengaduanPending' => Pengaduan::where('status', 'Pending')->count(),
+            'pengaduanProses' => Pengaduan::where('status', 'Diproses')->count(),
             
             // Keuangan Ringkas
             'pendapatanHariIni' => $pendapatanHariIni,
