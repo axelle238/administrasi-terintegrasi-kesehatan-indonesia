@@ -24,13 +24,11 @@ class Create extends Component
     {
         $this->validate();
 
-        DB::table('surveys')->insert([
+        Survey::create([
             'poli_id' => $this->poli_id,
             'nilai' => $this->nilai,
             'kritik_saran' => $this->kritik_saran,
             'ip_address' => request()->ip(),
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
 
         $this->isSubmitted = true;
