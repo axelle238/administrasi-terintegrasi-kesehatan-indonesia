@@ -6,9 +6,10 @@ use App\Http\Controllers\TransaksiObatController;
 use App\Http\Controllers\SuratController;
 use App\Http\Controllers\PasienController;
 use App\Http\Controllers\KasirController;
-use App\Models\Setting; // Import Model Setting
-
-use App\Models\Poli; // Import Model Poli
+use App\Models\Setting;
+use App\Models\Poli;
+use App\Models\JadwalJaga; // Import Model Jadwal
+use Carbon\Carbon;
 
 Route::get('/', function () {
     // Mengambil konfigurasi dari database
@@ -27,7 +28,12 @@ Route::get('/', function () {
     // Ambil data layanan medis (Poli)
     $layanan = Poli::all();
 
-    return view('welcome', compact('pengaturan', 'layanan'));
+    // Ambil Jadwal Dokter Hari Ini
+    $jadwalHariIni = JadwalJaga::with(['pegawai.user', 'shift'])
+        ->whereDate('tanggal', Carbon::today())
+        ->get();
+
+    return view('welcome', compact('pengaturan', 'layanan', 'jadwalHariIni'));
 });
 
 Route::get('/dashboard', \App\Livewire\Dashboard::class)->middleware(['auth', 'verified'])->name('dashboard');

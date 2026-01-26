@@ -50,6 +50,7 @@
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="#beranda" class="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Beranda</a>
+                    <a href="#jadwal" class="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Jadwal Dokter</a>
                     <a href="#layanan" class="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Layanan Poli</a>
                     <a href="#keunggulan" class="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Fasilitas</a>
                     
@@ -114,8 +115,46 @@
         <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-teal-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
     </section>
 
+    <!-- Jadwal Dokter Hari Ini (Dynamic) -->
+    <section id="jadwal" class="py-16 bg-white border-b border-slate-100 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+                <div>
+                    <span class="text-blue-600 font-bold tracking-widest uppercase text-xs mb-2 block">Jadwal Praktik</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-900">Dokter Bertugas Hari Ini</h2>
+                    <p class="mt-2 text-slate-500">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</p>
+                </div>
+            </div>
+
+            @if(isset($jadwalHariIni) && count($jadwalHariIni) > 0)
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @foreach($jadwalHariIni as $jadwal)
+                    <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:shadow-md transition-all">
+                        <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xl flex-shrink-0">
+                            {{ substr($jadwal->pegawai->user->name ?? 'D', 0, 1) }}
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-900">{{ $jadwal->pegawai->user->name ?? 'Dokter' }}</h4>
+                            <p class="text-sm text-blue-600 font-medium">{{ $jadwal->pegawai->jabatan ?? 'Dokter Umum' }}</p>
+                            <div class="flex items-center gap-2 mt-2 text-xs text-slate-500">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                {{ $jadwal->shift->jam_masuk ?? '08:00' }} - {{ $jadwal->shift->jam_keluar ?? '14:00' }}
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="bg-slate-50 rounded-2xl p-8 text-center border border-slate-200 border-dashed">
+                    <svg class="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    <p class="text-slate-500 font-medium">Belum ada jadwal dokter yang dipublikasikan untuk hari ini.</p>
+                </div>
+            @endif
+        </div>
+    </section>
+
     <!-- Layanan Section (Dynamic) -->
-    <section id="layanan" class="py-24 bg-white relative">
+    <section id="layanan" class="py-24 bg-slate-50 relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
                 <div class="max-w-2xl">
@@ -131,8 +170,8 @@
             @if($layanan->count() > 0)
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 @foreach($layanan as $poli)
-                <div class="group relative bg-slate-50 rounded-2xl p-8 hover:bg-white border border-slate-100 hover:border-blue-100 hover:shadow-xl transition-all duration-300">
-                    <div class="w-14 h-14 bg-white border border-slate-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                <div class="group relative bg-white rounded-2xl p-8 hover:bg-white border border-slate-200 hover:border-blue-100 hover:shadow-xl transition-all duration-300">
+                    <div class="w-14 h-14 bg-blue-50 border border-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
                         <!-- Icon Placeholder (Initials) -->
                         <span class="text-xl font-bold">{{ substr($poli->nama_poli, 0, 1) }}</span>
                     </div>
@@ -149,8 +188,8 @@
             </div>
             @else
             <!-- Empty State -->
-            <div class="bg-slate-50 border border-slate-200 border-dashed rounded-3xl p-12 text-center">
-                <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
+            <div class="bg-white border border-slate-200 border-dashed rounded-3xl p-12 text-center">
+                <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
                     <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                 </div>
                 <h3 class="text-lg font-bold text-slate-900">Belum ada layanan</h3>
@@ -161,7 +200,7 @@
     </section>
 
     <!-- Keunggulan Section -->
-    <section id="keunggulan" class="py-24 bg-slate-50 border-t border-slate-200">
+    <section id="keunggulan" class="py-24 bg-white border-t border-slate-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-16">
                 <span class="text-blue-600 font-bold tracking-widest uppercase text-xs mb-2 block">Mengapa Kami</span>
@@ -172,8 +211,8 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 @if(isset($pengaturan['fitur']) && count($pengaturan['fitur']) > 0)
                     @foreach($pengaturan['fitur'] as $fitur)
-                    <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                        <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6">
+                    <div class="bg-slate-50 p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                        <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6">
                             @if(($fitur['icon'] ?? '') == 'clipboard-document-list')
                                 <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
                             @elseif(($fitur['icon'] ?? '') == 'beaker')
@@ -192,22 +231,22 @@
                     @endforeach
                 @else
                     <!-- Default Features if empty -->
-                     <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                        <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6">
+                     <div class="bg-slate-50 p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                        <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6">
                             <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                         </div>
                         <h3 class="text-xl font-bold text-slate-900 mb-3">Terintegrasi</h3>
                         <p class="text-slate-500 leading-relaxed">Seluruh data pasien, rekam medis, dan apotek saling terhubung dalam satu sistem yang utuh.</p>
                      </div>
-                     <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                        <div class="w-14 h-14 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center mb-6">
+                     <div class="bg-slate-50 p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                        <div class="w-14 h-14 bg-teal-100 text-teal-600 rounded-2xl flex items-center justify-center mb-6">
                             <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         </div>
                         <h3 class="text-xl font-bold text-slate-900 mb-3">Real-time</h3>
                         <p class="text-slate-500 leading-relaxed">Pemantauan antrean dan stok obat dilakukan secara waktu nyata untuk akurasi data.</p>
                      </div>
-                     <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                        <div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-6">
+                     <div class="bg-slate-50 p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                        <div class="w-14 h-14 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mb-6">
                             <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         </div>
                         <h3 class="text-xl font-bold text-slate-900 mb-3">Mudah Digunakan</h3>
@@ -275,7 +314,7 @@
                             <span>{{ $pengaturan['alamat'] }}</span>
                         </li>
                         <li class="flex items-center gap-3">
-                            <svg class="w-5 h-5 text-blue-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                            <svg class="w-5 h-5 text-blue-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                             <span>{{ $pengaturan['telepon'] }}</span>
                         </li>
                         <li class="flex items-center gap-3">
