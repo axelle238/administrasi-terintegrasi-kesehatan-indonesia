@@ -119,8 +119,12 @@
         <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Masyarakat</p>
     </div>
 
-    <x-nav-link-sidebar :href="route('masyarakat.index')" :active="request()->routeIs('masyarakat.*')" icon="user-group" color="orange">
+    <x-nav-link-sidebar :href="route('masyarakat.index')" :active="request()->routeIs('masyarakat.index')" icon="user-group" color="orange">
         Layanan Masyarakat
+    </x-nav-link-sidebar>
+
+    <x-nav-link-sidebar :href="route('admin.masyarakat.pengaduan.index')" :active="request()->routeIs('admin.masyarakat.pengaduan.*')" icon="mail" color="orange">
+        Pengaduan Masyarakat
     </x-nav-link-sidebar>
     
     <x-nav-link-sidebar :href="route('survey.create')" :active="request()->routeIs('survey.create')" icon="thumb-up" color="orange">

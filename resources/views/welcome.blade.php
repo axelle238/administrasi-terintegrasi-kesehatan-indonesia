@@ -77,6 +77,7 @@
                     <a href="#beranda" class="text-sm font-bold text-slate-600 hover-text-primary transition-colors">Beranda</a>
                     <a href="#jadwal" class="text-sm font-bold text-slate-600 hover-text-primary transition-colors">Jadwal</a>
                     <a href="#layanan" class="text-sm font-bold text-slate-600 hover-text-primary transition-colors">Layanan</a>
+                    <a href="{{ route('pengaduan.public') }}" class="text-sm font-bold text-slate-600 hover-text-primary transition-colors">Pengaduan</a>
                     <a href="#fasilitas" class="text-sm font-bold text-slate-600 hover-text-primary transition-colors">Fasilitas</a>
                     
                     <div class="h-5 w-px bg-slate-200 mx-2"></div>
@@ -124,6 +125,10 @@
                 <a href="{{ route('antrean.monitor') }}" class="px-8 py-4 bg-primary text-white font-bold rounded-2xl shadow-xl shadow-blue-600/20 hover:opacity-90 transition-all transform hover:-translate-y-1 w-full sm:w-auto flex items-center justify-center gap-3">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <span>Ambil Antrean</span>
+                </a>
+                <a href="{{ route('pengaduan.public') }}" class="px-8 py-4 bg-orange-500 text-white font-bold rounded-2xl shadow-xl shadow-orange-600/20 hover:bg-orange-600 transition-all transform hover:-translate-y-1 w-full sm:w-auto flex items-center justify-center gap-3">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                    <span>Kirim Pengaduan</span>
                 </a>
                 <a href="#jadwal" class="px-8 py-4 bg-white text-slate-700 font-bold rounded-2xl shadow-lg border border-slate-200 hover:border-blue-300 hover-text-primary transition-all w-full sm:w-auto flex items-center justify-center gap-3">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>

@@ -43,6 +43,7 @@ Route::get('/dashboard', \App\Livewire\Dashboard::class)->middleware(['auth', 'v
 Route::get('/antrean/monitor', \App\Livewire\Antrean\Monitor::class)->name('antrean.monitor');
 Route::get('/kiosk', \App\Livewire\Antrean\Kiosk::class)->name('antrean.kiosk'); // Self-service
 Route::get('/survey', \App\Livewire\Survey\Create::class)->name('survey.create');
+Route::get('/pengaduan', \App\Livewire\Masyarakat\PengaduanPublic::class)->name('pengaduan.public');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', \App\Livewire\Profile\Edit::class)->name('profile.edit');
@@ -80,6 +81,7 @@ Route::middleware('auth')->group(function () {
     // MASYARAKAT
     Route::middleware('can:admin')->group(function () {
         Route::get('/masyarakat', \App\Livewire\Masyarakat\Index::class)->name('masyarakat.index');
+        Route::get('/masyarakat/pengaduan', \App\Livewire\Admin\Masyarakat\PengaduanIndex::class)->name('admin.masyarakat.pengaduan.index');
     });
 
     // UKM & Lainnya (Bisa diakses Staf/Kapus)
