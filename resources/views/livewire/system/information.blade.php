@@ -66,6 +66,9 @@
                 <button @click="activeTab = 'stats'" :class="{ 'border-blue-500 text-blue-600': activeTab === 'stats', 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300': activeTab !== 'stats' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
                     Statistik Data
                 </button>
+                <button @click="activeTab = 'capabilities'" :class="{ 'border-blue-500 text-blue-600': activeTab === 'capabilities', 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300': activeTab !== 'capabilities' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+                    Kemampuan Sistem
+                </button>
                 <button @click="activeTab = 'modules'" :class="{ 'border-blue-500 text-blue-600': activeTab === 'modules', 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300': activeTab !== 'modules' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
                     Modul Aplikasi
                 </button>
@@ -115,6 +118,26 @@
                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 text-center">
                     <dt class="text-xs font-bold text-slate-400 uppercase mb-1">{{ str_replace('_', ' ', $key) }}</dt>
                     <dd class="text-2xl font-bold text-slate-800">{{ number_format($value) }}</dd>
+                </div>
+                @endforeach
+            </div>
+
+            <!-- Capabilities Tab -->
+            <div x-show="activeTab === 'capabilities'" class="space-y-8" x-transition style="display: none;">
+                @foreach($capabilities as $category => $items)
+                <div>
+                    <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                        {{ $category }}
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        @foreach($items as $item)
+                        <div class="flex items-start gap-3 p-3 bg-white border border-slate-100 rounded-lg shadow-sm hover:border-blue-200 transition-all">
+                            <svg class="w-5 h-5 text-emerald-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                            <span class="text-sm text-slate-700 font-medium">{{ $item }}</span>
+                        </div>
+                        @endforeach
+                    </div>
                 </div>
                 @endforeach
             </div>
