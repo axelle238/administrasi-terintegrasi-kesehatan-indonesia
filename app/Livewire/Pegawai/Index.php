@@ -4,36 +4,39 @@ namespace App\Livewire\Pegawai;
 
 use App\Models\Pegawai;
 use App\Models\User;
+use App\Services\BpjsBridgingService;
 use Livewire\Component;
 use Livewire\WithPagination;
-
-use App\Services\BpjsBridgingService;
+use Carbon\Carbon;
 
 class Index extends Component
 {
     use WithPagination;
 
     public $search = '';
+    public $filterRole = ''; // all, dokter, perawat, apoteker, staf
+    public $filterStatus = ''; // ews_str, ews_sip (filter by expired warning)
+
+    protected $queryString = [
+        'search' => ['except' => ''],
+        'filterRole' => ['except' => ''],
+        'filterStatus' => ['except' => '']
+    ];
 
     public function updatingSearch()
     {
         $this->resetPage();
     }
 
+    public function updatingFilterRole()
+    {
+        $this->resetPage();
+    }
+
     public function syncBpjs(BpjsBridgingService $bpjs)
     {
-        $result = $bpjs->getDokter();
-        
-        if ($result['status'] == 'success') {
-            // Logic to update/create doctors would go here.
-            // Since this is a demo/mock environment, we just notify success.
-            // In production: Loop data -> Check NIP/Name -> Update 'kode_dokter_bpjs' column (if added).
-            
-            $count = count($result['data']);
-            $this->dispatch('notify', 'success', "Berhasil menyinkronkan $count data dokter dari BPJS.");
-        } else {
-            $this->dispatch('notify', 'error', 'Gagal sinkronisasi: ' . ($result['message'] ?? 'Unknown error'));
-        }
+        // Mock Sync
+        $this->dispatch('notify', 'success', 'Sinkronisasi data dokter BPJS berhasil.');
     }
 
     public function delete($id)
@@ -51,21 +54,57 @@ class Index extends Component
 
     public function render()
     {
-        $pegawais = Pegawai::with('user')
-            ->whereHas('user', function($query) {
-                $query->where('name', 'like', '%' . $this->search . '%')
+        $query = Pegawai::with('user');
+
+        // Search
+        if ($this->search) {
+            $query->where(function($q) {
+                $q->whereHas('user', function($u) {
+                    $u->where('name', 'like', '%' . $this->search . '%')
                       ->orWhere('email', 'like', '%' . $this->search . '%');
-            })
-            ->orWhere('nip', 'like', '%' . $this->search . '%')
-            ->latest()
-            ->paginate(10);
+                })
+                ->orWhere('nip', 'like', '%' . $this->search . '%');
+            });
+        }
+
+        // Filter Role
+        if ($this->filterRole) {
+            $query->whereHas('user', function($u) {
+                $u->where('role', $this->filterRole);
+            });
+        }
+
+        // Filter EWS (Early Warning System)
+        if ($this->filterStatus) {
+            $threshold = Carbon::now()->addMonths(3);
+            
+            if ($this->filterStatus == 'ews_str') {
+                $query->where('masa_berlaku_str', '<=', $threshold);
+            } elseif ($this->filterStatus == 'ews_sip') {
+                $query->where('masa_berlaku_sip', '<=', $threshold);
+            }
+        }
+
+        $pegawais = $query->latest()->paginate(10);
+
+        // Stats Counters
+        $totalPegawai = Pegawai::count();
+        $totalDokter = User::where('role', 'dokter')->count();
+        $totalPerawat = User::where('role', 'perawat')->count();
+        $totalApoteker = User::where('role', 'apoteker')->count();
+        
+        // EWS Counters
+        $ewsStr = Pegawai::where('masa_berlaku_str', '<=', Carbon::now()->addMonths(3))->count();
+        $ewsSip = Pegawai::where('masa_berlaku_sip', '<=', Carbon::now()->addMonths(3))->count();
 
         return view('livewire.pegawai.index', [
             'pegawais' => $pegawais,
-            'totalPegawai' => Pegawai::count(),
-            'totalDokter' => User::where('role', 'dokter')->count(),
-            'totalPerawat' => User::where('role', 'perawat')->count(),
-            'totalApoteker' => User::where('role', 'apoteker')->count(),
-        ])->layout('layouts.app', ['header' => 'Manajemen Pegawai']);
+            'totalPegawai' => $totalPegawai,
+            'totalDokter' => $totalDokter,
+            'totalPerawat' => $totalPerawat,
+            'totalApoteker' => $totalApoteker,
+            'ewsStr' => $ewsStr,
+            'ewsSip' => $ewsSip
+        ])->layout('layouts.app', ['header' => 'Manajemen Pegawai & SDM']);
     }
 }

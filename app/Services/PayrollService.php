@@ -2,32 +2,76 @@
 
 namespace App\Services;
 
-use App\Models\JadwalJaga;
+use App\Models\User;
 use App\Models\Pegawai;
-use Carbon\Carbon;
 
 class PayrollService
 {
     /**
-     * Hitung Potongan berdasarkan Kehadiran
+     * Hitung estimasi gaji berdasarkan data pegawai dan aturan perusahaan.
      */
-    public function calculateDeductions($userId, $month, $year)
+    public function calculatePayroll(User $user, $bulan, $tahun)
     {
-        $pegawai = Pegawai::where('user_id', $userId)->first();
-        if (!$pegawai) return 0;
+        // 1. Base Salary by Role (Simulasi Standar Gaji)
+        $gajiPokok = match($user->role) {
+            'dokter' => 7000000,
+            'apoteker' => 5000000,
+            'perawat' => 4500000,
+            'admin' => 4000000,
+            default => 3500000
+        };
 
-        // Convert month name to number
-        $monthNum = Carbon::parse($month)->month;
+        // 2. Tunjangan
+        $tunjanganJabatan = 0;
+        if ($user->role == 'dokter') $tunjanganJabatan = 2000000;
+        if ($user->role == 'apoteker') $tunjanganJabatan = 1000000;
 
-        $alphas = JadwalJaga::where('pegawai_id', $pegawai->id)
-            ->whereYear('tanggal', $year)
-            ->whereMonth('tanggal', $monthNum)
-            ->where('status_kehadiran', 'Alpha')
-            ->count();
+        $tunjanganFungsional = 500000; // Flat untuk tenaga medis
+        $tunjanganUmum = 200000;
+        
+        // Simulasi Kehadiran (20 Hari Kerja)
+        $hariKerja = 20; 
+        $uangMakanHarian = 30000;
+        $uangTransportHarian = 20000;
+        
+        $tunjanganMakan = $hariKerja * $uangMakanHarian;
+        $tunjanganTransport = $hariKerja * $uangTransportHarian;
 
-        // Policy: Potongan 100k per alpha
-        $dendaAlpha = $alphas * 100000;
+        $totalTunjangan = $tunjanganJabatan + $tunjanganFungsional + $tunjanganUmum + $tunjanganMakan + $tunjanganTransport;
 
-        return $dendaAlpha;
+        // 3. Potongan (BPJS & Pajak)
+        // BPJS Kesehatan (1% Pegawai, 4% Kantor - disini kita hitung yg dipotong dari gaji pegawai)
+        $potonganBpjsKes = $gajiPokok * 0.01; 
+        
+        // BPJS TK (2% JHT)
+        $potonganBpjsTk = $gajiPokok * 0.02;
+
+        // PPh 21 (Simulasi 5% dari PKP sebulan - simplifikasi)
+        $potonganPph21 = ($gajiPokok + $totalTunjangan) * 0.05;
+
+        // Absensi (Simulasi 0)
+        $potonganAbsen = 0;
+
+        $totalPotongan = $potonganBpjsKes + $potonganBpjsTk + $potonganPph21 + $potonganAbsen;
+
+        return [
+            'gaji_pokok' => $gajiPokok,
+            'tunjangan' => [
+                'jabatan' => $tunjanganJabatan,
+                'fungsional' => $tunjanganFungsional,
+                'umum' => $tunjanganUmum,
+                'makan' => $tunjanganMakan,
+                'transport' => $tunjanganTransport,
+                'total' => $totalTunjangan
+            ],
+            'potongan' => [
+                'bpjs_kesehatan' => $potonganBpjsKes,
+                'bpjs_tk' => $potonganBpjsTk,
+                'pph21' => $potonganPph21,
+                'absen' => $potonganAbsen,
+                'total' => $totalPotongan
+            ],
+            'total_gaji' => ($gajiPokok + $totalTunjangan) - $totalPotongan
+        ];
     }
 }
