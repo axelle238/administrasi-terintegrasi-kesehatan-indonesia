@@ -3,6 +3,7 @@
 namespace App\Livewire\System;
 
 use Livewire\Component;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 
 class Backup extends Component
@@ -11,38 +12,62 @@ class Backup extends Component
 
     public function mount()
     {
-        // Scan storage/app/backup (Simulation)
-        $this->backups = [
-            ['name' => 'backup-2025-01-01.zip', 'size' => '5.2MB', 'date' => '2025-01-01 00:00'],
-            ['name' => 'backup-2025-01-02.zip', 'size' => '5.3MB', 'date' => '2025-01-02 00:00'],
-        ];
+        $this->refreshBackups();
+    }
+
+    public function refreshBackups()
+    {
+        $files = Storage::files('backups');
+        $this->backups = [];
+        
+        foreach ($files as $file) {
+            $this->backups[] = [
+                'path' => $file,
+                'name' => basename($file),
+                'size' => $this->formatSize(Storage::size($file)),
+                'date' => date('Y-m-d H:i:s', Storage::lastModified($file))
+            ];
+        }
+        
+        // Sort by newest
+        usort($this->backups, function($a, $b) {
+            return $b['date'] <=> $a['date'];
+        });
+    }
+
+    private function formatSize($bytes)
+    {
+        if ($bytes >= 1073741824) return number_format($bytes / 1073741824, 2) . ' GB';
+        if ($bytes >= 1048576) return number_format($bytes / 1048576, 2) . ' MB';
+        if ($bytes >= 1024) return number_format($bytes / 1024, 2) . ' KB';
+        return $bytes . ' bytes';
     }
 
     public function createBackup()
     {
-        // In real app: Artisan::call('backup:run');
-        // Here simulation
-        $name = 'backup-' . date('Y-m-d-His') . '.zip';
-        $this->backups[] = ['name' => $name, 'size' => '5.5MB', 'date' => now()->toDateTimeString()];
-        
-        $this->dispatch('notify', 'success', 'Backup baru berhasil dibuat.');
+        try {
+            Artisan::call('database:backup');
+            $this->refreshBackups();
+            $this->dispatch('notify', 'success', 'Backup database berhasil dibuat.');
+        } catch (\Exception $e) {
+            $this->dispatch('notify', 'error', 'Gagal membuat backup: ' . $e->getMessage());
+        }
     }
 
-    public function download($name)
+    public function download($path)
     {
-        // return Storage::download('backup/'.$name);
-        $this->dispatch('notify', 'info', 'Mendownload ' . $name);
+        return Storage::download($path);
     }
 
-    public function delete($index)
+    public function delete($path)
     {
-        unset($this->backups[$index]);
-        $this->backups = array_values($this->backups);
+        Storage::delete($path);
+        $this->refreshBackups();
         $this->dispatch('notify', 'success', 'File backup dihapus.');
     }
 
     public function render()
     {
-        return view('livewire.system.backup')->layout('layouts.app', ['header' => 'Backup & Restore Database']);
+        return view('livewire.system.backup')->layout('layouts.app', ['header' => 'Backup & Restore']);
     }
 }
