@@ -8,6 +8,8 @@ use App\Http\Controllers\PasienController;
 use App\Http\Controllers\KasirController;
 use App\Models\Setting; // Import Model Setting
 
+use App\Models\Poli; // Import Model Poli
+
 Route::get('/', function () {
     // Mengambil konfigurasi dari database
     $pengaturan = [
@@ -22,7 +24,10 @@ Route::get('/', function () {
         'fitur' => json_decode(Setting::ambil('landing_features', '[]'), true),
     ];
 
-    return view('welcome', compact('pengaturan'));
+    // Ambil data layanan medis (Poli)
+    $layanan = Poli::all();
+
+    return view('welcome', compact('pengaturan', 'layanan'));
 });
 
 Route::get('/dashboard', \App\Livewire\Dashboard::class)->middleware(['auth', 'verified'])->name('dashboard');
