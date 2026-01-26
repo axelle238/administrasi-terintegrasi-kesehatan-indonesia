@@ -210,22 +210,79 @@
                         
                         <!-- Tindakan -->
                         <div>
-                            <h4 class="font-bold text-slate-700 mb-3 flex items-center gap-2">
-                                <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
-                                Prosedur & Tindakan
-                            </h4>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-60 overflow-y-auto p-4 bg-slate-50 rounded-xl border border-slate-200">
-                                @foreach($tindakans as $tindakan)
-                                    <label class="flex items-center space-x-3 p-3 bg-white rounded-lg border border-slate-100 hover:border-violet-300 cursor-pointer transition shadow-sm">
-                                        <input type="checkbox" wire:model="selectedTindakans" value="{{ $tindakan->id }}" class="rounded border-slate-300 text-violet-600 shadow-sm focus:ring-violet-500 w-5 h-5">
-                                        <div class="flex flex-col">
-                                            <span class="text-sm font-bold text-slate-700">{{ $tindakan->nama_tindakan }}</span>
-                                            <span class="text-xs text-slate-500">Rp {{ number_format($tindakan->harga, 0, ',', '.') }}</span>
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 class="font-bold text-slate-700 flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+                                    Prosedur & Tindakan
+                                </h4>
+                                <button type="button" wire:click="toggleTindakanModal" class="text-xs font-bold text-violet-600 bg-violet-50 px-3 py-1.5 rounded-lg hover:bg-violet-100 transition">+ Tambah Tindakan</button>
+                            </div>
+
+                            @if(count($selectedTindakans) > 0)
+                                <div class="space-y-2">
+                                    @foreach($tindakans as $tindakan)
+                                        @if(in_array($tindakan->id, $selectedTindakans))
+                                            <div class="flex justify-between items-center p-3 bg-white border border-slate-200 rounded-xl shadow-sm">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="w-8 h-8 rounded-full bg-violet-50 flex items-center justify-center text-violet-600">
+                                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm font-bold text-slate-800">{{ $tindakan->nama_tindakan }}</p>
+                                                        <p class="text-xs text-slate-500">Rp {{ number_format($tindakan->harga, 0, ',', '.') }}</p>
+                                                    </div>
+                                                </div>
+                                                <button type="button" wire:click="selectTindakan({{ $tindakan->id }})" class="text-red-500 hover:text-red-700 text-xs font-bold px-2 py-1">Hapus</button>
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            @else
+                                <div class="text-center py-6 bg-slate-50 rounded-xl border border-dashed border-slate-300 text-slate-400 text-sm">
+                                    Belum ada tindakan yang dipilih.
+                                </div>
+                            @endif
+                        </div>
+
+                        <!-- Modal Tindakan -->
+                        @if($showTindakanModal)
+                        <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" wire:click="toggleTindakanModal"></div>
+                                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                                <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+                                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                        <div class="sm:flex sm:items-start">
+                                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                                <h3 class="text-lg leading-6 font-medium text-slate-900" id="modal-title">Pilih Tindakan Medis</h3>
+                                                <div class="mt-4">
+                                                    <input type="text" wire:model.live.debounce.300ms="searchTindakan" class="w-full rounded-xl border-slate-300 focus:border-violet-500 focus:ring-violet-200 text-sm" placeholder="Cari nama tindakan...">
+                                                </div>
+                                                <div class="mt-4 max-h-60 overflow-y-auto space-y-2">
+                                                    @foreach($tindakans as $tindakan)
+                                                        <div wire:click="selectTindakan({{ $tindakan->id }})" class="flex justify-between items-center p-3 rounded-lg cursor-pointer transition {{ in_array($tindakan->id, $selectedTindakans) ? 'bg-violet-50 border border-violet-200' : 'bg-white border border-slate-100 hover:bg-slate-50' }}">
+                                                            <div>
+                                                                <p class="text-sm font-bold {{ in_array($tindakan->id, $selectedTindakans) ? 'text-violet-700' : 'text-slate-700' }}">{{ $tindakan->nama_tindakan }}</p>
+                                                                <p class="text-xs text-slate-500">Rp {{ number_format($tindakan->harga, 0, ',', '.') }}</p>
+                                                            </div>
+                                                            @if(in_array($tindakan->id, $selectedTindakans))
+                                                                <svg class="w-5 h-5 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                                            @endif
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
                                         </div>
-                                    </label>
-                                @endforeach
+                                    </div>
+                                    <div class="bg-slate-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                        <button type="button" wire:click="toggleTindakanModal" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-2 bg-violet-600 text-base font-medium text-white hover:bg-violet-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
+                                            Selesai
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                        @endif
 
                         <hr class="border-slate-100">
 

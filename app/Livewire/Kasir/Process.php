@@ -5,6 +5,7 @@ namespace App\Livewire\Kasir;
 use App\Models\Pembayaran;
 use App\Models\RekamMedis;
 use App\Models\Antrean;
+use App\Models\Setting;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -116,7 +117,7 @@ class Process extends Component
             $this->diskon = 0;
         } else {
             // Jika Umum
-            $this->biayaAdministrasi = 10000; // Reset ke default
+            $this->biayaAdministrasi = (int) Setting::ambil('biaya_pendaftaran_umum', 10000);
             $this->totalTagihan = $this->totalTindakan + $this->totalObat + $this->biayaAdministrasi + (int)$this->biayaTambahan;
             $this->grandTotal = max(0, $this->totalTagihan - (int)$this->diskon);
         }

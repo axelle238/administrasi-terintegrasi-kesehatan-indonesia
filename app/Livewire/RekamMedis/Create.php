@@ -46,6 +46,8 @@ class Create extends Component
 
     // Tindakan Selection
     public $selectedTindakans = []; 
+    public $showTindakanModal = false;
+    public $searchTindakan = '';
 
     // Resep Obat
     public $resep = [];
@@ -168,6 +170,23 @@ class Create extends Component
         $this->uploadNotes = array_values($this->uploadNotes);
     }
 
+    public function toggleTindakanModal()
+    {
+        $this->showTindakanModal = !$this->showTindakanModal;
+        if($this->showTindakanModal) {
+            $this->searchTindakan = '';
+        }
+    }
+
+    public function selectTindakan($id)
+    {
+        if (in_array($id, $this->selectedTindakans)) {
+            $this->selectedTindakans = array_diff($this->selectedTindakans, [$id]);
+        } else {
+            $this->selectedTindakans[] = $id;
+        }
+    }
+
     public function save()
     {
         $this->validate([
@@ -282,9 +301,14 @@ class Create extends Component
 
     public function render()
     {
+        $tindakanQuery = Tindakan::query();
+        if(!empty($this->searchTindakan)) {
+            $tindakanQuery->where('nama_tindakan', 'like', '%'.$this->searchTindakan.'%');
+        }
+
         return view('livewire.rekam-medis.create', [
             'obats' => Obat::orderBy('nama_obat')->get(),
-            'tindakans' => Tindakan::all(), 
+            'tindakans' => $tindakanQuery->orderBy('nama_tindakan')->get(), 
         ])->layout('layouts.app', ['header' => 'Pemeriksaan Pasien']);
     }
 }
