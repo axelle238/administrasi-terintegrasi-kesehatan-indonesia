@@ -81,12 +81,14 @@ class Create extends Component
                 DB::table('pengadaan_barang_details')->insert([
                     'pengadaan_barang_id' => $pengadaan->id,
                     'barang_id' => $item['type'] === 'existing' ? $item['barang_id'] : null,
-                    'nama_barang' => $item['type'] === 'existing' 
+                    'nama_barang_baru' => $item['type'] === 'existing' 
                         ? (Barang::find($item['barang_id'])->nama_barang ?? '-') 
                         : $item['nama_barang'],
-                    'jumlah_permintaan' => $item['jumlah_permintaan'],
+                    'jumlah_minta' => $item['jumlah_permintaan'],
+                    'jumlah_disetujui' => 0, // Default
                     'satuan' => $item['satuan'],
-                    'estimasi_harga_satuan' => $item['estimasi_harga_satuan'],
+                    'harga_satuan_estimasi' => $item['estimasi_harga_satuan'],
+                    'total_harga' => $item['jumlah_permintaan'] * $item['estimasi_harga_satuan'],
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);

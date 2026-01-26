@@ -34,6 +34,17 @@ class Index extends Component
                         $barang->kondisi = 'Dihapuskan';
                     }
                     $barang->save();
+
+                    // Log History
+                    \App\Models\RiwayatBarang::create([
+                        'barang_id' => $barang->id,
+                        'user_id' => Auth::id(),
+                        'jenis_transaksi' => 'Penghapusan',
+                        'jumlah' => $detail->jumlah,
+                        'stok_terakhir' => $barang->stok,
+                        'tanggal' => now(),
+                        'keterangan' => 'Penghapusan No: ' . $data->nomor_dokumen
+                    ]);
                 }
             }
 
