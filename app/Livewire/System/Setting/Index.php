@@ -33,7 +33,9 @@ class Index extends Component
                 'fields' => [
                     'hero_title' => ['label' => 'Judul Hero Section', 'type' => 'text', 'default' => 'Layanan Kesehatan Terpadu'],
                     'hero_subtitle' => ['label' => 'Sub-Judul Hero', 'type' => 'text', 'default' => 'Kesehatan Anda adalah Prioritas Kami'],
-                    // Fitur Landing Page bisa JSON, tapi kita simplifikasi text dulu atau handle khusus nanti
+                    'announcement_active' => ['label' => 'Aktifkan Bar Pengumuman', 'type' => 'select', 'options' => ['1' => 'Ya', '0' => 'Tidak'], 'default' => '0'],
+                    'announcement_text' => ['label' => 'Isi Pengumuman', 'type' => 'text', 'default' => 'Selamat Datang di Sistem Layanan Kesehatan.'],
+                    'primary_color' => ['label' => 'Warna Utama (Hex)', 'type' => 'text', 'default' => '#2563eb', 'help' => 'Contoh: #2563eb (Biru)'],
                 ]
             ],
             'operasional' => [

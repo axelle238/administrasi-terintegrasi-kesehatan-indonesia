@@ -22,6 +22,9 @@ Route::get('/', function () {
         'telepon' => Setting::ambil('app_phone', '-'),
         'email' => Setting::ambil('app_email', '-'),
         'alamat' => Setting::ambil('app_address', '-'),
+        'announcement_active' => Setting::ambil('announcement_active', '0'),
+        'announcement_text' => Setting::ambil('announcement_text', ''),
+        'primary_color' => Setting::ambil('primary_color', '#2563eb'),
         'fitur' => json_decode(Setting::ambil('landing_features', '[]'), true),
     ];
 
