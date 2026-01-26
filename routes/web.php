@@ -54,6 +54,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/activity-log', \App\Livewire\Admin\ActivityLog::class)->name('activity-log');
         Route::get('/system/info', \App\Livewire\System\Information::class)->name('system.info'); // Added route
         Route::get('/system/poli', \App\Livewire\System\Poli\Index::class)->name('system.poli.index');
+        Route::get('/system/poli/create', \App\Livewire\System\Poli\Create::class)->name('system.poli.create');
+        Route::get('/system/poli/{poli}/edit', \App\Livewire\System\Poli\Edit::class)->name('system.poli.edit');
         Route::get('/system/users', \App\Livewire\System\User\Index::class)->name('system.user.index');
         Route::get('/system/settings', \App\Livewire\System\Setting\Index::class)->name('system.setting.index');
         Route::get('/system/surat-templates', \App\Livewire\Surat\Template\Index::class)->name('system.surat-template.index');
