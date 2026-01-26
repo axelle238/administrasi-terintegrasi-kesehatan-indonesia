@@ -25,6 +25,11 @@ Route::get('/', function () {
         'announcement_active' => Setting::ambil('announcement_active', '0'),
         'announcement_text' => Setting::ambil('announcement_text', ''),
         'primary_color' => Setting::ambil('primary_color', '#2563eb'),
+        'show_jadwal_dokter' => Setting::ambil('show_jadwal_dokter', '1'),
+        'show_layanan_poli' => Setting::ambil('show_layanan_poli', '1'),
+        'show_fasilitas' => Setting::ambil('show_fasilitas', '1'),
+        'show_pengaduan_cta' => Setting::ambil('show_pengaduan_cta', '1'),
+        'footer_text' => Setting::ambil('footer_text', 'SATRIA - Sistem Kesehatan Terintegrasi'),
         'fitur' => json_decode(Setting::ambil('landing_features', '[]'), true),
     ];
 

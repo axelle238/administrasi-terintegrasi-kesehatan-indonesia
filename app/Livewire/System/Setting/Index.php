@@ -36,6 +36,11 @@ class Index extends Component
                     'announcement_active' => ['label' => 'Aktifkan Bar Pengumuman', 'type' => 'select', 'options' => ['1' => 'Ya', '0' => 'Tidak'], 'default' => '0'],
                     'announcement_text' => ['label' => 'Isi Pengumuman', 'type' => 'text', 'default' => 'Selamat Datang di Sistem Layanan Kesehatan.'],
                     'primary_color' => ['label' => 'Warna Utama (Hex)', 'type' => 'text', 'default' => '#2563eb', 'help' => 'Contoh: #2563eb (Biru)'],
+                    'show_jadwal_dokter' => ['label' => 'Tampilkan Jadwal Dokter', 'type' => 'select', 'options' => ['1' => 'Ya', '0' => 'Tidak'], 'default' => '1'],
+                    'show_layanan_poli' => ['label' => 'Tampilkan Layanan Poli', 'type' => 'select', 'options' => ['1' => 'Ya', '0' => 'Tidak'], 'default' => '1'],
+                    'show_fasilitas' => ['label' => 'Tampilkan Fasilitas', 'type' => 'select', 'options' => ['1' => 'Ya', '0' => 'Tidak'], 'default' => '1'],
+                    'show_pengaduan_cta' => ['label' => 'Tampilkan CTA Pengaduan', 'type' => 'select', 'options' => ['1' => 'Ya', '0' => 'Tidak'], 'default' => '1'],
+                    'footer_text' => ['label' => 'Teks Footer', 'type' => 'text', 'default' => 'SATRIA - Sistem Kesehatan Terintegrasi'],
                 ]
             ],
             'operasional' => [

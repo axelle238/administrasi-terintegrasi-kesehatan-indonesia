@@ -126,10 +126,12 @@
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <span>Ambil Antrean</span>
                 </a>
+                @if(($pengaturan['show_pengaduan_cta'] ?? '1') == '1')
                 <a href="{{ route('pengaduan.public') }}" class="px-8 py-4 bg-orange-500 text-white font-bold rounded-2xl shadow-xl shadow-orange-600/20 hover:bg-orange-600 transition-all transform hover:-translate-y-1 w-full sm:w-auto flex items-center justify-center gap-3">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                     <span>Kirim Pengaduan</span>
                 </a>
+                @endif
                 <a href="#jadwal" class="px-8 py-4 bg-white text-slate-700 font-bold rounded-2xl shadow-lg border border-slate-200 hover:border-blue-300 hover-text-primary transition-all w-full sm:w-auto flex items-center justify-center gap-3">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                     <span>Lihat Jadwal</span>
@@ -143,6 +145,7 @@
     </section>
 
     <!-- Jadwal Dokter Hari Ini (Dynamic) -->
+    @if(($pengaturan['show_jadwal_dokter'] ?? '1') == '1')
     <section id="jadwal" class="py-20 bg-white border-b border-slate-100 relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
@@ -185,8 +188,10 @@
             @endif
         </div>
     </section>
+    @endif
 
     <!-- Layanan Section (Dynamic) -->
+    @if(($pengaturan['show_layanan_poli'] ?? '1') == '1')
     <section id="layanan" class="py-24 bg-slate-50 relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-16">
@@ -219,8 +224,10 @@
             @endif
         </div>
     </section>
+    @endif
 
     <!-- Fasilitas / Keunggulan -->
+    @if(($pengaturan['show_fasilitas'] ?? '1') == '1')
     <section id="fasilitas" class="py-24 bg-white border-t border-slate-200">
          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -267,6 +274,7 @@
             </div>
          </div>
     </section>
+    @endif
 
     <!-- Footer -->
     <footer class="bg-slate-900 text-slate-300 py-16">
@@ -296,9 +304,11 @@
                 </div>
              </div>
              <div class="border-t border-slate-800 pt-8 text-center text-sm text-slate-500">
-                 &copy; {{ date('Y') }} {{ $pengaturan['nama_aplikasi'] }}. All rights reserved.
+                 &copy; {{ date('Y') }} {{ $pengaturan['footer_text'] }}. All rights reserved.
              </div>
         </div>
     </footer>
+</body>
+</html>
 </body>
 </html>
