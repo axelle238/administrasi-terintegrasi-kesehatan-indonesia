@@ -1,311 +1,268 @@
-<div class="space-y-6">
-    <!-- Welcome & Quick Stats -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Welcome Card -->
-        <div class="lg:col-span-2 rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-600 p-6 text-white shadow-lg relative overflow-hidden">
-            <div class="absolute right-0 top-0 w-64 h-64 bg-white opacity-10 rounded-full transform translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
-            <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                <div>
-                    <h2 class="text-3xl font-extrabold tracking-tight">Halo, {{ Auth::user()->name }}! 👋</h2>
-                    <p class="mt-2 text-teal-100 max-w-lg">
-                        Selamat datang di Dashboard Utama Sistem SATRIA. Berikut adalah ringkasan performa dan statistik operasional fasilitas kesehatan hari ini.
-                    </p>
-                    <div class="mt-6 flex flex-wrap gap-3">
-                        <a href="{{ route('antrean.index') }}" class="inline-flex items-center px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg text-sm font-semibold transition-colors">
-                            <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                            Monitor Antrean
-                        </a>
-                        <a href="{{ route('pasien.create') }}" class="inline-flex items-center px-4 py-2 bg-white text-teal-700 hover:bg-teal-50 rounded-lg text-sm font-bold shadow-md transition-colors">
-                            <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                            Pasien Baru
-                        </a>
-                        <button wire:click="clockIn" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg text-sm font-bold shadow-md transition-colors">
-                            <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                            Absen Masuk/Pulang
-                        </button>
-                    </div>
-                </div>
-                <div class="hidden md:block">
-                     <!-- Abstract Graphic or SVG -->
-                     <svg class="w-32 h-32 text-teal-200 opacity-80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M19.428 15.428a2 2 0 0 0-1.022-.547l-2.384-.477a6 6 0 0 0-3.86.517l-.318.158a6 6 0 0 1-3.86.517L6.05 15.21a2 2 0 0 0-1.806.547M8 4h8l-1 1v5.172a2 2 0 0 0 .586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 0 0 9 10.172V5L8 4Z"/></svg>
-                </div>
-            </div>
-        </div>
-
-        <!-- Clock & Location -->
-        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col justify-between">
+<div class="space-y-8">
+    
+    <!-- Welcome Section -->
+    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-teal-600 to-emerald-600 p-8 shadow-xl dark:shadow-teal-900/20">
+        <div class="absolute top-0 right-0 -mt-10 -mr-10 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 -mb-10 -ml-10 h-64 w-64 rounded-full bg-black/10 blur-3xl"></div>
+        
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-                <div class="flex items-center justify-between mb-4">
-                    <span class="text-xs font-bold uppercase text-gray-400 dark:text-gray-500 tracking-wider">Waktu Operasional</span>
-                    <span class="flex h-2 w-2 relative">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                <h2 class="text-3xl font-extrabold text-white tracking-tight">
+                    Selamat Datang, {{ Auth::user()->name }}! 👋
+                </h2>
+                <p class="mt-2 text-teal-50 text-lg max-w-2xl">
+                    Sistem Informasi Pusat Jaga (SIPUJAGA) siap membantu operasional pelayanan kesehatan Anda hari ini.
+                </p>
+                <div class="mt-6 flex flex-wrap gap-3">
+                    <span class="inline-flex items-center px-3 py-1 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium border border-white/10">
+                        <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        {{ \Carbon\Carbon::now()->format('d M Y') }}
+                    </span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-lg bg-white/20 backdrop-blur-sm text-white text-sm font-medium border border-white/10">
+                        <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        Shift Pagi
                     </span>
                 </div>
-                <h3 class="text-4xl font-black text-gray-800 dark:text-white" x-data="{ time: new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) }" x-init="setInterval(() => time = new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}), 1000)">
-                    <span x-text="time"></span>
-                </h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</p>
             </div>
             
-            <div class="mt-6 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-100 dark:border-gray-600 flex items-center gap-3">
-                 <div class="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                </div>
-                <div>
-                    <p class="text-xs font-bold text-gray-900 dark:text-gray-200">Puskesmas Jagakarsa</p>
-                    <p class="text-[10px] text-gray-500 dark:text-gray-400">Jakarta Selatan, DKI Jakarta</p>
+            <!-- Weather / Quick Status Widget -->
+            <div class="hidden lg:block">
+                <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 flex items-center gap-4 min-w-[200px]">
+                    <div class="p-3 bg-yellow-400/20 rounded-xl text-yellow-300">
+                         <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-white">28°C</div>
+                        <div class="text-teal-100 text-xs uppercase tracking-wider">Cerah Berawan</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Key Metrics (Grid 4) -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-        <!-- Pasien -->
-        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow group">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Total Pasien</p>
-                    <h4 class="text-2xl font-black text-gray-800 dark:text-white mt-1 group-hover:text-teal-600 transition-colors">{{ number_format($totalPasien) }}</h4>
-                </div>
-                <div class="p-2 bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 rounded-lg">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                </div>
-            </div>
-            <div class="mt-4 flex items-center text-xs text-green-600 dark:text-green-400 font-medium">
-                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
-                <span>+12% dr bulan lalu</span>
-            </div>
-        </div>
-
-        <!-- Antrean -->
-        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow group">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Antrean Hari Ini</p>
-                    <h4 class="text-2xl font-black text-gray-800 dark:text-white mt-1 group-hover:text-blue-600 transition-colors">{{ number_format($antreanHariIni) }}</h4>
-                </div>
-                <div class="p-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                </div>
-            </div>
-            <div class="mt-4 w-full bg-gray-100 dark:bg-gray-700 rounded-full h-1.5">
-                <div class="bg-blue-500 h-1.5 rounded-full" style="width: 65%"></div>
-            </div>
-        </div>
-
-        <!-- Surat -->
-        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow group">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Surat Masuk</p>
-                    <h4 class="text-2xl font-black text-gray-800 dark:text-white mt-1 group-hover:text-purple-600 transition-colors">{{ number_format($suratMasuk) }}</h4>
-                </div>
-                <div class="p-2 bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-lg">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                </div>
-            </div>
-             <div class="mt-4 flex items-center text-xs text-gray-500 dark:text-gray-400">
-                <span>Perlu disposisi: <strong>3</strong></span>
-            </div>
-        </div>
-
-        <!-- Kamar -->
-        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow group">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Kamar Tersedia</p>
-                    <h4 class="text-2xl font-black text-gray-800 dark:text-white mt-1 group-hover:text-orange-600 transition-colors">{{ number_format($kamarTersedia) }}</h4>
-                </div>
-                <div class="p-2 bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-lg">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-                </div>
-            </div>
-            <div class="mt-4 flex gap-1">
-                @for($i=0; $i<5; $i++)
-                    <div class="h-1.5 flex-1 rounded-full {{ $i < 3 ? 'bg-orange-500' : 'bg-gray-200 dark:bg-gray-700' }}"></div>
-                @endfor
-            </div>
-        </div>
-    </div>
-
-    <!-- Main Analytics Area -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Analytics Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         
-        <!-- Left Column: Charts -->
-        <div class="lg:col-span-2 space-y-6">
-            <!-- Patient Visits Chart -->
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <div class="flex items-center justify-between mb-6">
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Statistik Kunjungan Pasien</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Tren kunjungan 6 bulan terakhir</p>
+        <!-- Card 1: Pasien -->
+        <div class="group relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700">
+            <div class="absolute right-0 top-0 h-24 w-24 translate-x-8 -translate-y-8 rounded-full bg-blue-50 dark:bg-blue-900/20 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40 transition-colors"></div>
+            <div class="relative z-10">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                     </div>
-                    <select class="text-xs border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500">
-                        <option>6 Bulan Terakhir</option>
-                        <option>Tahun Ini</option>
-                    </select>
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Pasien</span>
                 </div>
-                
-                <div class="relative h-72">
-                    <canvas id="kunjunganChart"></canvas>
+                <div class="flex items-baseline gap-2">
+                    <h3 class="text-3xl font-bold text-gray-900 dark:text-white">{{ number_format($totalPasien) }}</h3>
+                    <span class="text-sm font-medium text-green-500 flex items-center">
+                        <svg class="w-3 h-3 mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                        +2.5%
+                    </span>
                 </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Terdaftar dalam database</p>
             </div>
-
-            <!-- Operational Alerts (Warning) -->
-            @if($obatMenipis > 0 || $obatExpired > 0)
-            <div class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 rounded-r-xl flex items-start justify-between">
-                <div class="flex items-start gap-3">
-                    <svg class="w-6 h-6 text-red-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                    <div>
-                        <h4 class="text-sm font-bold text-red-800 dark:text-red-200">Perhatian: Stok Kritis!</h4>
-                        <p class="text-xs text-red-700 dark:text-red-300 mt-1">
-                            Terdeteksi {{ $obatMenipis }} jenis obat menipis dan {{ $obatExpired }} jenis obat mendekati kedaluwarsa.
-                        </p>
-                    </div>
-                </div>
-                <a href="{{ route('obat.index') }}" class="text-xs font-bold bg-white dark:bg-gray-800 text-red-600 px-3 py-1.5 rounded border border-red-100 dark:border-gray-600 shadow-sm hover:bg-red-50">Cek Inventaris</a>
-            </div>
-            @endif
         </div>
 
-        <!-- Right Column: EWS & Activity -->
-        <div class="space-y-6">
-            
-            <!-- EWS Card -->
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <div class="flex items-center gap-2 mb-4">
-                    <div class="p-1.5 bg-indigo-100 dark:bg-indigo-900/50 rounded-lg">
-                        <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        <!-- Card 2: Antrean -->
+        <div class="group relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700">
+            <div class="absolute right-0 top-0 h-24 w-24 translate-x-8 -translate-y-8 rounded-full bg-teal-50 dark:bg-teal-900/20 group-hover:bg-teal-100 dark:group-hover:bg-teal-900/40 transition-colors"></div>
+            <div class="relative z-10">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 rounded-xl bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" /></svg>
                     </div>
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">EWS System</h3>
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Antrean Hari Ini</span>
+                </div>
+                <div class="flex items-baseline gap-2">
+                    <h3 class="text-3xl font-bold text-gray-900 dark:text-white">{{ number_format($antreanHariIni) }}</h3>
+                    <span class="text-sm font-medium text-gray-400">org</span>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Pasien menunggu layanan</p>
+            </div>
+        </div>
+
+        <!-- Card 3: Rawat Inap -->
+        <div class="group relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700">
+            <div class="absolute right-0 top-0 h-24 w-24 translate-x-8 -translate-y-8 rounded-full bg-purple-50 dark:bg-purple-900/20 group-hover:bg-purple-100 dark:group-hover:bg-purple-900/40 transition-colors"></div>
+            <div class="relative z-10">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                    </div>
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">BOR Rawat Inap</span>
+                </div>
+                <div class="flex items-baseline gap-2">
+                    <h3 class="text-3xl font-bold text-gray-900 dark:text-white">{{ $pasienRawatInap }}</h3>
+                    <span class="text-xs text-gray-500">/ {{ $pasienRawatInap + $kamarTersedia }} Bed</span>
                 </div>
                 
-                <div class="space-y-4">
-                    <!-- STR Expiring -->
-                    <div class="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50">
-                        <div class="flex items-center gap-3">
-                            <span class="w-2 h-2 rounded-full {{ $strExpired > 0 ? 'bg-red-500 animate-pulse' : 'bg-green-500' }}"></span>
-                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">STR Pegawai Expired</span>
-                        </div>
-                        <span class="text-sm font-bold {{ $strExpired > 0 ? 'text-red-600' : 'text-gray-900 dark:text-white' }}">{{ $strExpired }}</span>
-                    </div>
+                <!-- Simple Progress Bar -->
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mt-3">
+                    @php
+                        $totalBed = $pasienRawatInap + $kamarTersedia;
+                        $borPercentage = $totalBed > 0 ? ($pasienRawatInap / $totalBed) * 100 : 0;
+                    @endphp
+                    <div class="bg-purple-500 h-1.5 rounded-full transition-all duration-1000" style="width: {{ $borPercentage }}%"></div>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">{{ $kamarTersedia }} Bed Tersedia</p>
+            </div>
+        </div>
 
-                    <!-- SIP Expiring -->
-                    <div class="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50">
-                        <div class="flex items-center gap-3">
-                            <span class="w-2 h-2 rounded-full {{ $sipExpired > 0 ? 'bg-red-500 animate-pulse' : 'bg-green-500' }}"></span>
-                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">SIP Pegawai Expired</span>
-                        </div>
-                        <span class="text-sm font-bold {{ $sipExpired > 0 ? 'text-red-600' : 'text-gray-900 dark:text-white' }}">{{ $sipExpired }}</span>
+        <!-- Card 4: Farmasi Warning -->
+        <div class="group relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700">
+            <div class="absolute right-0 top-0 h-24 w-24 translate-x-8 -translate-y-8 rounded-full bg-red-50 dark:bg-red-900/20 group-hover:bg-red-100 dark:group-hover:bg-red-900/40 transition-colors"></div>
+            <div class="relative z-10">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 rounded-xl bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                     </div>
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Peringatan Stok</span>
+                </div>
+                <div class="flex items-baseline gap-2">
+                    <h3 class="text-3xl font-bold text-gray-900 dark:text-white">{{ $obatMenipis }}</h3>
+                    <span class="text-sm font-medium text-red-500">Item</span>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Obat Stok Menipis</p>
+            </div>
+        </div>
+    </div>
 
-                    <!-- Obat ED -->
-                    <div class="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50">
-                        <div class="flex items-center gap-3">
-                            <span class="w-2 h-2 rounded-full {{ $obatExpired > 0 ? 'bg-orange-500 animate-pulse' : 'bg-green-500' }}"></span>
-                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Obat Near ED</span>
-                        </div>
-                        <span class="text-sm font-bold {{ $obatExpired > 0 ? 'text-orange-600' : 'text-gray-900 dark:text-white' }}">{{ $obatExpired }}</span>
-                    </div>
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Visitor Chart (Line) -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white">Trend Kunjungan Pasien</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">6 Bulan Terakhir</p>
+                </div>
+                <div class="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                    <svg class="w-5 h-5 text-gray-500 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" /></svg>
                 </div>
             </div>
 
-            <!-- Revenue Trend (Mini) -->
-            <div class="bg-gradient-to-br from-indigo-600 to-purple-700 p-6 rounded-2xl text-white shadow-lg">
-                <p class="text-xs text-indigo-200 uppercase font-bold tracking-wider">Pendapatan Minggu Ini</p>
-                <h3 class="text-2xl font-black mt-2">Rp {{ number_format(array_sum($revenueData['data']), 0, ',', '.') }}</h3>
-                <div class="mt-4 flex items-end gap-1 h-16">
-                    @foreach($revenueData['data'] as $val)
-                        <div class="flex-1 bg-white/20 rounded-t-sm hover:bg-white/40 transition-colors" style="height: {{ ($val / (max($revenueData['data']) ?: 1)) * 100 }}%"></div>
+            <div class="relative h-64 w-full" x-data="{ tooltip: null, tooltipX: 0, tooltipY: 0 }">
+                <!-- CSS/SVG Chart Implementation -->
+                @php
+                    $maxVisits = max($chartData['data']) > 0 ? max($chartData['data']) : 10;
+                    $points = [];
+                    foreach($chartData['data'] as $index => $value) {
+                        $x = ($index / (count($chartData['data']) - 1)) * 100; // Percentage width
+                        $y = 100 - (($value / $maxVisits) * 80); // Inverted height percentage (leave 20% buffer)
+                        $points[] = "$x,$y";
+                    }
+                    $polylinePoints = implode(' ', $points);
+                @endphp
+                
+                <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="w-full h-full overflow-visible">
+                    <!-- Grid Lines -->
+                    <line x1="0" y1="20" x2="100" y2="20" stroke="currentColor" class="text-gray-100 dark:text-gray-700" stroke-width="0.5" stroke-dasharray="2 2" />
+                    <line x1="0" y1="40" x2="100" y2="40" stroke="currentColor" class="text-gray-100 dark:text-gray-700" stroke-width="0.5" stroke-dasharray="2 2" />
+                    <line x1="0" y1="60" x2="100" y2="60" stroke="currentColor" class="text-gray-100 dark:text-gray-700" stroke-width="0.5" stroke-dasharray="2 2" />
+                    <line x1="0" y1="80" x2="100" y2="80" stroke="currentColor" class="text-gray-100 dark:text-gray-700" stroke-width="0.5" stroke-dasharray="2 2" />
+                    
+                    <!-- Line -->
+                    <polyline fill="none" stroke="currentColor" class="text-teal-500" stroke-width="2" points="{{ $polylinePoints }}" vector-effect="non-scaling-stroke" />
+                    
+                    <!-- Area (Optional, tricky with simple polyline, skipping for cleanliness) -->
+
+                    <!-- Data Points -->
+                    @foreach($chartData['data'] as $index => $value)
+                        @php
+                            $x = ($index / (count($chartData['data']) - 1)) * 100;
+                            $y = 100 - (($value / $maxVisits) * 80);
+                        @endphp
+                        <circle cx="{{ $x }}" cy="{{ $y }}" r="1.5" class="text-white fill-current stroke-teal-500" stroke-width="0.5" />
+                        
+                        <!-- Tooltip Trigger Area -->
+                        <rect x="{{ $x - 5 }}" y="0" width="10" height="100" fill="transparent" 
+                              @mouseenter="tooltip = '{{ $value }}'; tooltipX = $event.clientX; tooltipY = $event.clientY" 
+                              @mouseleave="tooltip = null" class="cursor-pointer" />
+                    @endforeach
+                </svg>
+
+                <!-- X Axis Labels -->
+                <div class="flex justify-between mt-2 text-[10px] text-gray-400 dark:text-gray-500 font-mono uppercase">
+                    @foreach($chartData['labels'] as $label)
+                        <span>{{ $label }}</span>
                     @endforeach
                 </div>
-            </div>
 
-            <!-- System Info -->
-            <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <h4 class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">System Info</h4>
-                <div class="space-y-2 text-xs text-gray-600 dark:text-gray-400">
-                    <div class="flex justify-between">
-                        <span>Version</span>
-                        <span class="font-mono">v2.0.0</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>Framework</span>
-                        <span class="font-mono">Laravel 12</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>Server Time</span>
-                        <span class="font-mono">{{ now()->format('H:i') }}</span>
-                    </div>
+                <!-- Simple Tooltip -->
+                <div x-show="tooltip" 
+                     x-transition 
+                     class="fixed z-50 px-2 py-1 text-xs font-bold text-white bg-gray-900 rounded shadow-lg pointer-events-none"
+                     :style="`top: ${tooltipY - 40}px; left: ${tooltipX - 20}px`">
+                    <span x-text="tooltip"></span> Kunjungan
+                </div>
+            </div>
+        </div>
+
+        <!-- Revenue Chart (Bar) -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white">Pendapatan Minggu Ini</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">7 Hari Terakhir</p>
+                </div>
+                <div class="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                    <svg class="w-5 h-5 text-gray-500 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </div>
             </div>
 
+            <div class="h-64 flex items-end justify-between gap-2">
+                @php
+                    $maxRev = max($revenueData['data']) > 0 ? max($revenueData['data']) : 100000;
+                @endphp
+                
+                @foreach($revenueData['data'] as $index => $value)
+                    @php
+                        $height = ($value / $maxRev) * 100;
+                        $height = $height < 5 ? 5 : $height; // Min height
+                    @endphp
+                    <div class="w-full flex flex-col items-center gap-2 group">
+                        <div class="w-full bg-emerald-100 dark:bg-emerald-900/30 rounded-t-lg relative overflow-hidden group-hover:bg-emerald-200 dark:group-hover:bg-emerald-900/50 transition-colors" style="height: {{ $height }}%">
+                             <div class="absolute bottom-0 left-0 w-full bg-emerald-500 dark:bg-emerald-600 rounded-t-lg transition-all duration-500 ease-out" style="height: 0%" x-init="setTimeout(() => $el.style.height = '100%', 100 + {{ $index * 100 }})"></div>
+                        </div>
+                        <span class="text-[10px] text-gray-400 font-mono truncate w-full text-center">{{ Str::limit($revenueData['labels'][$index], 3) }}</span>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
+    <!-- EWS & Alerts Section -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 rounded-2xl p-5 flex items-center gap-4">
+            <div class="p-3 bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 rounded-full">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            </div>
+            <div>
+                <h4 class="font-bold text-gray-800 dark:text-red-100">Obat Expired</h4>
+                <p class="text-sm text-gray-500 dark:text-red-200/60">{{ $obatExpired }} batch mendekati kedaluwarsa</p>
+            </div>
+        </div>
+
+        <div class="bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/30 rounded-2xl p-5 flex items-center gap-4">
+            <div class="p-3 bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 rounded-full">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0c0 .883-.393 1.627-1.017 2.192C8.327 8.82 7.7 9 7 9s-1.327-.18-1.983-.808A2.992 2.992 0 014 6h16c0 .883-.393 1.627-1.017 2.192C18.327 8.82 17.7 9 17 9c-.7 0-1.327-.18-1.983-.808A2.992 2.992 0 0114 6" /></svg>
+            </div>
+            <div>
+                <h4 class="font-bold text-gray-800 dark:text-amber-100">SIP Pegawai</h4>
+                <p class="text-sm text-gray-500 dark:text-amber-200/60">{{ $sipExpired }} pegawai SIP akan habis</p>
+            </div>
+        </div>
+
+        <div class="bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-2xl p-5 flex items-center gap-4">
+            <div class="p-3 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-full">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+            </div>
+            <div>
+                <h4 class="font-bold text-gray-800 dark:text-blue-100">Surat Masuk</h4>
+                <p class="text-sm text-gray-500 dark:text-blue-200/60">{{ $suratMasuk }} surat baru belum disposisi</p>
+            </div>
         </div>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    document.addEventListener('livewire:initialized', () => {
-        // Safe check for Chart
-        if (typeof Chart === 'undefined') return;
-
-        // Kunjungan Chart
-        const ctxKunjungan = document.getElementById('kunjunganChart');
-        if (ctxKunjungan) {
-            new Chart(ctxKunjungan, {
-                type: 'line',
-                data: {
-                    labels: @json($chartData['labels']),
-                    datasets: [{
-                        label: 'Kunjungan Pasien',
-                        data: @json($chartData['data']),
-                        borderColor: '#0d9488', // teal-600
-                        backgroundColor: 'rgba(13, 148, 136, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        pointBackgroundColor: '#0f766e',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { 
-                        legend: { display: false },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                        }
-                    },
-                    scales: { 
-                        y: { 
-                            beginAtZero: true,
-                            grid: {
-                                color: document.documentElement.classList.contains('dark') ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'
-                            },
-                            ticks: {
-                                color: document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280'
-                            }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: {
-                                color: document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280'
-                            }
-                        }
-                    },
-                    interaction: {
-                        mode: 'nearest',
-                        axis: 'x',
-                        intersect: false
-                    }
-                }
-            });
-        }
-    });
-</script>
