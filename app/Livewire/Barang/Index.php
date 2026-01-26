@@ -138,9 +138,19 @@ class Index extends Component
 
         $kategoris = KategoriBarang::all();
 
+        // Dashboard Ringkas Stats
+        $totalAset = Barang::count();
+        $nilaiAset = Barang::sum('nilai_buku');
+        $asetRusak = Barang::where('kondisi', '!=', 'Baik')->count();
+        $stokMenipis = Barang::where('stok', '<=', 5)->count();
+
         return view('livewire.barang.index', [
             'barangs' => $barangs,
-            'kategoris' => $kategoris
+            'kategoris' => $kategoris,
+            'totalAset' => $totalAset,
+            'nilaiAset' => $nilaiAset,
+            'asetRusak' => $asetRusak,
+            'stokMenipis' => $stokMenipis,
         ])->layout('layouts.app', ['header' => 'Inventaris & Aset Puskesmas']);
     }
 }
