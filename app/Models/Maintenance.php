@@ -17,7 +17,8 @@ class Maintenance extends Model
         'keterangan',
         'teknisi',
         'biaya',
-        'tanggal_berikutnya'
+        'tanggal_berikutnya',
+        'status'
     ];
 
     protected $casts = [
