@@ -17,10 +17,10 @@
         </a>
     </div>
 
-    <!-- Navigation -->
+    <!-- Navigasi -->
     <div class="flex-1 overflow-y-auto px-4 py-6 space-y-1 custom-scrollbar">
         
-        <!-- Main -->
+        <!-- Utama -->
         <div class="mb-2 px-4 mt-2">
             <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Utama</p>
         </div>
@@ -29,7 +29,7 @@
             Dashboard
         </x-nav-link-sidebar>
 
-        <!-- Clinical / Medis -->
+        <!-- Klinis / Medis -->
         @if(Auth::user()->role === 'admin' || in_array(Auth::user()->role, ['dokter', 'perawat', 'staf']))
             <div class="mt-8 mb-2 px-4">
                 <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Layanan Medis</p>
@@ -45,7 +45,7 @@
 
             @if(Auth::user()->role === 'admin' || in_array(Auth::user()->role, ['dokter', 'perawat']))
                 <x-nav-link-sidebar :href="route('rekam-medis.index')" :active="request()->routeIs('rekam-medis.*')" icon="clipboard-list" color="cyan">
-                    Rekam Medis (EMR)
+                    Rekam Medis (RME)
                 </x-nav-link-sidebar>
 
                 <x-nav-link-sidebar :href="route('rawat-inap.index')" :active="request()->routeIs('rawat-inap.index')" icon="office-building" color="cyan">
@@ -53,12 +53,12 @@
                 </x-nav-link-sidebar>
                 
                 <x-nav-link-sidebar :href="route('rawat-inap.kamar')" :active="request()->routeIs('rawat-inap.kamar')" icon="view-grid" color="cyan">
-                    Monitoring Bed
+                    Monitoring Kamar
                 </x-nav-link-sidebar>
             @endif
         @endif
 
-        <!-- Pharmacy -->
+        <!-- Farmasi -->
         @if(Auth::user()->role === 'admin' || Auth::user()->role === 'apoteker')
             <div class="mt-8 mb-2 px-4">
                 <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Farmasi & Obat</p>
@@ -69,15 +69,15 @@
             </x-nav-link-sidebar>
 
             <x-nav-link-sidebar :href="route('obat.index')" :active="request()->routeIs('obat.index') || request()->routeIs('obat.create') || request()->routeIs('obat.edit')" icon="cube" color="emerald">
-                Inventory Obat
+                Inventaris Obat
             </x-nav-link-sidebar>
 
             <x-nav-link-sidebar :href="route('obat.stock-opname')" :active="request()->routeIs('obat.stock-opname')" icon="refresh" color="emerald">
-                Stock Opname
+                Stok Opname
             </x-nav-link-sidebar>
         @endif
 
-        <!-- Finance -->
+        <!-- Keuangan -->
         @if(Auth::user()->role === 'admin' || Auth::user()->role === 'staf')
             <div class="mt-8 mb-2 px-4">
                 <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Keuangan</p>
@@ -88,7 +88,7 @@
             </x-nav-link-sidebar>
         @endif
 
-        <!-- HR & Admin -->
+        <!-- SDM & Admin -->
         @if(Auth::user()->role === 'admin')
             <div class="mt-8 mb-2 px-4">
                 <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Administrasi</p>
@@ -103,19 +103,19 @@
             </x-nav-link-sidebar>
 
             <x-nav-link-sidebar :href="route('kepegawaian.gaji.index')" :active="request()->routeIs('kepegawaian.gaji.*')" icon="cash" color="violet">
-                Payroll
+                Penggajian
             </x-nav-link-sidebar>
         @endif
         
-        <!-- General Access -->
+        <!-- Akses Umum -->
         <x-nav-link-sidebar :href="route('kepegawaian.cuti.index')" :active="request()->routeIs('kepegawaian.cuti.*')" icon="document-text" color="orange">
             Pengajuan Cuti
         </x-nav-link-sidebar>
 
-        <!-- Assets -->
+        <!-- Aset -->
         @if(Auth::user()->role === 'admin' || Auth::user()->role === 'staf')
              <div class="mt-8 mb-2 px-4">
-                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Inventaris</p>
+                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Aset & Fasilitas</p>
             </div>
 
             <x-nav-link-sidebar :href="route('barang.dashboard')" :active="request()->routeIs('barang.dashboard')" icon="chart-bar" color="indigo">
@@ -127,22 +127,22 @@
             </x-nav-link-sidebar>
             
             <x-nav-link-sidebar :href="route('barang.maintenance')" :active="request()->routeIs('barang.maintenance')" icon="tool" color="indigo">
-                Maintenance
+                Pemeliharaan
             </x-nav-link-sidebar>
         @endif
 
-        <!-- System -->
+        <!-- Sistem -->
         @if(Auth::user()->role === 'admin')
             <div class="mt-8 mb-2 px-4">
-                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">System</p>
+                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Sistem</p>
             </div>
 
             <x-nav-link-sidebar :href="route('system.user.index')" :active="request()->routeIs('system.user.*')" icon="shield-check" color="slate">
-                User Management
+                Manajemen Pengguna
             </x-nav-link-sidebar>
 
             <x-nav-link-sidebar :href="route('system.setting.index')" :active="request()->routeIs('system.setting.*')" icon="cog" color="slate">
-                Settings
+                Pengaturan
             </x-nav-link-sidebar>
         @endif
         
@@ -150,7 +150,7 @@
 
     </div>
 
-    <!-- User Profile Strip -->
+    <!-- Strip Profil Pengguna -->
     <div class="p-4 border-t border-slate-200 bg-slate-50">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-600 font-bold text-sm shadow-md border border-slate-200">
@@ -162,7 +162,7 @@
             </div>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit" class="text-slate-400 hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-red-50" title="Logout">
+                <button type="submit" class="text-slate-400 hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-red-50" title="Keluar">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>

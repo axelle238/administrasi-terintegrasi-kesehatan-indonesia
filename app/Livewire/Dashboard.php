@@ -8,28 +8,20 @@ use App\Models\Antrean;
 use App\Models\Obat;
 use App\Models\Surat;
 use App\Models\Pegawai;
-use App\Models\JadwalJaga;
 use App\Models\RekamMedis;
 use App\Models\RawatInap;
 use App\Models\Kamar;
 use App\Models\Pembayaran;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class Dashboard extends Component
 {
-    // ... (Geolocation constants)
-
-    public $lat;
-    public $lng;
-
-    // ... (clockIn and calculateDistance methods remain same)
-
     public function render()
     {
-        $thresholdMonths = (int) ($this->app_settings['ews_threshold_month'] ?? 3);
-        $warningThreshold = Carbon::now()->addMonths($thresholdMonths);
+        // Mengatur ambang batas peringatan dini (Early Warning System)
+        $bulanAmbangBatas = (int) ($this->app_settings['ews_threshold_month'] ?? 3);
+        $batasPeringatan = Carbon::now()->addMonths($bulanAmbangBatas);
 
         return view('livewire.dashboard', [
             'totalPasien' => Pasien::count(),
@@ -39,45 +31,46 @@ class Dashboard extends Component
             'pasienRawatInap' => RawatInap::where('status', 'Aktif')->count(),
             'kamarTersedia' => Kamar::where('status', 'Tersedia')->count(),
             
-            // EWS Variables
-            'strExpired' => Pegawai::where('masa_berlaku_str', '<=', $warningThreshold)->count(),
-            'sipExpired' => Pegawai::where('masa_berlaku_sip', '<=', $warningThreshold)->count(),
-            'obatExpired' => Obat::where('tanggal_kedaluwarsa', '<=', $warningThreshold)->count(),
+            // Variabel Sistem Peringatan Dini (EWS)
+            'strExpired' => Pegawai::where('masa_berlaku_str', '<=', $batasPeringatan)->count(),
+            'sipExpired' => Pegawai::where('masa_berlaku_sip', '<=', $batasPeringatan)->count(),
+            'obatExpired' => Obat::where('tanggal_kedaluwarsa', '<=', $batasPeringatan)->count(),
 
-            'chartData' => $this->getChartData(), 
-            'revenueData' => $this->getRevenueData(),
-        ])->layout('layouts.app', ['header' => 'Dashboard']);
+            // Data Statistik
+            'dataGrafik' => $this->ambilDataGrafik(), 
+            'dataPendapatan' => $this->ambilDataPendapatan(),
+        ])->layout('layouts.app', ['header' => 'Ringkasan Sistem']);
     }
 
-    private function getChartData() {
-        $months = [];
-        $visitData = [];
+    private function ambilDataGrafik() {
+        $bulan = [];
+        $dataKunjungan = [];
         for ($i = 5; $i >= 0; $i--) {
-            $date = Carbon::now()->subMonths($i);
-            $months[] = $date->translatedFormat('M Y');
-            $visitData[] = RekamMedis::whereYear('created_at', $date->year)
-                ->whereMonth('created_at', $date->month)
+            $tanggal = Carbon::now()->subMonths($i);
+            $bulan[] = $tanggal->translatedFormat('M Y');
+            $dataKunjungan[] = RekamMedis::whereYear('created_at', $tanggal->year)
+                ->whereMonth('created_at', $tanggal->month)
                 ->count();
         }
         return [
-            'labels' => $months,
-            'data' => $visitData,
+            'labels' => $bulan,
+            'data' => $dataKunjungan,
         ];
     }
 
-    private function getRevenueData() {
-        $days = [];
-        $income = [];
+    private function ambilDataPendapatan() {
+        $hari = [];
+        $pendapatan = [];
         for ($i = 6; $i >= 0; $i--) {
-            $date = Carbon::now()->subDays($i);
-            $days[] = $date->translatedFormat('D, d M');
-            $income[] = Pembayaran::whereDate('created_at', $date)
+            $tanggal = Carbon::now()->subDays($i);
+            $hari[] = $tanggal->translatedFormat('D, d M');
+            $pendapatan[] = Pembayaran::whereDate('created_at', $tanggal)
                 ->where('status', 'Lunas')
                 ->sum('jumlah_bayar');
         }
         return [
-            'labels' => $days,
-            'data' => $income,
+            'labels' => $hari,
+            'data' => $pendapatan,
         ];
     }
 }

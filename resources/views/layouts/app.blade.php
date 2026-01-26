@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'SATRIA') }} Enterprise System</title>
+        <title>{{ config('app.name', 'SATRIA') }} Sistem Perusahaan</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -101,11 +101,11 @@
                     <footer class="mt-12 border-t border-slate-200 pt-6 pb-8">
                         <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
                             <div>
-                                <span class="font-bold text-slate-700">SATRIA Enterprise System</span> &copy; {{ date('Y') }}. 
+                                <span class="font-bold text-slate-700">SATRIA Sistem Perusahaan</span> &copy; {{ date('Y') }}. 
                                 <span class="hidden md:inline">Terintegritas. Cepat. Aman.</span>
                             </div>
                             <div class="flex items-center gap-4">
-                                <span class="px-2 py-1 rounded bg-white border border-slate-200 shadow-sm">v2.5.0-Stable</span>
+                                <span class="px-2 py-1 rounded bg-white border border-slate-200 shadow-sm">v2.5.0-Stabil</span>
                             </div>
                         </div>
                     </footer>
