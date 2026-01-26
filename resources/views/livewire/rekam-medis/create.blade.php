@@ -1,279 +1,313 @@
-<div class="max-w-7xl mx-auto">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Patient Info Sidebar -->
+<div class="max-w-7xl mx-auto space-y-6">
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-2 text-sm text-slate-500 mb-2">
+        <a href="{{ route('rekam-medis.index') }}" class="hover:text-blue-600 flex items-center gap-1">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+            Kembali
+        </a>
+        <span>/</span>
+        <span class="text-slate-800 font-bold">Pemeriksaan Pasien</span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Sidebar: Info Pasien (Sticky) -->
         <div class="lg:col-span-1">
-            <div class="bg-white overflow-hidden shadow-sm rounded-lg sticky top-6">
-                <div class="p-6 bg-blue-50 border-b border-blue-100">
-                    <h3 class="text-lg font-bold text-gray-900">Data Pasien</h3>
-                </div>
-                <div class="p-6 space-y-4">
-                    <div class="flex items-center gap-4">
-                        <div class="h-16 w-16 rounded-full bg-blue-200 flex items-center justify-center text-blue-700 text-2xl font-bold">
-                            {{ substr($pasien->nama_lengkap, 0, 1) }}
+            <div class="sticky top-6 space-y-6">
+                <!-- Kartu Pasien -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative">
+                    <div class="h-24 bg-gradient-to-r from-blue-600 to-cyan-500"></div>
+                    <div class="px-6 pb-6 relative">
+                        <div class="-mt-12 mb-4 flex justify-between items-end">
+                            <div class="w-24 h-24 rounded-2xl bg-white p-1 shadow-lg">
+                                <div class="w-full h-full bg-slate-100 rounded-xl flex items-center justify-center text-3xl font-bold text-slate-400">
+                                    {{ substr($pasien->nama_lengkap, 0, 1) }}
+                                </div>
+                            </div>
+                            <span class="font-mono text-xs font-bold bg-slate-100 px-2 py-1 rounded text-slate-600">{{ str_pad($pasien->id, 6, '0', STR_PAD_LEFT) }}</span>
                         </div>
-                        <div>
-                            <h2 class="text-xl font-bold text-gray-800">{{ $pasien->nama_lengkap }}</h2>
-                            <p class="text-sm text-gray-600">{{ $pasien->jenis_kelamin }} | {{ \Carbon\Carbon::parse($pasien->tanggal_lahir)->age }} Thn</p>
+                        
+                        <h2 class="text-xl font-bold text-slate-900 leading-tight">{{ $pasien->nama_lengkap }}</h2>
+                        <div class="flex flex-wrap gap-2 mt-3 text-sm">
+                            <span class="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold text-xs">{{ $pasien->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</span>
+                            <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-xs">{{ \Carbon\Carbon::parse($pasien->tanggal_lahir)->age }} Tahun</span>
+                            @if($pasien->no_bpjs)
+                                <span class="px-2.5 py-0.5 rounded-full bg-green-50 text-green-700 font-bold text-xs">BPJS</span>
+                            @else
+                                <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-xs">Umum</span>
+                            @endif
+                        </div>
+
+                        <div class="mt-6 space-y-3 border-t border-slate-100 pt-4">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-500">NIK</span>
+                                <span class="font-mono font-medium text-slate-800">{{ $pasien->nik }}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-500">Tgl Lahir</span>
+                                <span class="font-medium text-slate-800">{{ \Carbon\Carbon::parse($pasien->tanggal_lahir)->format('d M Y') }}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-500">Gol. Darah</span>
+                                <span class="font-bold text-slate-800">{{ $pasien->golongan_darah ?? '-' }}</span>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="border-t pt-4 space-y-2 text-sm">
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">NIK</span>
-                            <span class="font-medium">{{ $pasien->nik }}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">BPJS</span>
-                            <span class="font-medium">{{ $pasien->no_bpjs ?? '-' }}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Gol. Darah</span>
-                            <span class="font-medium">{{ $pasien->golongan_darah ?? '-' }}</span>
-                        </div>
+                </div>
+
+                <!-- Riwayat Singkat (Placeholder) -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                    <h3 class="font-bold text-slate-800 mb-3 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        Riwayat Kunjungan
+                    </h3>
+                    <div class="text-sm text-slate-500 italic">
+                        Belum ada riwayat kunjungan sebelumnya.
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Examination Form -->
-        <div class="lg:col-span-2">
+        <!-- Main Form: SOAP -->
+        <div class="lg:col-span-2 space-y-8">
             <form wire:submit="save">
-                <!-- Vitals & Anamnesa -->
-                <div class="bg-white overflow-hidden shadow-sm rounded-lg mb-6">
-                    <div class="p-6 border-b border-gray-200">
-                        <h3 class="text-lg font-bold text-gray-900 mb-4">1. Anamnesa & Tanda Vital</h3>
-                        
+                
+                <!-- S: Subjective -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="px-6 py-4 bg-blue-50 border-b border-blue-100 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 font-bold">S</div>
+                        <h3 class="font-bold text-slate-800">Subjective (Anamnesa)</h3>
+                    </div>
+                    <div class="p-6">
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Keluhan Utama</label>
+                        <textarea wire:model="keluhan" rows="4" class="w-full rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-200" placeholder="Jelaskan keluhan pasien secara rinci..." required></textarea>
+                        @error('keluhan') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
+                    </div>
+                </div>
+
+                <!-- O: Objective -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mt-6">
+                    <div class="px-6 py-4 bg-cyan-50 border-b border-cyan-100 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-cyan-100 rounded-lg flex items-center justify-center text-cyan-600 font-bold">O</div>
+                        <h3 class="font-bold text-slate-800">Objective (Pemeriksaan Fisik)</h3>
+                    </div>
+                    <div class="p-6">
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
                             <div>
-                                <x-input-label for="tekanan_darah" value="TD (mmHg)" />
-                                <x-text-input wire:model="tekanan_darah" id="tekanan_darah" class="block mt-1 w-full" placeholder="120/80" />
+                                <label class="text-xs font-bold text-slate-500 uppercase">TD (mmHg)</label>
+                                <input type="text" wire:model="tekanan_darah" class="w-full mt-1 rounded-xl border-slate-200 text-sm focus:border-cyan-500 focus:ring-cyan-200" placeholder="120/80">
                             </div>
                             <div>
-                                <x-input-label for="suhu_tubuh" value="Suhu (°C)" />
-                                <x-text-input wire:model="suhu_tubuh" id="suhu_tubuh" class="block mt-1 w-full" type="number" step="0.1" />
+                                <label class="text-xs font-bold text-slate-500 uppercase">Suhu (°C)</label>
+                                <input type="number" step="0.1" wire:model="suhu_tubuh" class="w-full mt-1 rounded-xl border-slate-200 text-sm focus:border-cyan-500 focus:ring-cyan-200">
                             </div>
                             <div>
-                                <x-input-label for="nadi" value="Nadi (bpm)" />
-                                <x-text-input wire:model="nadi" id="nadi" class="block mt-1 w-full" type="number" />
+                                <label class="text-xs font-bold text-slate-500 uppercase">Nadi (bpm)</label>
+                                <input type="number" wire:model="nadi" class="w-full mt-1 rounded-xl border-slate-200 text-sm focus:border-cyan-500 focus:ring-cyan-200">
                             </div>
                             <div>
-                                <x-input-label for="berat_badan" value="Berat (kg)" />
-                                <x-text-input wire:model="berat_badan" id="berat_badan" class="block mt-1 w-full" type="number" step="0.1" />
+                                <label class="text-xs font-bold text-slate-500 uppercase">RR (x/menit)</label>
+                                <input type="number" wire:model="pernapasan" class="w-full mt-1 rounded-xl border-slate-200 text-sm focus:border-cyan-500 focus:ring-cyan-200">
                             </div>
                             <div>
-                                <x-input-label for="tinggi_badan" value="Tinggi (cm)" />
-                                <x-text-input wire:model="tinggi_badan" id="tinggi_badan" class="block mt-1 w-full" type="number" />
+                                <label class="text-xs font-bold text-slate-500 uppercase">Berat (kg)</label>
+                                <input type="number" step="0.1" wire:model="berat_badan" class="w-full mt-1 rounded-xl border-slate-200 text-sm focus:border-cyan-500 focus:ring-cyan-200">
                             </div>
                             <div>
-                                <x-input-label for="pernapasan" value="RR (x/menit)" />
-                                <x-text-input wire:model="pernapasan" id="pernapasan" class="block mt-1 w-full" type="number" />
+                                <label class="text-xs font-bold text-slate-500 uppercase">Tinggi (cm)</label>
+                                <input type="number" wire:model="tinggi_badan" class="w-full mt-1 rounded-xl border-slate-200 text-sm focus:border-cyan-500 focus:ring-cyan-200">
                             </div>
                         </div>
 
-                        <div class="space-y-4">
-                            <div>
-                                <x-input-label for="keluhan" value="Keluhan Utama (Anamnesa)" />
-                                <textarea wire:model="keluhan" id="keluhan" rows="3" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required></textarea>
-                                <x-input-error :messages="$errors->get('keluhan')" class="mt-2" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Odontogram (Hanya jika Poli Gigi) -->
-                @if($isPoliGigi)
-                <div class="bg-white overflow-hidden shadow-sm rounded-lg mb-6">
-                    <div class="p-6 border-b border-gray-200">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-bold text-gray-900">Odontogram (Pemeriksaan Gigi)</h3>
-                            <div class="flex gap-4 text-xs">
-                                <span class="flex items-center gap-1"><div class="w-3 h-3 bg-white border border-gray-400"></div> Normal (N)</span>
-                                <span class="flex items-center gap-1"><div class="w-3 h-3 bg-red-500"></div> Caries (C)</span>
-                                <span class="flex items-center gap-1"><div class="w-3 h-3 bg-gray-800"></div> Missing (M)</span>
-                                <span class="flex items-center gap-1"><div class="w-3 h-3 bg-blue-500"></div> Filling (F)</span>
-                            </div>
-                        </div>
-                        <p class="text-sm text-gray-500 mb-4">Klik pada nomor gigi untuk mengubah status (Siklus: N -> C -> M -> F -> N).</p>
-                        
-                        <div class="flex flex-col items-center gap-4 py-4 overflow-x-auto">
-                            <!-- Dewasa Atas -->
-                            <div class="flex gap-8">
-                                <div class="flex gap-1 border-r-2 border-gray-300 pr-2">
-                                    @foreach([18,17,16,15,14,13,12,11] as $t)
-                                        @include('components.odontogram-tooth', ['number' => $t])
-                                    @endforeach
-                                </div>
-                                <div class="flex gap-1 pl-2">
-                                    @foreach([21,22,23,24,25,26,27,28] as $t)
-                                        @include('components.odontogram-tooth', ['number' => $t])
-                                    @endforeach
-                                </div>
-                            </div>
-
-                            <!-- Anak -->
-                            <div class="flex gap-8 my-2 bg-gray-50 p-2 rounded">
-                                <div class="flex flex-col gap-2 border-r-2 border-gray-300 pr-2 items-end">
-                                    <div class="flex gap-1">
-                                        @foreach([55,54,53,52,51] as $t)
-                                            @include('components.odontogram-tooth', ['number' => $t])
-                                        @endforeach
-                                    </div>
-                                    <div class="flex gap-1">
-                                        @foreach([85,84,83,82,81] as $t)
-                                            @include('components.odontogram-tooth', ['number' => $t])
-                                        @endforeach
-                                    </div>
-                                </div>
-                                <div class="flex flex-col gap-2 pl-2">
-                                    <div class="flex gap-1">
-                                        @foreach([61,62,63,64,65] as $t)
-                                            @include('components.odontogram-tooth', ['number' => $t])
-                                        @endforeach
-                                    </div>
-                                    <div class="flex gap-1">
-                                        @foreach([71,72,73,74,75] as $t)
-                                            @include('components.odontogram-tooth', ['number' => $t])
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Dewasa Bawah -->
-                            <div class="flex gap-8">
-                                <div class="flex gap-1 border-r-2 border-gray-300 pr-2">
-                                    @foreach([48,47,46,45,44,43,42,41] as $t)
-                                        @include('components.odontogram-tooth', ['number' => $t])
-                                    @endforeach
-                                </div>
-                                <div class="flex gap-1 pl-2">
-                                    @foreach([31,32,33,34,35,36,37,38] as $t)
-                                        @include('components.odontogram-tooth', ['number' => $t])
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endif
-
-                <!-- Diagnosa & Tindakan -->
-                <div class="bg-white overflow-hidden shadow-sm rounded-lg mb-6">
-                    <div class="p-6 border-b border-gray-200">
-                        <h3 class="text-lg font-bold text-gray-900 mb-4">2. Diagnosa & Tindakan</h3>
-                        
-                        <div class="space-y-4">
-                            <div class="relative">
-                                <x-input-label for="diagnosa" value="Diagnosa Medis (ICD-10)" />
-                                <div class="relative">
-                                    <x-text-input wire:model.live.debounce.300ms="icd10Query" placeholder="Ketik kode atau nama penyakit..." class="block mt-1 w-full" />
-                                    @if(!empty($icd10Results))
-                                        <div class="absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto">
-                                            <ul>
-                                                @foreach($icd10Results as $icd)
-                                                    <li wire:click="selectIcd10('{{ $icd->code }}', '{{ $icd->name_id ?? $icd->name_en }}')" class="px-4 py-2 hover:bg-indigo-50 cursor-pointer text-sm">
-                                                        <span class="font-bold text-indigo-600">{{ $icd->code }}</span> - {{ $icd->name_id ?? $icd->name_en }}
-                                                    </li>
-                                                @endforeach
-                                            </ul>
+                        <!-- Odontogram Panel -->
+                        @if($isPoliGigi)
+                            <div class="border rounded-xl p-4 bg-slate-50">
+                                <h4 class="font-bold text-slate-700 mb-2">Odontogram</h4>
+                                <p class="text-xs text-slate-500 mb-4">Klik gigi untuk ubah status: N (Normal) -> C (Caries) -> M (Missing) -> F (Filling)</p>
+                                
+                                <div class="overflow-x-auto pb-2">
+                                    <div class="flex flex-col items-center gap-6 min-w-max mx-auto">
+                                        <!-- Dewasa Atas -->
+                                        <div class="flex gap-8">
+                                            <div class="flex gap-1 border-r-2 border-slate-300 pr-4">
+                                                @foreach([18,17,16,15,14,13,12,11] as $t) @include('components.odontogram-tooth', ['number' => $t]) @endforeach
+                                            </div>
+                                            <div class="flex gap-1 pl-4">
+                                                @foreach([21,22,23,24,25,26,27,28] as $t) @include('components.odontogram-tooth', ['number' => $t]) @endforeach
+                                            </div>
                                         </div>
-                                    @endif
-                                </div>
-                                <textarea wire:model="diagnosa" id="diagnosa" rows="2" class="block mt-2 w-full border-gray-300 bg-gray-50 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" readonly required></textarea>
-                                <x-input-error :messages="$errors->get('diagnosa')" class="mt-2" />
-                            </div>
+                                        
+                                        <!-- Anak -->
+                                        <div class="flex gap-12 bg-white px-6 py-2 rounded-xl border border-slate-200 shadow-sm">
+                                            <div class="flex flex-col gap-2 border-r border-slate-200 pr-6 items-end">
+                                                <div class="flex gap-1">@foreach([55,54,53,52,51] as $t) @include('components.odontogram-tooth', ['number' => $t]) @endforeach</div>
+                                                <div class="flex gap-1">@foreach([85,84,83,82,81] as $t) @include('components.odontogram-tooth', ['number' => $t]) @endforeach</div>
+                                            </div>
+                                            <div class="flex flex-col gap-2 pl-2">
+                                                <div class="flex gap-1">@foreach([61,62,63,64,65] as $t) @include('components.odontogram-tooth', ['number' => $t]) @endforeach</div>
+                                                <div class="flex gap-1">@foreach([71,72,73,74,75] as $t) @include('components.odontogram-tooth', ['number' => $t]) @endforeach</div>
+                                            </div>
+                                        </div>
 
-                            <div>
-                                <x-input-label value="Tindakan Medis" />
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2 max-h-40 overflow-y-auto border p-2 rounded-md bg-gray-50">
-                                    @foreach($tindakans as $tindakan)
-                                        <label class="flex items-center space-x-2 p-2 hover:bg-white rounded cursor-pointer transition">
-                                            <input type="checkbox" wire:model="selectedTindakans" value="{{ $tindakan->id }}" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
-                                            <span class="text-sm text-gray-700">{{ $tindakan->nama_tindakan }} - <span class="text-xs text-gray-500">Rp {{ number_format($tindakan->harga, 0, ',', '.') }}</span></span>
-                                        </label>
-                                    @endforeach
+                                        <!-- Dewasa Bawah -->
+                                        <div class="flex gap-8">
+                                            <div class="flex gap-1 border-r-2 border-slate-300 pr-4">
+                                                @foreach([48,47,46,45,44,43,42,41] as $t) @include('components.odontogram-tooth', ['number' => $t]) @endforeach
+                                            </div>
+                                            <div class="flex gap-1 pl-4">
+                                                @foreach([31,32,33,34,35,36,37,38] as $t) @include('components.odontogram-tooth', ['number' => $t]) @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- A: Assessment -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mt-6">
+                    <div class="px-6 py-4 bg-indigo-50 border-b border-indigo-100 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-600 font-bold">A</div>
+                        <h3 class="font-bold text-slate-800">Assessment (Diagnosa)</h3>
+                    </div>
+                    <div class="p-6 overflow-visible"> <!-- Overflow visible for dropdown -->
+                        <div class="relative z-20">
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Cari Diagnosa ICD-10</label>
+                            <input type="text" wire:model.live.debounce.300ms="icd10Query" class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-200" placeholder="Ketik kode atau nama penyakit (contoh: A00, Demam)...">
+                            
+                            @if(!empty($icd10Results))
+                                <div class="absolute w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-60 overflow-y-auto z-50">
+                                    <ul class="py-1">
+                                        @foreach($icd10Results as $icd)
+                                            <li wire:click="selectIcd10('{{ $icd->code }}', '{{ $icd->name_id ?? $icd->name_en }}')" class="px-4 py-3 hover:bg-indigo-50 cursor-pointer border-b border-slate-50 last:border-0">
+                                                <div class="flex items-center justify-between">
+                                                    <span class="font-bold text-indigo-600">{{ $icd->code }}</span>
+                                                    <span class="text-sm text-slate-700">{{ $icd->name_id ?? $icd->name_en }}</span>
+                                                </div>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+                        </div>
+                        
+                        <div class="mt-4">
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Diagnosa Terpilih</label>
+                            <textarea wire:model="diagnosa" rows="2" class="w-full rounded-xl border-slate-200 bg-slate-50 font-medium text-slate-800 focus:ring-0" readonly></textarea>
+                            @error('diagnosa') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
                         </div>
                     </div>
                 </div>
 
-                <!-- Resep Obat -->
-                <div class="bg-white overflow-hidden shadow-sm rounded-lg mb-6">
-                    <div class="p-6 border-b border-gray-200">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-bold text-gray-900">3. Resep Obat</h3>
-                            <button type="button" wire:click="addResepRow" class="text-sm text-indigo-600 hover:text-indigo-900 font-semibold">+ Tambah Obat</button>
-                        </div>
-                        
-                        <div class="space-y-3">
-                            @foreach($resep as $index => $item)
-                                <div class="flex gap-2 items-start" wire:key="resep-{{ $index }}">
-                                    <div class="flex-grow">
-                                        <select wire:model="resep.{{ $index }}.obat_id" class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">
-                                            <option value="">-- Pilih Obat --</option>
-                                            @foreach($obats as $obat)
-                                                <option value="{{ $obat->id }}">{{ $obat->nama_obat }} (Stok: {{ $obat->stok }})</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="w-20">
-                                        <input type="number" wire:model="resep.{{ $index }}.jumlah" class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm" placeholder="Jml" min="1">
-                                    </div>
-                                    <div class="w-1/3">
-                                        <input type="text" wire:model="resep.{{ $index }}.aturan_pakai" class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm" placeholder="Aturan (3x1)">
-                                    </div>
-                                    <button type="button" wire:click="removeResepRow({{ $index }})" class="text-red-500 hover:text-red-700 p-2">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                    </button>
-                                </div>
-                            @endforeach
-                        </div>
+                <!-- P: Plan -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mt-6">
+                    <div class="px-6 py-4 bg-violet-50 border-b border-violet-100 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-violet-100 rounded-lg flex items-center justify-center text-violet-600 font-bold">P</div>
+                        <h3 class="font-bold text-slate-800">Plan (Tindakan & Terapi)</h3>
                     </div>
-                </div>
-
-                <!-- File Uploads (Lab/Rontgen) -->
-                <div class="bg-white overflow-hidden shadow-sm rounded-lg mb-6">
-                    <div class="p-6 border-b border-gray-200">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-bold text-gray-900">4. Upload Hasil Penunjang (Lab/Rontgen)</h3>
-                            <button type="button" wire:click="addUploadRow" class="text-sm text-indigo-600 hover:text-indigo-900 font-semibold">+ Upload File</button>
-                        </div>
+                    <div class="p-6 space-y-8">
                         
-                        <div class="space-y-3">
-                            @foreach($uploads as $index => $file)
-                                <div class="flex gap-4 items-start border p-3 rounded-md bg-gray-50" wire:key="upload-{{ $index }}">
-                                    <div class="w-1/3">
-                                        <x-input-label value="File" />
-                                        <input type="file" wire:model="uploads.{{ $index }}" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
-                                        @error("uploads.{$index}") <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                        <!-- Tindakan -->
+                        <div>
+                            <h4 class="font-bold text-slate-700 mb-3 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+                                Prosedur & Tindakan
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-60 overflow-y-auto p-4 bg-slate-50 rounded-xl border border-slate-200">
+                                @foreach($tindakans as $tindakan)
+                                    <label class="flex items-center space-x-3 p-3 bg-white rounded-lg border border-slate-100 hover:border-violet-300 cursor-pointer transition shadow-sm">
+                                        <input type="checkbox" wire:model="selectedTindakans" value="{{ $tindakan->id }}" class="rounded border-slate-300 text-violet-600 shadow-sm focus:ring-violet-500 w-5 h-5">
+                                        <div class="flex flex-col">
+                                            <span class="text-sm font-bold text-slate-700">{{ $tindakan->nama_tindakan }}</span>
+                                            <span class="text-xs text-slate-500">Rp {{ number_format($tindakan->harga, 0, ',', '.') }}</span>
+                                        </div>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <hr class="border-slate-100">
+
+                        <!-- Resep -->
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 class="font-bold text-slate-700 flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+                                    Resep Obat
+                                </h4>
+                                <button type="button" wire:click="addResepRow" class="text-xs font-bold text-violet-600 bg-violet-50 px-3 py-1.5 rounded-lg hover:bg-violet-100 transition">+ Tambah Item</button>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                @foreach($resep as $index => $item)
+                                    <div class="flex flex-col md:flex-row gap-3 items-start p-3 bg-slate-50 rounded-xl border border-slate-200" wire:key="resep-{{ $index }}">
+                                        <div class="flex-grow w-full">
+                                            <select wire:model="resep.{{ $index }}.obat_id" class="w-full rounded-lg border-slate-300 focus:border-violet-500 focus:ring-violet-200 text-sm">
+                                                <option value="">-- Pilih Obat --</option>
+                                                @foreach($obats as $obat)
+                                                    <option value="{{ $obat->id }}">{{ $obat->nama_obat }} (Stok: {{ $obat->stok }})</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="w-24 flex-shrink-0">
+                                            <input type="number" wire:model="resep.{{ $index }}.jumlah" class="w-full rounded-lg border-slate-300 focus:border-violet-500 focus:ring-violet-200 text-sm" placeholder="Jml" min="1">
+                                        </div>
+                                        <div class="w-full md:w-1/3">
+                                            <input type="text" wire:model="resep.{{ $index }}.aturan_pakai" class="w-full rounded-lg border-slate-300 focus:border-violet-500 focus:ring-violet-200 text-sm" placeholder="Aturan (e.g. 3x1 Sesudah Makan)">
+                                        </div>
+                                        <button type="button" wire:click="removeResepRow({{ $index }})" class="text-red-400 hover:text-red-600 p-2">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        </button>
                                     </div>
-                                    <div class="w-1/4">
-                                        <x-input-label value="Jenis" />
-                                        <select wire:model="uploadTypes.{{ $index }}" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
-                                            <option value="Lab">Laboratorium</option>
-                                            <option value="Rontgen">Rontgen/Radiologi</option>
-                                            <option value="EKG">EKG</option>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <hr class="border-slate-100">
+
+                        <!-- Uploads -->
+                         <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 class="font-bold text-slate-700">Lampiran Penunjang</h4>
+                                <button type="button" wire:click="addUploadRow" class="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-lg hover:bg-slate-200 transition">+ Upload</button>
+                            </div>
+                            <div class="space-y-2">
+                                @foreach($uploads as $index => $file)
+                                    <div class="flex items-center gap-3" wire:key="upload-{{ $index }}">
+                                        <input type="file" wire:model="uploads.{{ $index }}" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-xs file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200">
+                                        <select wire:model="uploadTypes.{{ $index }}" class="text-xs rounded-lg border-slate-300">
+                                            <option value="Lab">Lab</option>
+                                            <option value="Rontgen">Rontgen</option>
                                             <option value="Lainnya">Lainnya</option>
                                         </select>
+                                        <button type="button" wire:click="removeUploadRow({{ $index }})" class="text-red-400 hover:text-red-600">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                        </button>
                                     </div>
-                                    <div class="flex-grow">
-                                        <x-input-label value="Keterangan" />
-                                        <input type="text" wire:model="uploadNotes.{{ $index }}" class="w-full border-gray-300 rounded-md shadow-sm text-sm" placeholder="Keterangan file...">
-                                    </div>
-                                    <button type="button" wire:click="removeUploadRow({{ $index }})" class="text-red-500 mt-6">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                    </button>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
                         </div>
+
+                    </div>
+                    
+                    <!-- Footer Actions -->
+                    <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-between items-center sticky bottom-0 z-30">
+                        <div class="text-xs text-slate-400">
+                            Pastikan data medis sudah lengkap sebelum menyimpan.
+                        </div>
+                        <button 
+                            type="submit" 
+                            wire:loading.attr="disabled"
+                            class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/30 transition-all transform hover:-translate-y-1 flex items-center gap-2"
+                        >
+                            <svg wire:loading.remove class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                            <span wire:loading.remove>Simpan Rekam Medis</span>
+                            <span wire:loading>Menyimpan...</span>
+                        </button>
                     </div>
                 </div>
 
-                <div class="flex items-center justify-end pb-10">
-                    <x-primary-button class="text-lg px-8 py-3" wire:loading.attr="disabled">
-                        {{ __('Selesai & Simpan') }}
-                    </x-primary-button>
-                </div>
             </form>
         </div>
     </div>
