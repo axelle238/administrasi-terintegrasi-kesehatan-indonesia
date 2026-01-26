@@ -1,4 +1,44 @@
 <div class="space-y-6">
+    <!-- Stats Overview -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+            <div class="p-3 bg-indigo-50 rounded-xl text-indigo-600">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wide">Total Item Obat</p>
+                <p class="text-xl font-bold text-gray-900">{{ number_format($totalObat) }}</p>
+            </div>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+            <div class="p-3 bg-red-50 rounded-xl text-red-600">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wide">Stok Kritis</p>
+                <p class="text-xl font-bold text-gray-900">{{ number_format($stokMenipis) }}</p>
+            </div>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+            <div class="p-3 bg-orange-50 rounded-xl text-orange-600">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wide">Segera Expired</p>
+                <p class="text-xl font-bold text-gray-900">{{ number_format($kedaluwarsa) }}</p>
+            </div>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+            <div class="p-3 bg-emerald-50 rounded-xl text-emerald-600">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wide">Nilai Aset Farmasi</p>
+                <p class="text-xl font-bold text-gray-900">Rp {{ number_format($nilaiAset / 1000000, 1, ',', '.') }} Jt</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Header -->
     <div class="flex flex-col md:flex-row justify-between items-center gap-4">
         <div class="w-full md:w-1/3 relative">

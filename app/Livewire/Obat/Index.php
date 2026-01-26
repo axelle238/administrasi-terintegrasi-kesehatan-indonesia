@@ -23,14 +23,30 @@ class Index extends Component
 
     public function render()
     {
-        $obats = Obat::where('nama_obat', 'like', '%' . $this->search . '%')
-            ->orWhere('kode_obat', 'like', '%' . $this->search . '%')
-            ->orWhere('jenis_obat', 'like', '%' . $this->search . '%')
-            ->latest()
-            ->paginate(10);
+        $query = Obat::query();
+
+        if ($this->search) {
+            $query->where(function($q) {
+                $q->where('nama_obat', 'like', '%' . $this->search . '%')
+                  ->orWhere('kode_obat', 'like', '%' . $this->search . '%')
+                  ->orWhere('jenis_obat', 'like', '%' . $this->search . '%');
+            });
+        }
+
+        $obats = $query->latest()->paginate(10);
+
+        // Dashboard Stats
+        $totalObat = Obat::count();
+        $stokMenipis = Obat::whereColumn('stok', '<=', 'min_stok')->count();
+        $kedaluwarsa = Obat::where('tanggal_kedaluwarsa', '<=', now()->addMonths(3))->count();
+        $nilaiAset = Obat::selectRaw('SUM(stok * harga_satuan) as total')->value('total');
 
         return view('livewire.obat.index', [
-            'obats' => $obats
-        ])->layout('layouts.app', ['header' => 'Manajemen Data Obat (Farmasi)']);
+            'obats' => $obats,
+            'totalObat' => $totalObat,
+            'stokMenipis' => $stokMenipis,
+            'kedaluwarsa' => $kedaluwarsa,
+            'nilaiAset' => $nilaiAset
+        ])->layout('layouts.app', ['header' => 'Manajemen Farmasi & Obat']);
     }
 }
