@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="SATRIA Enterprise - Sistem Administrasi Terintegrasi Kesehatan Indonesia. Platform digital untuk manajemen rumah sakit dan puskesmas modern.">
     <title>{{ config('app.name', 'SATRIA') }} - Sistem Kesehatan Terintegrasi</title>
     
     <!-- Fonts -->
@@ -36,7 +37,7 @@
                     </div>
                 </div>
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="#fitur" class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Fitur Unggulan</a>
+                    <a href="#fitur" class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Keunggulan Sistem</a>
                     <a href="#layanan" class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Layanan Medis</a>
                     <div class="h-4 w-px bg-slate-200"></div>
                     @if (Route::has('login'))
@@ -112,7 +113,7 @@
     <section id="fitur" class="py-24 bg-slate-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <span class="text-blue-600 font-bold tracking-widest uppercase text-xs">Fitur Utama</span>
+                <span class="text-blue-600 font-bold tracking-widest uppercase text-xs">Keunggulan Sistem</span>
                 <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mt-2">Ekosistem Medis Terpadu</h2>
             </div>
             
@@ -148,6 +149,54 @@
                     <p class="text-slate-500 leading-relaxed">
                         Dashboard analitik komprehensif untuk memantau kinerja operasional, keuangan, dan layanan secara visual.
                     </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section (Ditambahkan) -->
+    <section id="layanan" class="py-24 bg-white border-t border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-blue-600 font-bold tracking-widest uppercase text-xs">Fasilitas</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mt-2">Layanan Medis Tersedia</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Poli Umum -->
+                <div class="p-6 bg-slate-50 rounded-2xl hover:bg-white hover:shadow-xl transition-all duration-300 border border-transparent hover:border-slate-100 group">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Poli Umum</h3>
+                    <p class="text-slate-500 text-sm">Pemeriksaan kesehatan dasar dan rujukan spesialis.</p>
+                </div>
+
+                <!-- Poli Gigi -->
+                <div class="p-6 bg-slate-50 rounded-2xl hover:bg-white hover:shadow-xl transition-all duration-300 border border-transparent hover:border-slate-100 group">
+                    <div class="w-12 h-12 bg-teal-100 text-teal-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Poli Gigi</h3>
+                    <p class="text-slate-500 text-sm">Perawatan kesehatan gigi dan mulut profesional.</p>
+                </div>
+
+                <!-- Poli KIA -->
+                <div class="p-6 bg-slate-50 rounded-2xl hover:bg-white hover:shadow-xl transition-all duration-300 border border-transparent hover:border-slate-100 group">
+                    <div class="w-12 h-12 bg-pink-100 text-pink-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Poli KIA</h3>
+                    <p class="text-slate-500 text-sm">Kesehatan Ibu dan Anak, KB, dan Imunisasi.</p>
+                </div>
+
+                <!-- Laboratorium -->
+                <div class="p-6 bg-slate-50 rounded-2xl hover:bg-white hover:shadow-xl transition-all duration-300 border border-transparent hover:border-slate-100 group">
+                    <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Laboratorium</h3>
+                    <p class="text-slate-500 text-sm">Pemeriksaan medis dan diagnostik akurat.</p>
                 </div>
             </div>
         </div>
