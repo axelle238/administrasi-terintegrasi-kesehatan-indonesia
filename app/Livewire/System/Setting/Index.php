@@ -75,6 +75,37 @@ class Index extends Component
                     'kepala_instansi' => ['label' => 'Nama Kepala Instansi', 'type' => 'text', 'default' => 'dr. Kepala Puskesmas'],
                     'nip_kepala_instansi' => ['label' => 'NIP Kepala Instansi', 'type' => 'text', 'default' => '-'],
                 ]
+            ],
+            'keamanan' => [
+                'label' => 'Keamanan & Akses',
+                'icon' => 'shield-check',
+                'fields' => [
+                    'password_min_length' => ['label' => 'Panjang Minimal Password', 'type' => 'number', 'default' => '8'],
+                    'session_lifetime' => ['label' => 'Durasi Sesi Login (Menit)', 'type' => 'number', 'default' => '120'],
+                    'enable_2fa' => ['label' => 'Aktifkan Autentikasi Dua Faktor (2FA)', 'type' => 'select', 'options' => ['1' => 'Ya', '0' => 'Tidak'], 'default' => '0'],
+                    'max_login_attempts' => ['label' => 'Maksimal Percobaan Login Gagal', 'type' => 'number', 'default' => '5'],
+                ]
+            ],
+            'notifikasi' => [
+                'label' => 'Notifikasi & Gateway',
+                'icon' => 'bell',
+                'fields' => [
+                    'wa_gateway_url' => ['label' => 'URL WhatsApp Gateway', 'type' => 'text', 'default' => ''],
+                    'wa_gateway_key' => ['label' => 'API Key WhatsApp', 'type' => 'password', 'default' => ''],
+                    'enable_email_notif' => ['label' => 'Aktifkan Notifikasi Email', 'type' => 'select', 'options' => ['1' => 'Ya', '0' => 'Tidak'], 'default' => '1'],
+                    'smtp_host' => ['label' => 'SMTP Host', 'type' => 'text', 'default' => 'smtp.mailtrap.io'],
+                    'smtp_port' => ['label' => 'SMTP Port', 'type' => 'text', 'default' => '2525'],
+                ]
+            ],
+            'backup' => [
+                'label' => 'Backup & Pemeliharaan',
+                'icon' => 'database',
+                'fields' => [
+                    'enable_auto_backup' => ['label' => 'Aktifkan Backup Otomatis', 'type' => 'select', 'options' => ['1' => 'Ya', '0' => 'Tidak'], 'default' => '0'],
+                    'backup_frequency' => ['label' => 'Frekuensi Backup', 'type' => 'select', 'options' => ['daily' => 'Harian', 'weekly' => 'Mingguan', 'monthly' => 'Bulanan'], 'default' => 'daily'],
+                    'backup_retention_days' => ['label' => 'Retensi Backup (Hari)', 'type' => 'number', 'default' => '7'],
+                    'maintenance_mode' => ['label' => 'Mode Pemeliharaan (Maintenance)', 'type' => 'select', 'options' => ['1' => 'Aktif', '0' => 'Non-Aktif'], 'default' => '0'],
+                ]
             ]
         ];
     }
