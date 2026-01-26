@@ -17,21 +17,71 @@ class Process extends Component
     
     public $totalTindakan = 0;
     public $totalObat = 0;
-    public $biayaAdministrasi = 10000; // Standar admin puskesmas
+    public $biayaAdministrasi = 10000;
+    public $biayaTambahan = 0;
+    public $diskon = 0;
+    
     public $totalTagihan = 0;
+    public $grandTotal = 0;
     
     public $metode_pembayaran = 'Tunai';
     public $jumlah_bayar = 0;
     public $kembalian = 0;
+    public $catatan = '';
+
+    // Toggle BPJS
+    public $useBpjs = false;
 
     public function mount(RekamMedis $rekamMedis)
     {
         $this->rekamMedis = $rekamMedis;
+        
+        // Auto-detect BPJS availability
+        if ($this->rekamMedis->pasien->no_bpjs && ($this->rekamMedis->jenis_pembayaran ?? 'Umum') != 'Umum') {
+            $this->useBpjs = true;
+            $this->metode_pembayaran = 'BPJS';
+        }
+
         $this->calculateBill();
+    }
+
+    public function updatedUseBpjs()
+    {
+        if ($this->useBpjs) {
+            $this->metode_pembayaran = 'BPJS';
+        } else {
+            $this->metode_pembayaran = 'Tunai';
+        }
+        $this->calculateBill();
+    }
+
+    public function updatedBiayaTambahan()
+    {
+        $this->calculateBill();
+    }
+
+    public function updatedDiskon()
+    {
+        $this->calculateBill();
+    }
+
+    public function setQuickAmount($amount)
+    {
+        if ($amount === 'pas') {
+            $this->jumlah_bayar = $this->grandTotal;
+        } else {
+            $this->jumlah_bayar = $amount;
+        }
+        $this->updatedJumlahBayar();
     }
 
     public function calculateBill()
     {
+        $this->detailsTindakan = [];
+        $this->detailsObat = [];
+        $this->totalTindakan = 0;
+        $this->totalObat = 0;
+
         // 1. Hitung Biaya Tindakan
         foreach ($this->rekamMedis->tindakans as $tindakan) {
             $harga = $tindakan->pivot->biaya;
@@ -45,8 +95,6 @@ class Process extends Component
         // 2. Hitung Biaya Obat
         foreach ($this->rekamMedis->obats as $obat) {
             $jumlah = $obat->pivot->jumlah;
-            // Harga satuan bisa diambil dari obat langsung jika tidak disimpan di pivot
-            // Idealnya harga dicatat saat transaksi untuk history yang akurat, tapi untuk sekarang pakai harga master
             $harga = $obat->harga_satuan; 
             $subtotal = $jumlah * $harga;
             
@@ -59,21 +107,27 @@ class Process extends Component
             $this->totalObat += $subtotal;
         }
 
-        // 3. Cek Penjamin (BPJS / Umum)
-        $jenisPasien = $this->rekamMedis->jenis_pembayaran ?? 'Umum'; // Dari Rawat Inap atau default
-        if ($this->rekamMedis->pasien->no_bpjs && $jenisPasien !== 'Umum') {
-            $this->metode_pembayaran = 'BPJS';
+        // 3. Kalkulasi Grand Total
+        if ($this->useBpjs) {
             $this->biayaAdministrasi = 0;
-            $this->totalTagihan = 0; // Ditanggung BPJS (Klaim Terpisah)
+            $this->totalTagihan = 0;
+            $this->grandTotal = 0;
+            $this->biayaTambahan = 0; // Reset biaya tambahan jika BPJS
+            $this->diskon = 0;
         } else {
-            $this->totalTagihan = $this->totalTindakan + $this->totalObat + $this->biayaAdministrasi;
+            // Jika Umum
+            $this->biayaAdministrasi = 10000; // Reset ke default
+            $this->totalTagihan = $this->totalTindakan + $this->totalObat + $this->biayaAdministrasi + (int)$this->biayaTambahan;
+            $this->grandTotal = max(0, $this->totalTagihan - (int)$this->diskon);
         }
+
+        $this->updatedJumlahBayar();
     }
 
     public function updatedJumlahBayar()
     {
-        if ($this->totalTagihan > 0) {
-            $this->kembalian = (int)$this->jumlah_bayar - $this->totalTagihan;
+        if ($this->grandTotal > 0) {
+            $this->kembalian = (int)$this->jumlah_bayar - $this->grandTotal;
         } else {
             $this->kembalian = 0;
         }
@@ -81,15 +135,13 @@ class Process extends Component
 
     public function processPayment()
     {
-        // Validasi pembayaran jika Tunai & Tagihan > 0
-        if ($this->totalTagihan > 0 && $this->metode_pembayaran == 'Tunai') {
-            if ($this->jumlah_bayar < $this->totalTagihan) {
+        if ($this->grandTotal > 0 && $this->metode_pembayaran == 'Tunai') {
+            if ($this->jumlah_bayar < $this->grandTotal) {
                 $this->dispatch('notify', 'error', 'Jumlah pembayaran kurang dari total tagihan.');
                 return;
             }
         }
 
-        // Cek duplikasi
         if (Pembayaran::where('rekam_medis_id', $this->rekamMedis->id)->where('status', 'Lunas')->exists()) {
             $this->dispatch('notify', 'error', 'Transaksi ini sudah lunas.');
             return $this->redirect(route('kasir.index'), navigate: true);
@@ -105,15 +157,17 @@ class Process extends Component
                 'total_biaya_tindakan' => $this->totalTindakan,
                 'total_biaya_obat' => $this->totalObat,
                 'biaya_administrasi' => $this->biayaAdministrasi,
-                'total_tagihan' => $this->totalTagihan,
+                'biaya_tambahan' => $this->biayaTambahan,
+                'diskon' => $this->diskon,
+                'total_tagihan' => $this->grandTotal,
                 'metode_pembayaran' => $this->metode_pembayaran,
                 'jumlah_bayar' => $this->jumlah_bayar,
                 'kembalian' => max(0, $this->kembalian),
                 'status' => 'Lunas',
-                'kasir_id' => Auth::id() ?? 1, // Fallback if no auth (shouldn't happen)
+                'catatan' => $this->catatan,
+                'kasir_id' => Auth::id() ?? 1,
             ]);
 
-            // Update Status Antrean -> Selesai / Pulang
             $antrean = Antrean::where('pasien_id', $this->rekamMedis->pasien_id)
                 ->whereDate('tanggal_antrean', now())
                 ->latest()
@@ -127,12 +181,11 @@ class Process extends Component
 
             $this->dispatch('notify', 'success', 'Pembayaran berhasil diproses.');
             
-            // Redirect ke Print Invoice
-            return $this->redirect(route('kasir.print', $pembayaran->id), navigate: false); // Full reload for print usually better
+            return $this->redirect(route('kasir.print', $pembayaran->id), navigate: false);
 
         } catch (\Exception $e) {
             DB::rollback();
-            $this->dispatch('notify', 'error', 'Gagal memproses pembayaran: ' . $e->getMessage());
+            $this->dispatch('notify', 'error', 'Gagal memproses: ' . $e->getMessage());
         }
     }
 
@@ -140,6 +193,6 @@ class Process extends Component
     {
         return view('livewire.kasir.process', [
             'pasien' => $this->rekamMedis->pasien
-        ])->layout('layouts.app', ['header' => 'Billing & Pembayaran']);
+        ])->layout('layouts.app', ['header' => 'Proses Pembayaran']);
     }
 }
