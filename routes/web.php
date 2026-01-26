@@ -6,9 +6,23 @@ use App\Http\Controllers\TransaksiObatController;
 use App\Http\Controllers\SuratController;
 use App\Http\Controllers\PasienController;
 use App\Http\Controllers\KasirController;
+use App\Models\Setting; // Import Model Setting
 
 Route::get('/', function () {
-    return view('welcome');
+    // Mengambil konfigurasi dari database
+    $pengaturan = [
+        'nama_aplikasi' => Setting::ambil('app_name', 'SATRIA'),
+        'tagline' => Setting::ambil('app_tagline', 'Sistem Kesehatan'),
+        'deskripsi' => Setting::ambil('app_description', ''),
+        'judul_hero' => Setting::ambil('hero_title', 'Layanan Kesehatan'),
+        'subjudul_hero' => Setting::ambil('hero_subtitle', ''),
+        'telepon' => Setting::ambil('app_phone', '-'),
+        'email' => Setting::ambil('app_email', '-'),
+        'alamat' => Setting::ambil('app_address', '-'),
+        'fitur' => json_decode(Setting::ambil('landing_features', '[]'), true),
+    ];
+
+    return view('welcome', compact('pengaturan'));
 });
 
 Route::get('/dashboard', \App\Livewire\Dashboard::class)->middleware(['auth', 'verified'])->name('dashboard');
