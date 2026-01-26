@@ -17,137 +17,9 @@
         </a>
     </div>
 
-    <!-- Navigasi -->
+    <!-- Navigasi Desktop -->
     <div class="flex-1 overflow-y-auto px-4 py-6 space-y-1 custom-scrollbar">
-        
-        <!-- Utama -->
-        <div class="mb-2 px-4 mt-2">
-            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Utama</p>
-        </div>
-        
-        <x-nav-link-sidebar :href="route('dashboard')" :active="request()->routeIs('dashboard')" icon="home" color="blue">
-            Dashboard
-        </x-nav-link-sidebar>
-
-        <!-- Klinis / Medis -->
-        @if(Auth::user()->role === 'admin' || in_array(Auth::user()->role, ['dokter', 'perawat', 'staf']))
-            <div class="mt-8 mb-2 px-4">
-                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Layanan Medis</p>
-            </div>
-            
-            <x-nav-link-sidebar :href="route('antrean.index')" :active="request()->routeIs('antrean.*')" icon="ticket" color="cyan">
-                Antrean & Triage
-            </x-nav-link-sidebar>
-
-            <x-nav-link-sidebar :href="route('pasien.index')" :active="request()->routeIs('pasien.*')" icon="users" color="cyan">
-                Database Pasien
-            </x-nav-link-sidebar>
-
-            @if(Auth::user()->role === 'admin' || in_array(Auth::user()->role, ['dokter', 'perawat']))
-                <x-nav-link-sidebar :href="route('rekam-medis.index')" :active="request()->routeIs('rekam-medis.*')" icon="clipboard-list" color="cyan">
-                    Rekam Medis (RME)
-                </x-nav-link-sidebar>
-
-                <x-nav-link-sidebar :href="route('rawat-inap.index')" :active="request()->routeIs('rawat-inap.index')" icon="office-building" color="cyan">
-                    Rawat Inap
-                </x-nav-link-sidebar>
-                
-                <x-nav-link-sidebar :href="route('rawat-inap.kamar')" :active="request()->routeIs('rawat-inap.kamar')" icon="view-grid" color="cyan">
-                    Monitoring Kamar
-                </x-nav-link-sidebar>
-            @endif
-        @endif
-
-        <!-- Farmasi -->
-        @if(Auth::user()->role === 'admin' || Auth::user()->role === 'apoteker')
-            <div class="mt-8 mb-2 px-4">
-                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Farmasi & Obat</p>
-            </div>
-
-            <x-nav-link-sidebar :href="route('apotek.index')" :active="request()->routeIs('apotek.*')" icon="beaker" color="emerald">
-                Layanan Resep
-            </x-nav-link-sidebar>
-
-            <x-nav-link-sidebar :href="route('obat.index')" :active="request()->routeIs('obat.index') || request()->routeIs('obat.create') || request()->routeIs('obat.edit')" icon="cube" color="emerald">
-                Inventaris Obat
-            </x-nav-link-sidebar>
-
-            <x-nav-link-sidebar :href="route('obat.stock-opname')" :active="request()->routeIs('obat.stock-opname')" icon="refresh" color="emerald">
-                Stok Opname
-            </x-nav-link-sidebar>
-        @endif
-
-        <!-- Keuangan -->
-        @if(Auth::user()->role === 'admin' || Auth::user()->role === 'staf')
-            <div class="mt-8 mb-2 px-4">
-                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Keuangan</p>
-            </div>
-
-            <x-nav-link-sidebar :href="route('kasir.index')" :active="request()->routeIs('kasir.*')" icon="credit-card" color="teal">
-                Kasir & Billing
-            </x-nav-link-sidebar>
-        @endif
-
-        <!-- SDM & Admin -->
-        @if(Auth::user()->role === 'admin')
-            <div class="mt-8 mb-2 px-4">
-                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Administrasi</p>
-            </div>
-
-            <x-nav-link-sidebar :href="route('pegawai.index')" :active="request()->routeIs('pegawai.*')" icon="identification" color="violet">
-                Data Pegawai
-            </x-nav-link-sidebar>
-
-            <x-nav-link-sidebar :href="route('jadwal-jaga.index')" :active="request()->routeIs('jadwal-jaga.*')" icon="calendar" color="violet">
-                Jadwal & Shift
-            </x-nav-link-sidebar>
-
-            <x-nav-link-sidebar :href="route('kepegawaian.gaji.index')" :active="request()->routeIs('kepegawaian.gaji.*')" icon="cash" color="violet">
-                Penggajian
-            </x-nav-link-sidebar>
-        @endif
-        
-        <!-- Akses Umum -->
-        <x-nav-link-sidebar :href="route('kepegawaian.cuti.index')" :active="request()->routeIs('kepegawaian.cuti.*')" icon="document-text" color="orange">
-            Pengajuan Cuti
-        </x-nav-link-sidebar>
-
-        <!-- Aset -->
-        @if(Auth::user()->role === 'admin' || Auth::user()->role === 'staf')
-             <div class="mt-8 mb-2 px-4">
-                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Aset & Fasilitas</p>
-            </div>
-
-            <x-nav-link-sidebar :href="route('barang.dashboard')" :active="request()->routeIs('barang.dashboard')" icon="chart-bar" color="indigo">
-                Dashboard Aset
-            </x-nav-link-sidebar>
-
-            <x-nav-link-sidebar :href="route('barang.index')" :active="request()->routeIs('barang.index')" icon="archive" color="indigo">
-                Data Aset
-            </x-nav-link-sidebar>
-            
-            <x-nav-link-sidebar :href="route('barang.maintenance')" :active="request()->routeIs('barang.maintenance')" icon="tool" color="indigo">
-                Pemeliharaan
-            </x-nav-link-sidebar>
-        @endif
-
-        <!-- Sistem -->
-        @if(Auth::user()->role === 'admin')
-            <div class="mt-8 mb-2 px-4">
-                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Sistem</p>
-            </div>
-
-            <x-nav-link-sidebar :href="route('system.user.index')" :active="request()->routeIs('system.user.*')" icon="shield-check" color="slate">
-                Manajemen Pengguna
-            </x-nav-link-sidebar>
-
-            <x-nav-link-sidebar :href="route('system.setting.index')" :active="request()->routeIs('system.setting.*')" icon="cog" color="slate">
-                Pengaturan
-            </x-nav-link-sidebar>
-        @endif
-        
-        <div class="pb-20"></div>
-
+        @include('layouts.sidebar-items')
     </div>
 
     <!-- Strip Profil Pengguna -->
@@ -182,16 +54,32 @@
      x-transition:leave="transition ease-in-out duration-300 transform" 
      x-transition:leave-start="translate-x-0" 
      x-transition:leave-end="-translate-x-full" 
-     class="fixed inset-y-0 left-0 z-50 w-72 bg-white md:hidden overflow-y-auto shadow-2xl border-r border-slate-200"
+     class="fixed inset-y-0 left-0 z-50 w-72 bg-white md:hidden overflow-y-auto shadow-2xl border-r border-slate-200 flex flex-col"
 >
-    <!-- Clone of Sidebar Content for Mobile -->
-    <div class="h-[80px] flex items-center px-6 border-b border-slate-100">
+    <!-- Header Mobile -->
+    <div class="h-[80px] flex items-center px-6 border-b border-slate-100 flex-shrink-0">
          <span class="text-xl font-extrabold text-slate-800 tracking-tight">SATRIA</span>
          <span class="ml-2 text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em] mt-1">Mobile</span>
     </div>
-    <div class="p-4 space-y-1">
-         <x-nav-link-sidebar :href="route('dashboard')" :active="request()->routeIs('dashboard')" icon="home" color="blue">Dashboard</x-nav-link-sidebar>
-         <x-nav-link-sidebar :href="route('antrean.index')" :active="request()->routeIs('antrean.*')" icon="ticket" color="cyan">Antrean</x-nav-link-sidebar>
-         <x-nav-link-sidebar :href="route('pasien.index')" :active="request()->routeIs('pasien.*')" icon="users" color="cyan">Pasien</x-nav-link-sidebar>
+    
+    <!-- Navigasi Mobile -->
+    <div class="flex-1 overflow-y-auto p-4 space-y-1">
+         @include('layouts.sidebar-items')
+    </div>
+    
+    <!-- User Strip Mobile -->
+    <div class="p-4 border-t border-slate-200 bg-slate-50 flex-shrink-0">
+        <div class="flex items-center gap-3">
+             <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm">
+                {{ substr(Auth::user()->name, 0, 1) }}
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold text-slate-800 truncate">{{ Auth::user()->name }}</p>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="text-xs text-red-500 hover:text-red-700">Keluar Sistem</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
