@@ -1,115 +1,115 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" 
-      x-data="{ 
-          darkMode: localStorage.getItem('darkMode') === 'true',
-          sidebarOpen: false,
-          toggleDarkMode() {
-              this.darkMode = !this.darkMode;
-              localStorage.setItem('darkMode', this.darkMode);
-              if (this.darkMode) {
-                  document.documentElement.classList.add('dark');
-              } else {
-                  document.documentElement.classList.remove('dark');
-              }
-          }
-      }"
-      x-init="$watch('darkMode', val => val ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark')); if(darkMode) document.documentElement.classList.add('dark');"
-      :class="{ 'dark': darkMode }">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="light">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'SATRIA') }}</title>
+        <title>{{ config('app.name', 'SATRIA') }} Enterprise System</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
         <!-- Styles -->
         @vite(['resources/css/app.css'])
         @livewireStyles
         
         <style>
-            body { font-family: 'Plus Jakarta Sans', sans-serif; }
+            :root {
+                --primary-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+                --secondary-gradient: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);
+                --success-gradient: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+                --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+                --danger-gradient: linear-gradient(135deg, #ef4444 0%, #f43f5e 100%);
+            }
+
+            body { 
+                font-family: 'Plus Jakarta Sans', sans-serif; 
+                background-color: #f3f4f6; /* Slate 100 */
+                color: #1e293b; /* Slate 800 */
+            }
+
+            h1, h2, h3, h4, h5, h6 {
+                font-family: 'Outfit', sans-serif;
+            }
+            
             [x-cloak] { display: none !important; }
             
-            /* Custom Scrollbar */
+            /* Soft Scrollbar */
             ::-webkit-scrollbar {
-                width: 6px;
-                height: 6px;
+                width: 8px;
+                height: 8px;
             }
             ::-webkit-scrollbar-track {
                 background: transparent;
             }
             ::-webkit-scrollbar-thumb {
-                background-color: rgba(156, 163, 175, 0.5);
+                background-color: #cbd5e1;
                 border-radius: 20px;
+                border: 2px solid #f3f4f6;
             }
             ::-webkit-scrollbar-thumb:hover {
-                background-color: rgba(107, 114, 128, 0.8);
+                background-color: #94a3b8;
             }
-            
-            .glass-card {
-                background: rgba(255, 255, 255, 0.7);
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 255, 255, 0.5);
+
+            /* Glassmorphism Panel - Light Version */
+            .glass-panel {
+                background: rgba(255, 255, 255, 0.85);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.6);
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
             }
-            .dark .glass-card {
-                background: rgba(17, 24, 39, 0.7);
-                border: 1px solid rgba(255, 255, 255, 0.1);
+
+            /* Gradient Text */
+            .text-gradient-primary {
+                background: var(--primary-gradient);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
             }
         </style>
     </head>
-    <body class="font-sans antialiased bg-gray-50 dark:bg-gray-950 text-slate-800 dark:text-gray-100 transition-colors duration-300 selection:bg-teal-500 selection:text-white">
+    <body class="font-sans antialiased overflow-hidden">
         
-        <div class="flex h-screen overflow-hidden">
+        <div class="flex h-screen w-full relative" x-data="{ sidebarOpen: false }">
             
             <!-- Sidebar -->
             @include('layouts.sidebar')
 
             <!-- Main Content Area -->
-            <div class="flex flex-col flex-1 w-0 overflow-hidden relative">
+            <div class="flex flex-col flex-1 min-w-0 overflow-hidden relative bg-[#f8fafc]">
                 
-                <!-- Background Pattern -->
-                <div class="absolute inset-0 z-0 pointer-events-none opacity-40 dark:opacity-20 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] dark:bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:20px_20px]"></div>
-
                 <!-- Topbar -->
                 @include('layouts.topbar')
 
                 <!-- Scrollable Body -->
-                <div class="flex-1 overflow-y-auto focus:outline-none relative z-10 custom-scrollbar">
+                <main class="flex-1 overflow-y-auto focus:outline-none relative z-10 p-4 md:p-6 lg:p-8">
+                    <!-- Background Decoration -->
+                    <div class="fixed top-0 left-0 w-full h-96 bg-gradient-to-b from-blue-50/50 to-transparent pointer-events-none -z-10"></div>
                     
-                    <div class="flex flex-col min-h-full">
-                        <!-- Main Content -->
-                        <main class="w-full grow p-4 md:p-8 space-y-6">
-                            @if (isset($header))
-                                <!-- Mobile Header (Visible only on small screens if needed) -->
-                                <div class="md:hidden mb-4 flex justify-between items-center">
-                                    <h2 class="text-xl font-bold text-gray-800 dark:text-white">{{ $header }}</h2>
-                                </div>
-                            @endif
+                    @if (isset($header))
+                        <div class="md:hidden mb-6">
+                            <h2 class="text-2xl font-bold text-slate-800 tracking-tight">{{ $header }}</h2>
+                        </div>
+                    @endif
 
-                            {{ $slot }}
-                        </main>
+                    {{ $slot }}
 
-                        <!-- Footer -->
-                        <footer class="mt-auto border-t border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm p-6">
-                            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-                                <div>
-                                    &copy; {{ date('Y') }} <span class="font-bold text-teal-600 dark:text-teal-400">SATRIA</span> Enterprise System.
-                                </div>
-                                <div class="flex items-center gap-6">
-                                    <span class="hover:text-teal-500 cursor-pointer transition-colors">Documentation</span>
-                                    <span class="hover:text-teal-500 cursor-pointer transition-colors">Support</span>
-                                    <span class="font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">v2.1.0</span>
-                                </div>
+                    <!-- Footer -->
+                    <footer class="mt-12 border-t border-slate-200 pt-6 pb-8">
+                        <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+                            <div>
+                                <span class="font-bold text-slate-700">SATRIA Enterprise System</span> &copy; {{ date('Y') }}. 
+                                <span class="hidden md:inline">Terintegritas. Cepat. Aman.</span>
                             </div>
-                        </footer>
-                    </div>
-
-                </div>
+                            <div class="flex items-center gap-4">
+                                <span class="px-2 py-1 rounded bg-white border border-slate-200 shadow-sm">v2.5.0-Stable</span>
+                            </div>
+                        </div>
+                    </footer>
+                </main>
             </div>
         </div>
 

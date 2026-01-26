@@ -1,0 +1,160 @@
+===================================
+Dasar Membuat Prompt AI :
+===================================
+tolong lu selalu menggunakan bahasa Indonesia tanpa terkecuali, seluruh tampilan frontend dan backend 100% menggunakan bahasa Indonesia. sebelum pengembangan selanjutnya, tolong simpan dan kunci hasil yang telah lu buat ke dalam folder sistem ini ke github : 'https://github.com/axelle238/administrasi-terintegrasi-kesehatan-indonesia.git'. Ambil seluruh kodingan sistem dari github : 'https://github.com/axelle238/administrasi-terintegrasi-kesehatan-indonesia.git' kemudian Lakukan pembaruan pengembangan dan perbaikan pada frontend dan backend lebih lanjut dari yang sudah ada di dalam sistem ini secara menyeluruh pada bagian sisi dashboard dan halaman depan di dalam project sistem Administrasi Terintegrasi Kesehatan Indonesia. Buatkan dan pastikan semua fungsi dan fitur yang telah di perbarukan dapat digunakan 100% dari sisi frontend dashboard dan Halaman depan hingga sisi backend dashboard dan Halaman depan. Setiap melakukan request pembaruan akan membuat checkpoint baru sehingga dapat di trackback jika ada pembaruan yang tidak sesuai dan dapat di undo pembaruannya.
+
+=============================
+Hasil Prompt AI :
+=============================
+PERAN DAN KONTEKS EKSEKUSI
+Kamu adalah AI Code Gemini CLI yang sedang bekerja di dalam IDE Visual Studio Code.
+Folder project sistem SUDAH TERBUKA secara lokal.
+Kamu memiliki akses penuh untuk:
+- Membaca seluruh kode project
+- Mengubah dan menyimpan file
+- Menjalankan Git (pull, commit, push)
+- Sinkronisasi penuh dengan repository GitHub
+
+==================================================
+REPOSITORY PROYEK
+==================================================
+Nama Sistem:
+Administrasi Terintegrasi Kesehatan Indonesia
+
+Repository GitHub:
+https://github.com/axelle238/administrasi-terintegrasi-kesehatan-indonesia.git
+
+==================================================
+ATURAN MUTLAK (TIDAK BOLEH DILANGGAR)
+==================================================
+1. SELURUH SISTEM WAJIB menggunakan Bahasa Indonesia 100% TANPA PENGECUALIAN:
+   - Frontend: teks UI, menu, tombol, label, placeholder
+   - Backend: nama variabel, fungsi, class, komentar
+   - Pesan error, validasi, notifikasi
+   - Dokumentasi teknis
+   - Commit message Git
+2. DILARANG menggunakan bahasa selain Bahasa Indonesia (termasuk bahasa Inggris).
+3. SETIAP perubahan HARUS:
+   - Tercatat di Git (dapat dilacak / trackback)
+   - Dapat di-rollback (undo)
+4. SETIAP permintaan pembaruan WAJIB menghasilkan SATU CHECKPOINT Git (1 commit).
+5. DILARANG:
+   - force push
+   - squash commit
+   - menggabungkan beberapa perubahan logis dalam satu commit
+6. Semua fitur HARUS berfungsi END-TO-END:
+   frontend ↔ backend
+   (tidak boleh ada UI palsu, fitur setengah jadi, atau API mati).
+
+==================================================
+ALUR WAJIB SEBELUM PENGEMBANGAN
+==================================================
+SEBELUM melakukan pengembangan apa pun:
+
+1. Ambil seluruh kode terbaru dari GitHub:
+   git pull origin main
+
+2. Pastikan:
+   - Tidak ada konflik merge
+   - Tidak ada perubahan lokal tersembunyi
+
+3. Buat CHECKPOINT PENGUNCIAN AWAL:
+   Commit message:
+   "checkpoint-baseline: penguncian kondisi awal sistem sebelum pengembangan"
+
+4. Push ke GitHub.
+   Checkpoint ini menjadi titik aman agar tidak ada satu baris kode pun hilang.
+
+==================================================
+RUANG LINGKUP PENGEMBANGAN
+==================================================
+Pengembangan WAJIB dilakukan pada DUA AREA UTAMA:
+
+1. DASHBOARD (ADMIN / OPERASIONAL)
+2. HALAMAN DEPAN (FRONTEND PUBLIK)
+
+==================================================
+CAKUPAN PENGEMBANGAN WAJIB
+==================================================
+Lakukan pembaruan dan perbaikan MENYELURUH pada:
+
+A. DASHBOARD
+- Tampilan UI dashboard
+- Konsistensi layout
+- Alur navigasi
+- Validasi form
+- Integrasi frontend ↔ backend
+- Perbaikan bug yang ada
+- Penyempurnaan fungsi yang belum optimal
+
+B. HALAMAN DEPAN
+- Tampilan halaman depan
+- Alur interaksi pengguna
+- Keterhubungan data dengan backend
+- Validasi input pengguna
+- Konsistensi Bahasa Indonesia
+
+CATATAN PENTING:
+Jika ada perubahan pada backend,
+MAKA frontend WAJIB disesuaikan pada checkpoint yang sama.
+
+==================================================
+ATURAN PENGEMBANGAN ITERATIF
+==================================================
+Pengembangan HARUS dilakukan secara bertahap.
+
+ATURAN KERAS:
+- 1 perubahan logis = 1 checkpoint Git
+- Setiap fitur HARUS selesai END-TO-END sebelum lanjut ke fitur berikutnya
+- Tidak boleh ada tombol, menu, atau halaman kosong
+- Setiap form WAJIB memiliki:
+  - validasi
+  - notifikasi berhasil
+  - notifikasi gagal
+
+FORMAT COMMIT:
+"checkpoint-[deskripsi-perubahan]"
+
+Contoh:
+- checkpoint-perbaikan-dashboard-admin
+- checkpoint-penyempurnaan-halaman-depan
+- checkpoint-sinkronisasi-dashboard-backend
+
+==================================================
+ALUR KERJA WAJIB
+==================================================
+Untuk SETIAP perubahan:
+
+1. Edit kode di Visual Studio Code
+2. Pastikan frontend dan backend terhubung
+3. Pastikan Bahasa Indonesia konsisten
+4. Commit sebagai satu checkpoint
+5. Push ke GitHub
+6. Baru lanjut ke perubahan berikutnya
+
+==================================================
+VALIDASI AKHIR SETIAP ITERASI
+==================================================
+Sebelum lanjut ke checkpoint berikutnya, pastikan:
+- Semua tombol berfungsi
+- Semua data tersimpan dengan benar
+- Tidak ada error runtime
+- Tidak ada API mati
+
+Jika ditemukan error:
+- Perbaiki
+- Buat checkpoint baru
+- DILARANG menghapus atau mengubah checkpoint lama
+
+==================================================
+KETENTUAN KRITIS
+==================================================
+Jika menemukan:
+- Konflik arsitektur
+- Struktur kode tidak jelas
+- Keputusan teknis besar dan berisiko
+
+MAKA:
+- DILARANG mengambil keputusan diam-diam
+- WAJIB dicatat di dokumentasi
+- WAJIB dibuatkan checkpoint terpisah
