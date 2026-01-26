@@ -52,6 +52,7 @@ Route::middleware('auth')->group(function () {
     // ADMIN
     Route::middleware('can:admin')->group(function () {
         Route::get('/activity-log', \App\Livewire\Admin\ActivityLog::class)->name('activity-log');
+        Route::get('/system/info', \App\Livewire\System\Information::class)->name('system.info'); // Added route
         Route::get('/system/poli', \App\Livewire\System\Poli\Index::class)->name('system.poli.index');
         Route::get('/system/users', \App\Livewire\System\User\Index::class)->name('system.user.index');
         Route::get('/system/settings', \App\Livewire\System\Setting\Index::class)->name('system.setting.index');

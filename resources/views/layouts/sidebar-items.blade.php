@@ -37,6 +37,10 @@
         <x-nav-link-sidebar :href="route('surat.keterangan.index')" :active="request()->routeIs('surat.keterangan.*')" icon="document-text" color="cyan">
             Surat Keterangan
         </x-nav-link-sidebar>
+        
+        <x-nav-link-sidebar :href="route('system.poli.index')" :active="request()->routeIs('system.poli.*')" icon="collection" color="cyan">
+            Data Poli/Unit
+        </x-nav-link-sidebar>
     @endif
 @endif
 
@@ -145,13 +149,13 @@
     <x-nav-link-sidebar :href="route('system.user.index')" :active="request()->routeIs('system.user.*')" icon="shield-check" color="slate">
         Manajemen Pengguna
     </x-nav-link-sidebar>
-    
-    <x-nav-link-sidebar :href="route('system.poli.index')" :active="request()->routeIs('system.poli.*')" icon="collection" color="slate">
-        Data Poli/Unit
-    </x-nav-link-sidebar>
 
     <x-nav-link-sidebar :href="route('system.setting.index')" :active="request()->routeIs('system.setting.*')" icon="cog" color="slate">
         Pengaturan Aplikasi
+    </x-nav-link-sidebar>
+    
+    <x-nav-link-sidebar :href="route('system.info')" :active="request()->routeIs('system.info')" icon="chart-bar" color="slate">
+        Informasi Sistem
     </x-nav-link-sidebar>
     
     <x-nav-link-sidebar :href="route('activity-log')" :active="request()->routeIs('activity-log')" icon="clock" color="slate">
