@@ -1,6 +1,6 @@
 <!-- Utama -->
 <div class="mb-2 px-4 mt-2">
-    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Utama</p>
+    <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Utama</p>
 </div>
 
 <x-nav-link-sidebar :href="route('dashboard')" :active="request()->routeIs('dashboard')" icon="home" color="blue">
@@ -10,7 +10,7 @@
 <!-- Klinis / Medis -->
 @if(Auth::user()->role === 'admin' || in_array(Auth::user()->role, ['dokter', 'perawat', 'staf']))
     <div class="mt-8 mb-2 px-4">
-        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Layanan Medis</p>
+        <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Layanan Medis</p>
     </div>
     
     <x-nav-link-sidebar :href="route('antrean.index')" :active="request()->routeIs('antrean.*')" icon="ticket" color="cyan">
@@ -43,7 +43,7 @@
 <!-- Farmasi -->
 @if(Auth::user()->role === 'admin' || Auth::user()->role === 'apoteker')
     <div class="mt-8 mb-2 px-4">
-        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Farmasi & Obat</p>
+        <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Farmasi & Obat</p>
     </div>
 
     <x-nav-link-sidebar :href="route('apotek.index')" :active="request()->routeIs('apotek.*')" icon="beaker" color="emerald">
@@ -66,7 +66,7 @@
 <!-- Keuangan -->
 @if(Auth::user()->role === 'admin' || Auth::user()->role === 'staf')
     <div class="mt-8 mb-2 px-4">
-        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Keuangan</p>
+        <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Keuangan</p>
     </div>
 
     <x-nav-link-sidebar :href="route('kasir.index')" :active="request()->routeIs('kasir.*')" icon="credit-card" color="teal">
@@ -77,7 +77,7 @@
 <!-- SDM & Admin -->
 @if(Auth::user()->role === 'admin')
     <div class="mt-8 mb-2 px-4">
-        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Administrasi</p>
+        <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Administrasi</p>
     </div>
 
     <x-nav-link-sidebar :href="route('pegawai.index')" :active="request()->routeIs('pegawai.*')" icon="identification" color="violet">
@@ -103,7 +103,7 @@
 
 <!-- Akses Umum -->
 <div class="mt-8 mb-2 px-4">
-    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Umum</p>
+    <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Umum</p>
 </div>
 <x-nav-link-sidebar :href="route('kepegawaian.cuti.index')" :active="request()->routeIs('kepegawaian.cuti.*')" icon="document-text" color="orange">
     Pengajuan Cuti
@@ -112,7 +112,7 @@
 <!-- Aset -->
 @if(Auth::user()->role === 'admin' || Auth::user()->role === 'staf')
      <div class="mt-8 mb-2 px-4">
-        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Aset & Fasilitas</p>
+        <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Aset & Fasilitas</p>
     </div>
 
     <x-nav-link-sidebar :href="route('barang.dashboard')" :active="request()->routeIs('barang.dashboard')" icon="chart-bar" color="indigo">
@@ -139,7 +139,7 @@
 <!-- Sistem -->
 @if(Auth::user()->role === 'admin')
     <div class="mt-8 mb-2 px-4">
-        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-[Outfit]">Sistem</p>
+        <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Sistem</p>
     </div>
 
     <x-nav-link-sidebar :href="route('system.user.index')" :active="request()->routeIs('system.user.*')" icon="shield-check" color="slate">
