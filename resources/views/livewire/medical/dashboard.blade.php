@@ -32,6 +32,20 @@
             <p class="text-xs text-slate-500 mt-2">{{ $bedTerisi }} Terisi / {{ $totalBed }} Total</p>
         </div>
 
+        <!-- Rata-rata Waktu Layanan -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border-l-4 border-orange-500">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Avg Waktu Layanan</p>
+                    <h3 class="text-3xl font-black text-slate-800 dark:text-white mt-2">{{ number_format($avgWaktuLayanan, 0) }} <span class="text-sm font-medium text-slate-400">Menit</span></h3>
+                </div>
+                <div class="p-3 bg-orange-50 rounded-xl text-orange-600">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </div>
+            </div>
+            <p class="text-xs text-slate-500 mt-4">Per Pasien Hari Ini</p>
+        </div>
+
         <!-- Pasien Baru -->
         <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border-l-4 border-emerald-500">
             <div class="flex justify-between items-start">
@@ -44,22 +58,6 @@
                 </div>
             </div>
             <p class="text-xs text-slate-500 mt-4">Bulan Ini</p>
-        </div>
-
-        <!-- Efisiensi Layanan -->
-        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border-l-4 border-orange-500">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Poli Teramai</p>
-                    <h3 class="text-lg font-black text-slate-800 dark:text-white mt-2 truncate">
-                        {{ $poliActivity->sortByDesc('total')->first()->poli->nama_poli ?? 'Belum Ada Data' }}
-                    </h3>
-                </div>
-                <div class="p-3 bg-orange-50 rounded-xl text-orange-600">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
-                </div>
-            </div>
-            <p class="text-xs text-slate-500 mt-4">Hari Ini</p>
         </div>
     </div>
 
@@ -102,21 +100,42 @@
         </div>
     </div>
 
-    <!-- Row 3: Aktivitas Poli -->
-    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
-        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Aktivitas Poliklinik Hari Ini</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            @foreach($poliActivity as $poli)
-                <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-500 hover:shadow-md transition-all bg-slate-50 dark:bg-slate-700/30">
+    <!-- Row 3: Distribusi Pasien & Aktivitas Poli -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Distribusi Pasien (BPJS/Umum) -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Jenis Pembayaran Hari Ini</h3>
+            <div class="space-y-4">
+                @forelse($distribusiPembayaran as $dist)
                     <div class="flex justify-between items-center">
-                        <h4 class="font-bold text-slate-700 dark:text-gray-200">{{ $poli->poli->nama_poli }}</h4>
-                        <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-black rounded-lg">{{ $poli->total }} Ps</span>
+                        <span class="text-sm font-bold text-slate-600 dark:text-gray-300">{{ $dist->asuransi ?? 'Umum' }}</span>
+                        <span class="px-3 py-1 bg-slate-100 dark:bg-slate-700 rounded-full text-xs font-black">{{ $dist->total }}</span>
                     </div>
-                    <div class="mt-2 w-full bg-slate-200 rounded-full h-1">
-                        <div class="bg-blue-500 h-1 rounded-full" style="width: {{ min(100, ($poli->total / 20) * 100) }}%"></div>
+                    <div class="w-full bg-slate-100 rounded-full h-2">
+                        <div class="bg-indigo-500 h-2 rounded-full" style="width: {{ ($dist->total / max($totalKunjunganHariIni, 1)) * 100 }}%"></div>
                     </div>
-                </div>
-            @endforeach
+                @empty
+                    <p class="text-center text-slate-400 text-sm">Belum ada data.</p>
+                @endforelse
+            </div>
+        </div>
+
+        <!-- Aktivitas Poli -->
+        <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Aktivitas Poliklinik Hari Ini</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                @foreach($poliActivity as $poli)
+                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-500 hover:shadow-md transition-all bg-slate-50 dark:bg-slate-700/30">
+                        <div class="flex justify-between items-center">
+                            <h4 class="font-bold text-slate-700 dark:text-gray-200">{{ $poli->poli->nama_poli }}</h4>
+                            <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-black rounded-lg">{{ $poli->total }} Ps</span>
+                        </div>
+                        <div class="mt-2 w-full bg-slate-200 rounded-full h-1">
+                            <div class="bg-blue-500 h-1 rounded-full" style="width: {{ min(100, ($poli->total / 20) * 100) }}%"></div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
         </div>
     </div>
 </div>

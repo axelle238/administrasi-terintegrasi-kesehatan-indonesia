@@ -44,9 +44,24 @@ class Dashboard extends Component
         $trenKunjungan = $this->getTrenKunjungan();
 
         // 6. Pasien Baru vs Lama (Bulan Ini)
-        // Asumsi sederhana: Pasien created_at bulan ini = baru
         $pasienBaru = Pasien::whereMonth('created_at', Carbon::now()->month)->count();
-        $pasienLama = $totalKunjunganBulanIni - $pasienBaru; // Aproksimasi
+        $pasienLama = $totalKunjunganBulanIni - $pasienBaru; 
+
+        // 7. Distribusi Pembayaran (Hari Ini)
+        // Kita perlu join ke tabel pasien untuk cek asuransi
+        $distribusiPembayaran = Antrean::join('pasiens', 'antreans.pasien_id', '=', 'pasiens.id')
+            ->whereDate('antreans.tanggal_antrean', Carbon::today())
+            ->select('pasiens.asuransi', DB::raw('count(*) as total'))
+            ->groupBy('pasiens.asuransi')
+            ->get();
+
+        // 8. Rata-rata Waktu Layanan (Sederhana: selisih created_at dan updated_at saat status Selesai)
+        $avgWaktuLayanan = Antrean::whereDate('tanggal_antrean', Carbon::today())
+            ->where('status', 'Selesai')
+            ->get()
+            ->avg(function($item) {
+                return $item->updated_at->diffInMinutes($item->created_at);
+            }) ?? 0;
 
         return view('livewire.medical.dashboard', compact(
             'totalKunjunganHariIni',
@@ -58,7 +73,9 @@ class Dashboard extends Component
             'poliActivity',
             'trenKunjungan',
             'pasienBaru',
-            'pasienLama'
+            'pasienLama',
+            'distribusiPembayaran',
+            'avgWaktuLayanan'
         ))->layout('layouts.app', ['header' => 'Dashboard Layanan Medis']);
     }
 
