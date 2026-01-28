@@ -1,287 +1,135 @@
-<div wire:poll.30s>
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-        <!-- Total -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-            <div class="flex items-center gap-3">
-                <div class="bg-indigo-100 p-2 rounded-lg text-indigo-600">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                </div>
-                <div>
-                    <p class="text-xs font-bold text-gray-400 uppercase">Total Pegawai</p>
-                    <p class="text-xl font-bold text-gray-900">{{ $totalPegawai }}</p>
-                </div>
-            </div>
+<div class="space-y-6">
+    <!-- Header & Action -->
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white tracking-tight">Manajemen Pegawai & SDM</h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Pengelolaan data dokter, perawat, dan staf medis lainnya.</p>
         </div>
-
-        <!-- Dokter -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-            <div class="flex items-center gap-3">
-                <div class="bg-green-100 p-2 rounded-lg text-green-600">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                </div>
-                <div>
-                    <p class="text-xs font-bold text-gray-400 uppercase">Dokter</p>
-                    <p class="text-xl font-bold text-gray-900">{{ $totalDokter }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Perawat -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-            <div class="flex items-center gap-3">
-                <div class="bg-blue-100 p-2 rounded-lg text-blue-600">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
-                </div>
-                <div>
-                    <p class="text-xs font-bold text-gray-400 uppercase">Perawat</p>
-                    <p class="text-xl font-bold text-gray-900">{{ $totalPerawat }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- EWS STR -->
-        <div class="bg-red-50 rounded-xl shadow-sm border border-red-100 p-4 cursor-pointer hover:bg-red-100 transition" wire:click="$set('filterStatus', 'ews_str')">
-            <div class="flex items-center gap-3">
-                <div class="bg-white p-2 rounded-lg text-red-500">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                </div>
-                <div>
-                    <p class="text-xs font-bold text-red-400 uppercase">STR Expired</p>
-                    <p class="text-xl font-bold text-red-600">{{ $ewsStr }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- EWS SIP -->
-        <div class="bg-red-50 rounded-xl shadow-sm border border-red-100 p-4 cursor-pointer hover:bg-red-100 transition" wire:click="$set('filterStatus', 'ews_sip')">
-            <div class="flex items-center gap-3">
-                <div class="bg-white p-2 rounded-lg text-red-500">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                </div>
-                <div>
-                    <p class="text-xs font-bold text-red-400 uppercase">SIP Expired</p>
-                    <p class="text-xl font-bold text-red-600">{{ $ewsSip }}</p>
-                </div>
-            </div>
+        <div class="flex gap-3">
+            <button wire:click="syncBpjs" wire:loading.attr="disabled" class="inline-flex items-center px-4 py-2 bg-green-600 text-white font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-green-700 shadow-lg shadow-green-500/20 transition-all">
+                <svg wire:loading.remove class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                <svg wire:loading class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                Sync BPJS
+            </button>
+            <a href="{{ route('pegawai.create') }}" wire:navigate class="inline-flex items-center px-6 py-2 bg-blue-600 text-white font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-500/20 transition-all">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                Tambah Pegawai
+            </a>
         </div>
     </div>
 
-    <!-- Toolbar & Table -->
-    <div class="bg-white overflow-hidden shadow-sm rounded-2xl border border-gray-100">
-        <div class="p-6 border-b border-gray-100">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                
-                <!-- Search & Filter -->
-                <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                    <div class="relative">
-                        <input wire:model.live.debounce.300ms="search" type="text" placeholder="Cari Pegawai..." class="w-full sm:w-64 pl-10 pr-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200 transition-all text-sm">
-                        <div class="absolute top-0 left-0 pt-2.5 pl-3">
-                            <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                        </div>
-                    </div>
-                    
-                    <select wire:model.live="filterRole" class="rounded-xl border border-gray-200 text-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200">
-                        <option value="">Semua Profesi</option>
-                        <option value="dokter">Dokter</option>
-                        <option value="perawat">Perawat</option>
-                        <option value="apoteker">Apoteker</option>
-                        <option value="bidan">Bidan</option>
-                        <option value="admin">Administrasi</option>
-                    </select>
-
-                    <select wire:model.live="filterStatus" class="rounded-xl border border-gray-200 text-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200">
-                        <option value="">Status Normal</option>
-                        <option value="ews_str">⚠ STR Kedaluwarsa</option>
-                        <option value="ews_sip">⚠ SIP Kedaluwarsa</option>
-                    </select>
-                </div>
-                
-                <!-- Actions -->
-                <div class="flex gap-2">
-                    <button wire:click="syncBpjs" class="inline-flex items-center px-4 py-2 bg-green-50 text-green-700 border border-green-200 rounded-xl font-bold text-xs hover:bg-green-100 transition shadow-sm">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                        Sync BPJS
-                    </button>
-                    
-                    <a href="{{ route('pegawai.create') }}" wire:navigate class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl font-bold text-xs hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        Tambah Pegawai
-                    </a>
-                </div>
-            </div>
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700">
+            <span class="text-xs font-black text-slate-400 uppercase tracking-widest block mb-1">Total</span>
+            <span class="text-2xl font-black text-slate-800 dark:text-white">{{ $totalPegawai }}</span>
         </div>
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700">
+            <span class="text-xs font-black text-blue-400 uppercase tracking-widest block mb-1">Dokter</span>
+            <span class="text-2xl font-black text-blue-600">{{ $totalDokter }}</span>
+        </div>
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700">
+            <span class="text-xs font-black text-emerald-400 uppercase tracking-widest block mb-1">Perawat</span>
+            <span class="text-2xl font-black text-emerald-600">{{ $totalPerawat }}</span>
+        </div>
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700">
+            <span class="text-xs font-black text-purple-400 uppercase tracking-widest block mb-1">Apoteker</span>
+            <span class="text-2xl font-black text-purple-600">{{ $totalApoteker }}</span>
+        </div>
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 cursor-pointer hover:bg-orange-50 transition-colors {{ $filterStatus == 'ews_str' ? 'ring-2 ring-orange-500' : '' }}" wire:click="$set('filterStatus', '{{ $filterStatus == 'ews_str' ? '' : 'ews_str' }}')">
+            <span class="text-xs font-black text-orange-400 uppercase tracking-widest block mb-1">EWS STR</span>
+            <span class="text-2xl font-black text-orange-600">{{ $ewsStr }}</span>
+        </div>
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 cursor-pointer hover:bg-red-50 transition-colors {{ $filterStatus == 'ews_sip' ? 'ring-2 ring-red-500' : '' }}" wire:click="$set('filterStatus', '{{ $filterStatus == 'ews_sip' ? '' : 'ews_sip' }}')">
+            <span class="text-xs font-black text-red-400 uppercase tracking-widest block mb-1">EWS SIP</span>
+            <span class="text-2xl font-black text-red-600">{{ $ewsSip }}</span>
+        </div>
+    </div>
 
-        <!-- Table -->
+    <!-- Search & Filters -->
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row gap-4">
+        <div class="relative flex-1">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <input wire:model.live.debounce.300ms="search" type="text" class="pl-10 block w-full rounded-xl border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:ring-blue-500 sm:text-sm transition-shadow" placeholder="Cari nama pegawai, NIP, atau email...">
+        </div>
+        <div class="w-full md:w-48">
+            <select wire:model.live="filterRole" class="block w-full rounded-xl border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                <option value="">Semua Role</option>
+                <option value="dokter">Dokter</option>
+                <option value="perawat">Perawat</option>
+                <option value="apoteker">Apoteker</option>
+                <option value="staf">Staf Admin</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-100">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-gray-100 dark:divide-gray-700">
+                <thead class="bg-gray-50/50 dark:bg-gray-700/50 font-bold">
                     <tr>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Identitas Pegawai</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Kontak</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Jabatan & Izin</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Aksi</th>
+                        <th class="px-6 py-4 text-left text-xs text-gray-500 uppercase tracking-wider">Pegawai</th>
+                        <th class="px-6 py-4 text-left text-xs text-gray-500 uppercase tracking-wider">Jabatan / Role</th>
+                        <th class="px-6 py-4 text-left text-xs text-gray-500 uppercase tracking-wider">SIP / STR</th>
+                        <th class="px-6 py-4 text-left text-xs text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-4 text-right text-xs text-gray-500 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-100">
-                    @forelse ($pegawais as $pegawai)
-                        <tr class="hover:bg-gray-50 transition">
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                    @forelse($pegawais as $p)
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center gap-4">
-                                    <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold">
-                                        {{ substr($pegawai->user->name, 0, 1) }}
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-600 font-bold text-sm">
+                                        {{ substr($p->user->name ?? '?', 0, 1) }}
                                     </div>
                                     <div>
-                                        <div class="text-sm font-bold text-gray-900">{{ $pegawai->user->name }}</div>
-                                        <div class="text-xs text-gray-500 font-mono">{{ $pegawai->nip }}</div>
+                                        <div class="text-sm font-bold text-slate-800 dark:text-white">{{ $p->user->name ?? '-' }}</div>
+                                        <div class="text-xs text-slate-500">NIP: {{ $p->nip ?? '-' }}</div>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{{ $pegawai->user->email }}</div>
-                                <div class="text-xs text-gray-500">{{ $pegawai->no_telepon }}</div>
+                                <div class="text-sm font-medium text-slate-800 dark:text-slate-200">{{ $p->jabatan }}</div>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ $p->user->role ?? '-' }}</span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900 font-medium">{{ $pegawai->jabatan }}</div>
-                                <div class="flex gap-1 mt-1">
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-100">
-                                        {{ ucfirst($pegawai->user->role) }}
-                                    </span>
-                                    
-                                    <!-- Indikator STR/SIP -->
-                                    @php 
-                                        $strExp = $pegawai->masa_berlaku_str ? \Carbon\Carbon::parse($pegawai->masa_berlaku_str) : null;
-                                        $sipExp = $pegawai->masa_berlaku_sip ? \Carbon\Carbon::parse($pegawai->masa_berlaku_sip) : null;
-                                        $isStrWarning = $strExp && $strExp->diffInMonths(now()) <= 3;
-                                        $isSipWarning = $sipExp && $sipExp->diffInMonths(now()) <= 3;
-                                    @endphp
-
-                                    @if($isStrWarning)
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-50 text-red-600 border border-red-100" title="STR Segera Habis">⚠ STR</span>
-                                    @endif
-                                    @if($isSipWarning)
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-50 text-red-600 border border-red-100" title="SIP Segera Habis">⚠ SIP</span>
-                                    @endif
+                                <div class="text-xs space-y-1">
+                                    <div class="{{ $p->masa_berlaku_sip <= now()->addMonths(3) ? 'text-red-600 font-bold' : 'text-slate-500' }}">
+                                        SIP: {{ $p->masa_berlaku_sip ? \Carbon\Carbon::parse($p->masa_berlaku_sip)->format('d/m/Y') : '-' }}
+                                    </div>
+                                    <div class="{{ $p->masa_berlaku_str <= now()->addMonths(3) ? 'text-orange-600 font-bold' : 'text-slate-500' }}">
+                                        STR: {{ $p->masa_berlaku_str ? \Carbon\Carbon::parse($p->masa_berlaku_str)->format('d/m/Y') : '-' }}
+                                    </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2.5 py-1 text-xs font-bold rounded-full 
-                                    {{ $pegawai->status_kepegawaian == 'PNS' || $pegawai->status_kepegawaian == 'Tetap' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
-                                    {{ $pegawai->status_kepegawaian }}
+                                <span class="px-3 py-1 text-[10px] font-black rounded-full uppercase tracking-widest
+                                    @if(($p->status_kepegawaian ?? '') == 'Tetap') bg-green-100 text-green-800
+                                    @else bg-blue-100 text-blue-800 @endif">
+                                    {{ $p->status_kepegawaian ?? 'Aktif' }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <div class="flex justify-end gap-3">
-                                    <button wire:click="showDetail({{ $pegawai->id }})" class="text-blue-600 hover:text-blue-900 font-semibold text-xs bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition">Detail</button>
-                                    <a href="{{ route('pegawai.edit', $pegawai->id) }}" wire:navigate class="text-indigo-600 hover:text-indigo-900 font-semibold text-xs bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition">Edit</a>
-                                    <button wire:click="delete({{ $pegawai->id }})" wire:confirm="Hapus pegawai ini?" class="text-red-600 hover:text-red-900 font-semibold text-xs bg-red-50 px-3 py-1.5 rounded-lg hover:bg-red-100 transition">Hapus</button>
-                                </div>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-xs font-bold space-x-3">
+                                <a href="{{ route('pegawai.edit', $p->id) }}" wire:navigate class="text-blue-600 hover:text-blue-900 uppercase">Edit</a>
+                                <button onclick="confirm('Yakin hapus data pegawai?') || event.stopImmediatePropagation()" wire:click="delete({{ $p->id }})" class="text-red-600 hover:text-red-900 uppercase">Hapus</button>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-gray-500 italic">
-                                Tidak ada data pegawai ditemukan.
-                            </td>
+                            <td colspan="5" class="px-6 py-12 text-center text-gray-500 font-bold">Belum ada data pegawai.</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-        
-        <div class="px-6 py-4 border-t border-gray-100">
+        <div class="p-6">
             {{ $pegawais->links() }}
         </div>
     </div>
-
-    <!-- Modal Detail Pegawai -->
-    @if($detailOpen && $selectedPegawai)
-    <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" wire:click="closeDetail"></div>
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl w-full">
-                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <div class="sm:flex sm:items-start">
-                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
-                            <span class="text-indigo-600 font-bold text-lg">{{ substr($selectedPegawai->user->name, 0, 1) }}</span>
-                        </div>
-                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">{{ $selectedPegawai->user->name }}</h3>
-                            <div class="mt-2 text-sm text-gray-500">
-                                <div class="grid grid-cols-2 gap-4 text-left">
-                                    <div>
-                                        <span class="block text-xs uppercase text-gray-400 font-bold">NIP</span>
-                                        <span class="font-mono text-gray-800">{{ $selectedPegawai->nip }}</span>
-                                    </div>
-                                    <div>
-                                        <span class="block text-xs uppercase text-gray-400 font-bold">Jabatan</span>
-                                        <span class="text-gray-800">{{ $selectedPegawai->jabatan }}</span>
-                                    </div>
-                                    <div>
-                                        <span class="block text-xs uppercase text-gray-400 font-bold">Unit/Poli</span>
-                                        <span class="text-gray-800">{{ $selectedPegawai->poli->nama_poli ?? '-' }}</span>
-                                    </div>
-                                    <div>
-                                        <span class="block text-xs uppercase text-gray-400 font-bold">Status</span>
-                                        <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800">{{ $selectedPegawai->status_kepegawaian }}</span>
-                                    </div>
-                                    <div class="col-span-2">
-                                        <span class="block text-xs uppercase text-gray-400 font-bold">Kontak & Alamat</span>
-                                        <span class="block text-gray-800">{{ $selectedPegawai->no_telepon }}</span>
-                                        <span class="block text-gray-600">{{ $selectedPegawai->alamat }}</span>
-                                    </div>
-                                </div>
-
-                                @if($selectedPegawai->user->role == 'dokter' || $selectedPegawai->user->role == 'perawat' || $selectedPegawai->user->role == 'apoteker')
-                                <div class="mt-4 pt-4 border-t border-gray-100">
-                                    <h4 class="font-bold text-gray-700 mb-2">Lisensi & Izin Praktik</h4>
-                                    <div class="grid grid-cols-2 gap-4 text-left">
-                                        <div class="bg-gray-50 p-2 rounded border {{ \Carbon\Carbon::parse($selectedPegawai->masa_berlaku_str)->isPast() ? 'border-red-300 bg-red-50' : 'border-gray-200' }}">
-                                            <span class="block text-xs uppercase font-bold text-gray-500">No. STR</span>
-                                            <span class="block font-mono font-bold">{{ $selectedPegawai->no_str ?? '-' }}</span>
-                                            <span class="text-xs {{ \Carbon\Carbon::parse($selectedPegawai->masa_berlaku_str)->isPast() ? 'text-red-600 font-bold' : 'text-gray-500' }}">
-                                                Exp: {{ $selectedPegawai->masa_berlaku_str ? \Carbon\Carbon::parse($selectedPegawai->masa_berlaku_str)->format('d M Y') : '-' }}
-                                            </span>
-                                            @if($selectedPegawai->file_str)
-                                                <a href="{{ asset('storage/'.$selectedPegawai->file_str) }}" target="_blank" class="block mt-1 text-xs text-indigo-600 hover:underline">Lihat Dokumen</a>
-                                            @endif
-                                        </div>
-                                        <div class="bg-gray-50 p-2 rounded border {{ \Carbon\Carbon::parse($selectedPegawai->masa_berlaku_sip)->isPast() ? 'border-red-300 bg-red-50' : 'border-gray-200' }}">
-                                            <span class="block text-xs uppercase font-bold text-gray-500">No. SIP</span>
-                                            <span class="block font-mono font-bold">{{ $selectedPegawai->no_sip ?? '-' }}</span>
-                                            <span class="text-xs {{ \Carbon\Carbon::parse($selectedPegawai->masa_berlaku_sip)->isPast() ? 'text-red-600 font-bold' : 'text-gray-500' }}">
-                                                Exp: {{ $selectedPegawai->masa_berlaku_sip ? \Carbon\Carbon::parse($selectedPegawai->masa_berlaku_sip)->format('d M Y') : '-' }}
-                                            </span>
-                                            @if($selectedPegawai->file_sip)
-                                                <a href="{{ asset('storage/'.$selectedPegawai->file_sip) }}" target="_blank" class="block mt-1 text-xs text-indigo-600 hover:underline">Lihat Dokumen</a>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                                @endif
-
-                                @if($selectedPegawai->file_ijazah)
-                                <div class="mt-4 pt-4 border-t border-gray-100 text-left">
-                                    <h4 class="font-bold text-gray-700 mb-2">Arsip Lainnya</h4>
-                                    <a href="{{ asset('storage/'.$selectedPegawai->file_ijazah) }}" target="_blank" class="inline-flex items-center px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs hover:bg-gray-200">
-                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                        Ijazah Terakhir
-                                    </a>
-                                </div>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button type="button" wire:click="closeDetail" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
-                        Tutup
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
 </div>

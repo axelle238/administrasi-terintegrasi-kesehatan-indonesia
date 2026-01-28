@@ -11,8 +11,6 @@ class Index extends Component
     use WithPagination;
 
     public $search = '';
-    public $deleteId = '';
-    public $showDeleteModal = false;
 
     public function render()
     {
@@ -30,19 +28,12 @@ class Index extends Component
         ])->layout('layouts.app', ['header' => 'Manajemen Supplier / Vendor']);
     }
 
-    public function confirmDelete($id)
+    public function delete($id)
     {
-        $this->deleteId = $id;
-        $this->showDeleteModal = true;
-    }
-
-    public function delete()
-    {
-        $supplier = Supplier::find($this->deleteId);
+        $supplier = Supplier::find($id);
         if ($supplier) {
             $supplier->delete();
-            $this->dispatch('notify', message: 'Data supplier berhasil dihapus.');
+            $this->dispatch('notify', 'success', 'Data supplier berhasil dihapus.');
         }
-        $this->showDeleteModal = false;
     }
 }

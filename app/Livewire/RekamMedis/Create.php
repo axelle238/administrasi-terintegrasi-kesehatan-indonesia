@@ -46,7 +46,6 @@ class Create extends Component
 
     // Tindakan Selection
     public $selectedTindakans = []; 
-    public $showTindakanModal = false;
     public $searchTindakan = '';
 
     // Resep Obat
@@ -168,14 +167,6 @@ class Create extends Component
         $this->uploads = array_values($this->uploads);
         $this->uploadTypes = array_values($this->uploadTypes);
         $this->uploadNotes = array_values($this->uploadNotes);
-    }
-
-    public function toggleTindakanModal()
-    {
-        $this->showTindakanModal = !$this->showTindakanModal;
-        if($this->showTindakanModal) {
-            $this->searchTindakan = '';
-        }
     }
 
     public function selectTindakan($id)

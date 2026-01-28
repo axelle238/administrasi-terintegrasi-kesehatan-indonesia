@@ -140,6 +140,7 @@ Route::middleware('auth')->group(function () {
         
         Route::get('/barang/print-labels', \App\Livewire\Barang\PrintLabelsBulk::class)->name('barang.print-labels-bulk');
         Route::get('/barang/maintenance/logs', \App\Livewire\Barang\MaintenanceLog::class)->name('barang.maintenance');
+        Route::get('/barang/{barang}/maintenance/create', \App\Livewire\Barang\Maintenance\Create::class)->name('barang.maintenance.create');
         Route::get('/barang/pengadaan', \App\Livewire\Barang\Pengadaan\Index::class)->name('barang.pengadaan.index');
         Route::get('/barang/pengadaan/create', \App\Livewire\Barang\Pengadaan\Create::class)->name('barang.pengadaan.create');
         
@@ -148,6 +149,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/barang/{barang}/edit', \App\Livewire\Barang\Edit::class)->name('barang.edit');
         Route::get('/rawat-inap', \App\Livewire\RawatInap\Index::class)->name('rawat-inap.index');
         Route::get('/rawat-inap/kamar', \App\Livewire\RawatInap\KamarIndex::class)->name('rawat-inap.kamar');
+        Route::get('/rawat-inap/create', \App\Livewire\RawatInap\Create::class)->name('rawat-inap.create');
+        Route::get('/rawat-inap/{rawatInap}/checkout', \App\Livewire\RawatInap\Checkout::class)->name('rawat-inap.checkout');
         Route::get('/laporan/penyakit', \App\Livewire\Laporan\Penyakit::class)->name('laporan.penyakit');
     });
 

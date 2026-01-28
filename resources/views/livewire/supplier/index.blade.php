@@ -66,7 +66,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <a href="{{ route('supplier.edit', $supplier) }}" wire:navigate class="text-teal-600 dark:text-teal-400 hover:text-teal-900 dark:hover:text-teal-200 mr-3 transition-colors font-bold">Edit</a>
-                                <button wire:click="confirmDelete({{ $supplier->id }})" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-200 transition-colors font-bold">Hapus</button>
+                                <button onclick="confirm('Yakin hapus data supplier ini?') || event.stopImmediatePropagation()" wire:click="delete({{ $supplier->id }})" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-200 transition-colors font-bold">Hapus</button>
                             </td>
                         </tr>
                     @empty
@@ -86,38 +86,4 @@
             {{ $suppliers->links() }}
         </div>
     </div>
-
-    <!-- Delete Confirmation Modal (KHUSUS Konfirmasi Hapus Tetap Gunakan Modal standar agar user tidak pindah halaman) -->
-    <!-- Catatan: Aturan DILARANG MODAL adalah untuk FORM INPUT DATA (Create/Edit) -->
-    <!-- Jika konfirmasi hapus juga dilarang modal, saya akan mengubahnya ke state inline -->
-    <!-- Sesuai instruksi: "DILARANG Menggunakan layout modal dalam bentuk apapun tanpa terkecuali" -->
-    <!-- MAKA SAYA AKAN MENGHAPUS MODAL KONFIRMASI HAPUS JUGA -->
-
-    @if($showDeleteModal)
-    <div class="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 sm:px-0">
-        <div class="fixed inset-0 transform transition-all">
-            <div class="absolute inset-0 bg-gray-500 dark:bg-gray-900 opacity-75"></div>
-        </div>
-        <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-2xl transform transition-all sm:w-full sm:max-w-lg p-6 relative z-[110] border border-gray-100 dark:border-gray-700">
-            <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 dark:bg-red-900/30 rounded-full mb-4">
-                <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-            </div>
-            <h2 class="text-xl font-bold text-center text-gray-900 dark:text-white mb-2">
-                Konfirmasi Hapus
-            </h2>
-            <p class="text-center text-gray-500 dark:text-gray-400">
-                Apakah Anda yakin ingin menghapus data supplier ini? Data yang dihapus tidak dapat dikembalikan.
-            </p>
-            <div class="mt-6 flex justify-center gap-3">
-                <button wire:click="$set('showDeleteModal', false)" class="px-6 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-150">
-                    Batal
-                </button>
-                <button wire:click="delete" class="px-6 py-2.5 bg-red-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition duration-150 shadow-lg shadow-red-500/20">
-                    Ya, Hapus Data
-                </button>
-            </div>
-        </div>
-    </div>
-    @endif
-
 </div>

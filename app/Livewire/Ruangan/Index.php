@@ -11,8 +11,6 @@ class Index extends Component
     use WithPagination;
 
     public $search = '';
-    public $deleteId = '';
-    public $showDeleteModal = false;
 
     public function render()
     {
@@ -30,19 +28,12 @@ class Index extends Component
         ])->layout('layouts.app', ['header' => 'Manajemen Ruangan']);
     }
 
-    public function confirmDelete($id)
+    public function delete($id)
     {
-        $this->deleteId = $id;
-        $this->showDeleteModal = true;
-    }
-
-    public function delete()
-    {
-        $ruangan = Ruangan::find($this->deleteId);
+        $ruangan = Ruangan::find($id);
         if ($ruangan) {
             $ruangan->delete();
-            $this->dispatch('notify', message: 'Data ruangan berhasil dihapus.');
+            $this->dispatch('notify', 'success', 'Data ruangan berhasil dihapus.');
         }
-        $this->showDeleteModal = false;
     }
 }
