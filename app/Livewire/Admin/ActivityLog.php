@@ -18,9 +18,6 @@ class ActivityLog extends Component
     public $date_start;
     public $date_end;
 
-    public $detailOpen = false;
-    public $selectedLog;
-
     public function mount()
     {
         if (Auth::user()->role !== 'admin') {
@@ -31,32 +28,6 @@ class ActivityLog extends Component
     public function resetFilters()
     {
         $this->reset(['search', 'causer_id', 'event', 'date_start', 'date_end']);
-    }
-
-    public function viewDetail($id)
-    {
-        $this->selectedLog = Activity::with('causer', 'subject')->find($id);
-        $this->detailOpen = true;
-    }
-
-    public function closeDetail()
-    {
-        $this->detailOpen = false;
-        $this->selectedLog = null;
-    }
-
-    public function generateNarrative($log)
-    {
-        $actor = $log->causer->name ?? 'Sistem';
-        $action = match($log->event) {
-            'created' => 'membuat data baru',
-            'updated' => 'memperbarui data',
-            'deleted' => 'menghapus data',
-            default => 'melakukan aktivitas'
-        };
-        $subject = class_basename($log->subject_type);
-        
-        return "$actor telah $action pada modul $subject.";
     }
 
     public function render()

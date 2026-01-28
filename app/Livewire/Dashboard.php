@@ -16,7 +16,8 @@ use App\Models\Maintenance;
 use App\Models\Penggajian;
 use App\Models\Setting;
 use App\Models\Pengaduan;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Poli;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class Dashboard extends Component
@@ -27,32 +28,61 @@ class Dashboard extends Component
         $bulanAmbangBatas = (int) (Setting::ambil('ews_threshold_month', 3));
         $batasPeringatan = Carbon::now()->addMonths($bulanAmbangBatas);
 
-        // Keuangan Hari Ini & Bulan Ini
+        // --- SECTION 1: KEUANGAN ---
         $pendapatanHariIni = Pembayaran::whereDate('created_at', Carbon::today())->where('status', 'Lunas')->sum('jumlah_bayar');
         $pendapatanBulanIni = Pembayaran::whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->where('status', 'Lunas')->sum('jumlah_bayar');
+        $pengeluaranGaji = Penggajian::where('bulan', Carbon::now()->translatedFormat('F'))->where('tahun', Carbon::now()->year)->sum('total_gaji');
         
-        // Pengeluaran Gaji Bulan Ini
-        $pengeluaranGaji = Penggajian::where('bulan', Carbon::now()->translatedFormat('F'))
-            ->where('tahun', Carbon::now()->year)
-            ->sum('total_gaji');
+        // --- SECTION 2: OPERASIONAL MEDIS ---
+        // Statistik Poli Hari Ini
+        $kunjunganPoli = Antrean::whereDate('tanggal_antrean', Carbon::today())
+            ->select('poli_id', DB::raw('count(*) as total'))
+            ->groupBy('poli_id')
+            ->with('poli')
+            ->get();
+
+        // Ketersediaan Kamar Rawat Inap per Kelas
+        $ketersediaanBed = Kamar::select('kelas', DB::raw('sum(kapasitas_bed) as total_kapasitas'), DB::raw('sum(bed_terisi) as total_terisi'))
+            ->groupBy('kelas')
+            ->get();
+
+        // Top 5 Penyakit Bulan Ini
+        $topPenyakit = RekamMedis::select('diagnosa', DB::raw('count(*) as total'))
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->whereNotNull('diagnosa')
+            ->groupBy('diagnosa')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get();
+
+        // Rata-rata Waktu Layanan (Simulasi/Sederhana)
+        // Di sistem real, hitung selisih waktu created_at vs waktu status 'Selesai'
+        $avgWaktuLayanan = Antrean::whereDate('tanggal_antrean', Carbon::today())
+            ->where('status', 'Selesai')
+            ->get()
+            ->avg(function($antrean) {
+                return $antrean->updated_at->diffInMinutes($antrean->created_at);
+            }) ?? 0;
 
         return view('livewire.dashboard', [
-            // Statistik Utama
+            // Statistik Utama Global
             'totalPasien' => Pasien::count(),
+            'pasienBaruBulanIni' => Pasien::whereMonth('created_at', Carbon::now()->month)->count(),
             'antreanHariIni' => Antrean::whereDate('tanggal_antrean', Carbon::today())->count(),
+            'antreanSelesai' => Antrean::whereDate('tanggal_antrean', Carbon::today())->where('status', 'Selesai')->count(),
             'pasienRawatInap' => RawatInap::where('status', 'Aktif')->count(),
             'kamarTersedia' => Kamar::where('status', 'Tersedia')->count(),
             
-            // Logistik & Aset
+            // Logistik & Aset & EWS
             'obatMenipis' => Obat::whereColumn('stok', '<=', 'min_stok')->count(),
-            'asetMaintenance' => Maintenance::whereDate('tanggal_berikutnya', '<=', Carbon::now()->addDays(7))
-                                    ->where('status', 'Terjadwal')
-                                    ->count(),
+            'asetMaintenance' => Maintenance::whereDate('tanggal_berikutnya', '<=', Carbon::now()->addDays(7))->where('status', 'Terjadwal')->count(),
+            'strExpired' => Pegawai::where('masa_berlaku_str', '<=', $batasPeringatan)->count(),
+            'sipExpired' => Pegawai::where('masa_berlaku_sip', '<=', $batasPeringatan)->count(),
+            'obatExpired' => Obat::where('tanggal_kedaluwarsa', '<=', $batasPeringatan)->count(),
 
-            // Administrasi
+            // Administrasi & Masyarakat
             'suratMasuk' => Surat::where('jenis_surat', 'Masuk')->count(),
-            
-            // Masyarakat
+            'suratKeluar' => Surat::where('jenis_surat', 'Keluar')->count(),
             'pengaduanPending' => Pengaduan::where('status', 'Pending')->count(),
             'pengaduanProses' => Pengaduan::where('status', 'Diproses')->count(),
             
@@ -61,15 +91,14 @@ class Dashboard extends Component
             'pendapatanBulanIni' => $pendapatanBulanIni,
             'pengeluaranGaji' => $pengeluaranGaji,
 
-            // Variabel Sistem Peringatan Dini (EWS) - HR & Farmasi
-            'strExpired' => Pegawai::where('masa_berlaku_str', '<=', $batasPeringatan)->count(),
-            'sipExpired' => Pegawai::where('masa_berlaku_sip', '<=', $batasPeringatan)->count(),
-            'obatExpired' => Obat::where('tanggal_kedaluwarsa', '<=', $batasPeringatan)->count(),
-
-            // Data Grafik Visual
+            // Data Visual & Detail
+            'kunjunganPoli' => $kunjunganPoli,
+            'ketersediaanBed' => $ketersediaanBed,
+            'topPenyakit' => $topPenyakit,
+            'avgWaktuLayanan' => round($avgWaktuLayanan),
             'dataGrafik' => $this->ambilDataGrafik(), 
             'dataPendapatan' => $this->ambilDataPendapatan(),
-        ])->layout('layouts.app', ['header' => 'Pusat Komando & Informasi']);
+        ])->layout('layouts.app', ['header' => 'Pusat Komando & Eksekutif Dashboard']);
     }
 
     private function ambilDataGrafik() {
