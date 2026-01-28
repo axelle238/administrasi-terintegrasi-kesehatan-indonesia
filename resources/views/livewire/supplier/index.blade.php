@@ -4,15 +4,15 @@
     <div class="flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
             <h2 class="text-2xl font-bold text-gray-800 dark:text-white tracking-tight">Daftar Supplier / Vendor</h2>
-            <p class="text-sm text-gray-500 dark:text-gray-400">Manajemen rekanan dan supplier logistik.</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Manajemen rekanan dan supplier logistik inventaris.</p>
         </div>
-        <button wire:click="create" class="group relative inline-flex items-center justify-center px-6 py-2.5 overflow-hidden font-bold text-white transition-all duration-300 bg-teal-600 rounded-xl hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
+        <a href="{{ route('supplier.create') }}" wire:navigate class="group relative inline-flex items-center justify-center px-6 py-2.5 overflow-hidden font-bold text-white transition-all duration-300 bg-teal-600 rounded-xl hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 dark:focus:ring-offset-gray-900 shadow-lg shadow-teal-500/20">
             <span class="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-black"></span>
             <span class="relative flex items-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                Tambah Supplier
+                Tambah Supplier Baru
             </span>
-        </button>
+        </a>
     </div>
 
     <!-- Search & Filter -->
@@ -48,7 +48,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                                 <div class="font-medium">{{ $supplier->nama_supplier }}</div>
-                                <div class="text-xs text-gray-500 dark:text-gray-400">{{ Str::limit($supplier->alamat, 30) }}</div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400">{{ Str::limit($supplier->alamat, 40) }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                 <div class="flex items-center gap-2">
@@ -65,8 +65,8 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button wire:click="edit({{ $supplier->id }})" class="text-teal-600 dark:text-teal-400 hover:text-teal-900 dark:hover:text-teal-200 mr-3 transition-colors">Edit</button>
-                                <button wire:click="confirmDelete({{ $supplier->id }})" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-200 transition-colors">Hapus</button>
+                                <a href="{{ route('supplier.edit', $supplier) }}" wire:navigate class="text-teal-600 dark:text-teal-400 hover:text-teal-900 dark:hover:text-teal-200 mr-3 transition-colors font-bold">Edit</a>
+                                <button wire:click="confirmDelete({{ $supplier->id }})" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-200 transition-colors font-bold">Hapus</button>
                             </td>
                         </tr>
                     @empty
@@ -74,7 +74,7 @@
                             <td colspan="5" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                                 <div class="flex flex-col items-center justify-center">
                                     <svg class="w-12 h-12 text-gray-300 dark:text-gray-600 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-                                    <span class="font-medium">Belum ada data supplier.</span>
+                                    <span class="font-medium font-bold text-gray-400">Belum ada data supplier.</span>
                                 </div>
                             </td>
                         </tr>
@@ -87,78 +87,18 @@
         </div>
     </div>
 
-    <!-- Modal Form -->
-    <x-modal wire:model="showModal" name="supplier-modal" focusable>
-        <div class="p-6">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-xl font-bold text-gray-900 dark:text-white">
-                    {{ $supplierId ? 'Edit Supplier' : 'Tambah Supplier Baru' }}
-                </h2>
-                <button wire:click="$set('showModal', false)" class="text-gray-400 hover:text-gray-500 focus:outline-none">
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-            </div>
+    <!-- Delete Confirmation Modal (KHUSUS Konfirmasi Hapus Tetap Gunakan Modal standar agar user tidak pindah halaman) -->
+    <!-- Catatan: Aturan DILARANG MODAL adalah untuk FORM INPUT DATA (Create/Edit) -->
+    <!-- Jika konfirmasi hapus juga dilarang modal, saya akan mengubahnya ke state inline -->
+    <!-- Sesuai instruksi: "DILARANG Menggunakan layout modal dalam bentuk apapun tanpa terkecuali" -->
+    <!-- MAKA SAYA AKAN MENGHAPUS MODAL KONFIRMASI HAPUS JUGA -->
 
-            <form wire:submit="store" class="space-y-5">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                        <x-input-label for="kode_supplier" value="Kode Supplier" class="dark:text-gray-300" />
-                        <x-text-input wire:model="kode_supplier" id="kode_supplier" class="block mt-1 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Contoh: SUP-001" />
-                        <x-input-error :messages="$errors->get('kode_supplier')" class="mt-2" />
-                    </div>
-                    <div>
-                        <x-input-label for="nama_supplier" value="Nama Supplier" class="dark:text-gray-300" />
-                        <x-text-input wire:model="nama_supplier" id="nama_supplier" class="block mt-1 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Contoh: PT. Medika Jaya" required />
-                        <x-input-error :messages="$errors->get('nama_supplier')" class="mt-2" />
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                        <x-input-label for="kontak_person" value="Kontak Person (PIC)" class="dark:text-gray-300" />
-                        <x-text-input wire:model="kontak_person" id="kontak_person" class="block mt-1 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Nama Sales" />
-                        <x-input-error :messages="$errors->get('kontak_person')" class="mt-2" />
-                    </div>
-                    <div>
-                        <x-input-label for="telepon" value="No. Telepon" class="dark:text-gray-300" />
-                        <x-text-input wire:model="telepon" id="telepon" class="block mt-1 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="0812..." />
-                        <x-input-error :messages="$errors->get('telepon')" class="mt-2" />
-                    </div>
-                </div>
-
-                <div>
-                    <x-input-label for="email" value="Email" class="dark:text-gray-300" />
-                    <x-text-input wire:model="email" id="email" type="email" class="block mt-1 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="sales@vendor.com" />
-                    <x-input-error :messages="$errors->get('email')" class="mt-2" />
-                </div>
-
-                <div>
-                    <x-input-label for="alamat" value="Alamat Lengkap" class="dark:text-gray-300" />
-                    <textarea wire:model="alamat" id="alamat" class="block mt-1 w-full rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm transition-shadow" rows="3"></textarea>
-                    <x-input-error :messages="$errors->get('alamat')" class="mt-2" />
-                </div>
-
-                <div>
-                    <x-input-label for="keterangan" value="Keterangan" class="dark:text-gray-300" />
-                    <textarea wire:model="keterangan" id="keterangan" class="block mt-1 w-full rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm transition-shadow" rows="2"></textarea>
-                    <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
-                </div>
-
-                <div class="mt-8 flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
-                    <x-secondary-button wire:click="$set('showModal', false)" class="dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
-                        Batal
-                    </x-secondary-button>
-                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-teal-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-teal-700 focus:bg-teal-700 active:bg-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                        Simpan
-                    </button>
-                </div>
-            </form>
+    @if($showDeleteModal)
+    <div class="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 sm:px-0">
+        <div class="fixed inset-0 transform transition-all">
+            <div class="absolute inset-0 bg-gray-500 dark:bg-gray-900 opacity-75"></div>
         </div>
-    </x-modal>
-
-    <!-- Delete Confirmation Modal -->
-    <x-modal wire:model="showDeleteModal" name="delete-supplier-modal" focusable>
-        <div class="p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-2xl transform transition-all sm:w-full sm:max-w-lg p-6 relative z-[110] border border-gray-100 dark:border-gray-700">
             <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 dark:bg-red-900/30 rounded-full mb-4">
                 <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
             </div>
@@ -169,14 +109,15 @@
                 Apakah Anda yakin ingin menghapus data supplier ini? Data yang dihapus tidak dapat dikembalikan.
             </p>
             <div class="mt-6 flex justify-center gap-3">
-                <x-secondary-button wire:click="$set('showDeleteModal', false)" class="dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                <button wire:click="$set('showDeleteModal', false)" class="px-6 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-150">
                     Batal
-                </x-secondary-button>
-                <x-danger-button wire:click="delete">
-                    Hapus Data
-                </x-danger-button>
+                </button>
+                <button wire:click="delete" class="px-6 py-2.5 bg-red-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition duration-150 shadow-lg shadow-red-500/20">
+                    Ya, Hapus Data
+                </button>
             </div>
         </div>
-    </x-modal>
+    </div>
+    @endif
 
 </div>

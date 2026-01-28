@@ -3,16 +3,16 @@
     <!-- Header & Action -->
     <div class="flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
-            <h2 class="text-2xl font-bold text-gray-800 dark:text-white tracking-tight">Daftar Ruangan</h2>
-            <p class="text-sm text-gray-500 dark:text-gray-400">Manajemen lokasi dan ruangan inventaris.</p>
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white tracking-tight">Manajemen Ruangan</h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Pengelolaan lokasi, gedung, dan unit ruangan pelayanan kesehatan.</p>
         </div>
-        <button wire:click="create" class="group relative inline-flex items-center justify-center px-6 py-2.5 overflow-hidden font-bold text-white transition-all duration-300 bg-teal-600 rounded-xl hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
+        <a href="{{ route('ruangan.create') }}" wire:navigate class="group relative inline-flex items-center justify-center px-6 py-2.5 overflow-hidden font-bold text-white transition-all duration-300 bg-indigo-600 rounded-xl hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 dark:focus:ring-offset-gray-900 shadow-lg shadow-indigo-500/20">
             <span class="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-black"></span>
             <span class="relative flex items-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                Tambah Ruangan
+                Tambah Ruangan Baru
             </span>
-        </button>
+        </a>
     </div>
 
     <!-- Search & Filter -->
@@ -23,7 +23,7 @@
                     <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
                 </svg>
             </div>
-            <input wire:model.live.debounce.300ms="search" type="text" class="pl-10 block w-full rounded-xl border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 sm:text-sm transition-shadow" placeholder="Cari nama, kode, atau PIC...">
+            <input wire:model.live.debounce.300ms="search" type="text" class="pl-10 block w-full rounded-xl border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm transition-shadow" placeholder="Cari nama ruangan, kode, atau PIC...">
         </div>
     </div>
 
@@ -36,34 +36,34 @@
                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Kode</th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nama Ruangan</th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Lokasi / Gedung</th>
-                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">PIC</th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Penanggung Jawab</th>
                         <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
                     @forelse ($ruangans as $ruangan)
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-teal-600 dark:text-teal-400">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-indigo-600 dark:text-indigo-400">
                                 {{ $ruangan->kode_ruangan ?? '-' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                <div class="font-medium">{{ $ruangan->nama_ruangan }}</div>
+                                <div class="font-bold">{{ $ruangan->nama_ruangan }}</div>
                                 <div class="text-xs text-gray-500 dark:text-gray-400">{{ Str::limit($ruangan->keterangan, 40) }}</div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300 font-medium">
                                 {{ $ruangan->lokasi_gedung ?? '-' }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                 <div class="flex items-center gap-2">
-                                    <div class="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center text-xs font-bold text-gray-600 dark:text-gray-200">
+                                     <div class="w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-xs font-bold text-indigo-600 dark:text-indigo-300">
                                         {{ substr($ruangan->penanggung_jawab ?? '?', 0, 1) }}
                                     </div>
-                                    {{ $ruangan->penanggung_jawab ?? '-' }}
+                                    <span class="font-medium">{{ $ruangan->penanggung_jawab ?? '-' }}</span>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button wire:click="edit({{ $ruangan->id }})" class="text-teal-600 dark:text-teal-400 hover:text-teal-900 dark:hover:text-teal-200 mr-3 transition-colors">Edit</button>
-                                <button wire:click="confirmDelete({{ $ruangan->id }})" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-200 transition-colors">Hapus</button>
+                                <a href="{{ route('ruangan.edit', $ruangan) }}" wire:navigate class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-200 mr-3 transition-colors font-bold">Edit</a>
+                                <button wire:click="confirmDelete({{ $ruangan->id }})" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-200 transition-colors font-bold">Hapus</button>
                             </td>
                         </tr>
                     @empty
@@ -71,7 +71,7 @@
                             <td colspan="5" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                                 <div class="flex flex-col items-center justify-center">
                                     <svg class="w-12 h-12 text-gray-300 dark:text-gray-600 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-                                    <span class="font-medium">Belum ada data ruangan.</span>
+                                    <span class="font-medium font-bold text-gray-400">Belum ada data ruangan.</span>
                                 </div>
                             </td>
                         </tr>
@@ -84,65 +84,13 @@
         </div>
     </div>
 
-    <!-- Modal Form -->
-    <x-modal wire:model="showModal" name="ruangan-modal" focusable>
-        <div class="p-6">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-xl font-bold text-gray-900 dark:text-white">
-                    {{ $ruanganId ? 'Edit Ruangan' : 'Tambah Ruangan Baru' }}
-                </h2>
-                <button wire:click="$set('showModal', false)" class="text-gray-400 hover:text-gray-500 focus:outline-none">
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-            </div>
-
-            <form wire:submit="store" class="space-y-5">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                        <x-input-label for="kode_ruangan" value="Kode Ruangan" class="dark:text-gray-300" />
-                        <x-text-input wire:model="kode_ruangan" id="kode_ruangan" class="block mt-1 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Contoh: R-001" />
-                        <x-input-error :messages="$errors->get('kode_ruangan')" class="mt-2" />
-                    </div>
-                    <div>
-                        <x-input-label for="nama_ruangan" value="Nama Ruangan" class="dark:text-gray-300" />
-                        <x-text-input wire:model="nama_ruangan" id="nama_ruangan" class="block mt-1 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Contoh: Gudang Farmasi" required />
-                        <x-input-error :messages="$errors->get('nama_ruangan')" class="mt-2" />
-                    </div>
-                </div>
-
-                <div>
-                    <x-input-label for="lokasi_gedung" value="Lokasi / Gedung" class="dark:text-gray-300" />
-                    <x-text-input wire:model="lokasi_gedung" id="lokasi_gedung" class="block mt-1 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Contoh: Lantai 1, Gedung A" />
-                    <x-input-error :messages="$errors->get('lokasi_gedung')" class="mt-2" />
-                </div>
-
-                <div>
-                    <x-input-label for="penanggung_jawab" value="Penanggung Jawab (PIC)" class="dark:text-gray-300" />
-                    <x-text-input wire:model="penanggung_jawab" id="penanggung_jawab" class="block mt-1 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Nama Personil" />
-                    <x-input-error :messages="$errors->get('penanggung_jawab')" class="mt-2" />
-                </div>
-
-                <div>
-                    <x-input-label for="keterangan" value="Keterangan" class="dark:text-gray-300" />
-                    <textarea wire:model="keterangan" id="keterangan" class="block mt-1 w-full rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm transition-shadow" rows="3" placeholder="Deskripsi fungsi ruangan..."></textarea>
-                    <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
-                </div>
-
-                <div class="mt-8 flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
-                    <x-secondary-button wire:click="$set('showModal', false)" class="dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
-                        Batal
-                    </x-secondary-button>
-                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-teal-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-teal-700 focus:bg-teal-700 active:bg-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                        Simpan
-                    </button>
-                </div>
-            </form>
+    <!-- Delete Confirmation -->
+    @if($showDeleteModal)
+    <div class="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 sm:px-0">
+        <div class="fixed inset-0 transform transition-all">
+            <div class="absolute inset-0 bg-gray-500 dark:bg-gray-900 opacity-75"></div>
         </div>
-    </x-modal>
-
-    <!-- Delete Confirmation Modal -->
-    <x-modal wire:model="showDeleteModal" name="delete-ruangan-modal" focusable>
-        <div class="p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-2xl transform transition-all sm:w-full sm:max-w-lg p-6 relative z-[110] border border-gray-100 dark:border-gray-700">
             <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 dark:bg-red-900/30 rounded-full mb-4">
                 <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
             </div>
@@ -153,14 +101,15 @@
                 Apakah Anda yakin ingin menghapus data ruangan ini? Data yang dihapus tidak dapat dikembalikan.
             </p>
             <div class="mt-6 flex justify-center gap-3">
-                <x-secondary-button wire:click="$set('showDeleteModal', false)" class="dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                <button wire:click="$set('showDeleteModal', false)" class="px-6 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-150">
                     Batal
-                </x-secondary-button>
-                <x-danger-button wire:click="delete">
-                    Hapus Data
-                </x-danger-button>
+                </button>
+                <button wire:click="delete" class="px-6 py-2.5 bg-red-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition duration-150 shadow-lg shadow-red-500/20">
+                    Ya, Hapus Data
+                </button>
             </div>
         </div>
-    </x-modal>
+    </div>
+    @endif
 
 </div>

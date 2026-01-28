@@ -95,7 +95,11 @@ Route::middleware('auth')->group(function () {
         
         // Master Data Inventaris
         Route::get('/ruangan', \App\Livewire\Ruangan\Index::class)->name('ruangan.index');
+        Route::get('/ruangan/create', \App\Livewire\Ruangan\Create::class)->name('ruangan.create');
+        Route::get('/ruangan/{ruangan}/edit', \App\Livewire\Ruangan\Edit::class)->name('ruangan.edit');
         Route::get('/supplier', \App\Livewire\Supplier\Index::class)->name('supplier.index');
+        Route::get('/supplier/create', \App\Livewire\Supplier\Create::class)->name('supplier.create');
+        Route::get('/supplier/{supplier}/edit', \App\Livewire\Supplier\Edit::class)->name('supplier.edit');
         
         Route::get('/barang/ruangan', \App\Livewire\Barang\Ruangan::class)->name('barang.ruangan');
         Route::get('/pasien', \App\Livewire\Pasien\Index::class)->name('pasien.index');
