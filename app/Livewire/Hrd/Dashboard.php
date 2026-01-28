@@ -33,10 +33,11 @@ class Dashboard extends Component
             ->whereDate('tanggal', Carbon::today())
             ->get();
 
-        // 4. Kinerja Bulan Ini (Top 5) - Mock logic jika belum ada data real
+        // 4. Kinerja Bulan Ini (Top 5)
         $topKinerja = KinerjaPegawai::with('pegawai.user')
             ->whereMonth('created_at', Carbon::now()->month)
-            ->orderByDesc('skor_total')
+            ->select('*', DB::raw('(orientasi_pelayanan + integritas + komitmen + disiplin + kerjasama) as total_skor'))
+            ->orderByDesc('total_skor')
             ->limit(5)
             ->get();
 

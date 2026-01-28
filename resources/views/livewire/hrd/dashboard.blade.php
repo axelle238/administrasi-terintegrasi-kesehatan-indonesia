@@ -101,4 +101,35 @@
             </div>
         </div>
     </div>
+
+    <!-- Row 3: Top Kinerja -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
+        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Top Kinerja Pegawai Bulan Ini</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead class="text-xs text-slate-400 uppercase bg-slate-50 dark:bg-gray-700">
+                    <tr>
+                        <th class="px-4 py-3 rounded-l-lg">Peringkat</th>
+                        <th class="px-4 py-3">Nama Pegawai</th>
+                        <th class="px-4 py-3 text-right rounded-r-lg">Total Skor</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-gray-700">
+                    @forelse($topKinerja as $index => $kinerja)
+                        <tr>
+                            <td class="px-4 py-3 font-black text-slate-500">#{{ $index + 1 }}</td>
+                            <td class="px-4 py-3 font-bold text-slate-700 dark:text-gray-300">
+                                {{ $kinerja->pegawai->user->name }}
+                            </td>
+                            <td class="px-4 py-3 text-right font-black text-indigo-600">
+                                {{ $kinerja->total_skor }}
+                            </td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="3" class="text-center py-4 text-slate-400">Belum ada data kinerja bulan ini.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
