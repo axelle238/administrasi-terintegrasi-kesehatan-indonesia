@@ -28,15 +28,15 @@ class SupplierTest extends TestCase
 
         $this->actingAs($user);
 
-        Livewire::test(\App\Livewire\Supplier\Index::class)
+        Livewire::test(\App\Livewire\Supplier\Create::class)
             ->set('nama_supplier', 'PT. Obat Sehat')
             ->set('kode_supplier', 'SUP-001')
             ->set('kontak_person', 'Budi')
             ->set('telepon', '08123456789')
             ->set('email', 'budi@obat.com')
             ->set('alamat', 'Jl. Sehat No. 1')
-            ->call('store')
-            ->assertDispatched('notify');
+            ->call('save')
+            ->assertRedirect(route('supplier.index'));
 
         $this->assertDatabaseHas('suppliers', [
             'nama_supplier' => 'PT. Obat Sehat',
@@ -51,9 +51,9 @@ class SupplierTest extends TestCase
 
         $this->actingAs($user);
 
-        Livewire::test(\App\Livewire\Supplier\Index::class)
+        Livewire::test(\App\Livewire\Supplier\Create::class)
             ->set('nama_supplier', '') // Empty
-            ->call('store')
+            ->call('save')
             ->assertHasErrors(['nama_supplier' => 'required']);
     }
 
@@ -67,11 +67,11 @@ class SupplierTest extends TestCase
 
         $this->actingAs($user);
 
-        Livewire::test(\App\Livewire\Supplier\Index::class)
-            ->call('edit', $supplier)
+        Livewire::test(\App\Livewire\Supplier\Edit::class, ['supplier' => $supplier])
             ->assertSet('nama_supplier', 'Old Name')
             ->set('nama_supplier', 'New Name')
-            ->call('store');
+            ->call('save')
+            ->assertRedirect(route('supplier.index'));
 
         $this->assertDatabaseHas('suppliers', [
             'id' => $supplier->id,

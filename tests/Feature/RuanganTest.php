@@ -28,13 +28,13 @@ class RuanganTest extends TestCase
 
         $this->actingAs($user);
 
-        Livewire::test(\App\Livewire\Ruangan\Index::class)
+        Livewire::test(\App\Livewire\Ruangan\Create::class)
             ->set('nama_ruangan', 'Ruang Mawar')
             ->set('kode_ruangan', 'R-001')
             ->set('lokasi_gedung', 'Gedung A')
             ->set('penanggung_jawab', 'Dr. Budi')
-            ->call('store')
-            ->assertDispatched('notify');
+            ->call('save')
+            ->assertRedirect(route('ruangan.index'));
 
         $this->assertDatabaseHas('ruangans', [
             'nama_ruangan' => 'Ruang Mawar',
@@ -48,9 +48,9 @@ class RuanganTest extends TestCase
 
         $this->actingAs($user);
 
-        Livewire::test(\App\Livewire\Ruangan\Index::class)
+        Livewire::test(\App\Livewire\Ruangan\Create::class)
             ->set('nama_ruangan', '') // Empty
-            ->call('store')
+            ->call('save')
             ->assertHasErrors(['nama_ruangan' => 'required']);
     }
 
@@ -64,11 +64,11 @@ class RuanganTest extends TestCase
 
         $this->actingAs($user);
 
-        Livewire::test(\App\Livewire\Ruangan\Index::class)
-            ->call('edit', $ruangan)
+        Livewire::test(\App\Livewire\Ruangan\Edit::class, ['ruangan' => $ruangan])
             ->assertSet('nama_ruangan', 'Old Room')
             ->set('nama_ruangan', 'New Room')
-            ->call('store');
+            ->call('save')
+            ->assertRedirect(route('ruangan.index'));
 
         $this->assertDatabaseHas('ruangans', [
             'id' => $ruangan->id,
