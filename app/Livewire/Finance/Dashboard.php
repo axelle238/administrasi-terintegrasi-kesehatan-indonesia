@@ -20,13 +20,25 @@ class Dashboard extends Component
         // 2. Ringkasan Pengeluaran (Gaji Only for now)
         $pengeluaranGajiBulan = Penggajian::where('bulan', Carbon::now()->translatedFormat('F'))->where('tahun', Carbon::now()->year)->sum('total_gaji');
 
-        // 3. Grafik Pendapatan 12 Bulan Terakhir
+        // 3. Proyeksi & Rata-rata
+        $hariBerjalan = Carbon::now()->day;
+        $rataRataHarian = $hariBerjalan > 0 ? $pendapatanBulanIni / $hariBerjalan : 0;
+        $proyeksiAkhirBulan = $rataRataHarian * Carbon::now()->daysInMonth;
+
+        // 4. Grafik Pendapatan 12 Bulan Terakhir
         $grafikPendapatan = $this->getGrafikPendapatan();
 
-        // 4. Metode Pembayaran Terpopuler
+        // 5. Metode Pembayaran Terpopuler
         $metodeBayar = Pembayaran::select('metode_pembayaran', DB::raw('count(*) as total'))
             ->whereMonth('created_at', Carbon::now()->month)
             ->groupBy('metode_pembayaran')
+            ->get();
+
+        // 6. Transaksi Terakhir (Live Feed)
+        $transaksiTerakhir = Pembayaran::with(['pasien', 'kasir'])
+            ->where('status', 'Lunas')
+            ->latest()
+            ->take(5)
             ->get();
 
         return view('livewire.finance.dashboard', compact(
@@ -34,8 +46,11 @@ class Dashboard extends Component
             'pendapatanBulanIni',
             'pendapatanTahunIni',
             'pengeluaranGajiBulan',
+            'rataRataHarian',
+            'proyeksiAkhirBulan',
             'grafikPendapatan',
-            'metodeBayar'
+            'metodeBayar',
+            'transaksiTerakhir'
         ))->layout('layouts.app', ['header' => 'Dashboard Keuangan']);
     }
 

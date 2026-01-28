@@ -12,13 +12,13 @@
         <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-gray-700">
             <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Pendapatan Bulan Ini</p>
             <h3 class="text-2xl font-black text-slate-800 dark:text-white mt-2">Rp {{ number_format($pendapatanBulanIni, 0, ',', '.') }}</h3>
-            <p class="text-xs text-emerald-500 font-bold mt-2">+ vs bulan lalu (est)</p>
+            <p class="text-xs text-emerald-500 font-bold mt-2">Proyeksi: Rp {{ number_format($proyeksiAkhirBulan, 0, ',', '.') }}</p>
         </div>
 
         <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-gray-700">
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Estimasi Pengeluaran Gaji</p>
-            <h3 class="text-2xl font-black text-slate-800 dark:text-white mt-2">Rp {{ number_format($pengeluaranGajiBulan, 0, ',', '.') }}</h3>
-            <p class="text-xs text-slate-400 mt-2">Bulan Ini</p>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Rata-rata Harian</p>
+            <h3 class="text-2xl font-black text-slate-800 dark:text-white mt-2">Rp {{ number_format($rataRataHarian, 0, ',', '.') }}</h3>
+            <p class="text-xs text-slate-400 mt-2">Per Hari (Bulan Ini)</p>
         </div>
 
         <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-gray-700">
@@ -54,10 +54,49 @@
                         <span class="px-3 py-1 bg-slate-100 dark:bg-slate-700 rounded-full text-xs font-black">{{ $m->total }} Trx</span>
                     </div>
                     <div class="w-full bg-slate-100 rounded-full h-2">
-                        <div class="bg-blue-500 h-2 rounded-full" style="width: {{ ($m->total / $metodeBayar->sum('total')) * 100 }}%"></div>
+                        <div class="bg-blue-500 h-2 rounded-full" style="width: {{ ($m->total / max($metodeBayar->sum('total'), 1)) * 100 }}%"></div>
                     </div>
                 @endforeach
             </div>
+        </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
+        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Transaksi Terakhir</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead class="text-xs text-slate-400 uppercase bg-slate-50 dark:bg-gray-700/50">
+                    <tr>
+                        <th class="px-4 py-3 rounded-l-lg">No Transaksi</th>
+                        <th class="px-4 py-3">Pasien</th>
+                        <th class="px-4 py-3">Kasir</th>
+                        <th class="px-4 py-3 text-right rounded-r-lg">Total</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-gray-700">
+                    @forelse($transaksiTerakhir as $trx)
+                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                            <td class="px-4 py-3 font-mono text-slate-600 dark:text-gray-400 text-xs">
+                                {{ $trx->no_transaksi }}
+                            </td>
+                            <td class="px-4 py-3 font-bold text-slate-800 dark:text-white">
+                                {{ $trx->pasien->nama_lengkap ?? 'Umum' }}
+                            </td>
+                            <td class="px-4 py-3 text-slate-500 text-xs">
+                                {{ $trx->kasir->name ?? 'System' }}
+                            </td>
+                            <td class="px-4 py-3 text-right font-black text-emerald-600">
+                                Rp {{ number_format($trx->total_tagihan, 0, ',', '.') }}
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center py-6 text-slate-400">Belum ada transaksi.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
