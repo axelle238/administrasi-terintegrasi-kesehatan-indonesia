@@ -46,7 +46,7 @@
             }
         </style>
     </head>
-    <body class="font-sans antialiased overflow-hidden bg-slate-50 text-slate-800">
+    <body class="font-sans antialiased overflow-hidden bg-tech-pattern text-slate-800">
         
         <div class="flex h-screen w-full relative" x-data="{ sidebarOpen: false }">
             

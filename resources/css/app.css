@@ -35,12 +35,22 @@
     --color-slate-300: #cbd5e1;
     --color-slate-800: #1e293b;
     --color-slate-900: #0f172a;
+
+    /* Custom Backgrounds */
+    --color-medical-bg: #f0f5fa; /* Very Light Cool Grey-Blue */
 }
 
 /* Base Styles */
 body {
-    background-color: var(--color-slate-50);
+    background-color: var(--color-medical-bg);
     color: var(--color-slate-800);
+}
+
+/* Tech Pattern Background Utility */
+.bg-tech-pattern {
+    background-color: var(--color-medical-bg);
+    background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+    background-size: 24px 24px;
 }
 
 /* Custom Scrollbar - Sleek & Minimal */
@@ -69,11 +79,11 @@ body {
 @layer components {
     /* Modern Health Card */
     .card-health {
-        @apply bg-white rounded-3xl border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary-100;
+        @apply bg-white rounded-3xl border border-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] transition-all duration-300 hover:shadow-[0_8px_30px_-4px_rgba(59,130,246,0.1)] hover:-translate-y-1;
     }
 
     .card-health-header {
-        @apply px-6 py-5 border-b border-slate-50 flex items-center justify-between;
+        @apply px-6 py-5 border-b border-slate-50 flex items-center justify-between bg-gradient-to-r from-white to-slate-50/50 rounded-t-3xl;
     }
 
     .card-health-body {
@@ -95,12 +105,12 @@ body {
 
     /* Form Inputs */
     .input-health {
-        @apply w-full rounded-xl border-slate-200 bg-slate-50/50 text-slate-800 placeholder-slate-400 focus:border-primary-500 focus:ring-primary-500 focus:bg-white transition-all duration-200 shadow-sm;
+        @apply w-full rounded-xl border-slate-200 bg-white text-slate-800 placeholder-slate-400 focus:border-primary-500 focus:ring-primary-500 focus:bg-white transition-all duration-200 shadow-sm;
     }
 
     /* Badges */
     .badge-pill {
-        @apply inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider;
+        @apply inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm;
     }
     
     .badge-primary { @apply bg-primary-50 text-primary-700 border border-primary-100; }
@@ -110,6 +120,6 @@ body {
 
     /* Glassmorphism */
     .glass-effect {
-        @apply bg-white/80 backdrop-blur-md border-b border-white/50;
+        @apply bg-white/80 backdrop-blur-md border-b border-white/50 shadow-sm;
     }
 }
