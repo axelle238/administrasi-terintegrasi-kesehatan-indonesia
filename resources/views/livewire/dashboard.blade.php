@@ -1,6 +1,6 @@
 <div class="space-y-8">
     
-    <!-- Section 1: Ringkasan Eksekutif (Key Performance Indicators) -->
+    <!-- Section 1: Ringkasan Eksekutif (Indikator Kinerja Utama) -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Pasien & Kunjungan -->
         <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-gray-700 relative overflow-hidden group hover:-translate-y-1 transition-all duration-300">
@@ -37,7 +37,7 @@
                 </div>
                 <div class="flex justify-between items-center text-xs">
                     <span class="text-slate-500">Selesai: <span class="font-bold text-slate-800 dark:text-white">{{ $antreanSelesai }}</span></span>
-                    <span class="text-purple-600 font-bold bg-purple-50 px-2 py-1 rounded">Avg: {{ $avgWaktuLayanan }} Menit</span>
+                    <span class="text-purple-600 font-bold bg-purple-50 px-2 py-1 rounded">Rata-rata: {{ $avgWaktuLayanan }} Menit</span>
                 </div>
             </div>
         </div>
@@ -116,7 +116,7 @@
                                 {{ substr($poliStat->poli->nama_poli ?? '?', 0, 1) }}
                             </div>
                             <div>
-                                <p class="text-sm font-bold text-slate-800 dark:text-white">{{ $poliStat->poli->nama_poli ?? 'Unknown' }}</p>
+                                <p class="text-sm font-bold text-slate-800 dark:text-white">{{ $poliStat->poli->nama_poli ?? 'Tidak Diketahui' }}</p>
                                 <p class="text-xs text-slate-400">Poliklinik</p>
                             </div>
                         </div>
@@ -129,7 +129,7 @@
         </div>
     </div>
 
-    <!-- Section 3: Early Warning System & Alerts -->
+    <!-- Section 3: Peringatan Dini (EWS) & Notifikasi -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- EWS SDM & Farmasi -->
         <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border-l-4 border-red-500">
@@ -140,13 +140,13 @@
             <div class="space-y-3">
                 @if($strExpired > 0)
                     <div class="flex justify-between items-center bg-red-50 p-3 rounded-lg text-red-700 text-sm font-medium">
-                        <span>STR Dokter Kadaluwarsa</span>
+                        <span>STR Dokter Kedaluwarsa</span>
                         <span class="font-bold bg-red-200 px-2 py-0.5 rounded">{{ $strExpired }}</span>
                     </div>
                 @endif
                 @if($sipExpired > 0)
                     <div class="flex justify-between items-center bg-orange-50 p-3 rounded-lg text-orange-700 text-sm font-medium">
-                        <span>SIP Dokter Kadaluwarsa</span>
+                        <span>SIP Dokter Kedaluwarsa</span>
                         <span class="font-bold bg-orange-200 px-2 py-0.5 rounded">{{ $sipExpired }}</span>
                     </div>
                 @endif
@@ -173,7 +173,7 @@
 
         <!-- Top 5 Penyakit (Tabel Mini) -->
         <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-gray-700">
-            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Top 5 Diagnosa Bulan Ini</h3>
+            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">5 Diagnosa Terbanyak Bulan Ini</h3>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left">
                     <thead class="text-xs text-slate-400 uppercase bg-slate-50 dark:bg-gray-700/50">
@@ -226,8 +226,8 @@
 
         <div class="bg-rose-600 rounded-2xl p-6 shadow-lg text-white relative overflow-hidden group">
             <div class="relative z-10">
-                <p class="text-xs font-bold text-rose-200 uppercase tracking-widest mb-1">Maintenance Aset</p>
-                <h3 class="text-3xl font-black">{{ $asetMaintenance }} <span class="text-sm font-medium text-rose-200">Item</span></h3>
+                <p class="text-xs font-bold text-rose-200 uppercase tracking-widest mb-1">Perawatan Aset</p>
+                <h3 class="text-3xl font-black">{{ $asetMaintenance }} <span class="text-sm font-medium text-rose-200">Unit</span></h3>
                 <a href="{{ route('barang.maintenance') }}" wire:navigate class="mt-4 inline-block text-xs font-bold bg-rose-500 hover:bg-rose-400 px-3 py-1.5 rounded-lg transition-colors">Jadwal &rarr;</a>
             </div>
             <svg class="absolute bottom-0 right-0 w-24 h-24 text-rose-500 opacity-20 -mr-6 -mb-6 transform group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" /></svg>
@@ -238,7 +238,7 @@
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Penggajian</p>
                 <h3 class="text-lg font-black truncate">Rp {{ number_format($pengeluaranGaji, 0, ',', '.') }}</h3>
                 <p class="text-[10px] text-slate-400 mb-3">Total Bulan Ini</p>
-                <a href="{{ route('kepegawaian.gaji.index') }}" wire:navigate class="inline-block text-xs font-bold bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg transition-colors">Detail Payroll &rarr;</a>
+                <a href="{{ route('kepegawaian.gaji.index') }}" wire:navigate class="inline-block text-xs font-bold bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg transition-colors">Detail Penggajian &rarr;</a>
             </div>
             <svg class="absolute bottom-0 right-0 w-24 h-24 text-slate-700 opacity-20 -mr-6 -mb-6 transform group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" /></svg>
         </div>

@@ -18,7 +18,7 @@
     </x-nav-link-sidebar>
 
     <x-nav-link-sidebar :href="route('antrean.index')" :active="request()->routeIs('antrean.*')" icon="ticket" color="cyan">
-        Antrean & Triage
+        Antrean & Triase
     </x-nav-link-sidebar>
 
     <x-nav-link-sidebar :href="route('pasien.index')" :active="request()->routeIs('pasien.*')" icon="users" color="cyan">
