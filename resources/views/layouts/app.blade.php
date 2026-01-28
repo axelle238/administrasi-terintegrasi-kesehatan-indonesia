@@ -27,8 +27,7 @@
 
             body { 
                 font-family: 'Plus Jakarta Sans', sans-serif; 
-                background-color: #f3f4f6; /* Slate 100 */
-                color: #1e293b; /* Slate 800 */
+                /* Background is handled by Tailwind class */
             }
 
             h1, h2, h3, h4, h5, h6 {
@@ -37,23 +36,6 @@
             
             [x-cloak] { display: none !important; }
             
-            /* Soft Scrollbar */
-            ::-webkit-scrollbar {
-                width: 8px;
-                height: 8px;
-            }
-            ::-webkit-scrollbar-track {
-                background: transparent;
-            }
-            ::-webkit-scrollbar-thumb {
-                background-color: #cbd5e1;
-                border-radius: 20px;
-                border: 2px solid #f3f4f6;
-            }
-            ::-webkit-scrollbar-thumb:hover {
-                background-color: #94a3b8;
-            }
-
             /* Glassmorphism Panel - Light Version */
             .glass-panel {
                 background: rgba(255, 255, 255, 0.85);
@@ -62,16 +44,9 @@
                 border: 1px solid rgba(255, 255, 255, 0.6);
                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
             }
-
-            /* Gradient Text */
-            .text-gradient-primary {
-                background: var(--primary-gradient);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-            }
         </style>
     </head>
-    <body class="font-sans antialiased overflow-hidden">
+    <body class="font-sans antialiased overflow-hidden bg-slate-50 text-slate-800">
         
         <div class="flex h-screen w-full relative" x-data="{ sidebarOpen: false }">
             
@@ -79,15 +54,15 @@
             @include('layouts.sidebar')
 
             <!-- Main Content Area -->
-            <div class="flex flex-col flex-1 min-w-0 overflow-hidden relative bg-[#f8fafc]">
+            <div class="flex flex-col flex-1 min-w-0 overflow-hidden relative bg-slate-50/50">
                 
                 <!-- Topbar -->
                 @include('layouts.topbar')
 
                 <!-- Scrollable Body -->
-                <main class="flex-1 overflow-y-auto focus:outline-none relative z-10 p-4 md:p-6 lg:p-8">
+                <main class="flex-1 overflow-y-auto focus:outline-none relative z-10 p-4 md:p-8 custom-scrollbar">
                     <!-- Background Decoration -->
-                    <div class="fixed top-0 left-0 w-full h-96 bg-gradient-to-b from-blue-50/50 to-transparent pointer-events-none -z-10"></div>
+                    <div class="fixed top-0 left-0 w-full h-96 bg-gradient-to-b from-blue-50/40 to-transparent pointer-events-none -z-10"></div>
                     
                     @if (isset($header))
                         <div class="md:hidden mb-6">
@@ -98,14 +73,14 @@
                     {{ $slot }}
 
                     <!-- Footer -->
-                    <footer class="mt-12 border-t border-slate-200 pt-6 pb-8">
-                        <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+                    <footer class="mt-12 border-t border-dashed border-slate-200 pt-6 pb-8">
+                        <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400 font-medium">
                             <div>
-                                <span class="font-bold text-slate-700">SATRIA Sistem Perusahaan</span> &copy; {{ date('Y') }}. 
-                                <span class="hidden md:inline">Terintegritas. Cepat. Aman.</span>
+                                <span class="font-bold text-slate-600">SATRIA Health System</span> &copy; {{ date('Y') }}. 
+                                <span class="hidden md:inline">Excellence in Healthcare.</span>
                             </div>
                             <div class="flex items-center gap-4">
-                                <span class="px-2 py-1 rounded bg-white border border-slate-200 shadow-sm">v2.5.0-Stabil</span>
+                                <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-100 shadow-sm text-slate-500">v2.5.0-Stable</span>
                             </div>
                         </div>
                     </footer>

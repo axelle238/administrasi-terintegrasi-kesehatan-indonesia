@@ -2,26 +2,51 @@
 @plugin "@tailwindcss/forms";
 
 @theme {
-    --font-sans: "Inter", "Figtree", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-sans: "Plus Jakarta Sans", "Inter", "Figtree", ui-sans-serif, system-ui, sans-serif;
     
-    /* Puskesmas Brand Colors */
-    --color-primary-50: #f0fdfa;
-    --color-primary-100: #ccfbf1;
-    --color-primary-200: #99f6e4;
-    --color-primary-300: #5eead4;
-    --color-primary-400: #2dd4bf;
-    --color-primary-500: #14b8a6;
-    --color-primary-600: #0d9488;
-    --color-primary-700: #0f766e;
-    --color-primary-800: #115e59;
-    --color-primary-900: #134e4a;
-    --color-primary-950: #042f2e;
+    /* SATRIA Health Modern Palette */
+    /* Primary: Medical Blue/Teal Mix - Trustworthy & Calm */
+    --color-primary-50: #eff6ff;  /* Softest Blue */
+    --color-primary-100: #dbeafe;
+    --color-primary-200: #bfdbfe;
+    --color-primary-300: #93c5fd;
+    --color-primary-400: #60a5fa;
+    --color-primary-500: #3b82f6; /* Base Brand Color */
+    --color-primary-600: #2563eb;
+    --color-primary-700: #1d4ed8;
+    --color-primary-800: #1e40af;
+    --color-primary-900: #1e3a8a;
+    --color-primary-950: #172554;
+
+    /* Secondary: Mint/Sage - Healing & Freshness */
+    --color-health-50: #f0fdfa;
+    --color-health-100: #ccfbf1;
+    --color-health-200: #99f6e4;
+    --color-health-300: #5eead4;
+    --color-health-400: #2dd4bf;
+    --color-health-500: #14b8a6;
+    --color-health-600: #0d9488;
+    --color-health-700: #0f766e;
+    
+    /* Neutrals: Clean Clinical Slate */
+    --color-slate-50: #f8fafc;
+    --color-slate-100: #f1f5f9;
+    --color-slate-200: #e2e8f0;
+    --color-slate-300: #cbd5e1;
+    --color-slate-800: #1e293b;
+    --color-slate-900: #0f172a;
 }
 
-/* Custom Scrollbar */
+/* Base Styles */
+body {
+    background-color: var(--color-slate-50);
+    color: var(--color-slate-800);
+}
+
+/* Custom Scrollbar - Sleek & Minimal */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -29,70 +54,62 @@
 }
 
 ::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 dark:bg-gray-600 rounded-full;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400 dark:bg-gray-500;
+    @apply bg-slate-300 rounded-full hover:bg-slate-400 transition-colors;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
     width: 4px;
 }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-}
-
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-gray-200 rounded-full;
+    @apply bg-slate-200 hover:bg-slate-300;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-300;
-}
-
-/* Custom Components */
+/* Custom Components & Utilities */
 @layer components {
+    /* Modern Health Card */
+    .card-health {
+        @apply bg-white rounded-3xl border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary-100;
+    }
+
+    .card-health-header {
+        @apply px-6 py-5 border-b border-slate-50 flex items-center justify-between;
+    }
+
+    .card-health-body {
+        @apply p-6;
+    }
+
+    /* Buttons */
     .btn-primary {
-        @apply inline-flex items-center px-4 py-2 bg-primary-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-primary-700 focus:bg-primary-700 active:bg-primary-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition ease-in-out duration-150 shadow-sm;
+        @apply inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 border border-transparent rounded-xl font-bold text-xs text-white uppercase tracking-wide shadow-lg shadow-primary-500/30 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-200 transform hover:-translate-y-0.5;
     }
 
     .btn-secondary {
-        @apply inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150;
+        @apply inline-flex items-center justify-center px-5 py-2.5 bg-white border border-slate-200 rounded-xl font-bold text-xs text-slate-700 uppercase tracking-wide shadow-sm hover:bg-slate-50 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition-all duration-200;
     }
 
-    .btn-danger {
-        @apply inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150 shadow-sm;
+    .btn-icon {
+        @apply p-2 rounded-xl text-slate-400 hover:text-primary-600 hover:bg-primary-50 transition-all duration-200;
     }
 
-    .card {
-        @apply bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-xl border border-gray-100 dark:border-gray-700;
+    /* Form Inputs */
+    .input-health {
+        @apply w-full rounded-xl border-slate-200 bg-slate-50/50 text-slate-800 placeholder-slate-400 focus:border-primary-500 focus:ring-primary-500 focus:bg-white transition-all duration-200 shadow-sm;
     }
 
-    .table-head {
-        @apply bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 uppercase tracking-wider text-xs font-semibold;
+    /* Badges */
+    .badge-pill {
+        @apply inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider;
     }
     
-    .badge {
-        @apply px-2.5 py-0.5 rounded-full text-xs font-bold inline-flex items-center;
-    }
-    
-    .badge-success { @apply bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400; }
-    .badge-warning { @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400; }
-    .badge-danger { @apply bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400; }
-    .badge-info { @apply bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400; }
-    
-    .input-field {
-        @apply border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primary-500 focus:ring-primary-500 rounded-lg shadow-sm w-full transition duration-150 ease-in-out;
-    }
+    .badge-primary { @apply bg-primary-50 text-primary-700 border border-primary-100; }
+    .badge-health { @apply bg-health-50 text-health-700 border border-health-100; }
+    .badge-warning { @apply bg-orange-50 text-orange-700 border border-orange-100; }
+    .badge-danger { @apply bg-red-50 text-red-700 border border-red-100; }
 
-    /* Glassmorphism Utilities */
-    .glass {
-        @apply bg-white/70 dark:bg-gray-900/70 backdrop-blur-lg border border-white/20 dark:border-gray-700/30 shadow-xl;
-    }
-    
-    .glass-panel {
-        @apply bg-white/40 dark:bg-gray-800/40 backdrop-blur-md border border-white/30 dark:border-gray-600/30;
+    /* Glassmorphism */
+    .glass-effect {
+        @apply bg-white/80 backdrop-blur-md border-b border-white/50;
     }
 }
