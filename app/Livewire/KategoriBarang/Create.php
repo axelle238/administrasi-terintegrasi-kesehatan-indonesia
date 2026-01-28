@@ -8,11 +8,11 @@ use Livewire\Component;
 class Create extends Component
 {
     public $nama_kategori;
-    public $deskripsi;
+    public $keterangan;
 
     protected $rules = [
-        'nama_kategori' => 'required|string|max:255|unique:kategori_barangs,nama_kategori',
-        'deskripsi' => 'nullable|string',
+        'nama_kategori' => 'required|string|max:255',
+        'keterangan' => 'nullable|string',
     ];
 
     public function save()
@@ -21,10 +21,10 @@ class Create extends Component
 
         KategoriBarang::create([
             'nama_kategori' => $this->nama_kategori,
-            'deskripsi' => $this->deskripsi,
+            'keterangan' => $this->keterangan,
         ]);
 
-        $this->dispatch('notify', 'success', 'Kategori barang berhasil ditambahkan.');
+        $this->dispatch('notify', 'success', 'Kategori Barang berhasil ditambahkan.');
         return $this->redirect(route('kategori-barang.index'), navigate: true);
     }
 
