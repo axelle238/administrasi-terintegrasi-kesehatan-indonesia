@@ -50,7 +50,46 @@
         </div>
     </div>
 
-    <!-- Row 2: Jadwal & Komposisi -->
+    <!-- Row 2: Grafik & Cuti List -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Grafik Kinerja -->
+        <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Tren Rata-rata Kinerja Pegawai</h3>
+            <div class="h-64 flex items-end justify-between gap-4 px-4">
+                @foreach($trenKinerja['data'] as $index => $val)
+                    <div class="flex flex-col items-center flex-1 group" title="Skor: {{ $val }}">
+                        <div class="w-full bg-indigo-500 dark:bg-indigo-600 rounded-t-sm relative transition-all duration-300 hover:bg-indigo-400" 
+                             style="height: {{ $val > 0 ? ($val / 100) * 100 : 0 }}%"> <!-- Asumsi max skor 100 -->
+                             <span class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-bold text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity">{{ $val }}</span>
+                        </div>
+                        <span class="text-[10px] text-slate-400 mt-2 font-bold">{{ $trenKinerja['labels'][$index] }}</span>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        <!-- List Cuti -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Sedang Cuti Hari Ini</h3>
+            <div class="space-y-4">
+                @forelse($listCutiHariIni as $cuti)
+                    <div class="flex items-center gap-3 p-3 rounded-xl bg-pink-50 dark:bg-pink-900/20">
+                        <div class="w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-pink-700 font-bold text-xs">
+                            {{ substr($cuti->user->name, 0, 1) }}
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-slate-700 dark:text-gray-300">{{ $cuti->user->name }}</p>
+                            <p class="text-xs text-slate-500">{{ $cuti->jenis_cuti }} ({{ \Carbon\Carbon::parse($cuti->tanggal_selesai)->diffInDays(now()) }} hari lagi)</p>
+                        </div>
+                    </div>
+                @empty
+                    <p class="text-center text-slate-400 text-sm py-4">Tidak ada pegawai cuti hari ini.</p>
+                @endforelse
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 3: Jadwal & Komposisi -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Jadwal Jaga -->
         <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
@@ -102,7 +141,7 @@
         </div>
     </div>
 
-    <!-- Row 3: Top Kinerja -->
+    <!-- Row 4: Top Kinerja -->
     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
         <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Top Kinerja Pegawai Bulan Ini</h3>
         <div class="overflow-x-auto">
