@@ -57,6 +57,7 @@ Route::middleware('auth')->group(function () {
 
     // ADMIN
     Route::middleware('can:admin')->group(function () {
+        Route::get('/security/dashboard', \App\Livewire\Security\Dashboard::class)->name('security.dashboard');
         Route::get('/activity-log', \App\Livewire\Admin\ActivityLog::class)->name('activity-log');
         Route::get('/activity-log/{id}', \App\Livewire\Admin\ActivityLogShow::class)->name('activity-log.show');
         Route::get('/system/info', \App\Livewire\System\Information::class)->name('system.info'); // Added route

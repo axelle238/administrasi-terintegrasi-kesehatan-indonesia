@@ -185,7 +185,11 @@
         <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Sistem</p>
     </div>
 
-    <x-nav-link-sidebar :href="route('system.user.index')" :active="request()->routeIs('system.user.*')" icon="shield-check" color="slate">
+    <x-nav-link-sidebar :href="route('security.dashboard')" :active="request()->routeIs('security.dashboard')" icon="shield-check" color="slate">
+        Dashboard Keamanan
+    </x-nav-link-sidebar>
+
+    <x-nav-link-sidebar :href="route('system.user.index')" :active="request()->routeIs('system.user.*')" icon="user" color="slate">
         Manajemen Pengguna
     </x-nav-link-sidebar>
 
