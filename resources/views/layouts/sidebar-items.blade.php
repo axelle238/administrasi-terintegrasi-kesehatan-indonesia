@@ -145,6 +145,10 @@
     <x-nav-link-sidebar :href="route('barang.index')" :active="request()->routeIs('barang.index')" icon="archive" color="indigo">
         Data Aset
     </x-nav-link-sidebar>
+
+    <x-nav-link-sidebar :href="route('supplier.index')" :active="request()->routeIs('supplier.*')" icon="truck" color="indigo">
+        Data Supplier
+    </x-nav-link-sidebar>
     
     <x-nav-link-sidebar :href="route('barang.pengadaan.index')" :active="request()->routeIs('barang.pengadaan.*')" icon="shopping-cart" color="indigo">
         Pengadaan

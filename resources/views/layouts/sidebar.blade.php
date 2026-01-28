@@ -12,7 +12,7 @@
             </div>
             <div class="flex flex-col">
                 <span class="text-2xl font-extrabold text-slate-800 tracking-tight font-[Outfit]">SATRIA</span>
-                <span class="text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em]">Enterprise</span>
+                <span class="text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em]">Kesehatan</span>
             </div>
         </a>
     </div>
