@@ -36,7 +36,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border-l-4 border-orange-500">
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Avg Waktu Layanan</p>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Rata-rata Waktu Layanan</p>
                     <h3 class="text-3xl font-black text-slate-800 dark:text-white mt-2">{{ number_format($avgWaktuLayanan, 0) }} <span class="text-sm font-medium text-slate-400">Menit</span></h3>
                 </div>
                 <div class="p-3 bg-orange-50 rounded-xl text-orange-600">
