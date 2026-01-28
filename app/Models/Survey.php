@@ -11,9 +11,26 @@ class Survey extends Model
 
     protected $fillable = [
         'poli_id',
-        'nilai',
+        'nilai', // Nilai Keseluruhan (Rata-rata atau persepsi umum)
         'kritik_saran',
         'ip_address',
+        
+        // 9 Unsur SKM
+        'u1_persyaratan',
+        'u2_prosedur',
+        'u3_waktu',
+        'u4_biaya',
+        'u5_produk',
+        'u6_kompetensi',
+        'u7_perilaku',
+        'u8_maklumat',
+        'u9_penanganan',
+
+        // Profil Responden
+        'umur',
+        'jenis_kelamin',
+        'pendidikan',
+        'pekerjaan',
     ];
 
     public function poli()
