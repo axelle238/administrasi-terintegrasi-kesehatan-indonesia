@@ -39,12 +39,12 @@
 
         <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-gray-700">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center text-yellow-600">
+                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </div>
                 <div>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Pending</p>
-                    <h3 class="text-2xl font-black text-yellow-600">{{ $pengaduanPending }}</h3>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Avg Waktu Respon</p>
+                    <h3 class="text-2xl font-black text-slate-800 dark:text-white">{{ $avgResponseTime }} <span class="text-sm font-medium text-slate-400">Jam</span></h3>
                 </div>
             </div>
         </div>
@@ -82,29 +82,50 @@
         </div>
     </div>
 
-    <!-- Row 3: Recent List -->
-    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
-        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Aduan Terbaru</h3>
-        <div class="space-y-4">
-            @forelse($pengaduanTerbaru as $p)
-                <div class="flex justify-between items-center p-4 bg-slate-50 dark:bg-slate-700/30 rounded-xl hover:bg-slate-100 transition-colors">
-                    <div>
-                        <h4 class="text-sm font-bold text-slate-800 dark:text-white">{{ $p->subjek }}</h4>
-                        <p class="text-xs text-slate-500 mt-1">{{ $p->nama_pelapor }} - {{ $p->created_at->diffForHumans() }}</p>
+    <!-- Row 3: Recent List & Top Categories -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Recent List -->
+        <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Aduan Terbaru</h3>
+            <div class="space-y-4">
+                @forelse($pengaduanTerbaru as $p)
+                    <div class="flex justify-between items-center p-4 bg-slate-50 dark:bg-slate-700/30 rounded-xl hover:bg-slate-100 transition-colors">
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-800 dark:text-white">{{ $p->subjek }}</h4>
+                            <p class="text-xs text-slate-500 mt-1">{{ $p->nama_pelapor }} - {{ $p->created_at->diffForHumans() }}</p>
+                        </div>
+                        <span class="px-3 py-1 text-[10px] font-black rounded-full uppercase tracking-widest
+                            @if($p->status == 'Pending') bg-yellow-100 text-yellow-800
+                            @elseif($p->status == 'Diproses') bg-blue-100 text-blue-800
+                            @else bg-green-100 text-green-800 @endif">
+                            {{ $p->status }}
+                        </span>
                     </div>
-                    <span class="px-3 py-1 text-[10px] font-black rounded-full uppercase tracking-widest
-                        @if($p->status == 'Pending') bg-yellow-100 text-yellow-800
-                        @elseif($p->status == 'Diproses') bg-blue-100 text-blue-800
-                        @else bg-green-100 text-green-800 @endif">
-                        {{ $p->status }}
-                    </span>
-                </div>
-            @empty
-                <div class="text-center py-6 text-slate-400 text-sm">Belum ada pengaduan.</div>
-            @endforelse
+                @empty
+                    <div class="text-center py-6 text-slate-400 text-sm">Belum ada pengaduan.</div>
+                @endforelse
+            </div>
+            <div class="mt-6 text-center">
+                <a href="{{ route('admin.masyarakat.pengaduan.index') }}" wire:navigate class="text-xs font-bold text-blue-600 hover:text-blue-800 uppercase tracking-widest">Lihat Semua Pengaduan &rarr;</a>
+            </div>
         </div>
-        <div class="mt-6 text-center">
-            <a href="{{ route('admin.masyarakat.pengaduan.index') }}" wire:navigate class="text-xs font-bold text-blue-600 hover:text-blue-800 uppercase tracking-widest">Lihat Semua Pengaduan &rarr;</a>
+
+        <!-- Top Categories -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Topik Terbanyak</h3>
+            <div class="space-y-4">
+                @forelse($topKategori as $cat)
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-bold text-slate-600 dark:text-gray-300 truncate max-w-[150px]">{{ $cat->subjek }}</span>
+                        <span class="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded-lg text-xs font-black">{{ $cat->total }}</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1.5">
+                        <div class="bg-orange-500 h-1.5 rounded-full" style="width: {{ ($cat->total / max($totalPengaduan, 1)) * 100 }}%"></div>
+                    </div>
+                @empty
+                    <p class="text-center text-slate-400 text-sm py-4">Belum ada data topik.</p>
+                @endforelse
+            </div>
         </div>
     </div>
 </div>

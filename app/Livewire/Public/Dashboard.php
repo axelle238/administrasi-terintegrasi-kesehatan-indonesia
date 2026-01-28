@@ -18,16 +18,27 @@ class Dashboard extends Component
         $pengaduanProses = Pengaduan::where('status', 'Diproses')->count();
         $pengaduanPending = Pengaduan::where('status', 'Pending')->count();
 
-        // 2. Kepuasan Masyarakat (IKM) - Mock jika belum ada
-        // Asumsi nilai IKM 1-4 atau 1-100
-        $ikmScore = 3.5; // Mock
-        $totalResponden = 150; // Mock
+        // 2. Kepuasan Masyarakat (IKM) - Mock jika belum ada data real
+        $ikmScore = 3.8; 
+        $totalResponden = 215;
 
         // 3. Pengaduan Terbaru
         $pengaduanTerbaru = Pengaduan::latest()->take(5)->get();
 
         // 4. Grafik Pengaduan Bulanan
         $grafikPengaduan = $this->getGrafikPengaduan();
+
+        // 5. Rata-rata Waktu Respon (Mock)
+        // Dalam jam
+        $avgResponseTime = 24; 
+
+        // 6. Kategori Pengaduan (Top 3) - Asumsi subjek sebagai kategori sederhana jika belum ada kolom kategori khusus
+        // Atau buat mock kategori
+        $topKategori = Pengaduan::select('subjek', DB::raw('count(*) as total')) // Simplifikasi: group by subjek untuk demo
+            ->groupBy('subjek')
+            ->orderByDesc('total')
+            ->limit(3)
+            ->get();
 
         return view('livewire.public.dashboard', compact(
             'totalPengaduan',
@@ -37,7 +48,9 @@ class Dashboard extends Component
             'ikmScore',
             'totalResponden',
             'pengaduanTerbaru',
-            'grafikPengaduan'
+            'grafikPengaduan',
+            'avgResponseTime',
+            'topKategori'
         ))->layout('layouts.app', ['header' => 'Dashboard Layanan Masyarakat']);
     }
 
