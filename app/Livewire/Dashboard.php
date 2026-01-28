@@ -41,9 +41,9 @@ class Dashboard extends Component
             ->with('poli')
             ->get();
 
-        // Ketersediaan Kamar Rawat Inap per Kelas
-        $ketersediaanBed = Kamar::select('kelas', DB::raw('sum(kapasitas_bed) as total_kapasitas'), DB::raw('sum(bed_terisi) as total_terisi'))
-            ->groupBy('kelas')
+        // Ketersediaan Kamar Rawat Inap per Bangsal
+        $ketersediaanBed = Kamar::select('nama_bangsal', DB::raw('sum(kapasitas_bed) as total_kapasitas'), DB::raw('sum(bed_terisi) as total_terisi'))
+            ->groupBy('nama_bangsal')
             ->get();
 
         // Top 5 Penyakit Bulan Ini
