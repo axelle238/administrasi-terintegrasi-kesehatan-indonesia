@@ -10,43 +10,30 @@ class Index extends Component
 {
     use WithPagination;
 
-    public $nama_kegiatan, $tanggal_kegiatan, $lokasi, $penanggung_jawab, $jumlah_peserta, $hasil_kegiatan;
-    public $isOpen = false;
+    public $search = '';
 
-    protected $rules = [
-        'nama_kegiatan' => 'required|string',
-        'tanggal_kegiatan' => 'required|date',
-        'lokasi' => 'required|string',
-        'penanggung_jawab' => 'required|string',
-        'jumlah_peserta' => 'required|integer',
-        'hasil_kegiatan' => 'nullable|string',
-    ];
-
-    public function create()
+    public function delete($id)
     {
-        $this->reset();
-        $this->isOpen = true;
-    }
-
-    public function save()
-    {
-        $this->validate();
-        KegiatanUkm::create([
-            'nama_kegiatan' => $this->nama_kegiatan,
-            'tanggal_kegiatan' => $this->tanggal_kegiatan,
-            'lokasi' => $this->lokasi,
-            'penanggung_jawab' => $this->penanggung_jawab,
-            'jumlah_peserta' => $this->jumlah_peserta,
-            'hasil_kegiatan' => $this->hasil_kegiatan,
-        ]);
-        $this->dispatch('notify', 'success', 'Kegiatan UKM disimpan.');
-        $this->isOpen = false;
+        $kegiatan = KegiatanUkm::find($id);
+        if ($kegiatan) {
+            $kegiatan->delete();
+            $this->dispatch('notify', 'success', 'Data kegiatan UKM berhasil dihapus.');
+        }
     }
 
     public function render()
     {
+        $kegiatans = KegiatanUkm::with('user')
+            ->where(function($q) {
+                $q->where('nama_kegiatan', 'like', '%' . $this->search . '%')
+                  ->orWhere('jenis_kegiatan', 'like', '%' . $this->search . '%')
+                  ->orWhere('lokasi', 'like', '%' . $this->search . '%');
+            })
+            ->latest('tanggal_kegiatan')
+            ->paginate(10);
+
         return view('livewire.ukm.index', [
-            'kegiatans' => KegiatanUkm::latest()->paginate(10)
+            'kegiatans' => $kegiatans
         ])->layout('layouts.app', ['header' => 'Upaya Kesehatan Masyarakat (UKM)']);
     }
 }

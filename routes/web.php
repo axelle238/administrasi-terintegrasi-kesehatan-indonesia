@@ -94,6 +94,7 @@ Route::middleware('auth')->group(function () {
     // UKM & Lainnya (Bisa diakses Staf/Kapus)
     Route::middleware('can:tata_usaha')->group(function () {
         Route::get('/ukm', \App\Livewire\Ukm\Index::class)->name('ukm.index');
+        Route::get('/ukm/create', \App\Livewire\Ukm\Create::class)->name('ukm.create');
         
         // Master Data Inventaris
         Route::get('/ruangan', \App\Livewire\Ruangan\Index::class)->name('ruangan.index');
