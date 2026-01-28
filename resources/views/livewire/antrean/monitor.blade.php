@@ -1,135 +1,120 @@
-<div class="min-h-screen bg-gray-100 flex flex-col" wire:poll.2s>
-    <!-- Header -->
-    <div class="bg-teal-700 text-white p-6 shadow-lg">
-        <div class="flex justify-between items-center max-w-7xl mx-auto w-full">
-            <div class="flex items-center gap-4">
-                 <!-- Logo Placeholder -->
-                 <div class="bg-white p-2 rounded-lg text-teal-700 font-bold text-2xl">P</div>
-                 <div>
-                     <h1 class="text-3xl font-bold">PUSKESMAS JAGAKARSA</h1>
-                     <p class="text-teal-100">Melayani dengan Hati, Menuju Jagakarsa Sehat</p>
-                 </div>
+<div class="min-h-screen bg-slate-100 flex flex-col p-6" wire:poll.5s>
+    <!-- Header Monitor -->
+    <div class="bg-white rounded-[2rem] p-6 shadow-xl border border-slate-200 flex items-center justify-between mb-8">
+        <div class="flex items-center gap-6">
+            <div class="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
             </div>
-            <div class="text-right">
-                <h2 class="text-4xl font-bold">{{ now()->format('H:i') }}</h2>
-                <p class="text-teal-100">{{ now()->translatedFormat('l, d F Y') }}</p>
+            <div>
+                <h1 class="text-3xl font-black text-slate-900 tracking-tight">MONITOR ANTREAN</h1>
+                <p class="text-sm font-bold text-blue-600 uppercase tracking-widest">{{ now()->translatedFormat('l, d F Y') }} | <span id="clock" class="text-slate-900">{{ now()->format('H:i:s') }}</span></p>
+            </div>
+        </div>
+        <div class="text-right">
+            <div class="px-6 py-3 bg-slate-900 rounded-2xl">
+                <span class="text-blue-400 font-black text-xl tracking-tighter">SATRIA</span>
+                <span class="text-white font-black text-xl tracking-tighter ml-1 italic">Health</span>
             </div>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="grow flex flex-col md:flex-row p-6 gap-6 max-w-7xl mx-auto w-full">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1">
         
-        <!-- Left Side: Main Displays -->
-        <div class="w-full md:w-2/3 flex flex-col gap-6">
-            <!-- Poli Display -->
-            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border-8 border-teal-500 flex flex-col justify-center items-center p-8 relative h-1/2">
-                <div class="absolute top-0 left-0 w-full bg-teal-500 text-white text-center py-2 text-xl font-bold uppercase tracking-widest">
-                    Nomor Antrean Poli
+        <!-- Panggilan Utama (Kiri) -->
+        <div class="lg:col-span-8 flex flex-col gap-8">
+            <div class="bg-white rounded-[3rem] p-10 shadow-2xl border-4 border-blue-600 flex-1 flex flex-col items-center justify-center relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-2 bg-blue-600"></div>
+                <div class="text-center">
+                    <span class="text-xs font-black text-slate-400 uppercase tracking-[0.5em] mb-6 block">Sedang Dilayani</span>
+                    
+                    @php 
+                        $current = $antreans->where('status', 'Diperiksa')->first();
+                    @endphp
+
+                    @if($current)
+                        <h2 class="text-[12rem] font-black text-slate-900 leading-none tracking-tighter mb-4 animate-pulse">{{ $current->nomor_antrean }}</h2>
+                        <div class="px-12 py-4 bg-blue-600 rounded-full inline-block shadow-2xl shadow-blue-600/30">
+                            <span class="text-3xl font-black text-white uppercase tracking-widest">{{ $current->poli->nama_poli }}</span>
+                        </div>
+                        <p class="text-2xl font-bold text-slate-500 mt-10">Atas Nama: <span class="text-slate-900">{{ $current->pasien->nama_lengkap }}</span></p>
+                    @else
+                        <div class="py-20">
+                            <h2 class="text-4xl font-black text-slate-300 uppercase tracking-widest">Belum Ada Panggilan</h2>
+                            <p class="text-slate-400 mt-4 font-bold">Silakan menunggu nomor antrean Anda dipanggil</p>
+                        </div>
+                    @endif
                 </div>
-                
-                @if($sedangDipanggil)
-                    <div class="text-[8rem] font-black text-gray-800 leading-none animate-pulse">
-                        {{ $sedangDipanggil->nomor_antrean }}
-                    </div>
-                    <div class="text-3xl font-bold text-teal-600 bg-teal-50 px-6 py-2 rounded-xl mt-4">
-                        {{ $sedangDipanggil->poli_tujuan }}
-                    </div>
-                @else
-                    <div class="text-gray-300 text-2xl font-bold">Belum ada panggilan</div>
-                @endif
             </div>
 
-            <!-- Pharmacy Display -->
-            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border-8 border-blue-500 flex flex-col justify-center items-center p-8 relative h-1/2">
-                <div class="absolute top-0 left-0 w-full bg-blue-500 text-white text-center py-2 text-xl font-bold uppercase tracking-widest">
-                    Nomor Antrean Farmasi
+            <!-- Video atau Informasi Running Text -->
+            <div class="h-32 bg-slate-900 rounded-[2rem] p-6 flex items-center overflow-hidden shadow-2xl relative">
+                <div class="absolute left-0 top-0 h-full w-24 bg-gradient-to-r from-slate-900 to-transparent z-10"></div>
+                <div class="absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-slate-900 to-transparent z-10"></div>
+                <div class="whitespace-nowrap flex items-center gap-20">
+                    <p class="text-white text-2xl font-bold italic tracking-wide animate-marquee">
+                        Selamat Datang di Sistem Layanan Terpadu • Harap tertib menunggu antrean • Jaga protokol kesehatan • Pendaftaran ditutup pukul 14:00 WIB • Gunakan fasilitas Kiosk Mandiri untuk pendaftaran cepat • Kami melayani dengan hati
+                    </p>
                 </div>
-                
-                @if($sedangDipanggilFarmasi)
-                    <div class="text-[8rem] font-black text-gray-800 leading-none animate-bounce mt-4">
-                        {{ $sedangDipanggilFarmasi->nomor_antrean }}
-                    </div>
-                    <div class="text-2xl font-medium text-gray-400 mt-2">
-                        Pasien: {{ $sedangDipanggilFarmasi->pasien->nama_lengkap }}
-                    </div>
-                @else
-                    <div class="text-gray-300 text-2xl font-bold">Belum ada panggilan</div>
-                @endif
             </div>
         </div>
 
-        <!-- Sidebar (Antrean Berikutnya) -->
-        <div class="w-full md:w-1/3 flex flex-col gap-6">
-            <div class="bg-white rounded-2xl shadow-lg overflow-hidden grow">
-                <div class="bg-gray-800 text-white py-4 px-6 text-xl font-bold uppercase tracking-wider flex justify-between items-center">
-                    <span>Antrean Berikutnya</span>
-                    <svg class="w-6 h-6 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+        <!-- Daftar Tunggu (Kanan) -->
+        <div class="lg:col-span-4 flex flex-col gap-6">
+            <div class="bg-white rounded-[2.5rem] shadow-xl border border-slate-200 overflow-hidden flex flex-col flex-1">
+                <div class="bg-slate-50 p-6 border-b border-slate-100 flex items-center justify-between">
+                    <h3 class="font-black text-slate-900 uppercase tracking-widest">Antrean Menunggu</h3>
+                    <span class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-black rounded-full">{{ $antreans->where('status', 'Menunggu')->count() }}</span>
                 </div>
-                <div class="divide-y divide-gray-200">
-                    @forelse ($antreanBerikutnya as $next)
-                        <div class="p-6 flex justify-between items-center hover:bg-gray-50 transition-colors">
+                
+                <div class="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+                    @forelse($antreans->where('status', 'Menunggu')->take(8) as $antrean)
+                        <div class="flex items-center justify-between p-5 bg-slate-50 rounded-2xl border border-slate-100 shadow-sm">
                             <div>
-                                <div class="text-4xl font-bold text-gray-800">{{ $next->nomor_antrean }}</div>
-                                <div class="text-sm text-gray-500 mt-1">{{ $next->poli_tujuan }}</div>
+                                <span class="text-3xl font-black text-slate-900 tracking-tighter">{{ $antrean->nomor_antrean }}</span>
+                                <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest mt-1">{{ $antrean->poli->nama_poli }}</p>
                             </div>
                             <div class="text-right">
-                                <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded">Menunggu</span>
+                                <span class="text-xs font-bold text-slate-400">STATUS</span>
+                                <p class="text-xs font-black text-emerald-600 uppercase tracking-widest mt-1">SIAP</p>
                             </div>
                         </div>
                     @empty
-                        <div class="p-10 text-center text-gray-400 italic">
-                            Tidak ada antrean menunggu
+                        <div class="flex flex-col items-center justify-center py-20 text-center">
+                            <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                                <svg class="w-8 h-8 text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            </div>
+                            <p class="text-slate-400 font-bold text-sm">Tidak ada antrean tunggu</p>
                         </div>
                     @endforelse
                 </div>
-            </div>
 
-            <!-- Video / Info Placeholder -->
-            <div class="bg-blue-600 rounded-2xl shadow-lg p-6 text-white text-center h-48 flex flex-col justify-center items-center">
-                <h3 class="text-2xl font-bold mb-2">Info Sehat</h3>
-                <p>Tetap patuhi protokol kesehatan. Gunakan masker saat berada di area Puskesmas.</p>
+                <!-- Next Info -->
+                <div class="p-6 bg-slate-900 text-center">
+                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-2">Didukung Oleh</p>
+                    <span class="text-white font-black text-lg tracking-tighter italic">SATRIA HEALTHCARE</span>
+                </div>
             </div>
         </div>
     </div>
-    
-    <!-- Running Text Footer -->
-    <div class="bg-gray-900 text-white py-3 overflow-hidden">
-        <div class="whitespace-nowrap animate-marquee">
-            Selamat Datang di Puskesmas Jagakarsa. Jam Operasional: Senin-Jumat 08:00 - 15:00. Sabtu 08:00 - 12:00. | Gunakan Aplikasi Mobile JKN untuk pendaftaran online. | Jagalah kebersihan lingkungan.
-        </div>
-    </div>
-    
-    <script>
-        document.addEventListener('livewire:initialized', () => {
-            @this.on('announce-queue', (event) => {
-                const data = event[0]; 
-                // Play Ding Dong (Optional, create file first if needed)
-                // new Audio('/sounds/dingdong.mp3').play();
-                
-                // Speak
-                const text = `Nomor Antrean, ${data.nomor_antrean}, Silakan menuju, ${data.poli_tujuan}`;
-                
-                if ('speechSynthesis' in window) {
-                    // Cancel previous
-                    window.speechSynthesis.cancel();
-                    
-                    const msg = new SpeechSynthesisUtterance(text);
-                    msg.lang = 'id-ID'; 
-                    msg.rate = 0.8;
-                    window.speechSynthesis.speak(msg);
-                }
-            });
-        });
-    </script>
 
     <style>
-        .animate-marquee {
-            animation: marquee 20s linear infinite;
-        }
         @keyframes marquee {
             0% { transform: translateX(100%); }
             100% { transform: translateX(-100%); }
         }
+        .animate-marquee {
+            display: inline-block;
+            animation: marquee 30s linear infinite;
+        }
+        .shadow-3xl {
+            box-shadow: 0 35px 60px -15px rgba(0, 0, 0, 0.3);
+        }
     </style>
+
+    <script>
+        setInterval(() => {
+            const clock = document.getElementById('clock');
+            if(clock) clock.innerText = new Date().toLocaleTimeString('en-GB');
+        }, 1000);
+    </script>
 </div>

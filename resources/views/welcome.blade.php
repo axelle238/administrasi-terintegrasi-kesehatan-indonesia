@@ -9,7 +9,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -22,34 +22,50 @@
         h1, h2, h3, h4, h5, h6 { font-family: 'Outfit', sans-serif; }
         
         .glass-nav {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
         }
         
-        .hero-pattern {
-            background-color: #ffffff;
-            background-image: radial-gradient(#eff6ff 2px, transparent 2px), radial-gradient(#eff6ff 2px, transparent 2px);
-            background-size: 32px 32px;
-            background-position: 0 0, 16px 16px;
+        .hero-gradient {
+            background: radial-gradient(circle at top right, rgba(37, 99, 235, 0.05), transparent),
+                        radial-gradient(circle at bottom left, rgba(6, 182, 212, 0.05), transparent);
         }
 
         .text-primary { color: var(--primary-color); }
         .bg-primary { background-color: var(--primary-color); }
         .border-primary { border-color: var(--primary-color); }
-        .hover-text-primary:hover { color: var(--primary-color); }
-        .hover-bg-primary:hover { background-color: var(--primary-color); }
-        .focus-ring-primary:focus { --tw-ring-color: var(--primary-color); }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+        }
     </style>
 </head>
-<body class="antialiased bg-slate-50 text-slate-800 selection:bg-blue-600 selection:text-white overflow-x-hidden">
+<body class="antialiased bg-white text-slate-800 selection:bg-blue-600 selection:text-white overflow-x-hidden">
 
     <!-- Announcement Bar -->
     @if(($pengaturan['announcement_active'] ?? '0') == '1')
-    <div class="bg-primary text-white text-sm font-medium py-2.5 px-4 text-center relative z-[60]">
-        <div class="max-w-7xl mx-auto flex items-center justify-center gap-2">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>
+    <div class="bg-primary text-white text-[11px] font-bold py-2 px-4 text-center relative z-[60] tracking-widest uppercase">
+        <div class="max-w-7xl mx-auto flex items-center justify-center gap-3">
+            <span class="flex h-2 w-2 relative">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+            </span>
             <span>{{ $pengaturan['announcement_text'] }}</span>
         </div>
     </div>
@@ -61,37 +77,36 @@
             <div class="flex justify-between h-20 items-center">
                 <!-- Logo -->
                 <div class="flex items-center gap-3">
-                    <div class="relative flex items-center justify-center w-10 h-10 bg-primary rounded-xl shadow-lg shadow-blue-500/20 text-white">
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div class="relative flex items-center justify-center w-11 h-11 bg-primary rounded-2xl shadow-xl shadow-blue-500/20 text-white">
+                        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
                     </div>
                     <div class="flex flex-col">
-                        <span class="text-xl font-extrabold text-slate-900 leading-none tracking-tight">{{ $pengaturan['nama_aplikasi'] }}</span>
-                        <span class="text-[10px] font-bold text-primary uppercase tracking-widest mt-1">Layanan Terpadu</span>
+                        <span class="text-2xl font-black text-slate-900 leading-none tracking-tighter">{{ $pengaturan['nama_aplikasi'] }}</span>
+                        <span class="text-[9px] font-extrabold text-primary uppercase tracking-[0.3em] mt-1.5">Kesehatan Terintegrasi</span>
                     </div>
                 </div>
 
                 <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="#beranda" class="text-sm font-bold text-slate-600 hover-text-primary transition-colors">Beranda</a>
-                    <a href="#jadwal" class="text-sm font-bold text-slate-600 hover-text-primary transition-colors">Jadwal</a>
-                    <a href="#layanan" class="text-sm font-bold text-slate-600 hover-text-primary transition-colors">Layanan</a>
-                    <a href="{{ route('pengaduan.public') }}" class="text-sm font-bold text-slate-600 hover-text-primary transition-colors">Pengaduan</a>
-                    <a href="#fasilitas" class="text-sm font-bold text-slate-600 hover-text-primary transition-colors">Fasilitas</a>
+                <div class="hidden lg:flex items-center space-x-10">
+                    <a href="#beranda" class="text-xs font-black text-slate-500 hover:text-primary transition-colors uppercase tracking-widest">Beranda</a>
+                    <a href="#jadwal" class="text-xs font-black text-slate-500 hover:text-primary transition-colors uppercase tracking-widest">Jadwal</a>
+                    <a href="#layanan" class="text-xs font-black text-slate-500 hover:text-primary transition-colors uppercase tracking-widest">Layanan</a>
+                    <a href="#fasilitas" class="text-xs font-black text-slate-500 hover:text-primary transition-colors uppercase tracking-widest">Fasilitas</a>
                     
-                    <div class="h-5 w-px bg-slate-200 mx-2"></div>
+                    <div class="h-4 w-px bg-slate-200 mx-2"></div>
 
                     @if (Route::has('login'))
                         @auth
-                            <a href="{{ url('/dashboard') }}" class="flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-xl hover:bg-slate-800 transition shadow-lg shadow-slate-900/20">
-                                <span>Dashboard</span>
+                            <a href="{{ url('/dashboard') }}" class="flex items-center gap-2 px-6 py-3 bg-slate-900 text-white text-xs font-black rounded-2xl hover:bg-slate-800 transition shadow-xl shadow-slate-900/20 uppercase tracking-widest">
+                                <span>Panel Dashboard</span>
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                             </a>
                         @else
-                            <a href="{{ route('login') }}" class="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-700 text-sm font-bold rounded-xl hover:border-blue-500 hover-text-primary transition-all">
-                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
-                                <span>Masuk Staff</span>
+                            <a href="{{ route('login') }}" class="flex items-center gap-2 px-6 py-3 bg-white border-2 border-slate-100 text-slate-800 text-xs font-black rounded-2xl hover:border-primary hover:text-primary transition-all uppercase tracking-widest">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+                                <span>Akses Staf</span>
                             </a>
                         @endauth
                     @endif
@@ -101,75 +116,84 @@
     </nav>
 
     <!-- Hero Section -->
-    <section id="beranda" class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden hero-pattern">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-            
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-blue-100 text-primary text-xs font-bold uppercase tracking-wider mb-8 shadow-sm animate-fade-in-up">
-                <span class="relative flex h-2.5 w-2.5">
-                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                  <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
-                </span>
-                Sistem Pelayanan Digital Terkini
-            </div>
-            
-            <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight mb-8 leading-[1.1] max-w-5xl mx-auto">
-                {{ $pengaturan['judul_hero'] }} <br class="hidden md:block">
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">{{ $pengaturan['subjudul_hero'] }}</span>
-            </h1>
-            
-            <p class="text-lg md:text-xl text-slate-500 mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
-                {{ $pengaturan['deskripsi'] }}
-            </p>
-            
-            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <a href="{{ route('antrean.monitor') }}" class="px-8 py-4 bg-primary text-white font-bold rounded-2xl shadow-xl shadow-blue-600/20 hover:opacity-90 transition-all transform hover:-translate-y-1 w-full sm:w-auto flex items-center justify-center gap-3">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span>Ambil Antrean</span>
-                </a>
-                @if(($pengaturan['show_pengaduan_cta'] ?? '1') == '1')
-                <a href="{{ route('pengaduan.public') }}" class="px-8 py-4 bg-orange-500 text-white font-bold rounded-2xl shadow-xl shadow-orange-600/20 hover:bg-orange-600 transition-all transform hover:-translate-y-1 w-full sm:w-auto flex items-center justify-center gap-3">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                    <span>Kirim Pengaduan</span>
-                </a>
-                @endif
-                <a href="#jadwal" class="px-8 py-4 bg-white text-slate-700 font-bold rounded-2xl shadow-lg border border-slate-200 hover:border-blue-300 hover-text-primary transition-all w-full sm:w-auto flex items-center justify-center gap-3">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                    <span>Lihat Jadwal</span>
-                </a>
+    <section id="beranda" class="relative pt-40 pb-20 lg:pt-56 lg:pb-40 overflow-hidden hero-gradient">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="flex flex-col lg:flex-row items-center gap-16">
+                <div class="w-full lg:w-3/5 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white shadow-xl shadow-blue-500/5 border border-blue-50 text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-10">
+                        <span class="relative flex h-2 w-2">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                        </span>
+                        Sistem Pelayanan Digital Puskesmas
+                    </div>
+                    
+                    <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-slate-900 tracking-tighter mb-10 leading-[0.95]">
+                        {{ $pengaturan['judul_hero'] }} <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">{{ $pengaturan['subjudul_hero'] }}</span>
+                    </h1>
+                    
+                    <p class="text-lg md:text-xl text-slate-500 mb-12 max-w-2xl lg:mx-0 mx-auto leading-relaxed font-medium">
+                        {{ $pengaturan['deskripsi'] }}
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start items-center">
+                        <a href="{{ route('antrean.monitor') }}" class="px-10 py-5 bg-primary text-white text-sm font-black rounded-3xl shadow-2xl shadow-blue-600/30 hover:scale-105 transition-all transform w-full sm:w-auto flex items-center justify-center gap-3 uppercase tracking-widest">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <span>Ambil Antrean</span>
+                        </a>
+                        @if(($pengaturan['show_pengaduan_cta'] ?? '1') == '1')
+                        <a href="{{ route('pengaduan.public') }}" class="px-10 py-5 bg-white border-2 border-slate-100 text-slate-800 text-sm font-black rounded-3xl hover:border-primary hover:text-primary transition-all w-full sm:w-auto flex items-center justify-center gap-3 uppercase tracking-widest">
+                            <span>Layanan Pengaduan</span>
+                        </a>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Hero Image Decor -->
+                <div class="w-full lg:w-2/5 relative hidden lg:block">
+                    <div class="relative z-10 animate-float">
+                        <div class="w-full aspect-square bg-gradient-to-br from-blue-600 to-cyan-400 rounded-[4rem] shadow-3xl transform rotate-6 overflow-hidden flex items-center justify-center p-12">
+                             <svg class="w-48 h-48 text-white opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="absolute inset-0 bg-blue-400 rounded-[4rem] blur-3xl opacity-10 -z-10 transform scale-110"></div>
+                </div>
             </div>
         </div>
-        
-        <!-- Decorative blobs -->
-        <div class="absolute top-0 left-0 -ml-20 -mt-20 w-96 h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-        <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-cyan-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
     </section>
 
     <!-- Jadwal Dokter Hari Ini (Dynamic) -->
     @if(($pengaturan['show_jadwal_dokter'] ?? '1') == '1')
-    <section id="jadwal" class="py-20 bg-white border-b border-slate-100 relative">
+    <section id="jadwal" class="py-32 bg-slate-50 relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-                <div>
-                    <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Jadwal Praktik</span>
-                    <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900">Dokter Hari Ini</h2>
-                    <p class="mt-2 text-slate-500 font-medium">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</p>
+            <div class="text-center mb-20">
+                <span class="text-primary font-black tracking-[0.4em] uppercase text-[10px] mb-4 block">Operasional</span>
+                <h2 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">Jadwal Praktik Hari Ini</h2>
+                <div class="mt-4 flex items-center justify-center gap-3">
+                    <div class="h-1.5 w-12 bg-primary rounded-full"></div>
+                    <p class="text-slate-500 font-bold uppercase text-xs tracking-widest">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</p>
+                    <div class="h-1.5 w-12 bg-primary rounded-full"></div>
                 </div>
-                <div class="hidden md:block h-1 w-24 bg-primary rounded-full mb-2"></div>
             </div>
 
             @if(isset($jadwalHariIni) && count($jadwalHariIni) > 0)
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     @foreach($jadwalHariIni as $jadwal)
-                    <div class="group relative bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-blue-100 transition-all duration-300">
-                        <div class="flex items-center gap-5">
-                            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-50 to-white border border-blue-100 flex items-center justify-center text-primary font-extrabold text-2xl shadow-inner">
+                    <div class="group bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm card-hover relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-bl-[3rem] -mr-6 -mt-6 transition-transform group-hover:scale-110"></div>
+                        
+                        <div class="flex items-center gap-6 relative z-10">
+                            <div class="w-20 h-20 rounded-3xl bg-slate-900 flex items-center justify-center text-white font-black text-3xl shadow-2xl">
                                 {{ substr($jadwal->pegawai->user->name ?? 'D', 0, 1) }}
                             </div>
                             <div>
-                                <h4 class="font-bold text-slate-900 text-lg group-hover-text-primary transition-colors">{{ $jadwal->pegawai->user->name ?? 'Dokter' }}</h4>
-                                <p class="text-sm text-slate-500 font-medium">{{ $jadwal->pegawai->jabatan ?? 'Dokter Umum' }}</p>
-                                <div class="flex items-center gap-2 mt-3 text-xs font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded-lg inline-flex">
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <h4 class="font-black text-slate-900 text-xl group-hover:text-primary transition-colors leading-tight">{{ $jadwal->pegawai->user->name ?? 'Dokter' }}</h4>
+                                <p class="text-xs text-primary font-black uppercase tracking-widest mt-1">{{ $jadwal->pegawai->jabatan ?? 'Dokter Umum' }}</p>
+                                <div class="flex items-center gap-2 mt-4 text-[10px] font-black text-slate-400 bg-slate-50 px-3 py-1.5 rounded-xl inline-flex tracking-widest">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                     {{ $jadwal->shift->jam_masuk ?? '08:00' }} - {{ $jadwal->shift->jam_keluar ?? '14:00' }}
                                 </div>
                             </div>
@@ -178,12 +202,12 @@
                     @endforeach
                 </div>
             @else
-                <div class="bg-slate-50 rounded-3xl p-12 text-center border border-slate-200 border-dashed">
-                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300 shadow-sm">
-                        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <div class="bg-white rounded-[3rem] p-20 text-center border-2 border-dashed border-slate-200">
+                    <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300">
+                        <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     </div>
-                    <h3 class="text-lg font-bold text-slate-900">Tidak Ada Jadwal</h3>
-                    <p class="text-slate-500 mt-2">Belum ada dokter yang dijadwalkan untuk hari ini.</p>
+                    <h3 class="text-xl font-black text-slate-900 uppercase tracking-widest">Sistem Sedang Diperbarui</h3>
+                    <p class="text-slate-500 mt-2 font-medium">Belum ada jadwal dokter yang tersedia untuk hari ini.</p>
                 </div>
             @endif
         </div>
@@ -192,32 +216,32 @@
 
     <!-- Layanan Section (Dynamic) -->
     @if(($pengaturan['show_layanan_poli'] ?? '1') == '1')
-    <section id="layanan" class="py-24 bg-slate-50 relative">
+    <section id="layanan" class="py-32 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Poliklinik & Unit</span>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900">Layanan Medis</h2>
-                <p class="mt-4 text-slate-500 text-lg">Pelayanan kesehatan komprehensif dengan fasilitas modern.</p>
+            <div class="text-center max-w-3xl mx-auto mb-24">
+                <span class="text-primary font-black tracking-[0.4em] uppercase text-[10px] mb-4 block">Poliklinik & Unit</span>
+                <h2 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">Layanan Medis Terintegrasi</h2>
+                <p class="mt-6 text-slate-500 text-lg leading-relaxed font-medium">Memberikan pelayanan kesehatan primer dengan kualitas terbaik bagi masyarakat.</p>
             </div>
 
             @if($layanan->count() > 0)
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 @foreach($layanan as $poli)
-                <div class="group bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden border border-slate-100 hover:border-blue-200">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-transparent rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-                    
-                    <div class="w-14 h-14 bg-white border border-slate-100 rounded-2xl flex items-center justify-center mb-6 shadow-sm relative z-10 group-hover:bg-primary group-hover:text-white transition-colors">
-                        <span class="text-xl font-bold">{{ substr($poli->nama_poli, 0, 1) }}</span>
+                <div class="group bg-slate-50 rounded-[2.5rem] p-10 card-hover border border-transparent hover:border-blue-100 hover:bg-white relative overflow-hidden">
+                    <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-8 shadow-sm group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                        <span class="text-2xl font-black">{{ substr($poli->nama_poli, 0, 1) }}</span>
                     </div>
                     
-                    <h3 class="text-xl font-bold text-slate-900 mb-3 relative z-10">{{ $poli->nama_poli }}</h3>
-                    <p class="text-slate-500 text-sm leading-relaxed mb-6 relative z-10">
-                        {{ $poli->keterangan ?? 'Layanan medis profesional.' }}
+                    <h3 class="text-2xl font-black text-slate-900 mb-4">{{ $poli->nama_poli }}</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-8">
+                        {{ $poli->keterangan ?? 'Layanan medis profesional dengan tenaga ahli di bidangnya.' }}
                     </p>
                     
-                    <a href="#" class="inline-flex items-center text-sm font-bold text-slate-400 group-hover-text-primary transition-colors relative z-10">
-                        Info Lengkap <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-                    </a>
+                    <div class="pt-6 border-t border-slate-200/60 mt-auto">
+                         <span class="inline-flex items-center text-[10px] font-black text-primary uppercase tracking-widest group-hover:gap-4 transition-all gap-2">
+                            Info Detail <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                        </span>
+                    </div>
                 </div>
                 @endforeach
             </div>
@@ -226,85 +250,69 @@
     </section>
     @endif
 
-    <!-- Fasilitas / Keunggulan -->
-    @if(($pengaturan['show_fasilitas'] ?? '1') == '1')
-    <section id="fasilitas" class="py-24 bg-white border-t border-slate-200">
-         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                <div>
-                    <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Fasilitas Unggulan</span>
-                    <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-6">Kenyamanan Anda Prioritas Kami.</h2>
-                    <p class="text-slate-500 text-lg leading-relaxed mb-8">
-                        Kami menyediakan fasilitas kesehatan dengan standar tinggi untuk memastikan setiap pasien mendapatkan penanganan yang cepat, tepat, dan nyaman.
-                    </p>
-                    
-                    <ul class="space-y-4">
-                        <li class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-primary">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            </div>
-                            <span class="font-bold text-slate-700">Ruang Tunggu Nyaman & Ber-AC</span>
-                        </li>
-                         <li class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-primary">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            </div>
-                            <span class="font-bold text-slate-700">Apotek Terlengkap & Terintegrasi</span>
-                        </li>
-                         <li class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-primary">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            </div>
-                            <span class="font-bold text-slate-700">Laboratorium Modern</span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="relative">
-                    <div class="absolute inset-0 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-3xl transform rotate-3 opacity-20 blur-lg"></div>
-                    <div class="relative bg-slate-900 rounded-3xl p-8 md:p-12 text-white overflow-hidden">
-                        <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-                        <h3 class="text-2xl font-bold mb-4">Gawat Darurat 24 Jam</h3>
-                        <p class="text-slate-300 mb-8">Layanan UGD kami siap sedia menangani kondisi kritis dengan tim medis yang sigap.</p>
-                        <a href="tel:{{ $pengaturan['telepon'] }}" class="inline-flex items-center gap-2 px-6 py-3 bg-white text-slate-900 font-bold rounded-xl hover:bg-blue-50 transition-colors">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-                            <span>Panggil Ambulans</span>
+    <!-- CTA Section -->
+    <section class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-slate-900 rounded-[3.5rem] p-10 md:p-20 relative overflow-hidden shadow-3xl">
+                <div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-blue-600 rounded-full blur-3xl opacity-20"></div>
+                <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-cyan-600 rounded-full blur-3xl opacity-20"></div>
+                
+                <div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12 text-center lg:text-left">
+                    <div>
+                        <h2 class="text-4xl md:text-5xl font-black text-white leading-tight mb-6 tracking-tight">Butuh Bantuan Segera?</h2>
+                        <p class="text-slate-400 text-lg max-w-xl font-medium">Tim medis kami siap melayani Anda 24/7 untuk kondisi darurat. Hubungi nomor layanan kami kapan saja.</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="tel:{{ $pengaturan['telepon'] }}" class="px-12 py-5 bg-white text-slate-900 text-sm font-black rounded-3xl hover:bg-blue-50 transition-all uppercase tracking-widest shadow-xl">
+                            {{ $pengaturan['telepon'] }}
+                        </a>
+                        <a href="{{ route('pengaduan.public') }}" class="px-12 py-5 bg-blue-600 text-white text-sm font-black rounded-3xl hover:bg-blue-700 transition-all uppercase tracking-widest shadow-xl shadow-blue-600/20">
+                            Pengaduan Online
                         </a>
                     </div>
                 </div>
             </div>
-         </div>
+        </div>
     </section>
-    @endif
 
     <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-300 py-16">
+    <footer class="bg-white border-t border-slate-100 pt-24 pb-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-             <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-                <div class="col-span-1 md:col-span-2">
-                    <h2 class="text-2xl font-extrabold text-white mb-6">{{ $pengaturan['nama_aplikasi'] }}</h2>
-                    <p class="text-slate-400 mb-6 max-w-sm leading-relaxed">
+             <div class="grid grid-cols-1 lg:grid-cols-4 gap-16 mb-20 text-center lg:text-left">
+                <div class="lg:col-span-2">
+                    <div class="flex items-center gap-3 justify-center lg:justify-start mb-8">
+                        <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white font-black text-xl">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                        </div>
+                        <span class="text-3xl font-black text-slate-900 tracking-tighter">{{ $pengaturan['nama_aplikasi'] }}</span>
+                    </div>
+                    <p class="text-slate-500 font-medium leading-relaxed max-w-md mx-auto lg:mx-0">
                         {{ $pengaturan['deskripsi'] }}
                     </p>
                 </div>
                 <div>
-                     <h4 class="font-bold text-white mb-6">Kontak</h4>
-                     <ul class="space-y-4 text-sm">
-                        <li>{{ $pengaturan['alamat'] }}</li>
+                     <h4 class="text-xs font-black text-slate-900 uppercase tracking-[0.3em] mb-8">Hubungi Kami</h4>
+                     <ul class="space-y-4 text-sm font-bold text-slate-500">
+                        <li class="flex items-start gap-3 justify-center lg:justify-start">
+                            <span>{{ $pengaturan['alamat'] }}</span>
+                        </li>
                         <li>{{ $pengaturan['telepon'] }}</li>
-                        <li>{{ $pengaturan['email'] }}</li>
+                        <li class="text-primary">{{ $pengaturan['email'] }}</li>
                      </ul>
                 </div>
                 <div>
-                     <h4 class="font-bold text-white mb-6">Menu</h4>
-                     <ul class="space-y-4 text-sm">
-                        <li><a href="#beranda" class="hover:text-white transition-colors">Beranda</a></li>
-                        <li><a href="#jadwal" class="hover:text-white transition-colors">Jadwal Dokter</a></li>
-                        <li><a href="#layanan" class="hover:text-white transition-colors">Layanan</a></li>
+                     <h4 class="text-xs font-black text-slate-900 uppercase tracking-[0.3em] mb-8">Navigasi</h4>
+                     <ul class="space-y-4 text-sm font-bold text-slate-500">
+                        <li><a href="#beranda" class="hover:text-primary transition-colors">Beranda</a></li>
+                        <li><a href="#jadwal" class="hover:text-primary transition-colors">Jadwal Dokter</a></li>
+                        <li><a href="#layanan" class="hover:text-primary transition-colors">Layanan Medis</a></li>
                      </ul>
                 </div>
              </div>
-             <div class="border-t border-slate-800 pt-8 text-center text-sm text-slate-500">
-                 &copy; {{ date('Y') }} {{ $pengaturan['footer_text'] }}. All rights reserved.
+             <div class="pt-8 border-t border-slate-100 text-center">
+                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">
+                    &copy; {{ date('Y') }} {{ $pengaturan['footer_text'] }}. Digital Transformation by SATRIA.
+                 </p>
              </div>
         </div>
     </footer>

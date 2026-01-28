@@ -12,48 +12,11 @@ class PengaduanIndex extends Component
 
     public $search = '';
     public $filterStatus = '';
-    
-    // Reply form
-    public $selectedId;
-    public $tanggapan;
-    public $newStatus;
-    public $isReplying = false;
 
     protected $queryString = [
         'search' => ['except' => ''],
         'filterStatus' => ['except' => ''],
     ];
-
-    public function selectForReply($id)
-    {
-        $pengaduan = Pengaduan::findOrFail($id);
-        $this->selectedId = $id;
-        $this->tanggapan = $pengaduan->tanggapan;
-        $this->newStatus = $pengaduan->status;
-        $this->isReplying = true;
-    }
-
-    public function cancelReply()
-    {
-        $this->reset(['selectedId', 'tanggapan', 'newStatus', 'isReplying']);
-    }
-
-    public function saveReply()
-    {
-        $this->validate([
-            'tanggapan' => 'required|string',
-            'newStatus' => 'required|in:Pending,Diproses,Selesai',
-        ]);
-
-        $pengaduan = Pengaduan::findOrFail($this->selectedId);
-        $pengaduan->update([
-            'tanggapan' => $this->tanggapan,
-            'status' => $this->newStatus,
-        ]);
-
-        $this->cancelReply();
-        $this->dispatch('notify', 'success', 'Tanggapan berhasil disimpan.');
-    }
 
     public function delete($id)
     {

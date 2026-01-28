@@ -67,6 +67,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/system/surat-templates', \App\Livewire\Surat\Template\Index::class)->name('system.surat-template.index');
         Route::get('/system/tindakan', \App\Livewire\System\Tindakan\Index::class)->name('system.tindakan.index');
         Route::get('/kepegawaian/gaji', \App\Livewire\Kepegawaian\Gaji\Index::class)->name('kepegawaian.gaji.index');
+        Route::get('/kepegawaian/gaji/create', \App\Livewire\Kepegawaian\Gaji\Create::class)->name('kepegawaian.gaji.create');
         Route::get('/pegawai', \App\Livewire\Pegawai\Index::class)->name('pegawai.index');
         Route::get('/pegawai/create', \App\Livewire\Pegawai\Create::class)->name('pegawai.create');
         Route::get('/pegawai/{pegawai}/edit', \App\Livewire\Pegawai\Edit::class)->name('pegawai.edit');
@@ -87,6 +88,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('can:admin')->group(function () {
         Route::get('/masyarakat', \App\Livewire\Masyarakat\Index::class)->name('masyarakat.index');
         Route::get('/masyarakat/pengaduan', \App\Livewire\Admin\Masyarakat\PengaduanIndex::class)->name('admin.masyarakat.pengaduan.index');
+        Route::get('/masyarakat/pengaduan/{pengaduan}', \App\Livewire\Admin\Masyarakat\PengaduanShow::class)->name('admin.masyarakat.pengaduan.show');
     });
 
     // UKM & Lainnya (Bisa diakses Staf/Kapus)
