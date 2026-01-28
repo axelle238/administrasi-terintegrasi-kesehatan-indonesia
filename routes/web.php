@@ -67,6 +67,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/system/settings', \App\Livewire\System\Setting\Index::class)->name('system.setting.index');
         Route::get('/system/surat-templates', \App\Livewire\Surat\Template\Index::class)->name('system.surat-template.index');
         Route::get('/system/tindakan', \App\Livewire\System\Tindakan\Index::class)->name('system.tindakan.index');
+        Route::get('/hrd/dashboard', \App\Livewire\Hrd\Dashboard::class)->name('hrd.dashboard');
         Route::get('/kepegawaian/gaji', \App\Livewire\Kepegawaian\Gaji\Index::class)->name('kepegawaian.gaji.index');
         Route::get('/kepegawaian/gaji/create', \App\Livewire\Kepegawaian\Gaji\Create::class)->name('kepegawaian.gaji.create');
         Route::get('/pegawai', \App\Livewire\Pegawai\Index::class)->name('pegawai.index');
@@ -87,6 +88,7 @@ Route::middleware('auth')->group(function () {
 
     // MASYARAKAT
     Route::middleware('can:admin')->group(function () {
+        Route::get('/public/dashboard', \App\Livewire\Public\Dashboard::class)->name('public.dashboard');
         Route::get('/masyarakat', \App\Livewire\Masyarakat\Index::class)->name('masyarakat.index');
         Route::get('/masyarakat/pengaduan', \App\Livewire\Admin\Masyarakat\PengaduanIndex::class)->name('admin.masyarakat.pengaduan.index');
         Route::get('/masyarakat/pengaduan/{pengaduan}', \App\Livewire\Admin\Masyarakat\PengaduanShow::class)->name('admin.masyarakat.pengaduan.show');
@@ -157,6 +159,7 @@ Route::middleware('auth')->group(function () {
 
     // MEDIS
     Route::middleware('can:medis')->group(function () {
+        Route::get('/medical/dashboard', \App\Livewire\Medical\Dashboard::class)->name('medical.dashboard');
         Route::get('/rekam-medis', \App\Livewire\RekamMedis\Index::class)->name('rekam-medis.index');
         Route::get('/rekam-medis/create', \App\Livewire\RekamMedis\Create::class)->name('rekam-medis.create');
         Route::get('/rekam-medis/{rekamMedis}', \App\Livewire\RekamMedis\Show::class)->name('rekam-medis.show');
@@ -166,6 +169,7 @@ Route::middleware('auth')->group(function () {
 
     // FARMASI
     Route::middleware('can:farmasi')->group(function () {
+        Route::get('/pharmacy/dashboard', \App\Livewire\Pharmacy\Dashboard::class)->name('pharmacy.dashboard');
         Route::get('/obat', \App\Livewire\Obat\Index::class)->name('obat.index');
         Route::get('/obat/create', \App\Livewire\Obat\Create::class)->name('obat.create');
         Route::get('/obat/stock-opname', \App\Livewire\Obat\StockOpname::class)->name('obat.stock-opname');

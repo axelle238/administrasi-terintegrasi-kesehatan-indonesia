@@ -13,6 +13,10 @@
         <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Layanan Medis</p>
     </div>
     
+    <x-nav-link-sidebar :href="route('medical.dashboard')" :active="request()->routeIs('medical.dashboard')" icon="chart-bar" color="cyan">
+        Dashboard Medis
+    </x-nav-link-sidebar>
+
     <x-nav-link-sidebar :href="route('antrean.index')" :active="request()->routeIs('antrean.*')" icon="ticket" color="cyan">
         Antrean & Triage
     </x-nav-link-sidebar>
@@ -50,6 +54,10 @@
         <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Farmasi & Obat</p>
     </div>
 
+    <x-nav-link-sidebar :href="route('pharmacy.dashboard')" :active="request()->routeIs('pharmacy.dashboard')" icon="chart-pie" color="emerald">
+        Dashboard Farmasi
+    </x-nav-link-sidebar>
+
     <x-nav-link-sidebar :href="route('apotek.index')" :active="request()->routeIs('apotek.*')" icon="beaker" color="emerald">
         Layanan Resep
     </x-nav-link-sidebar>
@@ -83,6 +91,10 @@
     <div class="mt-8 mb-2 px-4">
         <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Administrasi</p>
     </div>
+
+    <x-nav-link-sidebar :href="route('hrd.dashboard')" :active="request()->routeIs('hrd.dashboard')" icon="chart-square-bar" color="violet">
+        Dashboard SDM
+    </x-nav-link-sidebar>
 
     <x-nav-link-sidebar :href="route('pegawai.index')" :active="request()->routeIs('pegawai.*')" icon="identification" color="violet">
         Data Pegawai
@@ -118,6 +130,10 @@
     <div class="mt-8 mb-2 px-4">
         <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Masyarakat</p>
     </div>
+
+    <x-nav-link-sidebar :href="route('public.dashboard')" :active="request()->routeIs('public.dashboard')" icon="globe" color="orange">
+        Dashboard Publik
+    </x-nav-link-sidebar>
 
     <x-nav-link-sidebar :href="route('masyarakat.index')" :active="request()->routeIs('masyarakat.index')" icon="user-group" color="orange">
         Layanan Masyarakat
