@@ -81,6 +81,10 @@
         <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Keuangan</p>
     </div>
 
+    <x-nav-link-sidebar :href="route('finance.dashboard')" :active="request()->routeIs('finance.dashboard')" icon="chart-bar" color="teal">
+        Dashboard Keuangan
+    </x-nav-link-sidebar>
+
     <x-nav-link-sidebar :href="route('kasir.index')" :active="request()->routeIs('kasir.*')" icon="credit-card" color="teal">
         Kasir & Billing
     </x-nav-link-sidebar>

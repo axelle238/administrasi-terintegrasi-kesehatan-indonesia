@@ -119,6 +119,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/surat/{surat}/edit', \App\Livewire\Surat\Edit::class)->name('surat.edit');
         Route::get('/surat/{surat}/print-disposisi', [SuratController::class, 'printDisposition'])->name('surat.print-disposisi');
         Route::get('/antrean', \App\Livewire\Antrean\Index::class)->name('antrean.index');
+        
+        // Keuangan Dashboard
+        Route::get('/finance/dashboard', \App\Livewire\Finance\Dashboard::class)->name('finance.dashboard');
+        
         Route::get('/kasir', \App\Livewire\Kasir\Index::class)->name('kasir.index');
         Route::get('/kasir/{rekamMedis}/process', \App\Livewire\Kasir\Process::class)->name('kasir.process');
         Route::get('/kasir/closing', \App\Livewire\Kasir\Closing::class)->name('kasir.closing');
