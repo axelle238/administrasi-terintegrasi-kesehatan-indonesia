@@ -14,46 +14,64 @@ class Index extends Component
 {
     use WithPagination;
 
+    public $activeTab = 'ikhtisar'; // ikhtisar, ukm, survey
     public $search = '';
+
+    public function setTab($tab)
+    {
+        $this->activeTab = $tab;
+    }
 
     public function render()
     {
-        // 1. Statistik Utama
-        $totalKegiatan = KegiatanUkm::count();
-        $totalPengaduan = Pengaduan::count();
-        $pengaduanPending = Pengaduan::where('status', 'Pending')->count();
+        // === GLOBAL STATS ===
         $totalResponden = Survey::count();
-        
-        // Hitung Indeks Kepuasan Masyarakat (Rata-rata rating 1-5 dikonversi ke skala 100)
-        // Asumsi kolom 'rating' ada di tabel surveys. Jika tidak, perlu disesuaikan.
-        // Cek struktur Survey nanti, sementara asumsi ada.
-        $avgRating = Survey::avg('rating_layanan') ?? 0; // Skala 5
+        $avgRating = Survey::avg('rating_layanan') ?? 0;
         $ikmScore = ($avgRating / 5) * 100;
+        
+        $tabData = [];
 
-        // 2. Daftar Pengaduan Terbaru
-        $pengaduanTerbaru = Pengaduan::latest()
-            ->take(5)
-            ->get();
+        // === TAB 1: IKHTISAR ===
+        if ($this->activeTab == 'ikhtisar') {
+            $tabData['pengaduanPending'] = Pengaduan::where('status', 'Menunggu')->count();
+            $tabData['totalKegiatan'] = KegiatanUkm::count();
+            
+            // Tren Kepuasan 6 Bulan
+            $tabData['trenKepuasan'] = $this->getTrenKepuasan();
+            
+            // Pengaduan Terbaru
+            $tabData['pengaduanTerbaru'] = Pengaduan::latest()->take(5)->get();
+        }
 
-        // 3. Kegiatan UKM (Searchable)
-        $kegiatans = KegiatanUkm::where('nama_kegiatan', 'like', '%' . $this->search . '%')
-            ->orWhere('lokasi', 'like', '%' . $this->search . '%')
-            ->latest('tanggal_kegiatan')
-            ->paginate(6);
+        // === TAB 2: KEGIATAN UKM ===
+        if ($this->activeTab == 'ukm') {
+            $tabData['kegiatans'] = KegiatanUkm::where('nama_kegiatan', 'like', '%' . $this->search . '%')
+                ->orWhere('lokasi', 'like', '%' . $this->search . '%')
+                ->latest('tanggal_kegiatan')
+                ->paginate(9); // Grid layout 3x3
+        }
 
-        // 4. Grafik Tren Kepuasan (6 Bulan)
-        $trenKepuasan = $this->getTrenKepuasan();
+        // === TAB 3: SURVEY KEPUASAN ===
+        if ($this->activeTab == 'survey') {
+            $tabData['surveys'] = Survey::latest()->paginate(10);
+            
+            // Analisis per Bintang
+            $tabData['distribusiBintang'] = Survey::select('rating_layanan', DB::raw('count(*) as total'))
+                ->groupBy('rating_layanan')
+                ->orderBy('rating_layanan', 'desc')
+                ->get();
+                
+            $tabData['komentarTerbaru'] = Survey::whereNotNull('kritik_saran')
+                ->latest()
+                ->take(5)
+                ->get();
+        }
 
         return view('livewire.masyarakat.index', compact(
-            'totalKegiatan',
-            'totalPengaduan',
-            'pengaduanPending',
             'totalResponden',
             'ikmScore',
-            'pengaduanTerbaru',
-            'kegiatans',
-            'trenKepuasan'
-        ))->layout('layouts.app', ['header' => 'Dashboard Pelayanan Publik']);
+            'tabData'
+        ))->layout('layouts.app', ['header' => 'Pusat Layanan Masyarakat & UKM']);
     }
 
     private function getTrenKepuasan()
@@ -63,7 +81,7 @@ class Index extends Component
         
         for ($i = 5; $i >= 0; $i--) {
             $date = Carbon::now()->subMonths($i);
-            $labels[] = $date->format('M Y');
+            $labels[] = $date->translatedFormat('M Y');
             
             $avg = Survey::whereMonth('created_at', $date->month)
                 ->whereYear('created_at', $date->year)
