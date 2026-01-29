@@ -4,8 +4,10 @@ namespace App\Livewire\JadwalJaga;
 
 use App\Models\JadwalJaga;
 use App\Models\Pegawai;
+use App\Models\Shift;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\DB;
 
 class Index extends Component
 {
@@ -30,19 +32,31 @@ class Index extends Component
 
     public function render()
     {
-        $jadwals = JadwalJaga::with(['pegawai.user', 'shift'])
+        // Stats
+        $totalJadwalHariIni = JadwalJaga::whereDate('tanggal', $this->dateFilter)->count();
+        
+        $statsShift = JadwalJaga::whereDate('tanggal', $this->dateFilter)
+            ->select('shift_id', DB::raw('count(*) as total'))
+            ->groupBy('shift_id')
+            ->with('shift')
+            ->get();
+
+        // Data Table
+        $jadwals = JadwalJaga::with(['pegawai.user', 'shift', 'ruangan'])
             ->when($this->dateFilter, function($query) {
                 $query->whereDate('tanggal', $this->dateFilter);
             })
             ->when($this->pegawaiFilter, function($query) {
                 $query->where('pegawai_id', $this->pegawaiFilter);
             })
-            ->latest('tanggal')
-            ->paginate(10);
+            ->orderBy('shift_id') // Group by shift visually
+            ->paginate(15);
 
-        return view('livewire.jadwal-jaga.index', [
-            'jadwals' => $jadwals,
-            'pegawais' => Pegawai::with('user')->get(),
-        ])->layout('layouts.app', ['header' => 'Jadwal Jaga Pegawai']);
+        return view('livewire.jadwal-jaga.index', compact(
+            'jadwals', 
+            'totalJadwalHariIni', 
+            'statsShift'
+        ))->with('pegawais', Pegawai::with('user')->get())
+          ->layout('layouts.app', ['header' => 'Manajemen Jadwal Jaga']);
     }
 }

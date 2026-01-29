@@ -16,30 +16,43 @@ class Index extends Component
     public function render()
     {
         $user = Auth::user();
-        $pegawai = $user->pegawai;
+        $pegawai = $user->pegawai; // Pastikan user memiliki relasi pegawai
 
-        $query = Antrean::with(['pasien', 'dokter']) // Load relasi dokter (locking)
-            ->whereDate('tanggal_antrean', Carbon::today())
-            ->whereIn('status', ['Menunggu', 'Diperiksa']);
+        // Base Query untuk Antrean Hari Ini
+        $queryAntrean = Antrean::with(['pasien'])
+            ->whereDate('tanggal_antrean', Carbon::today());
 
-        // Filter Poli berdasarkan Poli Dokter
         if ($pegawai && $pegawai->poli_id) {
-            $query->where('poli_id', $pegawai->poli_id);
+            $queryAntrean->where('poli_id', $pegawai->poli_id);
         }
 
-        $antreanMenunggu = $query->orderByRaw("FIELD(status, 'Diperiksa', 'Menunggu')")
+        // Stats
+        $totalMenunggu = (clone $queryAntrean)->whereIn('status', ['Menunggu', 'Diperiksa'])->count();
+        $totalSelesaiHariIni = (clone $queryAntrean)->where('status', 'Selesai')->count();
+        
+        $totalDitanganiBulanIni = RekamMedis::where('dokter_id', $user->id)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->count();
+
+        // Data List Antrean (Prioritas Diperiksa)
+        $antreanMenunggu = $queryAntrean
+            ->whereIn('status', ['Menunggu', 'Diperiksa'])
+            ->orderByRaw("FIELD(status, 'Diperiksa', 'Menunggu')")
             ->orderBy('id', 'asc')
             ->get();
 
-        // History
+        // History Pemeriksaan Dokter Ini
         $history = RekamMedis::where('dokter_id', $user->id)
             ->with('pasien')
             ->latest()
             ->paginate(5);
 
-        return view('livewire.rekam-medis.index', [
-            'antreanMenunggu' => $antreanMenunggu,
-            'history' => $history
-        ])->layout('layouts.app', ['header' => 'Pemeriksaan Medis (Dokter)']);
+        return view('livewire.rekam-medis.index', compact(
+            'antreanMenunggu', 
+            'history',
+            'totalMenunggu',
+            'totalSelesaiHariIni',
+            'totalDitanganiBulanIni'
+        ))->layout('layouts.app', ['header' => 'Pemeriksaan Medis (Dokter)']);
     }
 }

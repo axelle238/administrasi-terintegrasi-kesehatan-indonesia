@@ -126,8 +126,16 @@ class Index extends Component
 
     public function render()
     {
-        $antreans = Antrean::with(['pasien', 'poli'])
-            ->whereDate('tanggal_antrean', Carbon::today())
+        $query = Antrean::with(['pasien', 'poli'])->whereDate('tanggal_antrean', Carbon::today());
+        
+        // Statistik Realtime
+        $totalAntrean = (clone $query)->count();
+        $sisaAntrean = (clone $query)->where('status', 'Menunggu')->count();
+        $sedangDiproses = (clone $query)->whereIn('status', ['Diperiksa', 'Farmasi'])->count();
+        $selesai = (clone $query)->where('status', 'Selesai')->count();
+
+        // Data Utama
+        $antreans = $query
             ->orderByRaw("FIELD(status, 'Diperiksa', 'Menunggu', 'Farmasi', 'Selesai', 'Batal')")
             ->orderBy('id', 'asc')
             ->get();
@@ -135,15 +143,19 @@ class Index extends Component
         $pasiens = Pasien::where('nama_lengkap', 'like', '%' . $this->searchPasien . '%')
             ->orWhere('nik', 'like', '%' . $this->searchPasien . '%')
             ->orderBy('nama_lengkap')
-            ->limit(20) // Limit to 20 results for performance
+            ->limit(20) 
             ->get();
             
         $polis = Poli::all();
 
-        return view('livewire.antrean.index', [
-            'antreans' => $antreans,
-            'pasiens' => $pasiens,
-            'polis' => $polis
-        ])->layout('layouts.app', ['header' => 'Manajemen Antrean Hari Ini']);
+        return view('livewire.antrean.index', compact(
+            'antreans', 
+            'pasiens', 
+            'polis',
+            'totalAntrean',
+            'sisaAntrean',
+            'sedangDiproses',
+            'selesai'
+        ))->layout('layouts.app', ['header' => 'Manajemen Antrean Harian']);
     }
 }
