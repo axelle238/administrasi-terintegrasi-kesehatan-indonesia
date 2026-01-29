@@ -8,13 +8,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('icd10s', function (Blueprint $table) {
-            $table->id();
-            $table->string('code')->unique(); // e.g., A00.0
-            $table->string('name_en'); // Cholera due to Vibrio cholerae 01, biovar cholerae
-            $table->string('name_id')->nullable(); // Kolera akibat Vibrio cholerae 01, biovar cholerae
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('icd10s')) {
+            Schema::create('icd10s', function (Blueprint $table) {
+                $table->id();
+                $table->string('code', 10)->unique()->index(); // Kode ICD (misal: A01.0)
+                $table->string('name_id', 500); // Nama Indonesia
+                $table->string('name_en', 500)->nullable(); // Nama Inggris (Standar WHO)
+                $table->boolean('is_bpjs')->default(true); // Apakah ditanggung BPJS
+                $table->boolean('active')->default(true);
+                $table->timestamps();
+            });
+        }
     }
 
     public function down(): void

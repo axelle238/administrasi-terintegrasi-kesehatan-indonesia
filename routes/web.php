@@ -194,6 +194,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/rekam-medis', \App\Livewire\RekamMedis\Index::class)->name('rekam-medis.index');
         Route::get('/rekam-medis/create', \App\Livewire\RekamMedis\Create::class)->name('rekam-medis.create');
         Route::get('/rekam-medis/{rekamMedis}', \App\Livewire\RekamMedis\Show::class)->name('rekam-medis.show');
+        Route::get('/penyakit/icd10', \App\Livewire\Medical\Penyakit\Index::class)->name('medical.penyakit.index');
         Route::get('/surat/keterangan', \App\Livewire\Surat\Keterangan\Index::class)->name('surat.keterangan.index');
         Route::get('/surat/keterangan/{surat}/print', [\App\Http\Controllers\SuratKeteranganController::class, 'print'])->name('surat.print-keterangan');
     });
