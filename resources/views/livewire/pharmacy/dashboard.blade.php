@@ -1,4 +1,30 @@
 <div class="space-y-8">
+    <!-- Critical Alerts -->
+    @if($stokHabis > 0)
+    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl shadow-sm animate-pulse">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <svg class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-black text-red-800 uppercase tracking-wide">Tindakan Segera Diperlukan!</h3>
+                    <div class="text-sm text-red-700 mt-1">
+                        Terdapat <span class="font-bold text-lg">{{ $stokHabis }} item obat</span> dengan stok 0 (Habis). Segera lakukan pengadaan ulang.
+                    </div>
+                </div>
+            </div>
+            <div>
+                <a href="{{ route('obat.index') }}?filter=habis" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-bold rounded-lg text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
+                    Lihat Detail
+                </a>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Row 1: Inventory Health -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-gray-700">

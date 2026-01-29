@@ -122,19 +122,41 @@
 
         <!-- Aktivitas Poli -->
         <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
-            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Aktivitas Poliklinik Hari Ini</h3>
+            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Status Antrean Poliklinik Hari Ini</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 @foreach($poliActivity as $poli)
-                    <div class="p-4 rounded-xl border border-slate-100 hover:border-blue-500 hover:shadow-md transition-all bg-slate-50 dark:bg-slate-700/30">
-                        <div class="flex justify-between items-center">
-                            <h4 class="font-bold text-slate-700 dark:text-gray-200">{{ $poli->poli->nama_poli }}</h4>
-                            <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-black rounded-lg">{{ $poli->total }} Ps</span>
+                    @php
+                        $status = 'Lancar';
+                        $statusColor = 'bg-emerald-100 text-emerald-700 border-emerald-200';
+                        $barColor = 'bg-emerald-500';
+                        
+                        if($poli->total > 20) {
+                            $status = 'Padat';
+                            $statusColor = 'bg-red-100 text-red-700 border-red-200';
+                            $barColor = 'bg-red-500';
+                        } elseif($poli->total > 10) {
+                            $status = 'Sedang';
+                            $statusColor = 'bg-yellow-100 text-yellow-700 border-yellow-200';
+                            $barColor = 'bg-yellow-500';
+                        }
+                    @endphp
+                    <div class="p-4 rounded-xl border {{ $statusColor }} border-opacity-50 hover:shadow-md transition-all bg-white dark:bg-slate-700/30">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-slate-800 dark:text-gray-200 truncate pr-2" title="{{ $poli->poli->nama_poli }}">{{ $poli->poli->nama_poli }}</h4>
+                            <span class="text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded bg-white/50 backdrop-blur-sm">{{ $status }}</span>
                         </div>
-                        <div class="mt-2 w-full bg-slate-200 rounded-full h-1">
-                            <div class="bg-blue-500 h-1 rounded-full" style="width: {{ min(100, ($poli->total / 20) * 100) }}%"></div>
+                        <div class="flex items-end gap-1 mb-2">
+                            <span class="text-2xl font-black text-slate-800 dark:text-white leading-none">{{ $poli->total }}</span>
+                            <span class="text-xs font-bold text-slate-500 mb-0.5">Pasien</span>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                            <div class="{{ $barColor }} h-1.5 rounded-full" style="width: {{ min(100, ($poli->total / 25) * 100) }}%"></div>
                         </div>
                     </div>
                 @endforeach
+                @if($poliActivity->isEmpty())
+                    <div class="col-span-full text-center py-8 text-slate-400 text-sm">Belum ada aktivitas poli hari ini.</div>
+                @endif
             </div>
         </div>
     </div>
