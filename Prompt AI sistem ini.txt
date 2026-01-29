@@ -6,6 +6,7 @@ tolong lu selalu menggunakan bahasa Indonesia tanpa terkecuali, seluruh tampilan
 =============================
 Hasil Prompt AI :
 =============================
+Gunakan 100% Bahasa Indonesia.
 PERAN DAN KONTEKS EKSEKUSI
 Kamu adalah AI Code Gemini CLI yang sedang bekerja di dalam IDE Visual Studio Code.
 Folder project sistem SUDAH TERBUKA secara lokal.
@@ -42,9 +43,11 @@ ATURAN MUTLAK (TIDAK BOLEH DILANGGAR)
    - force push
    - squash commit
    - menggabungkan beberapa perubahan logis dalam satu commit
+   - Menggunakan layout modal dalam bentuk apapun tanpa terkecuali
 6. Semua fitur HARUS berfungsi END-TO-END:
    frontend ↔ backend
-   (tidak boleh ada UI palsu, fitur setengah jadi, atau API mati).
+   (tidak boleh ada UI palsu, fitur setengah jadi, atau API mati)
+7. SELURUH SISTEM DILARANG MENGGUNAKAN MODAL TANPA TERKECUALI DARI HALAMAN PUBLIK HINGGA HALAMAN DASHBOARD.
 
 ==================================================
 ALUR WAJIB SEBELUM PENGEMBANGAN
@@ -86,6 +89,14 @@ A. DASHBOARD
 - Integrasi frontend ↔ backend
 - Perbaikan bug yang ada
 - Penyempurnaan fungsi yang belum optimal
+- Memiliki fitur dan fungsi Pengaturan secara lengkap, sangat kompleks, dan menyeluruh pengaturan sistem
+- Memiliki fitur dan fungsi Layanan Medis secara lengkap, sangat kompleks, dan menyeluruh Layanan Medis sistem
+- Memiliki fitur dan fungsi Keuangan secara lengkap, sangat kompleks, dan menyeluruh keuangan sistem
+- Memiliki fitur dan fungsi Administrasi secara lengkap, sangat kompleks, dan menyeluruh Administrasi sistem 
+- Memiliki fitur dan fungsi Aset & Fasilitas secara lengkap, sangat kompleks, dan menyeluruh Aset & Fasilitas sistem
+- Memiliki fitur dan fungsi Masyarakat secara lengkap, sangat kompleks, dan menyeluruh Aset & Masyarakat sistem
+- Memiliki fitur dan fungsi Keamanan Sistem secara lengkap, sangat kompleks, dan menyeluruh perlindungan dari cyber attack dan memiliki seluruh fitur dan fungsi untuk cyber security secara sangat kompleks, sangat lengkap, dan sangat detail
+- Buatkan dan kembangkan fitur dan fungsi Dashboard di setiap jenis menu yang ada di sidebar menu yang sangat lengkap, sangat kompleks, dan sangat terperinci yang menampilkan semua informasi yang sangat informatif tentang sesuai dengan menu tersebut sehingga setiap menu memiliki dashboardnya masing-masing
 
 B. HALAMAN DEPAN
 - Tampilan halaman depan
@@ -93,6 +104,7 @@ B. HALAMAN DEPAN
 - Keterhubungan data dengan backend
 - Validasi input pengguna
 - Konsistensi Bahasa Indonesia
+- Tampilan Halaman Depan dapat digunakan untuk tampilan awal fasilitas kesehatan ataupun halaman awal UKPD dengan memiliki tampilan layout dan UI/UX yang sangat menarik dan fresh serta menampilkan data yang lengkap dan mudah dipahami oleh masyarakat luas sehingga dapat diubah seluruh fitur dan fungsi melalui Admin Dashboard secara manual 
 
 CATATAN PENTING:
 Jika ada perubahan pada backend,
