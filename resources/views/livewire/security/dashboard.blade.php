@@ -1,19 +1,45 @@
 <div class="space-y-8">
     <!-- Row 1: Security Status & KPI -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- System Health -->
-        <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden group">
-            <div class="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+        <!-- System Infrastructure Monitoring -->
+        <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden group">
+            <div class="absolute right-0 top-0 w-32 h-32 bg-white/5 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
             <div class="relative z-10">
-                <div class="flex items-center gap-3 mb-2">
-                    <span class="flex h-3 w-3 relative">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
-                    </span>
-                    <p class="text-xs font-bold text-emerald-100 uppercase tracking-widest">Status Sistem</p>
+                <div class="flex items-center gap-2 mb-4">
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Infrastruktur Server</p>
                 </div>
-                <h3 class="text-3xl font-black mb-1">Aman</h3>
-                <p class="text-[10px] text-emerald-100 font-mono">Enkripsi: {{ $securityStatus['encryption'] }}</p>
+                
+                <div class="space-y-3">
+                    <div>
+                        <div class="flex justify-between text-[10px] font-mono mb-1">
+                            <span class="text-slate-300">CPU Load</span>
+                            <span class="{{ $serverHealth['cpu_load'] > 80 ? 'text-red-400' : 'text-emerald-400' }} font-bold">{{ $serverHealth['cpu_load'] }}%</span>
+                        </div>
+                        <div class="w-full bg-white/10 rounded-full h-1.5">
+                            <div class="{{ $serverHealth['cpu_load'] > 80 ? 'bg-red-500' : 'bg-emerald-500' }} h-1.5 rounded-full" style="width: {{ $serverHealth['cpu_load'] }}%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-[10px] font-mono mb-1">
+                            <span class="text-slate-300">RAM Usage</span>
+                            <span class="{{ $serverHealth['ram_usage'] > 80 ? 'text-red-400' : 'text-blue-400' }} font-bold">{{ $serverHealth['ram_usage'] }}%</span>
+                        </div>
+                        <div class="w-full bg-white/10 rounded-full h-1.5">
+                            <div class="{{ $serverHealth['ram_usage'] > 80 ? 'bg-red-500' : 'bg-blue-500' }} h-1.5 rounded-full" style="width: {{ $serverHealth['ram_usage'] }}%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-[10px] font-mono mb-1">
+                            <span class="text-slate-300">Disk Space</span>
+                            <span class="text-purple-400 font-bold">{{ $serverHealth['disk_space'] }}%</span>
+                        </div>
+                        <div class="w-full bg-white/10 rounded-full h-1.5">
+                            <div class="bg-purple-500 h-1.5 rounded-full" style="width: {{ $serverHealth['disk_space'] }}%"></div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-[9px] text-slate-500 font-mono mt-3 text-right">Uptime: {{ $serverHealth['uptime'] }}</p>
             </div>
         </div>
 
@@ -31,15 +57,15 @@
         </div>
 
         <!-- Threat Level -->
-        <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden group">
-            <div class="absolute right-0 top-0 w-32 h-32 bg-white/5 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+        <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xl border border-slate-100 dark:border-gray-700 relative overflow-hidden group">
+            <div class="absolute right-0 top-0 w-32 h-32 bg-red-50 dark:bg-red-900/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
             <div class="relative z-10">
                 <div class="flex items-center gap-3 mb-2">
-                    <svg class="w-4 h-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                    <svg class="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Tingkat Ancaman</p>
                 </div>
-                <h3 class="text-3xl font-black mb-1 text-red-500">{{ $securityStatus['threat_level'] }}</h3>
-                <p class="text-[10px] text-slate-400 font-mono">{{ $loginFailedToday }} Percobaan Ilegal Hari Ini</p>
+                <h3 class="text-3xl font-black mb-1 text-red-600">{{ $securityStatus['threat_level'] }}</h3>
+                <p class="text-[10px] text-slate-500 font-mono">{{ $loginFailedToday }} Percobaan Ilegal Hari Ini</p>
             </div>
         </div>
 
@@ -50,6 +76,80 @@
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Total Log Aktivitas</p>
                 <h3 class="text-3xl font-black text-slate-800">{{ number_format($logsToday) }}</h3>
                 <p class="text-[10px] text-slate-500 font-medium mt-1">Minggu Ini: {{ number_format($logsWeek) }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 2: Geo Intelligence -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Geo Table -->
+        <div class="card-health">
+            <div class="card-health-header">
+                <div>
+                    <h3 class="text-lg font-black text-slate-800">Distribusi Akses Global</h3>
+                    <p class="text-xs text-slate-500 font-bold mt-1">Asal Negara Login Terdeteksi</p>
+                </div>
+            </div>
+            <div class="card-health-body p-0">
+                <table class="w-full text-sm text-left">
+                    <thead class="text-xs text-slate-400 uppercase bg-slate-50">
+                        <tr>
+                            <th class="px-4 py-2 font-bold">Negara</th>
+                            <th class="px-4 py-2 font-bold text-right">Total</th>
+                            <th class="px-4 py-2 font-bold text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @foreach($geoDistribution as $geo)
+                            <tr>
+                                <td class="px-4 py-3 font-bold text-slate-700">{{ $geo['negara'] }}</td>
+                                <td class="px-4 py-3 text-right font-mono">{{ $geo['total'] }}</td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="px-2 py-1 rounded text-[10px] font-black uppercase tracking-wider
+                                        @if($geo['status'] == 'Aman') bg-emerald-100 text-emerald-700
+                                        @elseif($geo['status'] == 'Blokir') bg-red-100 text-red-700
+                                        @else bg-yellow-100 text-yellow-700 @endif">
+                                        {{ $geo['status'] }}
+                                    </span>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Threat Map Visual (Mock) -->
+        <div class="lg:col-span-2 bg-slate-900 rounded-3xl p-6 shadow-xl relative overflow-hidden flex items-center justify-center">
+            <div class="absolute inset-0 bg-[url('https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg')] bg-cover bg-center opacity-10"></div>
+            <div class="relative z-10 w-full h-64 flex items-center justify-center">
+                <!-- Ping Animation Points -->
+                <div class="absolute top-1/3 left-1/4">
+                    <span class="flex h-3 w-3 relative">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                    </span>
+                </div>
+                <div class="absolute top-1/2 right-1/3">
+                    <span class="flex h-3 w-3 relative">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                    </span>
+                </div>
+                <div class="absolute bottom-1/3 right-1/4">
+                    <span class="flex h-4 w-4 relative">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.8)]"></span>
+                    </span>
+                    <div class="absolute mt-2 ml-4 bg-slate-800 text-emerald-400 text-[10px] px-2 py-1 rounded border border-emerald-500/30 font-mono whitespace-nowrap">
+                        Server Utama (Indonesia) <br> Aktif • Aman
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <h4 class="text-slate-400 font-mono text-sm tracking-widest mb-2">JARINGAN GLOBAL TERPANTAU</h4>
+                    <p class="text-emerald-400 font-black text-2xl tracking-tight">SEMUA SISTEM NOMINAL</p>
+                </div>
             </div>
         </div>
     </div>

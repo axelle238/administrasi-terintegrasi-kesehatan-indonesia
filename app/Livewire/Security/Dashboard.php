@@ -54,6 +54,23 @@ class Dashboard extends Component
         // 7. Grafik Tren Ancaman (Login Gagal 7 Hari)
         $trenAncaman = $this->getTrenAncaman();
 
+        // 8. Geo Distribusi Akses (Simulasi Threat Intelligence)
+        $geoDistribution = [
+            ['negara' => 'Indonesia', 'total' => $loginSuccessToday + 45, 'status' => 'Aman'],
+            ['negara' => 'Amerika Serikat', 'total' => 12, 'status' => 'Waspada'],
+            ['negara' => 'Tiongkok', 'total' => 8, 'status' => 'Blokir'],
+            ['negara' => 'Rusia', 'total' => 5, 'status' => 'Blokir'],
+            ['negara' => 'Lainnya', 'total' => 3, 'status' => 'Waspada'],
+        ];
+
+        // 9. Kesehatan Server Infrastruktur (Simulasi Monitoring)
+        $serverHealth = [
+            'cpu_load' => rand(15, 45), // Persentase
+            'ram_usage' => rand(40, 70), // Persentase
+            'disk_space' => 68, // Persentase terpakai
+            'uptime' => '14 Hari 3 Jam'
+        ];
+
         return view('livewire.security.dashboard', compact(
             'logsToday',
             'logsWeek',
@@ -63,7 +80,9 @@ class Dashboard extends Component
             'topActiveUsers',
             'recentCritical',
             'securityStatus',
-            'trenAncaman'
+            'trenAncaman',
+            'geoDistribution',
+            'serverHealth'
         ))->layout('layouts.app', ['header' => 'Pusat Keamanan Siber & Sistem']);
     }
 
