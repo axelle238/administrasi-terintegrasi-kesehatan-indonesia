@@ -88,4 +88,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(RekamMedis::class, 'dokter_id');
     }
+
+    /**
+     * Relasi: User memiliki banyak riwayat login.
+     * (One-to-Many)
+     */
+    public function riwayatLogins(): HasMany
+    {
+        return $this->hasMany(RiwayatLogin::class);
+    }
 }
