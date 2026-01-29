@@ -44,7 +44,7 @@
             </div>
         </div>
 
-        <!-- Pengeluaran Gaji -->
+        <!-- Total Pengeluaran -->
         <div class="card-health p-6 relative overflow-hidden group">
             <div class="absolute right-0 top-0 w-32 h-32 bg-orange-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
             <div class="relative z-10">
@@ -53,13 +53,22 @@
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                     </div>
                     <div>
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Beban Gaji (Estimasi)</p>
-                        <h3 class="text-2xl font-black text-slate-800 tracking-tight">Rp {{ number_format($pengeluaranGajiBulan, 0, ',', '.') }}</h3>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Total Pengeluaran</p>
+                        <h3 class="text-2xl font-black text-slate-800 tracking-tight">Rp {{ number_format($totalPengeluaranBulan, 0, ',', '.') }}</h3>
                     </div>
                 </div>
-                <div class="flex items-center gap-2 text-xs font-bold text-orange-600 bg-white/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-orange-100 w-max shadow-sm">
-                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
-                    Beban Operasional Utama
+                <div class="flex flex-col gap-1 text-[10px] font-bold uppercase tracking-wide text-slate-500">
+                    <div class="flex justify-between">
+                        <span>Gaji SDM</span>
+                        <span class="text-orange-600">Rp {{ number_format($pengeluaranGajiBulan, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-1 rounded-full overflow-hidden">
+                        <div class="bg-orange-400 h-full" style="width: {{ $totalPengeluaranBulan > 0 ? ($pengeluaranGajiBulan / $totalPengeluaranBulan) * 100 : 0 }}%"></div>
+                    </div>
+                    <div class="flex justify-between mt-1">
+                        <span>Logistik & Obat</span>
+                        <span class="text-orange-600">Rp {{ number_format($pengeluaranBarang, 0, ',', '.') }}</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -69,8 +78,10 @@
             <div class="absolute right-0 top-0 w-48 h-48 bg-white/5 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-white/10 transition-colors"></div>
             <div class="relative z-10 h-full flex flex-col justify-between">
                 <div>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Net Cash Flow (Est)</p>
-                    <h3 class="text-3xl font-black text-white tracking-tight">Rp {{ number_format($pendapatanBulanIni - $pengeluaranGajiBulan, 0, ',', '.') }}</h3>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Arus Kas Bersih (Net Flow)</p>
+                    <h3 class="text-3xl font-black {{ ($pendapatanBulanIni - $totalPengeluaranBulan) >= 0 ? 'text-emerald-400' : 'text-red-400' }} tracking-tight">
+                        {{ ($pendapatanBulanIni - $totalPengeluaranBulan) >= 0 ? '+' : '' }} Rp {{ number_format($pendapatanBulanIni - $totalPengeluaranBulan, 0, ',', '.') }}
+                    </h3>
                 </div>
                 <div class="mt-4 pt-4 border-t border-white/10 flex justify-between items-end">
                     <div>
@@ -87,32 +98,44 @@
 
     <!-- Row 2: Analytics & Methods -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Revenue Chart -->
+        <!-- Revenue & Expense Chart -->
         <div class="lg:col-span-2 card-health">
             <div class="card-health-header">
                 <div>
-                    <h3 class="text-lg font-black text-slate-800">Analitik Pendapatan</h3>
-                    <p class="text-xs text-slate-500 font-bold mt-1">Tren Keuangan 12 Bulan Terakhir</p>
+                    <h3 class="text-lg font-black text-slate-800">Analisis Arus Kas</h3>
+                    <p class="text-xs text-slate-500 font-bold mt-1">Pendapatan vs Pengeluaran (12 Bulan)</p>
                 </div>
-                <button class="btn-icon">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                </button>
+                <div class="flex items-center gap-3 text-[10px] font-bold uppercase tracking-wider">
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Masuk</span>
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-500"></span> Keluar</span>
+                </div>
             </div>
             <div class="card-health-body">
-                <div class="h-72 flex items-end justify-between gap-3 px-2">
-                    @foreach($grafikPendapatan['data'] as $index => $val)
+                <div class="h-72 flex items-end justify-between gap-2 px-2">
+                    @foreach($grafikKeuangan['labels'] as $index => $label)
+                        @php
+                            $pemasukan = $grafikKeuangan['pendapatan'][$index];
+                            $pengeluaran = $grafikKeuangan['pengeluaran'][$index];
+                            $maxValue = max(array_merge($grafikKeuangan['pendapatan'], $grafikKeuangan['pengeluaran'])) ?: 1;
+                        @endphp
                         <div class="flex flex-col items-center flex-1 group h-full justify-end">
-                            <div class="w-full bg-gradient-to-t from-primary-600 to-primary-400 rounded-t-lg relative transition-all duration-500 group-hover:from-primary-500 group-hover:to-primary-300 shadow-lg shadow-primary-500/20" 
-                                 style="height: {{ $val > 0 ? ($val / (max($grafikPendapatan['data']) ?: 1) * 100) : 0 }}%">
-                                 <div class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                 
-                                 <!-- Tooltip -->
-                                 <div class="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white text-[10px] font-bold px-2 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all z-20 pointer-events-none whitespace-nowrap shadow-xl">
-                                     Rp {{ number_format($val/1000000, 1) }}Jt
-                                     <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 w-2 h-2 bg-slate-800 rotate-45"></div>
-                                 </div>
+                            <div class="flex gap-0.5 w-full justify-center items-end h-full">
+                                <!-- Bar Pemasukan -->
+                                <div class="w-1/2 bg-emerald-500 rounded-t-sm relative transition-all duration-500 hover:bg-emerald-400" 
+                                     style="height: {{ ($pemasukan / $maxValue) * 100 }}%">
+                                     <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white text-[9px] font-bold px-1.5 py-1 rounded opacity-0 group-hover:opacity-100 transition-all z-20 pointer-events-none whitespace-nowrap">
+                                         +{{ number_format($pemasukan/1000000, 1) }}M
+                                     </div>
+                                </div>
+                                <!-- Bar Pengeluaran -->
+                                <div class="w-1/2 bg-red-500 rounded-t-sm relative transition-all duration-500 hover:bg-red-400" 
+                                     style="height: {{ ($pengeluaran / $maxValue) * 100 }}%">
+                                     <div class="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white text-[9px] font-bold px-1.5 py-1 rounded opacity-0 group-hover:opacity-100 transition-all z-20 pointer-events-none whitespace-nowrap">
+                                         -{{ number_format($pengeluaran/1000000, 1) }}M
+                                     </div>
+                                </div>
                             </div>
-                            <span class="text-[10px] font-bold text-slate-400 mt-3 uppercase tracking-wider rotate-0 md:rotate-0">{{ $grafikPendapatan['labels'][$index] }}</span>
+                            <span class="text-[9px] font-bold text-slate-400 mt-2 uppercase tracking-tight rotate-0">{{ $label }}</span>
                         </div>
                     @endforeach
                 </div>

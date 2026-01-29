@@ -27,10 +27,24 @@ class Dashboard extends Component
             ->groupBy('role')
             ->get();
 
-        // 3. Jadwal Jaga Hari Ini
-        $jadwalHariIni = JadwalJaga::with('pegawai.user', 'shift')
-            ->whereDate('tanggal', Carbon::today())
-            ->get();
+        // 3. Jadwal Jaga & Absensi (Simulasi Real-time)
+        $jadwalHariIniQuery = JadwalJaga::with('pegawai.user', 'shift')
+            ->whereDate('tanggal', Carbon::today());
+            
+        $dijadwalkan = $jadwalHariIniQuery->count();
+        // Simulasi data kehadiran karena belum ada integrasi mesin fingerprint
+        $hadir = $dijadwalkan > 0 ? floor($dijadwalkan * 0.9) : 0; 
+        $terlambat = $dijadwalkan > 0 ? floor($dijadwalkan * 0.05) : 0;
+        $alpa = $dijadwalkan - $hadir - $terlambat;
+
+        $kehadiranStatistik = [
+            'dijadwalkan' => $dijadwalkan,
+            'hadir' => $hadir,
+            'terlambat' => $terlambat,
+            'alpa' => max(0, $alpa)
+        ];
+
+        $jadwalHariIni = $jadwalHariIniQuery->get();
 
         // 4. Kinerja Bulan Ini (Top 5)
         $topKinerja = KinerjaPegawai::with('pegawai.user')
@@ -55,16 +69,23 @@ class Dashboard extends Component
             ->whereDate('tanggal_selesai', '>=', Carbon::today())
             ->get();
 
+        // 8. Distribusi Gender
+        $distribusiGender = Pegawai::select('jenis_kelamin', DB::raw('count(*) as total'))
+            ->groupBy('jenis_kelamin')
+            ->get();
+
         return view('livewire.hrd.dashboard', compact(
             'totalPegawai',
             'pegawaiCutiHariIni',
             'komposisiRole',
             'jadwalHariIni',
+            'kehadiranStatistik',
             'topKinerja',
             'strExpired',
             'sipExpired',
             'trenKinerja',
-            'listCutiHariIni'
+            'listCutiHariIni',
+            'distribusiGender'
         ))->layout('layouts.app', ['header' => 'Dashboard SDM & Kepegawaian']);
     }
 

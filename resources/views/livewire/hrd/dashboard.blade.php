@@ -1,27 +1,38 @@
 <div class="space-y-8">
-    <!-- Row 1: Key Metrics -->
+    <!-- Row 1: Real-time Attendance & Alerts -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-gray-700">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                </div>
+        <!-- Kehadiran Hari Ini (Updated) -->
+        <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-gray-700 relative overflow-hidden">
+            <div class="flex justify-between items-start mb-4">
                 <div>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Total Pegawai</p>
-                    <h3 class="text-2xl font-black text-slate-800 dark:text-white">{{ $totalPegawai }}</h3>
+                    <h3 class="text-lg font-black text-slate-800 dark:text-white">Kehadiran Hari Ini</h3>
+                    <p class="text-xs text-slate-500 font-bold">Total Dijadwalkan: <span class="text-indigo-600">{{ $kehadiranStatistik['dijadwalkan'] }} Pegawai</span></p>
+                </div>
+                <div class="p-2 bg-indigo-50 rounded-lg text-indigo-600">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </div>
             </div>
-        </div>
-
-        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-gray-700">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center text-pink-600">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+            
+            <div class="grid grid-cols-3 gap-4 mb-4 text-center">
+                <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+                    <span class="block text-2xl font-black text-emerald-600">{{ $kehadiranStatistik['hadir'] }}</span>
+                    <span class="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">Hadir Tepat Waktu</span>
                 </div>
-                <div>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Cuti Hari Ini</p>
-                    <h3 class="text-2xl font-black text-slate-800 dark:text-white">{{ $pegawaiCutiHariIni }} <span class="text-sm font-medium text-slate-400">Orang</span></h3>
+                <div class="p-3 bg-yellow-50 rounded-xl border border-yellow-100">
+                    <span class="block text-2xl font-black text-yellow-600">{{ $kehadiranStatistik['terlambat'] }}</span>
+                    <span class="text-[10px] font-bold text-yellow-800 uppercase tracking-wider">Terlambat</span>
                 </div>
+                <div class="p-3 bg-red-50 rounded-xl border border-red-100">
+                    <span class="block text-2xl font-black text-red-600">{{ $kehadiranStatistik['alpa'] }}</span>
+                    <span class="text-[10px] font-bold text-red-800 uppercase tracking-wider">Belum Hadir/Alpa</span>
+                </div>
+            </div>
+            
+            <!-- Progress Bar Visual -->
+            <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden flex">
+                <div class="bg-emerald-500 h-full" style="width: {{ $kehadiranStatistik['dijadwalkan'] > 0 ? ($kehadiranStatistik['hadir'] / $kehadiranStatistik['dijadwalkan']) * 100 : 0 }}%"></div>
+                <div class="bg-yellow-500 h-full" style="width: {{ $kehadiranStatistik['dijadwalkan'] > 0 ? ($kehadiranStatistik['terlambat'] / $kehadiranStatistik['dijadwalkan']) * 100 : 0 }}%"></div>
+                <div class="bg-red-500 h-full" style="width: {{ $kehadiranStatistik['dijadwalkan'] > 0 ? ($kehadiranStatistik['alpa'] / $kehadiranStatistik['dijadwalkan']) * 100 : 0 }}%"></div>
             </div>
         </div>
 
@@ -50,7 +61,7 @@
         </div>
     </div>
 
-    <!-- Row 2: Grafik & Cuti List -->
+    <!-- Row 2: Grafik & Demografi -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Grafik Kinerja -->
         <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
@@ -68,23 +79,47 @@
             </div>
         </div>
 
-        <!-- List Cuti -->
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
-            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Sedang Cuti Hari Ini</h3>
-            <div class="space-y-4">
-                @forelse($listCutiHariIni as $cuti)
-                    <div class="flex items-center gap-3 p-3 rounded-xl bg-pink-50 dark:bg-pink-900/20">
-                        <div class="w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-pink-700 font-bold text-xs">
-                            {{ substr($cuti->user->name, 0, 1) }}
+        <!-- Demografi & Cuti -->
+        <div class="space-y-6">
+            <!-- Gender Distribution -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Distribusi Gender</h3>
+                <div class="space-y-4">
+                    @foreach($distribusiGender as $gender)
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-bold text-slate-600">
+                                @if($gender->jenis_kelamin == 'L') Laki-laki @else Perempuan @endif
+                            </span>
+                            <span class="text-sm font-black">{{ $gender->total }}</span>
                         </div>
-                        <div>
-                            <p class="text-sm font-bold text-slate-700 dark:text-gray-300">{{ $cuti->user->name }}</p>
-                            <p class="text-xs text-slate-500">{{ $cuti->jenis_cuti }} ({{ \Carbon\Carbon::parse($cuti->tanggal_selesai)->diffInDays(now()) }} hari lagi)</p>
+                        <div class="w-full bg-slate-100 rounded-full h-2">
+                            <div class="{{ $gender->jenis_kelamin == 'L' ? 'bg-blue-500' : 'bg-pink-500' }} h-2 rounded-full" style="width: {{ ($gender->total / max($totalPegawai, 1)) * 100 }}%"></div>
                         </div>
-                    </div>
-                @empty
-                    <p class="text-center text-slate-400 text-sm py-4">Tidak ada pegawai cuti hari ini.</p>
-                @endforelse
+                    @endforeach
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-100">
+                    <p class="text-xs text-center text-slate-400">Total Pegawai Aktif: <strong class="text-slate-800">{{ $totalPegawai }}</strong></p>
+                </div>
+            </div>
+
+            <!-- Cuti Hari Ini -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Sedang Cuti Hari Ini <span class="bg-pink-100 text-pink-600 px-2 py-0.5 rounded-full text-xs ml-2">{{ $pegawaiCutiHariIni }}</span></h3>
+                <div class="space-y-3 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+                    @forelse($listCutiHariIni as $cuti)
+                        <div class="flex items-center gap-3 p-3 rounded-xl bg-pink-50 dark:bg-pink-900/20">
+                            <div class="w-8 h-8 rounded-full bg-pink-200 flex items-center justify-center text-pink-700 font-bold text-[10px]">
+                                {{ substr($cuti->user->name, 0, 1) }}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-xs font-bold text-slate-700 dark:text-gray-300 truncate">{{ $cuti->user->name }}</p>
+                                <p class="text-[10px] text-slate-500 truncate">{{ $cuti->jenis_cuti }}</p>
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-center text-slate-400 text-xs py-4">Semua pegawai masuk (tidak ada cuti).</p>
+                    @endforelse
+                </div>
             </div>
         </div>
     </div>
