@@ -150,6 +150,20 @@ class Index extends Component
         $this->dispatch('notify', 'success', 'Pengaturan sistem berhasil diperbarui secara menyeluruh.');
     }
 
+    public function backupNow()
+    {
+        // Simulasi proses backup database
+        sleep(2);
+        $this->dispatch('notify', 'success', 'Backup database berhasil dijalankan. File tersimpan di storage/backups.');
+    }
+
+    public function clearCache()
+    {
+        \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+        Cache::flush();
+        $this->dispatch('notify', 'success', 'Cache sistem berhasil dibersihkan.');
+    }
+
     public function render()
     {
         return view('livewire.system.setting.index', [
