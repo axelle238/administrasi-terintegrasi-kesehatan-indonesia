@@ -93,6 +93,11 @@ Route::middleware('auth')->group(function () {
         
         // System Internal
         Route::get('/system/backup', \App\Livewire\System\Backup::class)->name('system.backup');
+
+        // Manajemen Berita (Admin)
+        Route::get('/admin/berita', \App\Livewire\Admin\Berita\Index::class)->name('admin.berita.index');
+        Route::get('/admin/berita/create', \App\Livewire\Admin\Berita\Create::class)->name('admin.berita.create');
+        Route::get('/admin/berita/{berita}/edit', \App\Livewire\Admin\Berita\Edit::class)->name('admin.berita.edit');
     });
 
     // MASYARAKAT
