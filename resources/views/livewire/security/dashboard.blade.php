@@ -1,271 +1,251 @@
-<div class="space-y-8">
-    <!-- Row 1: Security Status & KPI -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- System Infrastructure Monitoring -->
-        <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden group">
-            <div class="absolute right-0 top-0 w-32 h-32 bg-white/5 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-            <div class="relative z-10">
-                <div class="flex items-center gap-2 mb-4">
-                    <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Infrastruktur Server</p>
-                </div>
-                
-                <div class="space-y-3">
-                    <div>
-                        <div class="flex justify-between text-[10px] font-mono mb-1">
-                            <span class="text-slate-300">CPU Load</span>
-                            <span class="{{ $serverHealth['cpu_load'] > 80 ? 'text-red-400' : 'text-emerald-400' }} font-bold">{{ $serverHealth['cpu_load'] }}%</span>
-                        </div>
-                        <div class="w-full bg-white/10 rounded-full h-1.5">
-                            <div class="{{ $serverHealth['cpu_load'] > 80 ? 'bg-red-500' : 'bg-emerald-500' }} h-1.5 rounded-full" style="width: {{ $serverHealth['cpu_load'] }}%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-[10px] font-mono mb-1">
-                            <span class="text-slate-300">RAM Usage</span>
-                            <span class="{{ $serverHealth['ram_usage'] > 80 ? 'text-red-400' : 'text-blue-400' }} font-bold">{{ $serverHealth['ram_usage'] }}%</span>
-                        </div>
-                        <div class="w-full bg-white/10 rounded-full h-1.5">
-                            <div class="{{ $serverHealth['ram_usage'] > 80 ? 'bg-red-500' : 'bg-blue-500' }} h-1.5 rounded-full" style="width: {{ $serverHealth['ram_usage'] }}%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-[10px] font-mono mb-1">
-                            <span class="text-slate-300">Disk Space</span>
-                            <span class="text-purple-400 font-bold">{{ $serverHealth['disk_space'] }}%</span>
-                        </div>
-                        <div class="w-full bg-white/10 rounded-full h-1.5">
-                            <div class="bg-purple-500 h-1.5 rounded-full" style="width: {{ $serverHealth['disk_space'] }}%"></div>
-                        </div>
-                    </div>
-                </div>
-                <p class="text-[9px] text-slate-500 font-mono mt-3 text-right">Uptime: {{ $serverHealth['uptime'] }}</p>
-            </div>
+<div class="space-y-6">
+    
+    <!-- Top Bar: Status & Actions -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
+        <div>
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                <svg class="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                Status Keamanan Sistem
+            </h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                Pantau ancaman, kelola akses, dan audit aktivitas pengguna secara real-time.
+            </p>
         </div>
 
-        <!-- Firewall Status -->
-        <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden group">
-            <div class="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-            <div class="relative z-10">
-                <div class="flex items-center gap-3 mb-2">
-                    <svg class="w-4 h-4 text-blue-200" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                    <p class="text-xs font-bold text-blue-100 uppercase tracking-widest">Firewall</p>
-                </div>
-                <h3 class="text-3xl font-black mb-1">{{ $securityStatus['firewall'] }}</h3>
-                <p class="text-[10px] text-blue-100 font-mono">SSL: {{ $securityStatus['ssl_expiry'] }}</p>
+        <div class="flex items-center gap-4">
+            <!-- Lockdown Toggle -->
+            <div class="flex items-center gap-3 px-4 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600">
+                <span class="text-xs font-bold uppercase tracking-wider {{ $isLockdown ? 'text-red-600' : 'text-gray-500' }}">
+                    {{ $isLockdown ? 'LOCKDOWN AKTIF' : 'NORMAL MODE' }}
+                </span>
+                <button wire:click="toggleLockdown" wire:confirm="Apakah Anda yakin ingin mengubah status Lockdown? Jika Aktif, hanya Admin yang bisa login." 
+                    class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 {{ $isLockdown ? 'bg-red-600' : 'bg-gray-200' }}">
+                    <span class="translate-x-0 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out {{ $isLockdown ? 'translate-x-5' : 'translate-x-0' }}"></span>
+                </button>
             </div>
-        </div>
-
-        <!-- Threat Level -->
-        <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xl border border-slate-100 dark:border-gray-700 relative overflow-hidden group">
-            <div class="absolute right-0 top-0 w-32 h-32 bg-red-50 dark:bg-red-900/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-            <div class="relative z-10">
-                <div class="flex items-center gap-3 mb-2">
-                    <svg class="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Tingkat Ancaman</p>
-                </div>
-                <h3 class="text-3xl font-black mb-1 text-red-600">{{ $securityStatus['threat_level'] }}</h3>
-                <p class="text-[10px] text-slate-500 font-mono">{{ $loginFailedToday }} Percobaan Ilegal Hari Ini</p>
-            </div>
-        </div>
-
-        <!-- Total Activity -->
-        <div class="card-health p-6 relative overflow-hidden group">
-            <div class="absolute right-0 top-0 w-24 h-24 bg-primary-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-            <div class="relative z-10">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Total Log Aktivitas</p>
-                <h3 class="text-3xl font-black text-slate-800">{{ number_format($logsToday) }}</h3>
-                <p class="text-[10px] text-slate-500 font-medium mt-1">Minggu Ini: {{ number_format($logsWeek) }}</p>
-            </div>
+            
+            <button wire:click="$refresh" class="p-2 text-gray-400 hover:text-indigo-600 transition-colors" title="Refresh Data">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+            </button>
         </div>
     </div>
 
-    <!-- Row 2: Geo Intelligence -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Geo Table -->
-        <div class="card-health">
-            <div class="card-health-header">
-                <div>
-                    <h3 class="text-lg font-black text-slate-800">Distribusi Akses Global</h3>
-                    <p class="text-xs text-slate-500 font-bold mt-1">Asal Negara Login Terdeteksi</p>
+    <!-- Navigation Tabs -->
+    <div class="border-b border-gray-200 dark:border-gray-700">
+        <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+            <button wire:click="setTab('overview')" 
+                class="{{ $activeTab === 'overview' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+                Ringkasan & Analitik
+            </button>
+            <button wire:click="setTab('threats')" 
+                class="{{ $activeTab === 'threats' ? 'border-red-500 text-red-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+                Ancaman & Blokir IP
+            </button>
+            <button wire:click="setTab('sessions')" 
+                class="{{ $activeTab === 'sessions' ? 'border-teal-500 text-teal-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+                Sesi Pengguna Aktif
+            </button>
+            <button wire:click="setTab('logs')" 
+                class="{{ $activeTab === 'logs' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+                Audit Log Lengkap
+            </button>
+        </nav>
+    </div>
+
+    <!-- Content Area -->
+    <div class="min-h-[400px]">
+        
+        <!-- TAB 1: OVERVIEW -->
+        @if($activeTab === 'overview')
+            <div class="space-y-6 animate-fade-in-up">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <p class="text-xs font-bold text-gray-400 uppercase">Aktivitas Hari Ini</p>
+                        <h3 class="text-3xl font-black text-gray-900 dark:text-white mt-2">{{ $stats['logs_today'] }}</h3>
+                        <div class="mt-2 text-xs text-green-600 font-bold flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                            Data Masuk
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <p class="text-xs font-bold text-gray-400 uppercase">Login Gagal</p>
+                        <h3 class="text-3xl font-black text-red-600 mt-2">{{ $stats['failed_logins'] }}</h3>
+                        <div class="mt-2 text-xs text-red-500 font-bold">Percobaan mencurigakan</div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <p class="text-xs font-bold text-gray-400 uppercase">User Terdaftar</p>
+                        <h3 class="text-3xl font-black text-indigo-600 mt-2">{{ $stats['active_users'] }}</h3>
+                        <div class="mt-2 text-xs text-indigo-500 font-bold">Akun dalam sistem</div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <p class="text-xs font-bold text-gray-400 uppercase">IP Terblokir</p>
+                        <h3 class="text-3xl font-black text-slate-700 dark:text-slate-300 mt-2">{{ $stats['blocked_ips_count'] }}</h3>
+                        <div class="mt-2 text-xs text-slate-500 font-bold">Blacklist aktif</div>
+                    </div>
                 </div>
-            </div>
-            <div class="card-health-body p-0">
-                <table class="w-full text-sm text-left">
-                    <thead class="text-xs text-slate-400 uppercase bg-slate-50">
-                        <tr>
-                            <th class="px-4 py-2 font-bold">Negara</th>
-                            <th class="px-4 py-2 font-bold text-right">Total</th>
-                            <th class="px-4 py-2 font-bold text-center">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        @foreach($geoDistribution as $geo)
-                            <tr>
-                                <td class="px-4 py-3 font-bold text-slate-700">{{ $geo['negara'] }}</td>
-                                <td class="px-4 py-3 text-right font-mono">{{ $geo['total'] }}</td>
-                                <td class="px-4 py-3 text-center">
-                                    <span class="px-2 py-1 rounded text-[10px] font-black uppercase tracking-wider
-                                        @if($geo['status'] == 'Aman') bg-emerald-100 text-emerald-700
-                                        @elseif($geo['status'] == 'Blokir') bg-red-100 text-red-700
-                                        @else bg-yellow-100 text-yellow-700 @endif">
-                                        {{ $geo['status'] }}
-                                    </span>
-                                </td>
-                            </tr>
+
+                <!-- Chart -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6">Tren Ancaman (7 Hari Terakhir)</h3>
+                    <div class="h-64 flex items-end justify-between gap-4 px-4">
+                        @foreach($trenAncaman['data'] as $index => $val)
+                            <div class="flex flex-col items-center flex-1 group">
+                                <div class="w-full bg-red-500 rounded-t-lg relative transition-all duration-500 hover:bg-red-600 hover:shadow-lg hover:shadow-red-500/30" 
+                                     style="height: {{ $val > 0 ? ($val / (max($trenAncaman['data']) ?: 1) * 100) : 5 }}%">
+                                     <span class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                                         {{ $val }}
+                                     </span>
+                                </div>
+                                <span class="text-xs font-bold text-gray-400 mt-3">{{ $trenAncaman['labels'][$index] }}</span>
+                            </div>
                         @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Threat Map Visual (Mock) -->
-        <div class="lg:col-span-2 bg-slate-900 rounded-3xl p-6 shadow-xl relative overflow-hidden flex items-center justify-center">
-            <div class="absolute inset-0 bg-[url('https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg')] bg-cover bg-center opacity-10"></div>
-            <div class="relative z-10 w-full h-64 flex items-center justify-center">
-                <!-- Ping Animation Points -->
-                <div class="absolute top-1/3 left-1/4">
-                    <span class="flex h-3 w-3 relative">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                    </span>
-                </div>
-                <div class="absolute top-1/2 right-1/3">
-                    <span class="flex h-3 w-3 relative">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                    </span>
-                </div>
-                <div class="absolute bottom-1/3 right-1/4">
-                    <span class="flex h-4 w-4 relative">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.8)]"></span>
-                    </span>
-                    <div class="absolute mt-2 ml-4 bg-slate-800 text-emerald-400 text-[10px] px-2 py-1 rounded border border-emerald-500/30 font-mono whitespace-nowrap">
-                        Server Utama (Indonesia) <br> Aktif • Aman
                     </div>
                 </div>
-                
-                <div class="text-center">
-                    <h4 class="text-slate-400 font-mono text-sm tracking-widest mb-2">JARINGAN GLOBAL TERPANTAU</h4>
-                    <p class="text-emerald-400 font-black text-2xl tracking-tight">SEMUA SISTEM NOMINAL</p>
-                </div>
             </div>
-        </div>
-    </div>
+        @endif
 
-    <!-- Row 2: Charts & Analysis -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Threat Analysis Chart -->
-        <div class="lg:col-span-2 card-health">
-            <div class="card-health-header">
-                <div>
-                    <h3 class="text-lg font-black text-slate-800">Analisis Ancaman Siber</h3>
-                    <p class="text-xs text-slate-500 font-bold mt-1">Grafik Percobaan Login Gagal (Brute Force)</p>
-                </div>
-                <div class="bg-red-50 text-red-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider animate-pulse">
-                    Monitoring Aktif
-                </div>
-            </div>
-            <div class="card-health-body">
-                <div class="h-64 flex items-end justify-between gap-3 px-2">
-                    @foreach($trenAncaman['data'] as $index => $val)
-                        <div class="flex flex-col items-center flex-1 group">
-                            <div class="w-full bg-red-500 rounded-t-sm relative transition-all duration-300 hover:bg-red-600 shadow-[0_0_15px_rgba(239,68,68,0.5)]" 
-                                 style="height: {{ $val > 0 ? ($val / (max($trenAncaman['data']) ?: 1) * 100) : 0 }}%">
-                                 <!-- Data Label -->
-                                 <span class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-[10px] font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                                     {{ $val }}
-                                 </span>
-                            </div>
-                            <span class="text-[10px] font-mono font-bold text-slate-400 mt-2 uppercase tracking-wide">{{ $trenAncaman['labels'][$index] }}</span>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
+        <!-- TAB 2: THREATS & IP BLOCKING -->
+        @if($activeTab === 'threats')
+            <div class="space-y-6 animate-fade-in-up">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Manajemen Blokir IP (Blacklist)</h3>
+                    <p class="text-sm text-gray-500 mb-6">Tambahkan alamat IP yang dicurigai melakukan serangan Brute Force atau aktivitas ilegal lainnya. Akses dari IP ini akan ditolak otomatis oleh sistem.</p>
+                    
+                    <div class="flex gap-4 mb-8">
+                        <input type="text" wire:model="newBlockedIp" placeholder="Contoh: 192.168.1.50" 
+                            class="flex-1 rounded-xl border-gray-300 focus:border-red-500 focus:ring-red-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <button wire:click="addBlockedIp" class="px-6 py-2 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-colors shadow-lg shadow-red-600/20">
+                            Blokir IP
+                        </button>
+                    </div>
 
-        <!-- Top Active Users -->
-        <div class="card-health">
-            <div class="card-health-header">
-                <div>
-                    <h3 class="text-lg font-black text-slate-800">Pengguna Teraktif</h3>
-                    <p class="text-xs text-slate-500 font-bold mt-1">Berdasarkan Log Sistem</p>
+                    <div class="overflow-hidden border border-gray-200 dark:border-gray-700 rounded-xl">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-700/50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Alamat IP</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                @forelse($blockedIps as $ip)
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono font-medium text-gray-900 dark:text-white">{{ $ip }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                Blocked
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <button wire:click="removeBlockedIp('{{ $ip }}')" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
+                                                Hapus Blokir
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="px-6 py-12 text-center text-gray-500">
+                                            Belum ada IP yang diblokir. Sistem aman.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-            <div class="card-health-body p-0">
-                <div class="divide-y divide-slate-50">
-                    @forelse($topActiveUsers as $log)
-                        <div class="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-bold text-xs">
-                                    {{ substr($log->causer->name ?? 'S', 0, 1) }}
+        @endif
+
+        <!-- TAB 3: ACTIVE SESSIONS -->
+        @if($activeTab === 'sessions')
+            <div class="space-y-6 animate-fade-in-up">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Pengguna Aktif (24 Jam Terakhir)</h3>
+                    <p class="text-sm text-gray-500 mb-6">Daftar pengguna yang baru saja login atau aktif berinteraksi dengan sistem.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @forelse($activeSessions as $user)
+                            <div class="border border-gray-200 dark:border-gray-700 rounded-2xl p-4 flex items-start gap-4 hover:shadow-md transition-shadow">
+                                <div class="w-12 h-12 rounded-full bg-teal-100 flex items-center justify-center text-teal-700 font-bold text-lg flex-shrink-0">
+                                    {{ substr($user->name, 0, 1) }}
                                 </div>
-                                <div>
-                                    <p class="text-sm font-bold text-slate-700">{{ $log->causer->name ?? 'System' }}</p>
-                                    <p class="text-[10px] text-slate-400 uppercase tracking-wider">{{ $log->causer->role ?? 'Bot' }}</p>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ $user->name }}</h4>
+                                    <p class="text-xs text-gray-500 truncate">{{ $user->email }}</p>
+                                    <p class="text-[10px] text-teal-600 font-bold mt-1">
+                                        Login: {{ $user->riwayatLogins->first()->created_at->diffForHumans() }}
+                                    </p>
                                 </div>
+                                <button wire:click="killUserSession({{ $user->id }})" wire:confirm="Paksa logout pengguna ini?" class="text-red-500 hover:text-red-700 p-2" title="Force Logout">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                                </button>
                             </div>
-                            <span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-[10px] font-black">{{ $log->total }} Aksi</span>
-                        </div>
-                    @empty
-                        <div class="p-6 text-center text-slate-400 text-xs">Belum ada aktivitas.</div>
-                    @endforelse
+                        @empty
+                            <div class="col-span-full py-12 text-center text-gray-500">
+                                Tidak ada sesi aktif yang ditemukan.
+                            </div>
+                        @endforelse
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
+        @endif
 
-    <!-- Row 3: Critical Logs -->
-    <div class="card-health">
-        <div class="card-health-header">
-            <div>
-                <h3 class="text-lg font-black text-slate-800">Log Aktivitas Kritis (Realtime)</h3>
-                <p class="text-xs text-slate-500 font-bold mt-1">Audit Trail Penghapusan & Perubahan Data</p>
+        <!-- TAB 4: AUDIT LOGS -->
+        @if($activeTab === 'logs')
+            <div class="space-y-6 animate-fade-in-up">
+                <div class="flex gap-4 mb-4">
+                    <div class="flex-1 relative">
+                        <input type="text" wire:model.live.debounce.300ms="logSearch" placeholder="Cari aktivitas..." class="w-full pl-10 rounded-xl border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700/50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Waktu</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Aktor</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Deskripsi</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Metadata</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            @forelse($logs as $log)
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-mono">
+                                        {{ $log->created_at->format('d/m/Y H:i:s') }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-bold text-gray-900 dark:text-white">{{ $log->causer->name ?? 'System' }}</div>
+                                        <div class="text-xs text-gray-500">{{ $log->causer->email ?? '-' }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
+                                        {{ $log->description }}
+                                    </td>
+                                    <td class="px-6 py-4 text-xs text-gray-500 dark:text-gray-400 font-mono max-w-xs truncate">
+                                        {{ json_encode($log->properties) }}
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="px-6 py-12 text-center text-gray-500">
+                                        Tidak ada log aktivitas yang cocok.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                    <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+                        {{ $logs->links() }}
+                    </div>
+                </div>
             </div>
-            <a href="{{ route('activity-log') }}" wire:navigate class="btn-secondary text-xs">
-                Lihat Semua Log
-            </a>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left font-mono">
-                <thead class="text-xs text-slate-400 uppercase bg-slate-900 text-slate-300 border-b border-slate-700">
-                    <tr>
-                        <th class="px-6 py-3 font-bold tracking-wider">Waktu</th>
-                        <th class="px-6 py-3 font-bold tracking-wider">Aktor</th>
-                        <th class="px-6 py-3 font-bold tracking-wider">Kejadian</th>
-                        <th class="px-6 py-3 font-bold tracking-wider">Deskripsi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100 bg-slate-50/50">
-                    @forelse($recentCritical as $log)
-                        <tr class="hover:bg-white transition-colors group">
-                            <td class="px-6 py-3 text-slate-500 text-xs font-bold">
-                                {{ $log->created_at->format('d/m/Y H:i:s') }}
-                            </td>
-                            <td class="px-6 py-3 font-bold text-slate-700">
-                                {{ $log->causer->name ?? 'System' }}
-                            </td>
-                            <td class="px-6 py-3">
-                                @if($log->event == 'deleted')
-                                    <span class="text-red-600 bg-red-100 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider">DIHAPUS</span>
-                                @else
-                                    <span class="text-blue-600 bg-blue-100 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider">DIUBAH</span>
-                                @endif
-                            </td>
-                            <td class="px-6 py-3 text-slate-600 text-xs truncate max-w-xs" title="{{ $log->description }}">
-                                {{ $log->description }}
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="px-6 py-8 text-center text-slate-400 text-xs">
-                                Tidak ada log kritis baru.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+        @endif
+
     </div>
 </div>
