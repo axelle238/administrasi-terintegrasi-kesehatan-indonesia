@@ -56,6 +56,48 @@
         </div>
     @endif
 
+    <!-- SECTION: RINGKASAN SISTEM & PUBLIK -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Fasilitas -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Fasilitas Publik</p>
+                <h4 class="text-xl font-black text-slate-800">{{ $fasilitasAktif }} <span class="text-sm font-medium text-slate-400">Unit Aktif</span></h4>
+            </div>
+        </div>
+
+        <!-- Berita -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Berita & Artikel</p>
+                <h4 class="text-xl font-black text-slate-800">{{ $beritaPublished }} <span class="text-sm font-medium text-slate-400">Terbit</span></h4>
+            </div>
+        </div>
+
+        <!-- Security Status -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl {{ $loginGagal > 5 ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600' }} flex items-center justify-center">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Keamanan Hari Ini</p>
+                @if($loginGagal > 5)
+                    <h4 class="text-xl font-black text-red-600">Waspada</h4>
+                    <p class="text-[10px] text-red-400">{{ $loginGagal }} Login Gagal</p>
+                @else
+                    <h4 class="text-xl font-black text-emerald-600">Aman</h4>
+                    <p class="text-[10px] text-emerald-400">Sistem Stabil</p>
+                @endif
+            </div>
+        </div>
+    </div>
+
     <!-- SECTION 1: LAYANAN MEDIS & OPERASIONAL -->
     <div class="mb-8">
         <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">

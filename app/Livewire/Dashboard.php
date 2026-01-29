@@ -17,6 +17,9 @@ use App\Models\Penggajian;
 use App\Models\Setting;
 use App\Models\Pengaduan;
 use App\Models\Poli;
+use App\Models\Fasilitas;
+use App\Models\Berita;
+use App\Models\RiwayatLogin;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -56,13 +59,15 @@ class Dashboard extends Component
             ->get();
 
         // Rata-rata Waktu Layanan (Simulasi/Sederhana)
-        // Di sistem real, hitung selisih waktu created_at vs waktu status 'Selesai'
         $avgWaktuLayanan = Antrean::whereDate('tanggal_antrean', Carbon::today())
             ->where('status', 'Selesai')
             ->get()
             ->avg(function($antrean) {
                 return $antrean->updated_at->diffInMinutes($antrean->created_at);
             }) ?? 0;
+
+        // Login Gagal Hari Ini (Indikator Keamanan)
+        $loginGagal = RiwayatLogin::whereDate('created_at', Carbon::today())->where('status', 'Gagal')->count();
 
         return view('livewire.dashboard', [
             // Statistik Utama Global
@@ -86,6 +91,11 @@ class Dashboard extends Component
             'pengaduanPending' => Pengaduan::where('status', 'Pending')->count(),
             'pengaduanProses' => Pengaduan::where('status', 'Diproses')->count(),
             
+            // Konten Publik
+            'fasilitasAktif' => Fasilitas::where('is_active', true)->count(),
+            'beritaPublished' => Berita::where('status', 'published')->count(),
+            'loginGagal' => $loginGagal,
+
             // Keuangan Ringkas
             'pendapatanHariIni' => $pendapatanHariIni,
             'pendapatanBulanIni' => $pendapatanBulanIni,
