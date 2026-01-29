@@ -137,7 +137,6 @@
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex justify-end gap-2">
                                         @if($surat->jenis_surat == 'Masuk')
-                                            <!-- Ganti Modal dengan Link Halaman -->
                                             <a href="{{ route('surat.disposisi.manage', $surat->id) }}" class="p-2 text-amber-600 hover:bg-amber-50 rounded-lg font-bold text-xs" title="Kelola Disposisi">
                                                 Disposisi
                                             </a>
