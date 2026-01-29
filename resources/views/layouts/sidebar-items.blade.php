@@ -45,6 +45,10 @@
         <x-nav-link-sidebar :href="route('system.poli.index')" :active="request()->routeIs('system.poli.*')" icon="collection" color="cyan">
             Data Poli/Unit
         </x-nav-link-sidebar>
+
+        <x-nav-link-sidebar :href="route('medical.penyakit.index')" :active="request()->routeIs('medical.penyakit.index')" icon="book-open" color="cyan">
+            Kamus Penyakit
+        </x-nav-link-sidebar>
     @endif
 @endif
 
