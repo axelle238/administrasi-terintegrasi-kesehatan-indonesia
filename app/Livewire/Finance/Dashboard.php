@@ -6,91 +6,120 @@ use Livewire\Component;
 use App\Models\Pembayaran;
 use App\Models\Penggajian;
 use App\Models\PengadaanBarang;
+use App\Models\Pasien;
+use App\Models\Tindakan;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class Dashboard extends Component
 {
+    // Filter State
+    public $periodeTahun;
+    public $activeTab = 'ikhtisar'; // ikhtisar, pendapatan, pengeluaran, analitik
+
+    public function mount()
+    {
+        $this->periodeTahun = date('Y');
+    }
+
+    public function setTab($tab)
+    {
+        $this->activeTab = $tab;
+    }
+
     public function render()
     {
-        // 1. Ringkasan Pendapatan
+        // 1. KPI Pendapatan (Ikhtisar)
         $pendapatanHariIni = Pembayaran::whereDate('created_at', Carbon::today())->where('status', 'Lunas')->sum('jumlah_bayar');
-        $pendapatanBulanIni = Pembayaran::whereMonth('created_at', Carbon::now()->month)->where('status', 'Lunas')->sum('jumlah_bayar');
-        $pendapatanTahunIni = Pembayaran::whereYear('created_at', Carbon::now()->year)->where('status', 'Lunas')->sum('jumlah_bayar');
+        $pendapatanBulanIni = Pembayaran::whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->where('status', 'Lunas')->sum('jumlah_bayar');
+        $pendapatanTahunIni = Pembayaran::whereYear('created_at', $this->periodeTahun)->where('status', 'Lunas')->sum('jumlah_bayar');
 
-        // 2. Ringkasan Pengeluaran (Gaji + Pengadaan)
+        // 2. Analisis Pengeluaran Detail
         $pengeluaranGajiBulan = Penggajian::where('bulan', Carbon::now()->translatedFormat('F'))->where('tahun', Carbon::now()->year)->sum('total_gaji');
-        $pengeluaranBarang = PengadaanBarang::whereMonth('tanggal_pengadaan', Carbon::now()->month)->whereYear('tanggal_pengadaan', Carbon::now()->year)->sum('total_harga');
-        $totalPengeluaranBulan = $pengeluaranGajiBulan + $pengeluaranBarang;
+        $pengeluaranBarangBulan = PengadaanBarang::whereMonth('tanggal_pengadaan', Carbon::now()->month)->whereYear('tanggal_pengadaan', Carbon::now()->year)->sum('total_harga');
+        $totalPengeluaranBulan = $pengeluaranGajiBulan + $pengeluaranBarangBulan;
 
-        // 3. Proyeksi & Rata-rata
-        $hariBerjalan = Carbon::now()->day;
-        $rataRataHarian = $hariBerjalan > 0 ? $pendapatanBulanIni / $hariBerjalan : 0;
-        $proyeksiAkhirBulan = $rataRataHarian * Carbon::now()->daysInMonth;
+        // 3. Margin Laba (Net Profit Simulation)
+        $labaBersihBulan = $pendapatanBulanIni - $totalPengeluaranBulan;
+        $rasioMargin = $pendapatanBulanIni > 0 ? ($labaBersihBulan / $pendapatanBulanIni) * 100 : 0;
 
-        // 4. Grafik Komparasi Keuangan (Pendapatan vs Pengeluaran)
-        $grafikKeuangan = $this->getGrafikKeuangan();
+        // 4. Analitik Pasien
+        $totalPasienBulan = Pasien::whereMonth('created_at', Carbon::now()->month)->count();
+        $rataTransaksiPasien = $totalPasienBulan > 0 ? $pendapatanBulanIni / $totalPasienBulan : 0;
 
-        // 5. Metode Pembayaran Terpopuler
-        $metodeBayar = Pembayaran::select('metode_pembayaran', DB::raw('count(*) as total'))
-            ->whereMonth('created_at', Carbon::now()->month)
-            ->groupBy('metode_pembayaran')
-            ->get();
+        // 5. Data Grafik Kompleks (12 Bulan)
+        $grafikData = $this->getGrafikKomprehensif();
 
-        // 6. Transaksi Terakhir (Live Feed)
-        $transaksiTerakhir = Pembayaran::with(['pasien', 'kasir'])
-            ->where('status', 'Lunas')
-            ->latest()
+        // 6. Distribusi Pendapatan per Poli (Top 5)
+        $pendapatanPoli = DB::table('pembayarans')
+            ->join('rekam_medis', 'pembayarans.rekam_medis_id', '=', 'rekam_medis.id')
+            ->join('polis', 'rekam_medis.poli_id', '=', 'polis.id')
+            ->select('polis.nama_poli', DB::raw('SUM(pembayarans.jumlah_bayar) as total'))
+            ->whereMonth('pembayarans.created_at', Carbon::now()->month)
+            ->groupBy('polis.nama_poli')
+            ->orderByDesc('total')
             ->take(5)
             ->get();
+
+        // 7. Transaksi Terakhir (Live)
+        $transaksiTerakhir = Pembayaran::with(['pasien', 'kasir'])
+            ->latest()
+            ->take(8)
+            ->get();
+
+        // 8. Tunggakan / Pending (Piutang)
+        $piutangPending = Pembayaran::where('status', 'Menunggu')->sum('jumlah_bayar');
+        $piutangCount = Pembayaran::where('status', 'Menunggu')->count();
 
         return view('livewire.finance.dashboard', compact(
             'pendapatanHariIni',
             'pendapatanBulanIni',
             'pendapatanTahunIni',
             'pengeluaranGajiBulan',
-            'pengeluaranBarang',
+            'pengeluaranBarangBulan',
             'totalPengeluaranBulan',
-            'rataRataHarian',
-            'proyeksiAkhirBulan',
-            'grafikKeuangan',
-            'metodeBayar',
-            'transaksiTerakhir'
-        ))->layout('layouts.app', ['header' => 'Dashboard Keuangan']);
+            'labaBersihBulan',
+            'rasioMargin',
+            'rataTransaksiPasien',
+            'grafikData',
+            'pendapatanPoli',
+            'transaksiTerakhir',
+            'piutangPending',
+            'piutangCount'
+        ))->layout('layouts.app', ['header' => 'Pusat Analitik Keuangan & Aset']);
     }
 
-    private function getGrafikKeuangan()
+    private function getGrafikKomprehensif()
     {
         $labels = [];
-        $pendapatan = [];
-        $pengeluaran = [];
+        $income = [];
+        $expense = [];
         
-        for ($i = 11; $i >= 0; $i--) {
+        for ($i = 6; $i >= 0; $i--) {
             $date = Carbon::now()->subMonths($i);
-            $labels[] = $date->format('M Y');
+            $labels[] = $date->translatedFormat('M');
             
-            // Pendapatan
-            $pendapatan[] = Pembayaran::whereYear('created_at', $date->year)
+            // Income
+            $income[] = Pembayaran::whereYear('created_at', $date->year)
                 ->whereMonth('created_at', $date->month)
                 ->where('status', 'Lunas')
                 ->sum('jumlah_bayar');
 
-            // Pengeluaran (Gaji + Pengadaan)
+            // Expense
             $gaji = Penggajian::where('bulan', $date->translatedFormat('F'))
                 ->where('tahun', $date->year)
                 ->sum('total_gaji');
-            
             $barang = PengadaanBarang::whereYear('tanggal_pengadaan', $date->year)
                 ->whereMonth('tanggal_pengadaan', $date->month)
                 ->sum('total_harga');
-
-            $pengeluaran[] = $gaji + $barang;
+                
+            $expense[] = $gaji + $barang;
         }
 
         return [
-            'labels' => $labels, 
-            'pendapatan' => $pendapatan,
-            'pengeluaran' => $pengeluaran
+            'labels' => $labels,
+            'income' => $income,
+            'expense' => $expense
         ];
     }
 }

@@ -1,256 +1,248 @@
-<div class="space-y-8">
-    <!-- Row 1: Financial Health Overview -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- Pendapatan Hari Ini -->
-        <div class="card-health p-6 relative overflow-hidden group">
-            <div class="absolute right-0 top-0 w-32 h-32 bg-primary-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-            <div class="relative z-10">
-                <div class="flex items-center gap-4 mb-4">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white shadow-lg shadow-primary-500/30">
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Pendapatan Hari Ini</p>
-                        <h3 class="text-2xl font-black text-slate-800 tracking-tight">Rp {{ number_format($pendapatanHariIni, 0, ',', '.') }}</h3>
-                    </div>
+<div class="space-y-6">
+    <!-- Header Command Center -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                <div class="p-2 bg-emerald-100 dark:bg-emerald-900/50 rounded-lg text-emerald-600 dark:text-emerald-400">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </div>
-                <div class="w-full bg-slate-100 rounded-full h-1.5 mb-2 overflow-hidden">
-                    <div class="bg-primary-500 h-full rounded-full animate-pulse" style="width: 45%"></div>
-                </div>
-                <p class="text-[10px] text-slate-400 font-medium flex justify-between">
-                    <span>Target Harian</span>
-                    <span class="text-primary-600 font-bold">45%</span>
-                </p>
-            </div>
+                Analitik Keuangan Terpadu
+            </h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 ml-12">
+                Monitoring pendapatan, arus kas, dan margin laba operasional fasilitas kesehatan.
+            </p>
         </div>
 
-        <!-- Pendapatan Bulan Ini -->
-        <div class="card-health p-6 relative overflow-hidden group">
-            <div class="absolute right-0 top-0 w-32 h-32 bg-health-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-            <div class="relative z-10">
-                <div class="flex items-center gap-4 mb-4">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-health-500 to-health-600 flex items-center justify-center text-white shadow-lg shadow-health-500/30">
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Akumulasi Bulan Ini</p>
-                        <h3 class="text-2xl font-black text-slate-800 tracking-tight">Rp {{ number_format($pendapatanBulanIni, 0, ',', '.') }}</h3>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2 text-xs font-bold text-health-600 bg-white/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-health-100 w-max shadow-sm">
-                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
-                    Proyeksi: Rp {{ number_format($proyeksiAkhirBulan, 0, ',', '.') }}
-                </div>
-            </div>
-        </div>
-
-        <!-- Total Pengeluaran -->
-        <div class="card-health p-6 relative overflow-hidden group">
-            <div class="absolute right-0 top-0 w-32 h-32 bg-orange-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-            <div class="relative z-10">
-                <div class="flex items-center gap-4 mb-4">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-orange-500/30">
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Total Pengeluaran</p>
-                        <h3 class="text-2xl font-black text-slate-800 tracking-tight">Rp {{ number_format($totalPengeluaranBulan, 0, ',', '.') }}</h3>
-                    </div>
-                </div>
-                <div class="flex flex-col gap-1 text-[10px] font-bold uppercase tracking-wide text-slate-500">
-                    <div class="flex justify-between">
-                        <span>Gaji SDM</span>
-                        <span class="text-orange-600">Rp {{ number_format($pengeluaranGajiBulan, 0, ',', '.') }}</span>
-                    </div>
-                    <div class="w-full bg-slate-100 h-1 rounded-full overflow-hidden">
-                        <div class="bg-orange-400 h-full" style="width: {{ $totalPengeluaranBulan > 0 ? ($pengeluaranGajiBulan / $totalPengeluaranBulan) * 100 : 0 }}%"></div>
-                    </div>
-                    <div class="flex justify-between mt-1">
-                        <span>Logistik & Obat</span>
-                        <span class="text-orange-600">Rp {{ number_format($pengeluaranBarang, 0, ',', '.') }}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Profitabilitas -->
-        <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden group">
-            <div class="absolute right-0 top-0 w-48 h-48 bg-white/5 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-white/10 transition-colors"></div>
-            <div class="relative z-10 h-full flex flex-col justify-between">
-                <div>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Arus Kas Bersih (Net Flow)</p>
-                    <h3 class="text-3xl font-black {{ ($pendapatanBulanIni - $totalPengeluaranBulan) >= 0 ? 'text-emerald-400' : 'text-red-400' }} tracking-tight">
-                        {{ ($pendapatanBulanIni - $totalPengeluaranBulan) >= 0 ? '+' : '' }} Rp {{ number_format($pendapatanBulanIni - $totalPengeluaranBulan, 0, ',', '.') }}
-                    </h3>
-                </div>
-                <div class="mt-4 pt-4 border-t border-white/10 flex justify-between items-end">
-                    <div>
-                        <p class="text-[10px] text-slate-400 uppercase font-bold">Rata-rata Harian</p>
-                        <p class="text-sm font-bold text-primary-300">Rp {{ number_format($rataRataHarian, 0, ',', '.') }}</p>
-                    </div>
-                    <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-sm">
-                        <svg class="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
-                    </div>
-                </div>
-            </div>
+        <div class="flex items-center gap-3">
+            <select wire:model.live="periodeTahun" class="rounded-xl border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <option value="{{ date('Y') }}">Tahun {{ date('Y') }}</option>
+                <option value="{{ date('Y')-1 }}">Tahun {{ date('Y')-1 }}</option>
+            </select>
+            <button wire:click="$refresh" class="p-2.5 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 text-gray-500 hover:text-emerald-600 transition-all">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+            </button>
         </div>
     </div>
 
-    <!-- Row 2: Analytics & Methods -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Revenue & Expense Chart -->
-        <div class="lg:col-span-2 card-health">
-            <div class="card-health-header">
-                <div>
-                    <h3 class="text-lg font-black text-slate-800">Analisis Arus Kas</h3>
-                    <p class="text-xs text-slate-500 font-bold mt-1">Pendapatan vs Pengeluaran (12 Bulan)</p>
-                </div>
-                <div class="flex items-center gap-3 text-[10px] font-bold uppercase tracking-wider">
-                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Masuk</span>
-                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-500"></span> Keluar</span>
-                </div>
-            </div>
-            <div class="card-health-body">
-                <div class="h-72 flex items-end justify-between gap-2 px-2">
-                    @foreach($grafikKeuangan['labels'] as $index => $label)
-                        @php
-                            $pemasukan = $grafikKeuangan['pendapatan'][$index];
-                            $pengeluaran = $grafikKeuangan['pengeluaran'][$index];
-                            $maxValue = max(array_merge($grafikKeuangan['pendapatan'], $grafikKeuangan['pengeluaran'])) ?: 1;
-                        @endphp
-                        <div class="flex flex-col items-center flex-1 group h-full justify-end">
-                            <div class="flex gap-0.5 w-full justify-center items-end h-full">
-                                <!-- Bar Pemasukan -->
-                                <div class="w-1/2 bg-emerald-500 rounded-t-sm relative transition-all duration-500 hover:bg-emerald-400" 
-                                     style="height: {{ ($pemasukan / $maxValue) * 100 }}%">
-                                     <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white text-[9px] font-bold px-1.5 py-1 rounded opacity-0 group-hover:opacity-100 transition-all z-20 pointer-events-none whitespace-nowrap">
-                                         +{{ number_format($pemasukan/1000000, 1) }}M
-                                     </div>
-                                </div>
-                                <!-- Bar Pengeluaran -->
-                                <div class="w-1/2 bg-red-500 rounded-t-sm relative transition-all duration-500 hover:bg-red-400" 
-                                     style="height: {{ ($pengeluaran / $maxValue) * 100 }}%">
-                                     <div class="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white text-[9px] font-bold px-1.5 py-1 rounded opacity-0 group-hover:opacity-100 transition-all z-20 pointer-events-none whitespace-nowrap">
-                                         -{{ number_format($pengeluaran/1000000, 1) }}M
-                                     </div>
-                                </div>
-                            </div>
-                            <span class="text-[9px] font-bold text-slate-400 mt-2 uppercase tracking-tight rotate-0">{{ $label }}</span>
-                        </div>
-                    @endforeach
-                </div>
+    <!-- Top Key Performance Indicators -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Pendapatan Card -->
+        <div class="bg-gradient-to-br from-emerald-600 to-teal-700 p-6 rounded-3xl text-white shadow-xl shadow-emerald-500/20 relative overflow-hidden group">
+            <div class="absolute right-0 top-0 w-24 h-24 bg-white/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+            <p class="text-xs font-bold text-emerald-100 uppercase tracking-widest mb-1">Pendapatan Bulan Ini</p>
+            <h3 class="text-2xl font-black">Rp {{ number_format($pendapatanBulanIni, 0, ',', '.') }}</h3>
+            <div class="mt-4 flex items-center gap-2">
+                <span class="text-[10px] bg-emerald-500/30 px-2 py-0.5 rounded font-bold">Harian: Rp {{ number_format($pendapatanHariIni, 0, ',', '.') }}</span>
             </div>
         </div>
 
-        <!-- Payment Methods -->
-        <div class="card-health">
-            <div class="card-health-header">
-                <div>
-                    <h3 class="text-lg font-black text-slate-800">Metode Pembayaran</h3>
-                    <p class="text-xs text-slate-500 font-bold mt-1">Distribusi Transaksi Bulan Ini</p>
+        <!-- Margin Laba Card -->
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden">
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Estimasi Laba Bersih</p>
+            <h3 class="text-2xl font-black text-gray-900 dark:text-white">Rp {{ number_format($labaBersihBulan, 0, ',', '.') }}</h3>
+            <div class="mt-4 flex items-center gap-2">
+                <div class="flex-1 bg-gray-100 dark:bg-gray-700 h-1.5 rounded-full overflow-hidden">
+                    <div class="bg-emerald-500 h-full rounded-full" style="width: {{ $rasioMargin }}%"></div>
                 </div>
+                <span class="text-[10px] font-bold text-emerald-600">{{ number_format($rasioMargin, 1) }}% Margin</span>
             </div>
-            <div class="card-health-body space-y-5">
-                @foreach($metodeBayar as $metode)
-                    <div class="group">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm font-bold text-slate-700 flex items-center gap-2">
-                                @if(strtolower($metode->metode_pembayaran) == 'tunai')
-                                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                @elseif(strtolower($metode->metode_pembayaran) == 'bpjs')
-                                    <span class="w-2 h-2 rounded-full bg-green-500"></span>
-                                @else
-                                    <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                                @endif
-                                {{ $metode->metode_pembayaran }}
-                            </span>
-                            <span class="text-xs font-black text-slate-900 bg-slate-100 px-2 py-1 rounded-lg">{{ $metode->total }} Transaksi</span>
-                        </div>
-                        <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                            <div class="h-full rounded-full transition-all duration-1000 group-hover:scale-x-105 origin-left
-                                @if(strtolower($metode->metode_pembayaran) == 'tunai') bg-emerald-500
-                                @elseif(strtolower($metode->metode_pembayaran) == 'bpjs') bg-green-500
-                                @else bg-blue-500 @endif" 
-                                style="width: {{ ($metode->total / $metodeBayar->sum('total')) * 100 }}%">
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
+        </div>
 
-                <!-- Empty State -->
-                @if($metodeBayar->isEmpty())
-                    <div class="text-center py-8">
-                        <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3 text-slate-300">
-                            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                        </div>
-                        <p class="text-slate-400 text-sm font-medium">Belum ada data transaksi bulan ini.</p>
-                    </div>
-                @endif
-            </div>
+        <!-- Pengeluaran Card -->
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden">
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Operasional & Gaji</p>
+            <h3 class="text-2xl font-black text-red-600">Rp {{ number_format($totalPengeluaranBulan, 0, ',', '.') }}</h3>
+            <p class="mt-4 text-[10px] text-gray-500 font-medium">Beban Gaji: Rp {{ number_format($pengeluaranGajiBulan, 0, ',', '.') }}</p>
+        </div>
+
+        <!-- Piutang/Pending Card -->
+        <div class="bg-amber-50 dark:bg-amber-900/20 p-6 rounded-3xl border border-amber-100 dark:border-amber-900/30 relative overflow-hidden group">
+            <p class="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest mb-1">Piutang Pending</p>
+            <h3 class="text-2xl font-black text-amber-700 dark:text-amber-300">Rp {{ number_format($piutangPending, 0, ',', '.') }}</h3>
+            <p class="mt-4 text-[10px] text-amber-600 font-bold flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                Ditunggu dari {{ $piutangCount }} Transaksi
+            </p>
         </div>
     </div>
 
-    <!-- Row 3: Live Transactions -->
-    <div class="card-health">
-        <div class="card-health-header">
-            <div>
-                <h3 class="text-lg font-black text-slate-800">Transaksi Langsung Terkini</h3>
-                <p class="text-xs text-slate-500 font-bold mt-1">Monitor Pembayaran Real-time</p>
-            </div>
-            <a href="{{ route('kasir.index') }}" wire:navigate class="btn-secondary text-xs">
-                Lihat Semua Transaksi
-            </a>
+    <!-- Tabbed Analysis Area -->
+    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+        <div class="border-b border-gray-100 dark:border-gray-700 px-6 pt-4 flex gap-8">
+            <button wire:click="setTab('ikhtisar')" class="pb-4 text-sm font-bold transition-all relative {{ $activeTab == 'ikhtisar' ? 'text-emerald-600' : 'text-gray-400 hover:text-gray-600' }}">
+                Ringkasan Arus Kas
+                @if($activeTab == 'ikhtisar') <div class="absolute bottom-0 left-0 w-full h-1 bg-emerald-600 rounded-t-full"></div> @endif
+            </button>
+            <button wire:click="setTab('analitik')" class="pb-4 text-sm font-bold transition-all relative {{ $activeTab == 'analitik' ? 'text-emerald-600' : 'text-gray-400 hover:text-gray-600' }}">
+                Analitik & Proyeksi
+                @if($activeTab == 'analitik') <div class="absolute bottom-0 left-0 w-full h-1 bg-emerald-600 rounded-t-full"></div> @endif
+            </button>
+        </div>
+
+        <div class="p-8">
+            @if($activeTab == 'ikhtisar')
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 animate-fade-in-up">
+                    <!-- Grafik Arus Kas -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-lg font-bold text-gray-900 dark:text-white">Performa Keuangan 6 Bulan</h4>
+                            <div class="flex gap-4 text-xs font-bold">
+                                <span class="flex items-center gap-1.5 text-emerald-600"><div class="w-3 h-3 bg-emerald-500 rounded-sm"></div> Pendapatan</span>
+                                <span class="flex items-center gap-1.5 text-red-500"><div class="w-3 h-3 bg-red-500 rounded-sm"></div> Pengeluaran</span>
+                            </div>
+                        </div>
+                        
+                        <div class="h-64 flex items-end justify-between gap-4 border-b border-gray-100 dark:border-gray-700 pb-2">
+                            @foreach($grafikData['labels'] as $index => $label)
+                                <div class="flex-1 flex flex-col items-center group h-full justify-end">
+                                    <div class="flex items-end gap-1 h-full w-full justify-center">
+                                        <!-- Income Bar -->
+                                        <div class="w-3 bg-emerald-500 rounded-t-sm transition-all duration-500 group-hover:bg-emerald-600 relative" 
+                                             style="height: {{ $grafikData['income'][$index] > 0 ? ($grafikData['income'][$index] / (max($grafikData['income']) ?: 1) * 100) : 0 }}%">
+                                             <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 z-20 whitespace-nowrap">
+                                                 Rp {{ number_format($grafikData['income'][$index], 0, ',', '.') }}
+                                             </div>
+                                        </div>
+                                        <!-- Expense Bar -->
+                                        <div class="w-3 bg-red-400 rounded-t-sm transition-all duration-500 group-hover:bg-red-500 relative" 
+                                             style="height: {{ $grafikData['expense'][$index] > 0 ? ($grafikData['expense'][$index] / (max($grafikData['income']) ?: 1) * 100) : 0 }}%">
+                                             <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 z-20 whitespace-nowrap">
+                                                 Rp {{ number_format($grafikData['expense'][$index], 0, ',', '.') }}
+                                             </div>
+                                        </div>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-gray-400 mt-3">{{ $label }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- Side Stats -->
+                    <div class="space-y-8">
+                        <div>
+                            <h4 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Top Revenue by Poli</h4>
+                            <div class="space-y-4">
+                                @foreach($pendapatanPoli as $poli)
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-sm font-bold text-gray-800 dark:text-gray-200">{{ $poli->nama_poli }}</p>
+                                            <div class="w-32 bg-gray-100 dark:bg-gray-700 h-1 rounded-full mt-1">
+                                                <div class="bg-emerald-500 h-full rounded-full" style="width: {{ ($poli->total / ($pendapatanBulanIni ?: 1)) * 100 }}%"></div>
+                                            </div>
+                                        </div>
+                                        <span class="text-sm font-black text-gray-900 dark:text-white">Rp {{ number_format($poli->total, 0, ',', '.') }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl border border-emerald-100 dark:border-emerald-900/30">
+                            <p class="text-xs font-bold text-emerald-700 dark:text-emerald-400 mb-2">Metrik Pasien</p>
+                            <div class="flex justify-between items-end">
+                                <div>
+                                    <p class="text-2xl font-black text-emerald-800 dark:text-emerald-300">Rp {{ number_format($rataTransaksiPasien, 0, ',', '.') }}</p>
+                                    <p class="text-[10px] text-emerald-600 font-medium italic">Rata-rata pendapatan per pasien</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            @if($activeTab == 'analitik')
+                <div class="space-y-6 animate-fade-in-up">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="p-6 bg-slate-50 dark:bg-slate-700/50 rounded-2xl border border-slate-100 dark:border-slate-700">
+                            <h4 class="text-sm font-bold text-slate-500 uppercase mb-4">Efisiensi Biaya</h4>
+                            <div class="flex items-center gap-6">
+                                <div class="relative w-24 h-24">
+                                    <svg class="w-full h-full transform -rotate-90">
+                                        <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="transparent" class="text-slate-200 dark:text-slate-600" />
+                                        <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="transparent" class="text-emerald-500" 
+                                            stroke-dasharray="251.2" stroke-dashoffset="{{ 251.2 - (251.2 * $rasioMargin / 100) }}" />
+                                    </svg>
+                                    <div class="absolute inset-0 flex items-center justify-center font-black text-lg text-slate-800 dark:text-white">
+                                        {{ round($rasioMargin) }}%
+                                    </div>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-xs text-slate-500 leading-relaxed">
+                                        Persentase laba bersih setelah dikurangi beban operasional dan gaji pegawai bulan ini. 
+                                        Target margin sehat adalah di atas 20%.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-6 bg-slate-50 dark:bg-slate-700/50 rounded-2xl border border-slate-100 dark:border-slate-700">
+                            <h4 class="text-sm font-bold text-slate-500 uppercase mb-4">Status Tagihan Pending</h4>
+                            <div class="space-y-3">
+                                <div class="flex justify-between text-xs">
+                                    <span class="font-bold text-slate-600 dark:text-slate-300">Piutang Menunggu Konfirmasi</span>
+                                    <span class="font-black text-amber-600">Rp {{ number_format($piutangPending, 0, ',', '.') }}</span>
+                                </div>
+                                <div class="w-full bg-slate-200 dark:bg-slate-600 h-2 rounded-full">
+                                    <div class="bg-amber-500 h-full rounded-full" style="width: 45%"></div> <!-- Placeholder % -->
+                                </div>
+                                <p class="text-[10px] text-slate-400 italic font-medium">Segera lakukan follow-up pada transaksi berstatus 'Menunggu'.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    <!-- Live Transaction Feed -->
+    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+        <div class="px-8 py-5 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center">
+            <h4 class="text-lg font-black text-gray-900 dark:text-white">Alur Transaksi Terakhir</h4>
+            <a href="{{ route('kasir.index') }}" class="text-xs font-bold text-emerald-600 hover:text-emerald-700">Lihat Semua Transaksi</a>
         </div>
         <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left">
-                <thead class="text-xs text-slate-400 uppercase bg-slate-50/50 border-b border-slate-100">
+            <table class="w-full text-left">
+                <thead class="text-xs text-gray-400 uppercase bg-gray-50/50 dark:bg-gray-700/50 font-bold">
                     <tr>
-                        <th class="px-6 py-4 font-bold tracking-wider">ID Transaksi</th>
-                        <th class="px-6 py-4 font-bold tracking-wider">Pasien</th>
-                        <th class="px-6 py-4 font-bold tracking-wider">Metode</th>
-                        <th class="px-6 py-4 font-bold tracking-wider">Kasir</th>
-                        <th class="px-6 py-4 font-bold tracking-wider text-right">Jumlah</th>
-                        <th class="px-6 py-4 font-bold tracking-wider text-center">Waktu</th>
+                        <th class="px-8 py-4">Waktu</th>
+                        <th class="px-8 py-4">Pasien</th>
+                        <th class="px-8 py-4">Metode</th>
+                        <th class="px-8 py-4 text-right">Total Bayar</th>
+                        <th class="px-8 py-4 text-center">Status</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-50">
+                <tbody class="divide-y divide-gray-50 dark:divide-gray-700">
                     @forelse($transaksiTerakhir as $trx)
-                        <tr class="hover:bg-slate-50/50 transition-colors group">
-                            <td class="px-6 py-4 font-mono font-bold text-primary-600">
-                                #{{ substr($trx->id, 0, 8) }}
+                        <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-700/30 transition-colors group">
+                            <td class="px-8 py-4 whitespace-nowrap text-xs text-gray-500 font-mono">
+                                {{ $trx->created_at->format('H:i:s') }}
                             </td>
-                            <td class="px-6 py-4">
-                                <div class="font-bold text-slate-700">{{ $trx->pasien->nama ?? 'Umum' }}</div>
-                                <div class="text-xs text-slate-400">{{ $trx->pasien->no_rm ?? '-' }}</div>
+                            <td class="px-8 py-4 whitespace-nowrap">
+                                <div class="text-sm font-bold text-gray-800 dark:text-white">{{ $trx->pasien->nama_pasien ?? 'Umum' }}</div>
+                                <div class="text-[10px] text-gray-400 font-mono">{{ $trx->nomor_pembayaran }}</div>
                             </td>
-                            <td class="px-6 py-4">
-                                <span class="badge-pill 
-                                    @if(strtolower($trx->metode_pembayaran) == 'tunai') badge-health
-                                    @elseif(strtolower($trx->metode_pembayaran) == 'bpjs') badge-success
-                                    @else badge-primary @endif">
-                                    {{ $trx->metode_pembayaran }}
-                                </span>
+                            <td class="px-8 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
+                                {{ $trx->metode_pembayaran }}
                             </td>
-                            <td class="px-6 py-4 text-slate-600 font-medium text-xs">
-                                {{ $trx->kasir->name ?? 'Sistem' }}
-                            </td>
-                            <td class="px-6 py-4 text-right font-black text-slate-800">
+                            <td class="px-8 py-4 whitespace-nowrap text-right font-black text-gray-900 dark:text-white">
                                 Rp {{ number_format($trx->jumlah_bayar, 0, ',', '.') }}
                             </td>
-                            <td class="px-6 py-4 text-center text-slate-400 text-xs font-bold">
-                                {{ $trx->created_at->format('H:i') }}
+                            <td class="px-8 py-4 whitespace-nowrap text-center">
+                                @php
+                                    $statusColor = match($trx->status) {
+                                        'Lunas' => 'bg-emerald-100 text-emerald-700',
+                                        'Menunggu' => 'bg-amber-100 text-amber-700',
+                                        'Batal' => 'bg-red-100 text-red-700',
+                                        default => 'bg-gray-100 text-gray-700'
+                                    };
+                                @endphp
+                                <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider {{ $statusColor }}">
+                                    {{ $trx->status }}
+                                </span>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-12 text-center">
-                                <div class="flex flex-col items-center justify-center">
-                                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4 text-slate-300">
-                                        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
-                                    </div>
-                                    <p class="text-slate-500 font-bold">Belum ada transaksi pembayaran hari ini.</p>
-                                </div>
-                            </td>
+                            <td colspan="5" class="px-8 py-12 text-center text-gray-400">Belum ada transaksi terekam.</td>
                         </tr>
                     @endforelse
                 </tbody>
