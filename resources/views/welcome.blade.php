@@ -17,7 +17,6 @@
 
     <style>
         :root {
-            /* Fallback to Teal-600 if setup is null */
             --primary-color: {{ $pengaturan['primary_color'] ?? '#0d9488' }}; 
             --primary-rgb: {{ hexdec(substr($pengaturan['primary_color'] ?? '#0d9488', 1, 2)) }}, {{ hexdec(substr($pengaturan['primary_color'] ?? '#0d9488', 3, 2)) }}, {{ hexdec(substr($pengaturan['primary_color'] ?? '#0d9488', 5, 2)) }};
         }
@@ -25,26 +24,16 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; }
         h1, h2, h3, h4, h5, h6 { font-family: 'Outfit', sans-serif; }
         
-        /* Utility Classes for Dynamic Colors */
         .text-primary { color: var(--primary-color); }
         .bg-primary { background-color: var(--primary-color); }
         .bg-primary-50 { background-color: rgba(var(--primary-rgb), 0.05); }
         .bg-primary-100 { background-color: rgba(var(--primary-rgb), 0.1); }
-        .bg-primary-10 { background-color: rgba(var(--primary-rgb), 0.1); }
         .border-primary { border-color: var(--primary-color); }
         .ring-primary { --tw-ring-color: var(--primary-color); }
         
         .hover\:bg-primary:hover { background-color: var(--primary-color); }
         .hover\:text-primary:hover { color: var(--primary-color); }
         .group:hover .group-hover\:text-primary { color: var(--primary-color); }
-        
-        /* Custom Effects */
-        .glass-nav {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-        }
         
         .hero-bg {
             background-color: #f8fafc;
@@ -64,20 +53,14 @@
             from { transform: translate(0, 0) scale(1); }
             to { transform: translate(20px, -20px) scale(1.1); }
         }
-
-        .card-hover {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-        }
+        
+        [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-600 selection:bg-primary selection:text-white overflow-x-hidden">
+<body class="bg-slate-50 text-slate-600 selection:bg-primary selection:text-white overflow-x-hidden" x-data="{ mobileMenuOpen: false, scrolled: false }" @scroll.window="scrolled = (window.pageYOffset > 20)">
 
     <!-- Navbar -->
-    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 top-0 py-4">
+    <nav :class="{ 'py-2': scrolled, 'py-4': !scrolled }" class="fixed w-full z-50 transition-all duration-300 top-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-white/90 backdrop-blur-md rounded-2xl shadow-sm border border-slate-200/60 px-6 py-3 flex justify-between items-center">
                 <!-- Logo -->
@@ -102,24 +85,59 @@
                     <a href="#berita" class="text-sm font-bold text-slate-500 hover:text-primary transition-colors">Info</a>
                 </div>
 
-                <!-- CTA Button -->
+                <!-- CTA Button & Mobile Toggle -->
                 <div class="flex items-center gap-3">
-                    @if (Route::has('login'))
-                        @auth
-                            <a href="{{ url('/dashboard') }}" class="px-5 py-2.5 bg-slate-800 text-white text-sm font-bold rounded-xl hover:bg-slate-900 transition-all shadow-lg shadow-slate-900/20 flex items-center gap-2 transform hover:-translate-y-0.5">
-                                Dashboard
-                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                            </a>
-                        @else
-                            <a href="{{ route('login') }}" class="hidden sm:inline-flex px-5 py-2.5 bg-white border border-slate-200 text-slate-700 text-sm font-bold rounded-xl hover:border-primary hover:text-primary transition-all items-center gap-2">
-                                Masuk Staf
-                            </a>
-                            <a href="{{ route('antrean.monitor') }}" class="px-5 py-2.5 bg-primary text-white text-sm font-bold rounded-xl hover:opacity-90 transition-all shadow-lg shadow-primary/30 flex items-center gap-2 transform hover:-translate-y-0.5">
-                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
-                                Antrean
-                            </a>
-                        @endauth
-                    @endif
+                    <div class="hidden md:flex items-center gap-3">
+                        @if (Route::has('login'))
+                            @auth
+                                <a href="{{ url('/dashboard') }}" class="px-5 py-2.5 bg-slate-800 text-white text-sm font-bold rounded-xl hover:bg-slate-900 transition-all shadow-lg shadow-slate-900/20 flex items-center gap-2 transform hover:-translate-y-0.5">
+                                    Dashboard
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                                </a>
+                            @else
+                                <a href="{{ route('login') }}" class="hidden sm:inline-flex px-5 py-2.5 bg-white border border-slate-200 text-slate-700 text-sm font-bold rounded-xl hover:border-primary hover:text-primary transition-all items-center gap-2">
+                                    Masuk Staf
+                                </a>
+                                <a href="{{ route('antrean.monitor') }}" class="px-5 py-2.5 bg-primary text-white text-sm font-bold rounded-xl hover:opacity-90 transition-all shadow-lg shadow-primary/30 flex items-center gap-2 transform hover:-translate-y-0.5">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                                    Antrean
+                                </a>
+                            @endauth
+                        @endif
+                    </div>
+                    
+                    <!-- Mobile Menu Button -->
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 rounded-xl text-slate-500 hover:bg-slate-100 transition-colors">
+                        <svg x-show="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                        <svg x-cloak x-show="mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Menu Dropdown -->
+            <div x-cloak x-show="mobileMenuOpen" 
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 -translate-y-2"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 -translate-y-2"
+                 class="md:hidden mt-2 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+                <div class="px-4 py-6 space-y-4">
+                    <a href="#beranda" @click="mobileMenuOpen = false" class="block text-base font-bold text-slate-600 hover:text-primary">Beranda</a>
+                    <a href="#layanan" @click="mobileMenuOpen = false" class="block text-base font-bold text-slate-600 hover:text-primary">Layanan</a>
+                    <a href="#jadwal" @click="mobileMenuOpen = false" class="block text-base font-bold text-slate-600 hover:text-primary">Dokter</a>
+                    <a href="#fasilitas" @click="mobileMenuOpen = false" class="block text-base font-bold text-slate-600 hover:text-primary">Fasilitas</a>
+                    <div class="pt-4 border-t border-slate-100 grid gap-3">
+                         @if (Route::has('login'))
+                            @auth
+                                <a href="{{ url('/dashboard') }}" class="w-full text-center px-5 py-3 bg-slate-800 text-white font-bold rounded-xl">Dashboard</a>
+                            @else
+                                <a href="{{ route('antrean.monitor') }}" class="w-full text-center px-5 py-3 bg-primary text-white font-bold rounded-xl">Ambil Antrean</a>
+                                <a href="{{ route('login') }}" class="w-full text-center px-5 py-3 bg-slate-50 text-slate-700 font-bold rounded-xl border border-slate-200">Masuk Staf</a>
+                            @endauth
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -163,18 +181,19 @@
                         @endif
                     </div>
 
-                    <div class="mt-12 pt-8 border-t border-slate-200 flex items-center justify-center lg:justify-start gap-8 text-slate-400">
-                        <div class="flex items-center gap-2">
-                            <div class="p-2 bg-green-100 rounded-lg text-green-600">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                            </div>
-                            <span class="text-sm font-bold text-slate-600">Terpercaya</span>
+                    <!-- Trust Indicators / Stats (Static Mockup for Now) -->
+                    <div class="mt-12 pt-8 border-t border-slate-200 grid grid-cols-3 gap-4 text-center lg:text-left">
+                        <div>
+                            <p class="text-2xl font-black text-slate-900">24/7</p>
+                            <p class="text-xs font-bold text-slate-400 uppercase">Layanan</p>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <div class="p-2 bg-blue-100 rounded-lg text-blue-600">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                            </div>
-                            <span class="text-sm font-bold text-slate-600">Cepat & Efisien</span>
+                        <div>
+                            <p class="text-2xl font-black text-slate-900">{{ $stats['dokter_total'] }}+</p>
+                            <p class="text-xs font-bold text-slate-400 uppercase">Dokter Ahli</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-black text-slate-900">{{ number_format($stats['layanan_total'], 0, ',', '.') }}+</p>
+                            <p class="text-xs font-bold text-slate-400 uppercase">Pasien Puas</p>
                         </div>
                     </div>
                 </div>
@@ -355,8 +374,59 @@
     </section>
     @endif
 
+    <!-- FAQ Section (New) -->
+    <section class="py-24 bg-white relative overflow-hidden">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+             <div class="text-center mb-12">
+                <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Informasi Umum</span>
+                <h2 class="text-3xl lg:text-4xl font-black text-slate-900">Pertanyaan Sering Diajukan</h2>
+            </div>
+            
+            <div class="space-y-4" x-data="{ active: null }">
+                <!-- FAQ Item 1 -->
+                <div class="bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden transition-all duration-300" :class="active === 1 ? 'shadow-lg bg-white' : ''">
+                    <button @click="active = (active === 1 ? null : 1)" class="w-full px-6 py-4 flex items-center justify-between text-left focus:outline-none">
+                        <span class="font-bold text-slate-800">Bagaimana cara mendaftar antrean online?</span>
+                        <svg class="w-5 h-5 text-slate-400 transform transition-transform duration-300" :class="active === 1 ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div x-show="active === 1" x-collapse>
+                        <div class="px-6 pb-6 text-slate-500 text-sm leading-relaxed border-t border-slate-100 pt-4">
+                            Anda dapat mengambil nomor antrean melalui menu "Antrean" di halaman ini atau datang langsung ke kiosk mandiri di lokasi kami. Cukup pilih poliklinik tujuan dan dapatkan tiket antrean Anda.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden transition-all duration-300" :class="active === 2 ? 'shadow-lg bg-white' : ''">
+                    <button @click="active = (active === 2 ? null : 2)" class="w-full px-6 py-4 flex items-center justify-between text-left focus:outline-none">
+                        <span class="font-bold text-slate-800">Apakah menerima pasien BPJS?</span>
+                        <svg class="w-5 h-5 text-slate-400 transform transition-transform duration-300" :class="active === 2 ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div x-show="active === 2" x-collapse>
+                        <div class="px-6 pb-6 text-slate-500 text-sm leading-relaxed border-t border-slate-100 pt-4">
+                            Ya, kami melayani pasien BPJS Kesehatan. Pastikan kartu BPJS Anda aktif dan membawa surat rujukan dari Faskes 1 jika diperlukan untuk pemeriksaan spesialis.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden transition-all duration-300" :class="active === 3 ? 'shadow-lg bg-white' : ''">
+                    <button @click="active = (active === 3 ? null : 3)" class="w-full px-6 py-4 flex items-center justify-between text-left focus:outline-none">
+                        <span class="font-bold text-slate-800">Jam berapa pelayanan dibuka?</span>
+                        <svg class="w-5 h-5 text-slate-400 transform transition-transform duration-300" :class="active === 3 ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div x-show="active === 3" x-collapse>
+                        <div class="px-6 pb-6 text-slate-500 text-sm leading-relaxed border-t border-slate-100 pt-4">
+                            Pendaftaran dibuka mulai pukul 07:00 WIB. Pelayanan poliklinik dimulai pukul 08:00 WIB hingga selesai. Layanan IGD tersedia 24 jam.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Berita -->
-    <section id="berita" class="py-24 bg-white">
+    <section id="berita" class="py-24 bg-slate-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-end justify-between mb-12">
                 <div>
@@ -374,11 +444,11 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @foreach($beritaTerbaru as $berita)
                 <div class="group cursor-pointer">
-                    <div class="bg-slate-100 rounded-3xl overflow-hidden aspect-[16/10] mb-6 relative">
+                    <div class="bg-white rounded-3xl overflow-hidden aspect-[16/10] mb-6 relative shadow-sm">
                         @if($berita->thumbnail)
                             <img src="{{ asset('storage/' . $berita->thumbnail) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="{{ $berita->judul }}">
                         @else
-                            <div class="absolute inset-0 flex items-center justify-center text-slate-400">
+                            <div class="absolute inset-0 flex items-center justify-center text-slate-400 bg-slate-100">
                                 <svg class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
                             </div>
                         @endif
@@ -399,7 +469,7 @@
                 @endforeach
             </div>
             @else
-            <div class="text-center py-12 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
+            <div class="text-center py-12 bg-white rounded-3xl border border-dashed border-slate-200">
                 <p class="text-slate-400">Belum ada berita yang dipublikasikan.</p>
             </div>
             @endif
@@ -466,19 +536,5 @@
             </div>
         </div>
     </footer>
-
-    <script>
-        // Smooth Navbar Scroll Effect
-        window.addEventListener('scroll', function() {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('py-2');
-                navbar.classList.remove('py-4');
-            } else {
-                navbar.classList.add('py-4');
-                navbar.classList.remove('py-2');
-            }
-        });
-    </script>
 </body>
 </html>

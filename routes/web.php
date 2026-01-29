@@ -56,7 +56,14 @@ Route::get('/', function () {
         ->take(6)
         ->get();
 
-    return view('welcome', compact('pengaturan', 'layanan', 'jadwalHariIni', 'beritaTerbaru', 'fasilitas'));
+    // Statistik Real-time
+    $stats = [
+        'pasien_total' => \App\Models\Pasien::count(),
+        'dokter_total' => \App\Models\Pegawai::where('jabatan', 'LIKE', '%Dokter%')->count(),
+        'layanan_total' => \App\Models\RekamMedis::count(),
+    ];
+
+    return view('welcome', compact('pengaturan', 'layanan', 'jadwalHariIni', 'beritaTerbaru', 'fasilitas', 'stats'));
 });
 
 Route::get('/dashboard', \App\Livewire\Dashboard::class)->middleware(['auth', 'verified'])->name('dashboard');
