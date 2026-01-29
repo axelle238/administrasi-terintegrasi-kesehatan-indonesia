@@ -176,9 +176,9 @@
                                     @forelse($tabData['surveys'] as $s)
                                         <tr>
                                             <td class="px-4 py-3 text-gray-500">{{ $s->created_at->format('d/m/y H:i') }}</td>
-                                            <td class="px-4 py-3 font-bold text-gray-800 dark:text-gray-200">{{ $s->nama_responden ?? 'Anonim' }}</td>
+                                            <td class="px-4 py-3 font-bold text-gray-800 dark:text-gray-200">Anonim</td>
                                             <td class="px-4 py-3 text-center text-amber-500 font-bold">
-                                                {{ $s->rating_layanan }} <span class="text-gray-400 text-xs font-normal">/ 5</span>
+                                                {{ $s->nilai }} <span class="text-gray-400 text-xs font-normal">/ 5</span>
                                             </td>
                                             <td class="px-4 py-3 text-gray-600 dark:text-gray-400 italic line-clamp-1" title="{{ $s->kritik_saran }}">{{ $s->kritik_saran ?? '-' }}</td>
                                         </tr>
@@ -197,7 +197,7 @@
                             <div class="space-y-2">
                                 @for($i=5; $i>=1; $i--)
                                     @php 
-                                        $count = $tabData['distribusiBintang']->where('rating_layanan', $i)->first()->total ?? 0;
+                                        $count = $tabData['distribusiBintang']->where('nilai', $i)->first()->total ?? 0;
                                         $percent = $totalResponden > 0 ? ($count / $totalResponden) * 100 : 0;
                                     @endphp
                                     <div class="flex items-center gap-2 text-xs">

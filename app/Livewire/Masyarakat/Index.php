@@ -26,7 +26,8 @@ class Index extends Component
     {
         // === GLOBAL STATS ===
         $totalResponden = Survey::count();
-        $avgRating = Survey::avg('rating_layanan') ?? 0;
+        // FIX: Column name 'nilai' instead of 'rating_layanan'
+        $avgRating = Survey::avg('nilai') ?? 0;
         $ikmScore = ($avgRating / 5) * 100;
         
         $tabData = [];
@@ -56,9 +57,10 @@ class Index extends Component
             $tabData['surveys'] = Survey::latest()->paginate(10);
             
             // Analisis per Bintang
-            $tabData['distribusiBintang'] = Survey::select('rating_layanan', DB::raw('count(*) as total'))
-                ->groupBy('rating_layanan')
-                ->orderBy('rating_layanan', 'desc')
+            // FIX: Column name 'nilai' instead of 'rating_layanan'
+            $tabData['distribusiBintang'] = Survey::select('nilai', DB::raw('count(*) as total'))
+                ->groupBy('nilai')
+                ->orderBy('nilai', 'desc')
                 ->get();
                 
             $tabData['komentarTerbaru'] = Survey::whereNotNull('kritik_saran')
@@ -83,9 +85,10 @@ class Index extends Component
             $date = Carbon::now()->subMonths($i);
             $labels[] = $date->translatedFormat('M Y');
             
+            // FIX: Column name 'nilai'
             $avg = Survey::whereMonth('created_at', $date->month)
                 ->whereYear('created_at', $date->year)
-                ->avg('rating_layanan');
+                ->avg('nilai');
                 
             $data[] = round($avg ?? 0, 1);
         }

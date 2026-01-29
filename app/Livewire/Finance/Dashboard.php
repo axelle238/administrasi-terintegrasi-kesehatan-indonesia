@@ -5,7 +5,7 @@ namespace App\Livewire\Finance;
 use Livewire\Component;
 use App\Models\Pembayaran;
 use App\Models\Penggajian;
-use App\Models\PengadaanBarang;
+use App\Models\PengadaanBarangDetail;
 use App\Models\Pasien;
 use App\Models\Tindakan;
 use Carbon\Carbon;
@@ -36,7 +36,13 @@ class Dashboard extends Component
 
         // 2. Analisis Pengeluaran Detail
         $pengeluaranGajiBulan = Penggajian::where('bulan', Carbon::now()->translatedFormat('F'))->where('tahun', Carbon::now()->year)->sum('total_gaji');
-        $pengeluaranBarangBulan = PengadaanBarang::whereMonth('tanggal_pengadaan', Carbon::now()->month)->whereYear('tanggal_pengadaan', Carbon::now()->year)->sum('total_harga');
+        
+        // FIX: Hitung total pengadaan dari tabel detail, join ke header untuk filter tanggal
+        $pengeluaranBarangBulan = PengadaanBarangDetail::join('pengadaan_barangs', 'pengadaan_barang_details.pengadaan_barang_id', '=', 'pengadaan_barangs.id')
+            ->whereMonth('pengadaan_barangs.tanggal_pengajuan', Carbon::now()->month)
+            ->whereYear('pengadaan_barangs.tanggal_pengajuan', Carbon::now()->year)
+            ->sum(DB::raw('pengadaan_barang_details.jumlah_permintaan * pengadaan_barang_details.estimasi_harga_satuan'));
+
         $totalPengeluaranBulan = $pengeluaranGajiBulan + $pengeluaranBarangBulan;
 
         // 3. Margin Laba (Net Profit Simulation)
@@ -109,9 +115,12 @@ class Dashboard extends Component
             $gaji = Penggajian::where('bulan', $date->translatedFormat('F'))
                 ->where('tahun', $date->year)
                 ->sum('total_gaji');
-            $barang = PengadaanBarang::whereYear('tanggal_pengadaan', $date->year)
-                ->whereMonth('tanggal_pengadaan', $date->month)
-                ->sum('total_harga');
+            
+            // FIX: Pengadaan Expense
+            $barang = PengadaanBarangDetail::join('pengadaan_barangs', 'pengadaan_barang_details.pengadaan_barang_id', '=', 'pengadaan_barangs.id')
+                ->whereMonth('pengadaan_barangs.tanggal_pengajuan', $date->month)
+                ->whereYear('pengadaan_barangs.tanggal_pengajuan', $date->year)
+                ->sum(DB::raw('pengadaan_barang_details.jumlah_permintaan * pengadaan_barang_details.estimasi_harga_satuan'));
                 
             $expense[] = $gaji + $barang;
         }
