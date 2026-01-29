@@ -316,56 +316,39 @@
                     <h2 class="text-3xl md:text-4xl font-black text-slate-900">Penunjang Medis Modern</h2>
                 </div>
 
+                @if($fasilitas->count() > 0)
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <!-- Card 1 -->
-                    <div class="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group">
-                        <div class="h-48 bg-slate-200 relative overflow-hidden">
+                    @foreach($fasilitas as $item)
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col h-full">
+                        <div class="h-48 bg-slate-200 relative overflow-hidden flex-shrink-0">
                              <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent z-10"></div>
-                             <!-- Placeholder Image -->
-                             <div class="w-full h-full bg-slate-300 flex items-center justify-center text-slate-400">
-                                 <svg class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                             </div>
+                             @if($item->gambar)
+                                <img src="{{ asset('storage/' . $item->gambar) }}" alt="{{ $item->nama_fasilitas }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                             @else
+                                <div class="w-full h-full bg-slate-300 flex items-center justify-center text-slate-400">
+                                     <svg class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                                </div>
+                             @endif
+                             @if($item->jenis == 'unggulan')
+                                <div class="absolute top-4 right-4 z-20 bg-amber-400 text-amber-900 text-[10px] font-black px-2 py-1 rounded shadow-lg uppercase tracking-wider">
+                                    Unggulan
+                                </div>
+                             @endif
                         </div>
-                        <div class="p-8">
-                            <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-sky-600 transition-colors">Laboratorium Lengkap</h3>
-                            <p class="text-slate-500 text-sm leading-relaxed">
-                                Dilengkapi peralatan modern untuk pemeriksaan darah, urin, dan tes medis lainnya dengan hasil cepat dan akurat.
+                        <div class="p-8 flex-1 flex flex-col">
+                            <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-sky-600 transition-colors">{{ $item->nama_fasilitas }}</h3>
+                            <p class="text-slate-500 text-sm leading-relaxed flex-1">
+                                {{ $item->deskripsi }}
                             </p>
                         </div>
                     </div>
-
-                    <!-- Card 2 -->
-                    <div class="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group">
-                        <div class="h-48 bg-slate-200 relative overflow-hidden">
-                             <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent z-10"></div>
-                             <div class="w-full h-full bg-slate-300 flex items-center justify-center text-slate-400">
-                                 <svg class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                             </div>
-                        </div>
-                        <div class="p-8">
-                            <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-sky-600 transition-colors">Ruang Rawat Inap</h3>
-                            <p class="text-slate-500 text-sm leading-relaxed">
-                                Kamar rawat inap yang bersih, nyaman, dan ber-AC untuk mempercepat pemulihan pasien.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Card 3 -->
-                    <div class="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group">
-                        <div class="h-48 bg-slate-200 relative overflow-hidden">
-                             <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent z-10"></div>
-                             <div class="w-full h-full bg-slate-300 flex items-center justify-center text-slate-400">
-                                 <svg class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                             </div>
-                        </div>
-                        <div class="p-8">
-                            <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-sky-600 transition-colors">IGD 24 Jam</h3>
-                            <p class="text-slate-500 text-sm leading-relaxed">
-                                Unit Gawat Darurat yang siap sedia 24 jam menangani kasus kegawatdaruratan medis.
-                            </p>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
+                @else
+                <div class="text-center py-12 bg-white rounded-3xl border border-dashed border-slate-200">
+                    <p class="text-slate-500">Data fasilitas belum ditambahkan.</p>
+                </div>
+                @endif
             </div>
         </section>
         @endif

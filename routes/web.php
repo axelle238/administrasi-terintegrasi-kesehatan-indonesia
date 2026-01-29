@@ -9,6 +9,7 @@ use App\Http\Controllers\KasirController;
 use App\Models\Setting;
 use App\Models\Poli;
 use App\Models\Berita; // Import Model Berita
+use App\Models\Fasilitas; // Import Model Fasilitas
 use App\Models\JadwalJaga; // Import Model Jadwal
 use Carbon\Carbon;
 
@@ -49,7 +50,13 @@ Route::get('/', function () {
         ->take(3)
         ->get();
 
-    return view('welcome', compact('pengaturan', 'layanan', 'jadwalHariIni', 'beritaTerbaru'));
+    // Ambil Fasilitas Aktif
+    $fasilitas = Fasilitas::where('is_active', true)
+        ->latest()
+        ->take(6)
+        ->get();
+
+    return view('welcome', compact('pengaturan', 'layanan', 'jadwalHariIni', 'beritaTerbaru', 'fasilitas'));
 });
 
 Route::get('/dashboard', \App\Livewire\Dashboard::class)->middleware(['auth', 'verified'])->name('dashboard');
@@ -98,6 +105,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/berita', \App\Livewire\Admin\Berita\Index::class)->name('admin.berita.index');
         Route::get('/admin/berita/create', \App\Livewire\Admin\Berita\Create::class)->name('admin.berita.create');
         Route::get('/admin/berita/{berita}/edit', \App\Livewire\Admin\Berita\Edit::class)->name('admin.berita.edit');
+
+        // Manajemen Fasilitas (Admin)
+        Route::get('/admin/fasilitas', \App\Livewire\Admin\Fasilitas\Index::class)->name('admin.fasilitas.index');
+        Route::get('/admin/fasilitas/create', \App\Livewire\Admin\Fasilitas\Create::class)->name('admin.fasilitas.create');
+        Route::get('/admin/fasilitas/{fasilitas}/edit', \App\Livewire\Admin\Fasilitas\Edit::class)->name('admin.fasilitas.edit');
     });
 
     // MASYARAKAT
@@ -130,6 +142,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/surat', \App\Livewire\Surat\Index::class)->name('surat.index');
         Route::get('/surat/create', \App\Livewire\Surat\Create::class)->name('surat.create');
         Route::get('/surat/{surat}/edit', \App\Livewire\Surat\Edit::class)->name('surat.edit');
+        Route::get('/surat/{surat}/disposisi', \App\Livewire\Surat\Disposisi\Manage::class)->name('surat.disposisi.manage');
         Route::get('/surat/{surat}/print-disposisi', [SuratController::class, 'printDisposition'])->name('surat.print-disposisi');
         Route::get('/antrean', \App\Livewire\Antrean\Index::class)->name('antrean.index');
         
