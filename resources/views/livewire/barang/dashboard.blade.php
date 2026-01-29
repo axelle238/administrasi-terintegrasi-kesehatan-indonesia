@@ -55,6 +55,42 @@
         </div>
     </div>
 
+    <!-- Row 2: Asset Analysis -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Kondisi Aset -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Kondisi Keseluruhan Aset</h3>
+            <div class="flex items-center justify-between text-sm mb-2">
+                <span class="font-bold text-emerald-600">Baik ({{ $chartKondisi[0] }})</span>
+                <span class="font-bold text-red-600">Rusak ({{ $chartKondisi[1] }})</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-4 overflow-hidden flex">
+                @php $totalKondisi = array_sum($chartKondisi) ?: 1; @endphp
+                <div class="bg-emerald-500 h-full transition-all duration-500" style="width: {{ ($chartKondisi[0] / $totalKondisi) * 100 }}%"></div>
+                <div class="bg-red-500 h-full transition-all duration-500" style="width: {{ ($chartKondisi[1] / $totalKondisi) * 100 }}%"></div>
+            </div>
+            <p class="text-xs text-slate-400 mt-4 text-center">Rasio kondisi aset saat ini.</p>
+        </div>
+
+        <!-- Top Kategori -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Kategori Aset Terbanyak</h3>
+            <div class="space-y-4">
+                @foreach($distribusiKategori as $kat)
+                    <div>
+                        <div class="flex justify-between text-xs font-bold mb-1">
+                            <span class="text-slate-600 dark:text-gray-300">{{ $kat->nama_kategori }}</span>
+                            <span class="text-slate-800 dark:text-white">{{ $kat->barangs_count }} Item</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-1.5">
+                            <div class="bg-blue-500 h-1.5 rounded-full" style="width: {{ ($kat->barangs_count / max($totalAset, 1)) * 100 }}%"></div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Low Stock Alert -->
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">

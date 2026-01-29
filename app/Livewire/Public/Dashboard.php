@@ -4,7 +4,7 @@ namespace App\Livewire\Public;
 
 use Livewire\Component;
 use App\Models\Pengaduan;
-use App\Models\Survey; // Asumsi ada model Survey Kepuasan
+use App\Models\Survey;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -18,9 +18,9 @@ class Dashboard extends Component
         $pengaduanProses = Pengaduan::where('status', 'Diproses')->count();
         $pengaduanPending = Pengaduan::where('status', 'Pending')->count();
 
-        // 2. Kepuasan Masyarakat (IKM) - Mock jika belum ada data real
-        $ikmScore = 3.8; 
-        $totalResponden = 215;
+        // 2. Kepuasan Masyarakat (IKM) Real-time
+        $ikmScore = Survey::avg('kepuasan') ?? 0; // Menggunakan kolom 'kepuasan'
+        $totalResponden = Survey::count();
 
         // 3. Pengaduan Terbaru
         $pengaduanTerbaru = Pengaduan::latest()->take(5)->get();
@@ -28,17 +28,23 @@ class Dashboard extends Component
         // 4. Grafik Pengaduan Bulanan
         $grafikPengaduan = $this->getGrafikPengaduan();
 
-        // 5. Rata-rata Waktu Respon (Mock)
-        // Dalam jam
+        // 5. Rata-rata Waktu Respon (Mock - Simulasi Sistem Tiket)
         $avgResponseTime = 24; 
 
-        // 6. Kategori Pengaduan (Top 3) - Asumsi subjek sebagai kategori sederhana jika belum ada kolom kategori khusus
-        // Atau buat mock kategori
-        $topKategori = Pengaduan::select('subjek', DB::raw('count(*) as total')) // Simplifikasi: group by subjek untuk demo
+        // 6. Kategori Pengaduan
+        $topKategori = Pengaduan::select('subjek', DB::raw('count(*) as total'))
             ->groupBy('subjek')
             ->orderByDesc('total')
             ->limit(3)
             ->get();
+
+        // 7. Kanal Pengaduan (Simulasi Distribusi)
+        $kanalPengaduan = [
+            ['nama' => 'Website/Aplikasi', 'total' => floor($totalPengaduan * 0.6)],
+            ['nama' => 'WhatsApp Center', 'total' => floor($totalPengaduan * 0.25)],
+            ['nama' => 'Datang Langsung', 'total' => floor($totalPengaduan * 0.1)],
+            ['nama' => 'Email Resmi', 'total' => $totalPengaduan - floor($totalPengaduan * 0.95)]
+        ];
 
         return view('livewire.public.dashboard', compact(
             'totalPengaduan',
@@ -50,7 +56,8 @@ class Dashboard extends Component
             'pengaduanTerbaru',
             'grafikPengaduan',
             'avgResponseTime',
-            'topKategori'
+            'topKategori',
+            'kanalPengaduan'
         ))->layout('layouts.app', ['header' => 'Dashboard Layanan Masyarakat']);
     }
 

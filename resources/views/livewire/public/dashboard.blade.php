@@ -55,9 +55,21 @@
         <!-- IKM Score -->
         <div class="bg-gradient-to-br from-orange-500 to-amber-600 rounded-2xl p-6 text-white shadow-lg flex flex-col justify-center items-center text-center relative overflow-hidden group">
             <div class="relative z-10">
-                <h3 class="text-5xl font-black mb-2">{{ number_format($ikmScore, 1) }}<span class="text-2xl opacity-75">/4.0</span></h3>
-                <p class="text-sm font-bold text-orange-100 uppercase tracking-widest">Indeks Kepuasan Masyarakat</p>
-                <div class="mt-6 inline-flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">
+                <h3 class="text-5xl font-black mb-2">{{ number_format($ikmScore, 1) }}<span class="text-2xl opacity-75">/5.0</span></h3>
+                <p class="text-sm font-bold text-orange-100 uppercase tracking-widest mb-4">Indeks Kepuasan Masyarakat</p>
+                
+                <!-- Star Rating Visual -->
+                <div class="flex gap-1 mb-6 text-yellow-300">
+                    @for($i=1; $i<=5; $i++)
+                        @if($i <= round($ikmScore))
+                            <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        @else
+                            <svg class="w-6 h-6 text-orange-400 fill-current opacity-50" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        @endif
+                    @endfor
+                </div>
+
+                <div class="inline-flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">
                     <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" /></svg>
                     <span class="font-bold">{{ $totalResponden }} Responden</span>
                 </div>
@@ -82,7 +94,7 @@
         </div>
     </div>
 
-    <!-- Row 3: Recent List & Top Categories -->
+    <!-- Row 3: Recent List & Channels -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Recent List -->
         <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
@@ -110,21 +122,27 @@
             </div>
         </div>
 
-        <!-- Top Categories -->
+        <!-- Channels -->
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
-            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Topik Terbanyak</h3>
+            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Kanal Pengaduan Utama</h3>
             <div class="space-y-4">
-                @forelse($topKategori as $cat)
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-bold text-slate-600 dark:text-gray-300 truncate max-w-[150px]">{{ $cat->subjek }}</span>
-                        <span class="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded-lg text-xs font-black">{{ $cat->total }}</span>
+                @foreach($kanalPengaduan as $kanal)
+                    <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+                                @if(Str::contains($kanal['nama'], 'Web'))
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
+                                @elseif(Str::contains($kanal['nama'], 'Whats'))
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                                @else
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                                @endif
+                            </div>
+                            <span class="text-sm font-bold text-slate-700 dark:text-gray-300">{{ $kanal['nama'] }}</span>
+                        </div>
+                        <span class="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded-lg text-xs font-black">{{ $kanal['total'] }}</span>
                     </div>
-                    <div class="w-full bg-slate-100 rounded-full h-1.5">
-                        <div class="bg-orange-500 h-1.5 rounded-full" style="width: {{ ($cat->total / max($totalPengaduan, 1)) * 100 }}%"></div>
-                    </div>
-                @empty
-                    <p class="text-center text-slate-400 text-sm py-4">Belum ada data topik.</p>
-                @endforelse
+                @endforeach
             </div>
         </div>
     </div>
