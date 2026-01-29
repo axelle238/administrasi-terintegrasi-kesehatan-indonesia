@@ -19,7 +19,8 @@ class Dashboard extends Component
         $pengaduanPending = Pengaduan::where('status', 'Pending')->count();
 
         // 2. Kepuasan Masyarakat (IKM) Real-time
-        $ikmScore = Survey::avg('kepuasan') ?? 0; // Menggunakan kolom 'kepuasan'
+        $avgRating = Survey::avg('nilai') ?? 0;
+        $ikmScore = ($avgRating / 5) * 100;
         $totalResponden = Survey::count();
 
         // 3. Pengaduan Terbaru
