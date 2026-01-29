@@ -7,86 +7,104 @@ use App\Models\Pegawai;
 use App\Models\PengajuanCuti;
 use App\Models\KinerjaPegawai;
 use App\Models\JadwalJaga;
+use App\Models\Penggajian;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class Dashboard extends Component
 {
+    public $activeTab = 'ikhtisar'; // ikhtisar, presensi, cuti, kinerja
+
+    public function setTab($tab)
+    {
+        $this->activeTab = $tab;
+    }
+
     public function render()
     {
-        // 1. Statistik Pegawai
+        // === GLOBAL METRICS ===
         $totalPegawai = Pegawai::count();
-        $pegawaiCutiHariIni = PengajuanCuti::where('status', 'Disetujui')
-            ->whereDate('tanggal_mulai', '<=', Carbon::today())
-            ->whereDate('tanggal_selesai', '>=', Carbon::today())
+        $totalUser = User::count();
+        $pegawaiAktif = Pegawai::where('status_kepegawaian', '!=', 'Resign')->count();
+        
+        // Peringatan STR/SIP
+        $batasPeringatan = Carbon::now()->addMonths(3);
+        $dokumenExpired = Pegawai::where('masa_berlaku_str', '<=', $batasPeringatan)
+            ->orWhere('masa_berlaku_sip', '<=', $batasPeringatan)
             ->count();
 
-        // 2. Komposisi SDM
-        $komposisiRole = User::select('role', DB::raw('count(*) as total'))
-            ->groupBy('role')
-            ->get();
+        $tabData = [];
 
-        // 3. Jadwal Jaga & Absensi (Simulasi Real-time)
-        $jadwalHariIniQuery = JadwalJaga::with('pegawai.user', 'shift')
-            ->whereDate('tanggal', Carbon::today());
+        // === TAB 1: IKHTISAR ===
+        if ($this->activeTab == 'ikhtisar') {
+            $tabData['komposisiRole'] = User::select('role', DB::raw('count(*) as total'))
+                ->groupBy('role')
+                ->get();
             
-        $dijadwalkan = $jadwalHariIniQuery->count();
-        // Simulasi data kehadiran karena belum ada integrasi mesin fingerprint
-        $hadir = $dijadwalkan > 0 ? floor($dijadwalkan * 0.9) : 0; 
-        $terlambat = $dijadwalkan > 0 ? floor($dijadwalkan * 0.05) : 0;
-        $alpa = $dijadwalkan - $hadir - $terlambat;
+            $tabData['dokumenAlert'] = Pegawai::where('masa_berlaku_str', '<=', $batasPeringatan)
+                ->orWhere('masa_berlaku_sip', '<=', $batasPeringatan)
+                ->with('user')
+                ->take(5)
+                ->get();
 
-        $kehadiranStatistik = [
-            'dijadwalkan' => $dijadwalkan,
-            'hadir' => $hadir,
-            'terlambat' => $terlambat,
-            'alpa' => max(0, $alpa)
-        ];
+            $tabData['gajiBulanIni'] = Penggajian::where('bulan', Carbon::now()->translatedFormat('F'))
+                ->where('tahun', Carbon::now()->year)
+                ->sum('total_gaji');
+        }
 
-        $jadwalHariIni = $jadwalHariIniQuery->get();
+        // === TAB 2: PRESENSI & JADWAL ===
+        if ($this->activeTab == 'presensi') {
+            $jadwalQuery = JadwalJaga::with('pegawai.user', 'shift')
+                ->whereDate('tanggal', Carbon::today());
+            
+            $dijadwalkan = $jadwalQuery->count();
+            // Simulasi kehadiran (karena belum ada data riil presensi di DB)
+            $hadir = max(0, floor($dijadwalkan * 0.9)); 
+            
+            $tabData['statistikKehadiran'] = [
+                'total' => $dijadwalkan,
+                'hadir' => $hadir,
+                'absen' => max(0, $dijadwalkan - $hadir)
+            ];
+            
+            $tabData['jadwalHariIni'] = $jadwalQuery->get();
+        }
 
-        // 4. Kinerja Bulan Ini (Top 5)
-        $topKinerja = KinerjaPegawai::with('pegawai.user')
-            ->whereMonth('created_at', Carbon::now()->month)
-            ->select('*', DB::raw('(orientasi_pelayanan + integritas + komitmen + disiplin + kerjasama) as total_skor'))
-            ->orderByDesc('total_skor')
-            ->limit(5)
-            ->get();
+        // === TAB 3: CUTI ===
+        if ($this->activeTab == 'cuti') {
+            $tabData['cutiPending'] = PengajuanCuti::with('user')->where('status', 'Menunggu')->get();
+            $tabData['sedangCuti'] = PengajuanCuti::with('user')
+                ->where('status', 'Disetujui')
+                ->whereDate('tanggal_mulai', '<=', Carbon::today())
+                ->whereDate('tanggal_selesai', '>=', Carbon::today())
+                ->get();
+            
+            // Statistik Jenis Cuti (Tahunan, Sakit, Melahirkan, dll)
+            $tabData['jenisCuti'] = PengajuanCuti::select('jenis_cuti', DB::raw('count(*) as total'))
+                ->whereYear('created_at', Carbon::now()->year)
+                ->groupBy('jenis_cuti')
+                ->get();
+        }
 
-        // 5. Peringatan Dini (EWS) STR/SIP
-        $batasPeringatan = Carbon::now()->addMonths(3);
-        $strExpired = Pegawai::where('masa_berlaku_str', '<=', $batasPeringatan)->count();
-        $sipExpired = Pegawai::where('masa_berlaku_sip', '<=', $batasPeringatan)->count();
-
-        // 6. Tren Kinerja Rata-rata (6 Bulan Terakhir)
-        $trenKinerja = $this->getTrenKinerja();
-
-        // 7. Daftar Pegawai Cuti Hari Ini
-        $listCutiHariIni = PengajuanCuti::with('user')
-            ->where('status', 'Disetujui')
-            ->whereDate('tanggal_mulai', '<=', Carbon::today())
-            ->whereDate('tanggal_selesai', '>=', Carbon::today())
-            ->get();
-
-        // 8. Distribusi Gender
-        $distribusiGender = Pegawai::select('jenis_kelamin', DB::raw('count(*) as total'))
-            ->groupBy('jenis_kelamin')
-            ->get();
+        // === TAB 4: KINERJA ===
+        if ($this->activeTab == 'kinerja') {
+            $tabData['topPerformance'] = KinerjaPegawai::with('pegawai.user')
+                ->whereMonth('created_at', Carbon::now()->month)
+                ->select('*', DB::raw('(orientasi_pelayanan + integritas + komitmen + disiplin + kerjasama) / 5 as rata_rata'))
+                ->orderByDesc('rata_rata')
+                ->limit(5)
+                ->get();
+            
+            $tabData['trenKinerja'] = $this->getTrenKinerja();
+        }
 
         return view('livewire.hrd.dashboard', compact(
             'totalPegawai',
-            'pegawaiCutiHariIni',
-            'komposisiRole',
-            'jadwalHariIni',
-            'kehadiranStatistik',
-            'topKinerja',
-            'strExpired',
-            'sipExpired',
-            'trenKinerja',
-            'listCutiHariIni',
-            'distribusiGender'
-        ))->layout('layouts.app', ['header' => 'Dashboard SDM & Kepegawaian']);
+            'pegawaiAktif',
+            'dokumenExpired',
+            'tabData'
+        ))->layout('layouts.app', ['header' => 'Manajemen Sumber Daya Manusia']);
     }
 
     private function getTrenKinerja()
@@ -96,15 +114,14 @@ class Dashboard extends Component
         
         for ($i = 5; $i >= 0; $i--) {
             $date = Carbon::now()->subMonths($i);
-            $labels[] = $date->format('M Y');
+            $labels[] = $date->translatedFormat('M Y');
             
-            // Hitung rata-rata skor total seluruh pegawai
             $avg = KinerjaPegawai::whereMonth('created_at', $date->month)
                 ->whereYear('created_at', $date->year)
-                ->select(DB::raw('AVG(orientasi_pelayanan + integritas + komitmen + disiplin + kerjasama) as avg_score'))
+                ->select(DB::raw('AVG((orientasi_pelayanan + integritas + komitmen + disiplin + kerjasama) / 5) as avg_score'))
                 ->value('avg_score');
                 
-            $data[] = round($avg ?? 0, 1);
+            $data[] = round($avg ?? 0, 2); // Skor rata-rata 0-100 atau skala lain
         }
 
         return ['labels' => $labels, 'data' => $data];
