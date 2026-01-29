@@ -77,10 +77,10 @@
                         <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400 font-medium">
                             <div>
                                 <span class="font-bold text-slate-600">SATRIA Health System</span> &copy; {{ date('Y') }}. 
-                                <span class="hidden md:inline">Excellence in Healthcare.</span>
+                                <span class="hidden md:inline">Keunggulan dalam Pelayanan Kesehatan.</span>
                             </div>
                             <div class="flex items-center gap-4">
-                                <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-100 shadow-sm text-slate-500">v2.5.0-Stable</span>
+                                <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-100 shadow-sm text-slate-500">v2.5.0-Stabil</span>
                             </div>
                         </div>
                     </footer>

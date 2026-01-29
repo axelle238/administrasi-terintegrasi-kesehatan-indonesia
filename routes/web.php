@@ -8,6 +8,7 @@ use App\Http\Controllers\PasienController;
 use App\Http\Controllers\KasirController;
 use App\Models\Setting;
 use App\Models\Poli;
+use App\Models\Berita; // Import Model Berita
 use App\Models\JadwalJaga; // Import Model Jadwal
 use Carbon\Carbon;
 
@@ -41,7 +42,14 @@ Route::get('/', function () {
         ->whereDate('tanggal', Carbon::today())
         ->get();
 
-    return view('welcome', compact('pengaturan', 'layanan', 'jadwalHariIni'));
+    // Ambil Berita Terbaru
+    $beritaTerbaru = Berita::with('penulis')
+        ->where('status', 'published')
+        ->latest()
+        ->take(3)
+        ->get();
+
+    return view('welcome', compact('pengaturan', 'layanan', 'jadwalHariIni', 'beritaTerbaru'));
 });
 
 Route::get('/dashboard', \App\Livewire\Dashboard::class)->middleware(['auth', 'verified'])->name('dashboard');

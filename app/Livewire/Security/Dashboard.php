@@ -41,13 +41,14 @@ class Dashboard extends Component
             ->take(8)
             ->get();
 
-        // 6. Cyber Security Status (Simulasi/Metrics)
+        // 6. Cyber Security Status (Realtime Config)
         $securityStatus = [
-            'firewall' => 'Aktif',
-            'ssl_expiry' => '245 Hari lagi',
-            'last_backup' => Carbon::now()->subHours(2)->diffForHumans(),
+            'firewall' => \App\Models\Setting::ambil('ip_whitelist') ? 'Restricted (IP)' : 'Standard',
+            'ssl_expiry' => \App\Models\Setting::ambil('force_https') == '1' ? 'Enforced' : 'Optional',
+            'last_backup' => \App\Models\Setting::ambil('enable_auto_backup') == '1' ? 'Auto-Active' : 'Manual',
             'encryption' => 'AES-256-CBC',
-            'threat_level' => $loginFailedToday > 10 ? 'Tinggi' : 'Rendah',
+            'threat_level' => $loginFailedToday > 10 ? 'Tinggi' : ($loginFailedToday > 3 ? 'Sedang' : 'Rendah'),
+            'recaptcha' => \App\Models\Setting::ambil('recaptcha_active') == '1' ? 'Aktif' : 'Non-Aktif',
         ];
 
         // 7. Grafik Tren Ancaman (Login Gagal 7 Hari)

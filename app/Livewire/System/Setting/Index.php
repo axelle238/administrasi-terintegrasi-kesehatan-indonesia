@@ -91,6 +91,11 @@ class Index extends Component
                     'session_lifetime' => ['label' => 'Durasi Sesi Login (Menit)', 'type' => 'number', 'default' => '120'],
                     'enable_2fa' => ['label' => 'Aktifkan Autentikasi Dua Faktor (2FA)', 'type' => 'select', 'options' => ['1' => 'Ya', '0' => 'Tidak'], 'default' => '0'],
                     'max_login_attempts' => ['label' => 'Maksimal Percobaan Login Gagal', 'type' => 'number', 'default' => '5'],
+                    'ip_whitelist' => ['label' => 'Whitelist IP Admin (Pisahkan dengan koma)', 'type' => 'textarea', 'default' => '', 'help' => 'Kosongkan jika ingin diakses dari mana saja. Contoh: 192.168.1.1, 10.0.0.1'],
+                    'recaptcha_active' => ['label' => 'Aktifkan Google reCAPTCHA', 'type' => 'select', 'options' => ['1' => 'Ya', '0' => 'Tidak'], 'default' => '0'],
+                    'recaptcha_site_key' => ['label' => 'reCAPTCHA Site Key', 'type' => 'text', 'default' => ''],
+                    'recaptcha_secret_key' => ['label' => 'reCAPTCHA Secret Key', 'type' => 'password', 'default' => ''],
+                    'force_https' => ['label' => 'Paksa HTTPS (SSL)', 'type' => 'select', 'options' => ['1' => 'Ya', '0' => 'Tidak'], 'default' => '0'],
                 ]
             ],
             'notifikasi' => [

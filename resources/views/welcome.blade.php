@@ -370,59 +370,75 @@
         </section>
         @endif
 
-        <!-- Berita & Informasi (Placeholder) -->
+        <!-- Berita & Informasi -->
         <section id="berita" class="py-24 bg-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                  <div class="flex items-center justify-between mb-12">
                      <h2 class="text-3xl font-black text-slate-900">Informasi & Edukasi</h2>
-                     <a href="#" class="text-sm font-bold text-sky-600 hover:text-sky-700">Lihat Semua</a>
+                     @if($beritaTerbaru->count() > 0)
+                        <a href="#" class="text-sm font-bold text-sky-600 hover:text-sky-700">Lihat Semua</a>
+                     @endif
                  </div>
 
+                 @if($beritaTerbaru->count() > 0)
                  <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                     <!-- News Item Big -->
+                     <!-- News Item Big (First Item) -->
                      <div class="group cursor-pointer">
                          <div class="aspect-video bg-slate-200 rounded-3xl mb-6 relative overflow-hidden">
-                             <div class="absolute inset-0 bg-slate-300 flex items-center justify-center text-slate-400">
-                                 <span class="text-sm font-bold">Image Placeholder</span>
-                             </div>
+                             @if($beritaTerbaru[0]->thumbnail)
+                                <img src="{{ asset('storage/' . $beritaTerbaru[0]->thumbnail) }}" alt="{{ $beritaTerbaru[0]->judul }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                             @else
+                                <div class="absolute inset-0 bg-slate-300 flex items-center justify-center text-slate-400">
+                                    <svg class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                </div>
+                             @endif
                          </div>
                          <div class="flex items-center gap-3 text-xs font-bold text-slate-400 mb-3">
-                             <span class="text-sky-600">Kesehatan</span>
+                             <span class="text-sky-600">{{ $beritaTerbaru[0]->kategori }}</span>
                              <span>•</span>
-                             <span>2 Jam yang lalu</span>
+                             <span>{{ $beritaTerbaru[0]->created_at->diffForHumans() }}</span>
                          </div>
-                         <h3 class="text-2xl font-black text-slate-900 mb-3 group-hover:text-sky-600 transition-colors">Pentingnya Deteksi Dini Penyakit Tidak Menular</h3>
+                         <h3 class="text-2xl font-black text-slate-900 mb-3 group-hover:text-sky-600 transition-colors">{{ $beritaTerbaru[0]->judul }}</h3>
                          <p class="text-slate-500 text-sm leading-relaxed line-clamp-2">
-                             Skrining kesehatan secara berkala sangat penting untuk mencegah komplikasi penyakit tidak menular seperti hipertensi dan diabetes.
+                             {{ Str::limit(strip_tags($beritaTerbaru[0]->konten), 150) }}
                          </p>
                      </div>
 
-                     <!-- News List -->
+                     <!-- News List (Remaining Items) -->
                      <div class="flex flex-col gap-8">
-                         <!-- List Item 1 -->
+                         @foreach($beritaTerbaru->skip(1) as $berita)
                          <div class="flex gap-6 group cursor-pointer">
-                             <div class="w-32 h-24 bg-slate-200 rounded-xl flex-shrink-0"></div>
+                             <div class="w-32 h-24 bg-slate-200 rounded-xl flex-shrink-0 overflow-hidden relative">
+                                 @if($berita->thumbnail)
+                                    <img src="{{ asset('storage/' . $berita->thumbnail) }}" alt="{{ $berita->judul }}" class="w-full h-full object-cover">
+                                 @else
+                                    <div class="absolute inset-0 bg-slate-300 flex items-center justify-center text-slate-400">
+                                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    </div>
+                                 @endif
+                             </div>
                              <div>
                                  <div class="flex items-center gap-3 text-xs font-bold text-slate-400 mb-2">
-                                     <span class="text-sky-600">Imunisasi</span>
+                                     <span class="text-sky-600">{{ $berita->kategori }}</span>
+                                     <span>•</span>
+                                     <span>{{ $berita->created_at->diffForHumans() }}</span>
                                  </div>
-                                 <h4 class="text-lg font-bold text-slate-900 mb-2 group-hover:text-sky-600 transition-colors leading-tight">Jadwal Pekan Imunisasi Nasional Terbaru</h4>
-                                 <p class="text-slate-500 text-xs line-clamp-2">Informasi lengkap mengenai jadwal dan lokasi posyandu terdekat.</p>
+                                 <h4 class="text-lg font-bold text-slate-900 mb-2 group-hover:text-sky-600 transition-colors leading-tight">{{ $berita->judul }}</h4>
+                                 <p class="text-slate-500 text-xs line-clamp-2">{{ Str::limit(strip_tags($berita->konten), 80) }}</p>
                              </div>
                          </div>
-                         <!-- List Item 2 -->
-                         <div class="flex gap-6 group cursor-pointer">
-                             <div class="w-32 h-24 bg-slate-200 rounded-xl flex-shrink-0"></div>
-                             <div>
-                                 <div class="flex items-center gap-3 text-xs font-bold text-slate-400 mb-2">
-                                     <span class="text-sky-600">Tips Sehat</span>
-                                 </div>
-                                 <h4 class="text-lg font-bold text-slate-900 mb-2 group-hover:text-sky-600 transition-colors leading-tight">Cara Menjaga Kesehatan Mata di Era Digital</h4>
-                                 <p class="text-slate-500 text-xs line-clamp-2">Tips sederhana mengurangi dampak radiasi layar gadget pada mata Anda.</p>
-                             </div>
-                         </div>
+                         @endforeach
                      </div>
                  </div>
+                 @else
+                    <div class="text-center py-12 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
+                        <div class="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
+                            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+                        </div>
+                        <h3 class="text-slate-800 font-bold mb-1">Belum Ada Informasi</h3>
+                        <p class="text-slate-500 text-sm">Berita dan artikel kesehatan akan segera ditampilkan di sini.</p>
+                    </div>
+                 @endif
             </div>
         </section>
 
@@ -498,7 +514,7 @@
             
             <div class="border-t border-slate-800 pt-8 text-center">
                 <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">
-                    &copy; {{ date('Y') }} {{ $pengaturan['footer_text'] }}. Developed by SATRIA.
+                    &copy; {{ date('Y') }} {{ $pengaturan['footer_text'] }}. Dikembangkan oleh SATRIA.
                 </p>
             </div>
         </div>
