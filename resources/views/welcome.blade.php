@@ -16,11 +16,24 @@
 
     <style>
         :root {
-            --primary-color: {{ $pengaturan['primary_color'] ?? '#0ea5e9' }}; /* Sky 500 default */
+            --primary-color: {{ $pengaturan['primary_color'] ?? '#0ea5e9' }}; /* Default Sky 500 */
+            --primary-rgb: {{ hexdec(substr($pengaturan['primary_color'] ?? '#0ea5e9', 1, 2)) }}, {{ hexdec(substr($pengaturan['primary_color'] ?? '#0ea5e9', 3, 2)) }}, {{ hexdec(substr($pengaturan['primary_color'] ?? '#0ea5e9', 5, 2)) }};
             --secondary-color: #0f172a; /* Slate 900 */
         }
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         h1, h2, h3, h4, h5, h6 { font-family: 'Outfit', sans-serif; }
+        
+        /* Dynamic Theme Classes */
+        .text-primary { color: var(--primary-color); }
+        .bg-primary { background-color: var(--primary-color); }
+        .bg-primary-50 { background-color: rgba(var(--primary-rgb), 0.05); }
+        .bg-primary-100 { background-color: rgba(var(--primary-rgb), 0.1); }
+        .border-primary { border-color: var(--primary-color); }
+        .ring-primary { --tw-ring-color: var(--primary-color); }
+        .hover\:bg-primary:hover { background-color: var(--primary-color); }
+        .hover\:text-primary:hover { color: var(--primary-color); }
+        .group:hover .group-hover\:text-primary { color: var(--primary-color); }
+        .group:hover .group-hover\:bg-primary { background-color: var(--primary-color); }
         
         .glass-header {
             background: rgba(255, 255, 255, 0.95);
@@ -34,9 +47,6 @@
             background-size: 24px 24px;
         }
 
-        .text-primary { color: var(--primary-color); }
-        .bg-primary { background-color: var(--primary-color); }
-        
         .service-card {
             transition: all 0.3s ease;
         }
@@ -44,21 +54,32 @@
             transform: translateY(-5px);
             box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
         }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(var(--primary-rgb), 0.3);
+        }
     </style>
 </head>
 <body class="antialiased bg-slate-50 text-slate-800">
 
-    <!-- Top Bar (Informasi Darurat & Jam) -->
+    <!-- Top Bar -->
     <div class="bg-slate-900 text-white text-xs py-2.5">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-2">
             <div class="flex items-center gap-4">
                 <span class="flex items-center gap-1.5 font-medium">
-                    <svg class="w-4 h-4 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-                    Gawat Darurat: <span class="font-bold text-sky-400">{{ $pengaturan['telepon'] }}</span>
+                    <svg class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                    Gawat Darurat: <span class="font-bold text-primary">{{ $pengaturan['telepon'] }}</span>
                 </span>
                 <span class="hidden sm:inline text-slate-600">|</span>
                 <span class="flex items-center gap-1.5 font-medium">
-                    <svg class="w-4 h-4 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    <svg class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                     {{ $pengaturan['email'] }}
                 </span>
             </div>
@@ -77,24 +98,24 @@
             <div class="flex justify-between h-20 items-center">
                 <!-- Logo -->
                 <a href="#" class="flex items-center gap-3 group">
-                    <div class="w-12 h-12 bg-gradient-to-br from-sky-500 to-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg group-hover:shadow-sky-500/30 transition-all">
+                    <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg transition-all">
                         <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
                     </div>
                     <div class="flex flex-col">
                         <span class="text-xl font-black text-slate-800 leading-none">{{ $pengaturan['nama_aplikasi'] }}</span>
-                        <span class="text-[10px] font-bold text-sky-600 uppercase tracking-widest mt-1">Sistem Kesehatan Terpadu</span>
+                        <span class="text-[10px] font-bold text-primary uppercase tracking-widest mt-1">Sistem Kesehatan Terpadu</span>
                     </div>
                 </a>
 
                 <!-- Desktop Menu -->
                 <nav class="hidden lg:flex items-center gap-8">
-                    <a href="#beranda" class="text-sm font-bold text-slate-600 hover:text-sky-600 transition-colors">Beranda</a>
-                    <a href="#layanan" class="text-sm font-bold text-slate-600 hover:text-sky-600 transition-colors">Layanan</a>
-                    <a href="#jadwal" class="text-sm font-bold text-slate-600 hover:text-sky-600 transition-colors">Jadwal Dokter</a>
-                    <a href="#fasilitas" class="text-sm font-bold text-slate-600 hover:text-sky-600 transition-colors">Fasilitas</a>
-                    <a href="#berita" class="text-sm font-bold text-slate-600 hover:text-sky-600 transition-colors">Informasi</a>
+                    <a href="#beranda" class="text-sm font-bold text-slate-600 hover:text-primary transition-colors">Beranda</a>
+                    <a href="#layanan" class="text-sm font-bold text-slate-600 hover:text-primary transition-colors">Layanan</a>
+                    <a href="#jadwal" class="text-sm font-bold text-slate-600 hover:text-primary transition-colors">Jadwal Dokter</a>
+                    <a href="#fasilitas" class="text-sm font-bold text-slate-600 hover:text-primary transition-colors">Fasilitas</a>
+                    <a href="#berita" class="text-sm font-bold text-slate-600 hover:text-primary transition-colors">Informasi</a>
                 </nav>
 
                 <!-- Auth Buttons -->
@@ -106,7 +127,7 @@
                                 Dashboard
                             </a>
                         @else
-                            <a href="{{ route('login') }}" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 text-sm font-bold rounded-xl hover:border-sky-500 hover:text-sky-600 transition flex items-center gap-2">
+                            <a href="{{ route('login') }}" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 text-sm font-bold rounded-xl hover:border-primary hover:text-primary transition flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
                                 Masuk Staf
                             </a>
@@ -137,7 +158,7 @@
 
                         <h1 class="text-5xl lg:text-7xl font-black text-slate-900 tracking-tight leading-[1.1] mb-6">
                             {{ $pengaturan['judul_hero'] }} <br>
-                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600">{{ $pengaturan['subjudul_hero'] }}</span>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600" style="background-image: linear-gradient(to right, var(--primary-color), #4f46e5);">{{ $pengaturan['subjudul_hero'] }}</span>
                         </h1>
                         
                         <p class="text-lg text-slate-500 mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium">
@@ -145,12 +166,12 @@
                         </p>
                         
                         <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                            <a href="{{ route('antrean.monitor') }}" class="px-8 py-4 bg-sky-500 text-white text-sm font-bold rounded-2xl shadow-xl shadow-sky-500/20 hover:bg-sky-600 hover:shadow-sky-600/30 transition-all flex items-center justify-center gap-3">
+                            <a href="{{ route('antrean.monitor') }}" class="px-8 py-4 btn-primary rounded-2xl shadow-xl flex items-center justify-center gap-3 font-bold text-sm">
                                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
                                 Ambil Antrean
                             </a>
                             @if(($pengaturan['show_pengaduan_cta'] ?? '1') == '1')
-                            <a href="{{ route('pengaduan.public') }}" class="px-8 py-4 bg-white border border-slate-200 text-slate-700 text-sm font-bold rounded-2xl hover:border-sky-500 hover:text-sky-600 transition-all flex items-center justify-center gap-3">
+                            <a href="{{ route('pengaduan.public') }}" class="px-8 py-4 bg-white border border-slate-200 text-slate-700 text-sm font-bold rounded-2xl hover:border-primary hover:text-primary transition-all flex items-center justify-center gap-3">
                                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
                                 Layanan Pengaduan
                             </a>
@@ -178,7 +199,7 @@
 
                     <!-- Visual -->
                     <div class="w-full lg:w-1/2 relative">
-                        <div class="absolute inset-0 bg-gradient-to-tr from-sky-200 to-blue-100 rounded-[3rem] transform rotate-3 scale-95 opacity-50 -z-10"></div>
+                        <div class="absolute inset-0 bg-primary-100 rounded-[3rem] transform rotate-3 scale-95 opacity-50 -z-10"></div>
                         <div class="bg-white rounded-[2.5rem] shadow-2xl p-6 border border-slate-100 relative overflow-hidden">
                              <!-- Placeholder Illustration representing Health Dashboard/Care -->
                              <div class="aspect-[4/3] bg-slate-100 rounded-2xl flex items-center justify-center relative overflow-hidden group">
@@ -210,7 +231,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
                     <div>
-                        <span class="text-sky-500 font-bold tracking-widest uppercase text-xs mb-2 block">Layanan Kami</span>
+                        <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Layanan Kami</span>
                         <h2 class="text-3xl md:text-4xl font-black text-slate-900">Poliklinik & Spesialis</h2>
                     </div>
                     <p class="text-slate-500 max-w-md text-right md:text-left">
@@ -221,10 +242,10 @@
                 @if($layanan->count() > 0)
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     @foreach($layanan as $poli)
-                    <div class="group bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-sky-100 transition-all duration-300 relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-sky-50 to-transparent rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-150"></div>
+                    <div class="group bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden" style="border-color: rgba(var(--primary-rgb), 0.1);">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-primary-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-150"></div>
                         
-                        <div class="w-14 h-14 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-sky-500 group-hover:text-white transition-colors">
+                        <div class="w-14 h-14 bg-primary-100 text-primary rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
                             <span class="text-2xl font-black">{{ substr($poli->nama_poli, 0, 1) }}</span>
                         </div>
                         
@@ -233,7 +254,7 @@
                             {{ $poli->keterangan ?? 'Melayani pemeriksaan kesehatan umum, konsultasi, dan tindakan medis dasar sesuai standar operasional prosedur.' }}
                         </p>
                         
-                        <a href="#" class="inline-flex items-center text-sm font-bold text-sky-600 hover:text-sky-700 transition-colors">
+                        <a href="#" class="inline-flex items-center text-sm font-bold text-primary hover:opacity-80 transition-colors">
                             Lihat Detail <svg class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                         </a>
                     </div>
@@ -260,7 +281,7 @@
 
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div class="text-center mb-16">
-                    <span class="text-sky-400 font-bold tracking-widest uppercase text-xs mb-2 block">Jadwal Praktik</span>
+                    <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Jadwal Praktik</span>
                     <h2 class="text-3xl md:text-4xl font-black mb-4">Dokter Bertugas Hari Ini</h2>
                     <div class="inline-flex items-center justify-center gap-3 px-6 py-2 bg-white/10 rounded-full backdrop-blur-sm border border-white/10">
                         <div class="h-2 w-2 bg-green-400 rounded-full animate-pulse"></div>
@@ -273,12 +294,12 @@
                         @foreach($jadwalHariIni as $jadwal)
                         <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 hover:bg-white/10 transition-all duration-300">
                             <div class="flex items-center gap-5">
-                                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-sky-500/20">
+                                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-black text-2xl shadow-lg" style="background-image: linear-gradient(to bottom right, var(--primary-color), #4f46e5);">
                                     {{ substr($jadwal->pegawai->user->name ?? 'D', 0, 1) }}
                                 </div>
                                 <div>
                                     <h4 class="font-bold text-lg leading-tight">{{ $jadwal->pegawai->user->name ?? 'Dokter' }}</h4>
-                                    <p class="text-sky-300 text-xs font-bold uppercase tracking-wider mt-1">{{ $jadwal->pegawai->jabatan ?? 'Dokter Umum' }}</p>
+                                    <p class="text-primary text-xs font-bold uppercase tracking-wider mt-1">{{ $jadwal->pegawai->jabatan ?? 'Dokter Umum' }}</p>
                                     <div class="mt-3 flex items-center gap-2 text-xs font-medium text-slate-300">
                                         <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                         {{ $jadwal->shift->jam_masuk ?? '08:00' }} - {{ $jadwal->shift->jam_keluar ?? '14:00' }} WIB
@@ -299,7 +320,7 @@
                 @endif
                 
                 <div class="mt-12 text-center">
-                    <a href="#" class="inline-flex items-center gap-2 text-sky-400 hover:text-sky-300 font-bold text-sm transition-colors">
+                    <a href="#" class="inline-flex items-center gap-2 text-primary hover:opacity-80 font-bold text-sm transition-colors">
                         Lihat Jadwal Lengkap Minggu Ini <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>
                 </div>
@@ -312,7 +333,7 @@
         <section id="fasilitas" class="py-24 bg-slate-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
-                    <span class="text-sky-500 font-bold tracking-widest uppercase text-xs mb-2 block">Fasilitas & Sarana</span>
+                    <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Fasilitas & Sarana</span>
                     <h2 class="text-3xl md:text-4xl font-black text-slate-900">Penunjang Medis Modern</h2>
                 </div>
 
@@ -336,7 +357,7 @@
                              @endif
                         </div>
                         <div class="p-8 flex-1 flex flex-col">
-                            <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-sky-600 transition-colors">{{ $item->nama_fasilitas }}</h3>
+                            <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-primary transition-colors">{{ $item->nama_fasilitas }}</h3>
                             <p class="text-slate-500 text-sm leading-relaxed flex-1">
                                 {{ $item->deskripsi }}
                             </p>
@@ -359,7 +380,7 @@
                  <div class="flex items-center justify-between mb-12">
                      <h2 class="text-3xl font-black text-slate-900">Informasi & Edukasi</h2>
                      @if($beritaTerbaru->count() > 0)
-                        <a href="#" class="text-sm font-bold text-sky-600 hover:text-sky-700">Lihat Semua</a>
+                        <a href="#" class="text-sm font-bold text-primary hover:opacity-80">Lihat Semua</a>
                      @endif
                  </div>
 
@@ -377,11 +398,11 @@
                              @endif
                          </div>
                          <div class="flex items-center gap-3 text-xs font-bold text-slate-400 mb-3">
-                             <span class="text-sky-600">{{ $beritaTerbaru[0]->kategori }}</span>
+                             <span class="text-primary">{{ $beritaTerbaru[0]->kategori }}</span>
                              <span>•</span>
                              <span>{{ $beritaTerbaru[0]->created_at->diffForHumans() }}</span>
                          </div>
-                         <h3 class="text-2xl font-black text-slate-900 mb-3 group-hover:text-sky-600 transition-colors">{{ $beritaTerbaru[0]->judul }}</h3>
+                         <h3 class="text-2xl font-black text-slate-900 mb-3 group-hover:text-primary transition-colors">{{ $beritaTerbaru[0]->judul }}</h3>
                          <p class="text-slate-500 text-sm leading-relaxed line-clamp-2">
                              {{ Str::limit(strip_tags($beritaTerbaru[0]->konten), 150) }}
                          </p>
@@ -402,11 +423,11 @@
                              </div>
                              <div>
                                  <div class="flex items-center gap-3 text-xs font-bold text-slate-400 mb-2">
-                                     <span class="text-sky-600">{{ $berita->kategori }}</span>
+                                     <span class="text-primary">{{ $berita->kategori }}</span>
                                      <span>•</span>
                                      <span>{{ $berita->created_at->diffForHumans() }}</span>
                                  </div>
-                                 <h4 class="text-lg font-bold text-slate-900 mb-2 group-hover:text-sky-600 transition-colors leading-tight">{{ $berita->judul }}</h4>
+                                 <h4 class="text-lg font-bold text-slate-900 mb-2 group-hover:text-primary transition-colors leading-tight">{{ $berita->judul }}</h4>
                                  <p class="text-slate-500 text-xs line-clamp-2">{{ Str::limit(strip_tags($berita->konten), 80) }}</p>
                              </div>
                          </div>
@@ -426,14 +447,14 @@
         </section>
 
         <!-- CTA / Footer Info -->
-        <section class="py-20 bg-gradient-to-br from-sky-600 to-blue-700 text-white">
+        <section class="py-20 text-white" style="background: linear-gradient(135deg, var(--primary-color), #4f46e5);">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <h2 class="text-3xl md:text-5xl font-black mb-6">Layanan Kesehatan Digital</h2>
-                <p class="text-sky-100 text-lg max-w-2xl mx-auto mb-10">
+                <p class="text-white/80 text-lg max-w-2xl mx-auto mb-10">
                     Akses layanan kesehatan kini lebih mudah dan cepat melalui sistem terintegrasi kami.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="{{ route('antrean.monitor') }}" class="px-8 py-4 bg-white text-blue-700 text-sm font-bold rounded-2xl hover:bg-slate-100 transition shadow-xl">
+                    <a href="{{ route('antrean.monitor') }}" class="px-8 py-4 bg-white text-primary text-sm font-bold rounded-2xl hover:bg-slate-100 transition shadow-xl">
                         Ambil Antrean Online
                     </a>
                 </div>
@@ -447,7 +468,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-12 mb-16">
                 <div class="lg:col-span-2">
                     <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 bg-sky-500 rounded-lg flex items-center justify-center text-white font-black text-xl">
+                        <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white font-black text-xl">
                             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                         </div>
                         <span class="text-2xl font-black text-white tracking-tighter">{{ $pengaturan['nama_aplikasi'] }}</span>
