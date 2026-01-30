@@ -101,20 +101,20 @@
 
     <!-- Navigation Tabs -->
     <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
-        <div class="px-8 pt-6 border-b border-slate-50 flex gap-10">
-            <button wire:click="setTab('overview')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative {{ $activeTab == 'overview' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600' }}">
+        <div class="px-8 pt-6 border-b border-slate-50 flex gap-10 overflow-x-auto">
+            <button wire:click="setTab('overview')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $activeTab == 'overview' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600' }}">
                 Ringkasan Ancaman
                 @if($activeTab == 'overview') <div class="absolute bottom-0 left-0 w-full h-1 bg-blue-600 rounded-t-full"></div> @endif
             </button>
-            <button wire:click="setTab('threats')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative {{ $activeTab == 'threats' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600' }}">
+            <button wire:click="setTab('threats')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $activeTab == 'threats' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600' }}">
                 Firewall & Blokir IP
                 @if($activeTab == 'threats') <div class="absolute bottom-0 left-0 w-full h-1 bg-blue-600 rounded-t-full"></div> @endif
             </button>
-            <button wire:click="setTab('sessions')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative {{ $activeTab == 'sessions' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600' }}">
+            <button wire:click="setTab('sessions')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $activeTab == 'sessions' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600' }}">
                 Kontrol Sesi User
                 @if($activeTab == 'sessions') <div class="absolute bottom-0 left-0 w-full h-1 bg-blue-600 rounded-t-full"></div> @endif
             </button>
-            <button wire:click="setTab('logs')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative {{ $activeTab == 'logs' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600' }}">
+            <button wire:click="setTab('logs')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $activeTab == 'logs' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600' }}">
                 Audit Trail Forensik
                 @if($activeTab == 'logs') <div class="absolute bottom-0 left-0 w-full h-1 bg-blue-600 rounded-t-full"></div> @endif
             </button>
@@ -241,7 +241,10 @@
             <div class="animate-fade-in-up space-y-6">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <h4 class="text-lg font-black text-slate-800">Log Aktivitas Keamanan</h4>
-                    <input type="text" wire:model.live="logSearch" placeholder="Cari aktivitas..." class="rounded-xl border-slate-200 text-sm focus:ring-blue-500 w-full md:w-64">
+                    <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
+                        <input type="text" wire:model.live="userSearch" placeholder="Filter User..." class="rounded-xl border-slate-200 text-sm focus:ring-blue-500 w-full md:w-48">
+                        <input type="text" wire:model.live="logSearch" placeholder="Cari aktivitas..." class="rounded-xl border-slate-200 text-sm focus:ring-blue-500 w-full md:w-64">
+                    </div>
                 </div>
                 <div class="space-y-3">
                     @foreach($logs as $log)

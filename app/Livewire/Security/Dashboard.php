@@ -22,6 +22,7 @@ class Dashboard extends Component
     
     // Filter Log
     public $logSearch = '';
+    public $userSearch = ''; // New: Filter by User
     public $logLevel = 'all';
 
     // Lockdown State
@@ -60,11 +61,9 @@ class Dashboard extends Component
     public function addBlockedIp()
     {
         $this->validate([
-            'newBlockedIp' => 'required|ip|unique:settings,value' // Simplifikasi, aslinya perlu tabel khusus
+            'newBlockedIp' => 'required|ip' 
         ]);
 
-        // Karena belum ada tabel BlockedIP khusus, kita simpan di Setting sebagai JSON array
-        // Mengambil daftar existing
         $blockedIps = json_decode(Setting::ambil('security_blocked_ips', '[]'), true);
         
         if (!in_array($this->newBlockedIp, $blockedIps)) {
@@ -94,16 +93,11 @@ class Dashboard extends Component
     // --- Actions: Session Management ---
     public function killUserSession($userId)
     {
-        // Simulasi Kill Session (Idealnya menggunakan DB Session driver)
-        // Di sini kita update 'remember_token' user untuk invalidasi sesi "remember me"
-        // Dan bisa set flag 'force_logout' di user table jika ada fieldnya.
-        
         $user = User::find($userId);
         if ($user) {
             $user->remember_token = null;
             $user->save();
             
-            // Log activity
             activity()
                 ->causedBy(auth()->user())
                 ->performedOn($user)
@@ -119,7 +113,7 @@ class Dashboard extends Component
         $stats = [
             'logs_today' => Activity::whereDate('created_at', Carbon::today())->count(),
             'failed_logins' => RiwayatLogin::whereDate('created_at', Carbon::today())->where('status', 'Gagal')->count(),
-            'active_users' => User::count(), // Simulasi active users
+            'active_users' => User::count(), 
             'blocked_ips_count' => count(json_decode(Setting::ambil('security_blocked_ips', '[]'), true)),
         ];
 
@@ -129,7 +123,7 @@ class Dashboard extends Component
         // Data Tab: Threats
         $blockedIps = json_decode(Setting::ambil('security_blocked_ips', '[]'), true);
 
-        // Data Tab: Sessions (Active Users Simulation - last login < 24h)
+        // Data Tab: Sessions 
         $activeSessions = User::whereHas('riwayatLogins', function($q) {
                 $q->where('created_at', '>=', Carbon::now()->subDay());
             })
@@ -139,10 +133,15 @@ class Dashboard extends Component
             ->limit(10)
             ->get();
 
-        // Data Tab: Logs
+        // Data Tab: Logs with Filters
         $logs = Activity::with('causer')
             ->when($this->logSearch, function($q) {
                 $q->where('description', 'like', '%'.$this->logSearch.'%');
+            })
+            ->when($this->userSearch, function($q) {
+                $q->whereHas('causer', function($sq) {
+                    $sq->where('name', 'like', '%'.$this->userSearch.'%');
+                });
             })
             ->latest()
             ->paginate(10);
@@ -163,10 +162,7 @@ class Dashboard extends Component
         for ($i = 6; $i >= 0; $i--) {
             $date = Carbon::now()->subDays($i);
             $labels[] = $date->format('d/m');
-            // Randomize data jika kosong untuk visualisasi prototype, 
-            // aslinya pakai RiwayatLogin where status=Gagal
             $count = RiwayatLogin::whereDate('created_at', $date)->where('status', 'Gagal')->count();
-            // Fallback mock data jika DB kosong agar grafik terlihat
             if ($count == 0 && app()->environment('local')) $count = rand(0, 5); 
             $data[] = $count;
         }
