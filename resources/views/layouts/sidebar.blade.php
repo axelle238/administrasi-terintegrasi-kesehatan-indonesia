@@ -1,5 +1,5 @@
 <aside 
-    class="flex flex-col w-[280px] h-screen bg-white hidden md:flex z-50 transition-all duration-300 shadow-[4px_0_24px_rgba(0,0,0,0.02)] border-r border-dashed border-slate-200 relative flex-shrink-0"
+    class="flex flex-col w-[280px] h-screen bg-white hidden md:flex z-50 transition-all duration-300 shadow-[4px_0_24px_rgba(0,0,0,0.02)] border-r border-dashed border-slate-200 relative flex-shrink-0 sticky top-0"
     :class="sidebarOpen ? 'translate-x-0' : 'translate-x-0'"
 >
     <!-- Branding -->

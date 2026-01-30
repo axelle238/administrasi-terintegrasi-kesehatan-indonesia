@@ -65,12 +65,17 @@
 
 <!-- KLASTER 4: PENYAKIT MENULAR -->
 @if(Auth::user()->role === 'admin' || in_array(Auth::user()->role, ['dokter', 'perawat', 'surveilans']))
-    <x-nav.link :href="route('medical.penyakit.index')" :active="request()->routeIs('medical.penyakit.*')" icon="shield-exclamation">
+    <x-nav.dropdown label="Pencegahan Penyakit" :active="request()->routeIs('medical.penyakit.*')">
         <x-slot:icon>
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
         </x-slot:icon>
-        Surveilans P2P
-    </x-nav.link>
+        <x-nav.link-child :href="route('medical.penyakit.index')" :active="request()->routeIs('medical.penyakit.*')">
+            Surveilans P2P
+        </x-nav.link-child>
+        <x-nav.link-child :href="route('ukm.index')" :active="request()->routeIs('ukm.*')">
+            Kegiatan UKM
+        </x-nav.link-child>
+    </x-nav.dropdown>
 @endif
 
 <!-- LINTAS KLASTER -->
@@ -126,6 +131,15 @@
         </x-nav.link-child>
         <x-nav.link-child :href="route('security.dashboard')" :active="request()->routeIs('security.*')">
             Keamanan Siber
+        </x-nav.link-child>
+    </x-nav.dropdown>
+
+    <x-nav.dropdown label="Tema Tampilan" :active="request()->routeIs('system.setting.index')">
+        <x-slot:icon>
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.172-1.172a4 4 0 115.656 5.656L10 17.657l-1.414-1.414L11 7.343z"></path></svg>
+        </x-slot:icon>
+        <x-nav.link-child :href="route('system.setting.index', ['tab' => 'tampilan'])" :active="false">
+            Ganti Template Depan
         </x-nav.link-child>
     </x-nav.dropdown>
 @endif
