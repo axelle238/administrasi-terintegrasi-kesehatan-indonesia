@@ -8,13 +8,13 @@ use App\Http\Controllers\PasienController;
 use App\Http\Controllers\KasirController;
 use App\Models\Setting;
 use App\Models\Poli;
-use App\Models\Berita; // Import Model Berita
-use App\Models\Fasilitas; // Import Model Fasilitas
-use App\Models\JadwalJaga; // Import Model Jadwal
+use App\Models\Berita;
+use App\Models\Fasilitas;
+use App\Models\JadwalJaga;
 use Carbon\Carbon;
 
 Route::get('/', function () {
-    // Mengambil konfigurasi dari database
+    // 1. Ambil Pengaturan
     $pengaturan = [
         'nama_aplikasi' => Setting::ambil('app_name', 'SATRIA'),
         'tagline' => Setting::ambil('app_tagline', 'Sistem Kesehatan'),
@@ -32,43 +32,41 @@ Route::get('/', function () {
         'show_fasilitas' => Setting::ambil('show_fasilitas', '1'),
         'show_pengaduan_cta' => Setting::ambil('show_pengaduan_cta', '1'),
         'footer_text' => Setting::ambil('footer_text', 'SATRIA - Sistem Kesehatan Terintegrasi'),
-        'fitur' => json_decode(Setting::ambil('landing_features', '[]'), true),
+        'front_theme' => Setting::ambil('front_theme', 'high-tech'), // Default theme
     ];
 
-    // Ambil data layanan medis (Poli)
+    // 2. Data Dinamis
     $layanan = Poli::all();
-
-    // Ambil Jadwal Dokter Hari Ini
     $jadwalHariIni = JadwalJaga::with(['pegawai.user', 'shift'])
         ->whereDate('tanggal', Carbon::today())
         ->get();
-
-    // Ambil Berita Terbaru
     $beritaTerbaru = Berita::with('penulis')
         ->where('status', 'published')
         ->latest()
         ->take(3)
         ->get();
-
-    // Ambil Fasilitas Aktif
     $fasilitas = Fasilitas::where('is_active', true)
         ->latest()
         ->take(6)
         ->get();
-
-    // Statistik Real-time
     $stats = [
         'pasien_total' => \App\Models\Pasien::count(),
         'dokter_total' => \App\Models\Pegawai::where('jabatan', 'LIKE', '%Dokter%')->count(),
         'layanan_total' => \App\Models\RekamMedis::count(),
     ];
 
-    return view('welcome', compact('pengaturan', 'layanan', 'jadwalHariIni', 'beritaTerbaru', 'fasilitas', 'stats'));
+    // 3. Tentukan View Berdasarkan Tema
+    $view = 'themes.' . $pengaturan['front_theme'];
+    if (!view()->exists($view)) {
+        $view = 'themes.high-tech'; // Fallback
+    }
+
+    return view($view, compact('pengaturan', 'layanan', 'jadwalHariIni', 'beritaTerbaru', 'fasilitas', 'stats'));
 });
 
 Route::get('/dashboard', \App\Livewire\Dashboard::class)->middleware(['auth', 'verified'])->name('dashboard');
 Route::get('/antrean/monitor', \App\Livewire\Antrean\Monitor::class)->name('antrean.monitor');
-Route::get('/kiosk', \App\Livewire\Antrean\Kiosk::class)->name('antrean.kiosk'); // Self-service
+Route::get('/kiosk', \App\Livewire\Antrean\Kiosk::class)->name('antrean.kiosk');
 Route::get('/survey', \App\Livewire\Survey\Create::class)->name('survey.create');
 Route::get('/pengaduan', \App\Livewire\Masyarakat\PengaduanPublic::class)->name('pengaduan.public');
 
@@ -78,12 +76,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/kepegawaian/cuti', \App\Livewire\Kepegawaian\Cuti\Index::class)->name('kepegawaian.cuti.index');
 
-    // ADMIN
+    // ADMIN routes...
     Route::middleware('can:admin')->group(function () {
         Route::get('/security/dashboard', \App\Livewire\Security\Dashboard::class)->name('security.dashboard');
         Route::get('/activity-log', \App\Livewire\Admin\ActivityLog::class)->name('activity-log');
         Route::get('/activity-log/{id}', \App\Livewire\Admin\ActivityLogShow::class)->name('activity-log.show');
-        Route::get('/system/info', \App\Livewire\System\Information::class)->name('system.info'); // Added route
+        Route::get('/system/info', \App\Livewire\System\Information::class)->name('system.info');
         Route::get('/system/poli', \App\Livewire\System\Poli\Index::class)->name('system.poli.index');
         Route::get('/system/poli/create', \App\Livewire\System\Poli\Create::class)->name('system.poli.create');
         Route::get('/system/poli/{poli}/edit', \App\Livewire\System\Poli\Edit::class)->name('system.poli.edit');
@@ -103,18 +101,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/jadwal-jaga', \App\Livewire\JadwalJaga\Index::class)->name('jadwal-jaga.index');
         Route::get('/jadwal-jaga/create', \App\Livewire\JadwalJaga\Create::class)->name('jadwal-jaga.create');
         Route::get('/jadwal-jaga/{jadwalJaga}/edit', \App\Livewire\JadwalJaga\Edit::class)->name('jadwal-jaga.edit');
-        // Kinerja
         Route::get('/kepegawaian/kinerja', \App\Livewire\Kepegawaian\Kinerja\Index::class)->name('kepegawaian.kinerja.index');
-        
-        // System Internal
         Route::get('/system/backup', \App\Livewire\System\Backup::class)->name('system.backup');
-
-        // Manajemen Berita (Admin)
         Route::get('/admin/berita', \App\Livewire\Admin\Berita\Index::class)->name('admin.berita.index');
         Route::get('/admin/berita/create', \App\Livewire\Admin\Berita\Create::class)->name('admin.berita.create');
         Route::get('/admin/berita/{berita}/edit', \App\Livewire\Admin\Berita\Edit::class)->name('admin.berita.edit');
-
-        // Manajemen Fasilitas (Admin)
         Route::get('/admin/fasilitas', \App\Livewire\Admin\Fasilitas\Index::class)->name('admin.fasilitas.index');
         Route::get('/admin/fasilitas/create', \App\Livewire\Admin\Fasilitas\Create::class)->name('admin.fasilitas.create');
         Route::get('/admin/fasilitas/{fasilitas}/edit', \App\Livewire\Admin\Fasilitas\Edit::class)->name('admin.fasilitas.edit');
@@ -128,19 +119,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/masyarakat/pengaduan/{pengaduan}', \App\Livewire\Admin\Masyarakat\PengaduanShow::class)->name('admin.masyarakat.pengaduan.show');
     });
 
-    // UKM & Lainnya (Bisa diakses Staf/Kapus)
+    // UKM & Lainnya
     Route::middleware('can:tata_usaha')->group(function () {
         Route::get('/ukm', \App\Livewire\Ukm\Index::class)->name('ukm.index');
         Route::get('/ukm/create', \App\Livewire\Ukm\Create::class)->name('ukm.create');
-        
-        // Master Data Inventaris
         Route::get('/ruangan', \App\Livewire\Ruangan\Index::class)->name('ruangan.index');
         Route::get('/ruangan/create', \App\Livewire\Ruangan\Create::class)->name('ruangan.create');
         Route::get('/ruangan/{ruangan}/edit', \App\Livewire\Ruangan\Edit::class)->name('ruangan.edit');
         Route::get('/supplier', \App\Livewire\Supplier\Index::class)->name('supplier.index');
         Route::get('/supplier/create', \App\Livewire\Supplier\Create::class)->name('supplier.create');
         Route::get('/supplier/{supplier}/edit', \App\Livewire\Supplier\Edit::class)->name('supplier.edit');
-        
         Route::get('/barang/ruangan', \App\Livewire\Barang\Ruangan::class)->name('barang.ruangan');
         Route::get('/pasien', \App\Livewire\Pasien\Index::class)->name('pasien.index');
         Route::get('/pasien/create', \App\Livewire\Pasien\Create::class)->name('pasien.create');
@@ -153,10 +141,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/surat/{surat}/disposisi', \App\Livewire\Surat\Disposisi\Manage::class)->name('surat.disposisi.manage');
         Route::get('/surat/{surat}/print-disposisi', [SuratController::class, 'printDisposition'])->name('surat.print-disposisi');
         Route::get('/antrean', \App\Livewire\Antrean\Index::class)->name('antrean.index');
-        
-        // Keuangan Dashboard
         Route::get('/finance/dashboard', \App\Livewire\Finance\Dashboard::class)->name('finance.dashboard');
-        
         Route::get('/kasir', \App\Livewire\Kasir\Index::class)->name('kasir.index');
         Route::get('/kasir/{rekamMedis}/process', \App\Livewire\Kasir\Process::class)->name('kasir.process');
         Route::get('/kasir/closing', \App\Livewire\Kasir\Closing::class)->name('kasir.closing');
@@ -164,28 +149,20 @@ Route::middleware('auth')->group(function () {
         Route::get('/kategori-barang', \App\Livewire\KategoriBarang\Index::class)->name('kategori-barang.index');
         Route::get('/kategori-barang/create', \App\Livewire\KategoriBarang\Create::class)->name('kategori-barang.create');
         Route::get('/kategori-barang/{kategoriBarang}/edit', \App\Livewire\KategoriBarang\Edit::class)->name('kategori-barang.edit');
-        
-        // Inventory Dashboard
         Route::get('/barang/dashboard', \App\Livewire\Barang\Dashboard::class)->name('barang.dashboard');
         Route::get('/barang/laporan', \App\Livewire\Barang\Laporan::class)->name('barang.laporan');
         Route::get('/barang/penyusutan', \App\Livewire\Barang\Penyusutan::class)->name('barang.penyusutan');
-        
-        // Penghapusan Aset
         Route::get('/barang/penghapusan', \App\Livewire\Barang\Penghapusan\Index::class)->name('barang.penghapusan.index');
         Route::get('/barang/penghapusan/create', \App\Livewire\Barang\Penghapusan\Create::class)->name('barang.penghapusan.create');
-
         Route::get('/barang', \App\Livewire\Barang\Index::class)->name('barang.index');
         Route::get('/barang/create', \App\Livewire\Barang\Create::class)->name('barang.create');
-        // Opname Routes
         Route::get('/barang/opname', \App\Livewire\Barang\OpnameIndex::class)->name('barang.opname.index');
         Route::get('/barang/opname/create', \App\Livewire\Barang\OpnameCreate::class)->name('barang.opname.create');
-        
         Route::get('/barang/print-labels', \App\Livewire\Barang\PrintLabelsBulk::class)->name('barang.print-labels-bulk');
         Route::get('/barang/maintenance/logs', \App\Livewire\Barang\MaintenanceLog::class)->name('barang.maintenance');
         Route::get('/barang/{barang}/maintenance/create', \App\Livewire\Barang\Maintenance\Create::class)->name('barang.maintenance.create');
         Route::get('/barang/pengadaan', \App\Livewire\Barang\Pengadaan\Index::class)->name('barang.pengadaan.index');
         Route::get('/barang/pengadaan/create', \App\Livewire\Barang\Pengadaan\Create::class)->name('barang.pengadaan.create');
-        
         Route::get('/barang/{barang}/print', \App\Livewire\Barang\PrintLabel::class)->name('barang.print-label');
         Route::get('/barang/{barang}', \App\Livewire\Barang\Show::class)->name('barang.show'); 
         Route::get('/barang/{barang}/edit', \App\Livewire\Barang\Edit::class)->name('barang.edit');
@@ -213,10 +190,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/obat', \App\Livewire\Obat\Index::class)->name('obat.index');
         Route::get('/obat/create', \App\Livewire\Obat\Create::class)->name('obat.create');
         Route::get('/obat/stock-opname', \App\Livewire\Obat\StockOpname::class)->name('obat.stock-opname');
-        
-        // NEW: Kartu Stok Route
         Route::get('/obat/{obat}/kartu-stok', \App\Livewire\Obat\KartuStok::class)->name('obat.kartu-stok');
-
         Route::get('/obat/{obat}/edit', \App\Livewire\Obat\Edit::class)->name('obat.edit');
         Route::resource('transaksi-obat', TransaksiObatController::class);
         Route::get('/apotek', \App\Livewire\Apotek\Index::class)->name('apotek.index');

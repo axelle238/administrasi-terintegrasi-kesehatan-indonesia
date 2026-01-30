@@ -31,6 +31,7 @@ class Index extends Component
                 'label' => 'Halaman Depan (Landing)',
                 'icon' => 'desktop-computer',
                 'fields' => [
+                    'front_theme' => ['label' => 'Tema Tampilan Depan', 'type' => 'select', 'options' => ['high-tech' => 'Modern High-Tech', 'classic' => 'Classic Minimalist', 'modern' => 'Modern Clean'], 'default' => 'high-tech'],
                     'hero_title' => ['label' => 'Judul Hero Section', 'type' => 'text', 'default' => 'Layanan Kesehatan Terpadu'],
                     'hero_subtitle' => ['label' => 'Sub-Judul Hero', 'type' => 'text', 'default' => 'Kesehatan Anda adalah Prioritas Kami'],
                     'announcement_active' => ['label' => 'Aktifkan Bar Pengumuman', 'type' => 'select', 'options' => ['1' => 'Ya', '0' => 'Tidak'], 'default' => '0'],
