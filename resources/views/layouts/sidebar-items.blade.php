@@ -25,8 +25,12 @@
         Aset & Logistik
     </x-nav-link-sidebar>
     
-    <x-nav-link-sidebar :href="route('system.setting.index')" :active="request()->routeIs('system.*') || request()->routeIs('security.*')" icon="cog" color="slate">
-        Sistem & Keamanan
+    <x-nav-link-sidebar :href="route('system.info')" :active="request()->routeIs('system.*')" icon="cog" color="slate">
+        Sistem & Pengaturan
+    </x-nav-link-sidebar>
+
+    <x-nav-link-sidebar :href="route('security.dashboard')" :active="request()->routeIs('security.*')" icon="lock-closed" color="red">
+        Keamanan Siber (SecOps)
     </x-nav-link-sidebar>
 @endif
 
@@ -40,7 +44,6 @@
         Antrean KIA
     </x-nav-link-sidebar>
     
-    <!-- Placeholder untuk fitur spesifik KIA nanti -->
     <x-nav-link-sidebar :href="route('medical.dashboard')" :active="request()->routeIs('medical.dashboard') && request()->query('cluster') == 2" icon="chart-pie" color="rose">
         Statistik KIA
     </x-nav-link-sidebar>
@@ -94,6 +97,26 @@
         Database Pasien
     </x-nav-link-sidebar>
 @endif
+
+<!-- KLASTER 5: MASYARAKAT (Public) -->
+@if(Auth::user()->role === 'admin')
+    <div class="mt-6 mb-2 px-4">
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 font-display">Klaster 5: Masyarakat</p>
+    </div>
+
+    <x-nav-link-sidebar :href="route('public.dashboard')" :active="request()->routeIs('public.*') || request()->routeIs('masyarakat.*')" icon="globe" color="cyan">
+        Portal Masyarakat
+    </x-nav-link-sidebar>
+    
+    <x-nav-link-sidebar :href="route('admin.berita.index')" :active="request()->routeIs('admin.berita.*')" icon="newspaper" color="cyan">
+        Manajemen Berita
+    </x-nav-link-sidebar>
+
+    <x-nav-link-sidebar :href="route('admin.masyarakat.pengaduan.index')" :active="request()->routeIs('admin.masyarakat.*')" icon="chat-alt-2" color="cyan">
+        Pusat Pengaduan
+    </x-nav-link-sidebar>
+@endif
+
 
 <!-- PORTAL PEGAWAI -->
 <div class="mt-6 mb-2 px-4">
