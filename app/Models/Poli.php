@@ -20,4 +20,9 @@ class Poli extends Model
         'kode_poli', // Kode Unik (misal: P-001)
         'keterangan' // Deskripsi operasional
     ];
+
+    public function pegawais()
+    {
+        return $this->hasMany(Pegawai::class);
+    }
 }

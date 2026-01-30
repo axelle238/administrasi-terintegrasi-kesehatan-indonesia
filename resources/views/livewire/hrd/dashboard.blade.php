@@ -33,12 +33,18 @@
             </div>
         </div>
 
-        <!-- Pegawai Aktif -->
+        <!-- Sedang Bertugas (Realtime) -->
         <div class="bg-gradient-to-br from-rose-600 to-rose-700 p-6 rounded-3xl text-white shadow-xl shadow-rose-500/20 relative overflow-hidden group">
             <div class="absolute right-0 top-0 w-24 h-24 bg-white/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-            <p class="text-xs font-bold text-rose-100 uppercase tracking-widest mb-1 relative z-10">Pegawai Aktif</p>
-            <h3 class="text-3xl font-black relative z-10">{{ $pegawaiAktif }}</h3>
-            <p class="mt-4 text-[10px] font-bold text-rose-100 uppercase relative z-10 italic">Bertugas Hari Ini</p>
+            <p class="text-xs font-bold text-rose-100 uppercase tracking-widest mb-1 relative z-10">Sedang Bertugas</p>
+            <h3 class="text-3xl font-black relative z-10">{{ $sedangBertugas }}</h3>
+            <div class="mt-4 flex items-center gap-2 text-[10px] font-bold text-rose-100 uppercase relative z-10">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+                </span>
+                Real-time Shift
+            </div>
         </div>
 
         <!-- Dokumen Expired Alert -->
@@ -66,16 +72,20 @@
 
     <!-- Navigation Tabs & Content -->
     <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
-        <div class="px-8 pt-6 border-b border-slate-50 flex gap-10">
-            <button wire:click="setTab('ikhtisar')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative {{ $activeTab == 'ikhtisar' ? 'text-rose-600' : 'text-slate-400 hover:text-slate-600' }}">
+        <div class="px-8 pt-6 border-b border-slate-50 flex gap-10 overflow-x-auto">
+            <button wire:click="setTab('ikhtisar')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $activeTab == 'ikhtisar' ? 'text-rose-600' : 'text-slate-400 hover:text-slate-600' }}">
                 Ringkasan & Dokumen
                 @if($activeTab == 'ikhtisar') <div class="absolute bottom-0 left-0 w-full h-1 bg-rose-600 rounded-t-full"></div> @endif
             </button>
-            <button wire:click="setTab('presensi')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative {{ $activeTab == 'presensi' ? 'text-rose-600' : 'text-slate-400 hover:text-slate-600' }}">
+            <button wire:click="setTab('presensi')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $activeTab == 'presensi' ? 'text-rose-600' : 'text-slate-400 hover:text-slate-600' }}">
                 Presensi & Jadwal
                 @if($activeTab == 'presensi') <div class="absolute bottom-0 left-0 w-full h-1 bg-rose-600 rounded-t-full"></div> @endif
             </button>
-            <button wire:click="setTab('kinerja')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative {{ $activeTab == 'kinerja' ? 'text-rose-600' : 'text-slate-400 hover:text-slate-600' }}">
+            <button wire:click="setTab('cuti')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $activeTab == 'cuti' ? 'text-rose-600' : 'text-slate-400 hover:text-slate-600' }}">
+                Manajemen Cuti
+                @if($activeTab == 'cuti') <div class="absolute bottom-0 left-0 w-full h-1 bg-rose-600 rounded-t-full"></div> @endif
+            </button>
+            <button wire:click="setTab('kinerja')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $activeTab == 'kinerja' ? 'text-rose-600' : 'text-slate-400 hover:text-slate-600' }}">
                 Evaluasi Kinerja
                 @if($activeTab == 'kinerja') <div class="absolute bottom-0 left-0 w-full h-1 bg-rose-600 rounded-t-full"></div> @endif
             </button>
@@ -84,17 +94,30 @@
         <div class="p-8">
             @if($activeTab == 'ikhtisar')
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 animate-fade-in-up">
-                <!-- Komposisi Role -->
-                <div class="space-y-6" x-data="chartRole()">
-                    <h4 class="font-black text-slate-800 uppercase tracking-widest text-xs">Komposisi Peran SDM</h4>
-                    <div id="chart-komposisi-role" class="w-full flex justify-center"></div>
-                    <div class="space-y-3">
-                        @foreach($tabData['komposisiRole'] ?? [] as $role)
-                        <div class="flex justify-between text-xs font-bold">
-                            <span class="text-slate-500 uppercase">{{ $role->role }}</span>
-                            <span class="text-slate-800">{{ $role->total }} Orang</span>
+                <!-- Charts Section -->
+                <div class="space-y-8">
+                    <!-- Status Kepegawaian -->
+                    <div class="p-6 rounded-2xl bg-slate-50 border border-slate-100" x-data="chartStatus()">
+                        <h4 class="font-black text-slate-800 uppercase tracking-widest text-xs mb-4">Status Kepegawaian</h4>
+                        <div id="chart-status-pegawai" class="w-full flex justify-center"></div>
+                    </div>
+
+                    <!-- Distribusi Poli -->
+                    <div class="p-6 rounded-2xl bg-slate-50 border border-slate-100">
+                        <h4 class="font-black text-slate-800 uppercase tracking-widest text-xs mb-4">Distribusi Medis per Poli</h4>
+                        <div class="space-y-3 max-h-[300px] overflow-y-auto custom-scrollbar">
+                            @foreach($tabData['distribusiPoli'] ?? [] as $poli)
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="font-bold text-slate-600">{{ $poli->nama_poli }}</span>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-24 h-2 bg-slate-200 rounded-full overflow-hidden">
+                                        <div class="bg-rose-500 h-full" style="width: {{ min(100, ($poli->pegawais_count / $totalPegawai) * 100 * 5) }}%"></div>
+                                    </div>
+                                    <span class="font-black text-slate-800 w-6 text-right">{{ $poli->pegawais_count }}</span>
+                                </div>
+                            </div>
+                            @endforeach
                         </div>
-                        @endforeach
                     </div>
                 </div>
 
@@ -102,7 +125,7 @@
                 <div class="lg:col-span-2 space-y-6">
                     <h4 class="font-black text-slate-800 uppercase tracking-widest text-xs flex items-center gap-2">
                         <svg class="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                        Monitoring Masa Berlaku STR / SIP
+                        Monitoring Masa Berlaku STR / SIP (3 Bulan Kedepan)
                     </h4>
                     <div class="overflow-hidden border border-slate-100 rounded-3xl">
                         <table class="w-full text-left text-xs">
@@ -121,11 +144,11 @@
                                         <p class="font-black text-slate-800">{{ $pegawai->user->name ?? 'N/A' }}</p>
                                         <p class="text-[10px] text-slate-400 font-bold uppercase">{{ $pegawai->jabatan }}</p>
                                     </td>
-                                    <td class="px-6 py-4 font-bold {{ \Carbon\Carbon::parse($pegawai->masa_berlaku_str)->isPast() ? 'text-rose-600' : 'text-slate-600' }}">
-                                        {{ \Carbon\Carbon::parse($pegawai->masa_berlaku_str)->translatedFormat('d M Y') }}
+                                    <td class="px-6 py-4 font-bold {{ $pegawai->masa_berlaku_str && \Carbon\Carbon::parse($pegawai->masa_berlaku_str)->isPast() ? 'text-rose-600' : 'text-slate-600' }}">
+                                        {{ $pegawai->masa_berlaku_str ? \Carbon\Carbon::parse($pegawai->masa_berlaku_str)->translatedFormat('d M Y') : '-' }}
                                     </td>
-                                    <td class="px-6 py-4 font-bold {{ \Carbon\Carbon::parse($pegawai->masa_berlaku_sip)->isPast() ? 'text-rose-600' : 'text-slate-600' }}">
-                                        {{ \Carbon\Carbon::parse($pegawai->masa_berlaku_sip)->translatedFormat('d M Y') }}
+                                    <td class="px-6 py-4 font-bold {{ $pegawai->masa_berlaku_sip && \Carbon\Carbon::parse($pegawai->masa_berlaku_sip)->isPast() ? 'text-rose-600' : 'text-slate-600' }}">
+                                        {{ $pegawai->masa_berlaku_sip ? \Carbon\Carbon::parse($pegawai->masa_berlaku_sip)->translatedFormat('d M Y') : '-' }}
                                     </td>
                                     <td class="px-6 py-4 text-center">
                                         <span class="px-2 py-1 rounded bg-amber-100 text-amber-700 font-black uppercase tracking-tighter text-[10px]">Perlu Update</span>
@@ -164,27 +187,129 @@
 
                 <!-- Daftar Jadwal -->
                 <div class="lg:col-span-2 space-y-6">
-                    <h4 class="font-black text-slate-800 uppercase tracking-widest text-xs flex items-center gap-2">
-                        <svg class="w-4 h-4 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                        Daftar Petugas Piket Hari Ini
-                    </h4>
+                    <div class="flex justify-between items-center">
+                         <h4 class="font-black text-slate-800 uppercase tracking-widest text-xs flex items-center gap-2">
+                            <svg class="w-4 h-4 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            Daftar Petugas Piket Hari Ini
+                        </h4>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
+                    </div>
+                   
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                         @foreach($tabData['jadwalHariIni'] ?? [] as $jadwal)
-                        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-4 group hover:bg-white hover:shadow-md transition-all">
-                            <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-rose-600 font-black text-xs shadow-sm">
+                        @php
+                            $isNow = false;
+                            if($jadwal->shift) {
+                                $now = \Carbon\Carbon::now();
+                                $start = \Carbon\Carbon::parse($jadwal->shift->jam_mulai);
+                                $end = \Carbon\Carbon::parse($jadwal->shift->jam_selesai);
+                                $isNow = $now->between($start, $end);
+                            }
+                        @endphp
+                        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-4 group hover:bg-white hover:shadow-md transition-all {{ $isNow ? 'ring-2 ring-rose-500/20 bg-rose-50/30' : '' }}">
+                            <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-rose-600 font-black text-xs shadow-sm relative">
                                 {{ substr($jadwal->pegawai->user->name ?? '?', 0, 1) }}
+                                @if($isNow)
+                                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
+                                @endif
                             </div>
                             <div class="flex-1">
                                 <p class="text-xs font-black text-slate-800">{{ $jadwal->pegawai->user->name ?? 'Pegawai' }}</p>
                                 <p class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">{{ $jadwal->pegawai->jabatan }}</p>
                             </div>
                             <div class="text-right">
-                                <span class="px-2 py-1 bg-rose-100 text-rose-700 rounded text-[9px] font-black uppercase">{{ $jadwal->shift->nama_shift }}</span>
-                                <p class="text-[10px] font-bold text-slate-500 mt-1">{{ $jadwal->shift->jam_masuk }} - {{ $jadwal->shift->jam_keluar }}</p>
+                                <span class="px-2 py-1 bg-rose-100 text-rose-700 rounded text-[9px] font-black uppercase">{{ $jadwal->shift->nama_shift ?? '-' }}</span>
+                                <p class="text-[10px] font-bold text-slate-500 mt-1">{{ $jadwal->shift->jam_mulai ?? '-' }} - {{ $jadwal->shift->jam_selesai ?? '-' }}</p>
                             </div>
                         </div>
                         @endforeach
                     </div>
+                </div>
+            </div>
+            @endif
+
+            @if($activeTab == 'cuti')
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 animate-fade-in-up">
+                <!-- Sedang Cuti -->
+                <div>
+                    <h4 class="font-black text-slate-800 uppercase tracking-widest text-xs mb-4">Sedang Cuti Hari Ini</h4>
+                    <div class="space-y-4">
+                        @forelse($tabData['sedangCuti'] ?? [] as $cuti)
+                        <div class="flex items-center gap-4 p-4 rounded-2xl border border-slate-100 bg-white">
+                             <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-black text-xs">
+                                {{ substr($cuti->user->name ?? '?', 0, 1) }}
+                            </div>
+                            <div>
+                                <p class="text-sm font-black text-slate-800">{{ $cuti->user->name }}</p>
+                                <span class="text-[10px] bg-purple-100 text-purple-700 px-2 py-0.5 rounded uppercase font-bold">{{ $cuti->jenis_cuti }}</span>
+                            </div>
+                            <div class="ml-auto text-right text-xs text-slate-500 font-medium">
+                                Sampai {{ \Carbon\Carbon::parse($cuti->tanggal_selesai)->translatedFormat('d M') }}
+                            </div>
+                        </div>
+                        @empty
+                        <div class="p-8 text-center border-2 border-dashed border-slate-100 rounded-2xl">
+                            <p class="text-slate-400 text-sm font-bold">Tidak ada pegawai yang sedang cuti.</p>
+                        </div>
+                        @endforelse
+                    </div>
+                </div>
+
+                <!-- Cuti Akan Datang -->
+                <div>
+                    <h4 class="font-black text-slate-800 uppercase tracking-widest text-xs mb-4">Akan Cuti (7 Hari Kedepan)</h4>
+                    <div class="space-y-4">
+                        @forelse($tabData['cutiAkanDatang'] ?? [] as $cuti)
+                        <div class="flex items-center gap-4 p-4 rounded-2xl border border-slate-100 bg-slate-50/50">
+                             <div class="w-10 h-10 rounded-xl bg-slate-200 text-slate-600 flex items-center justify-center font-black text-xs">
+                                {{ substr($cuti->user->name ?? '?', 0, 1) }}
+                            </div>
+                            <div>
+                                <p class="text-sm font-black text-slate-800">{{ $cuti->user->name }}</p>
+                                <p class="text-[10px] text-slate-400">{{ $cuti->jenis_cuti }}</p>
+                            </div>
+                            <div class="ml-auto text-right text-xs font-bold text-slate-600">
+                                {{ \Carbon\Carbon::parse($cuti->tanggal_mulai)->translatedFormat('d M') }}
+                            </div>
+                        </div>
+                        @empty
+                        <div class="p-8 text-center border-2 border-dashed border-slate-100 rounded-2xl">
+                            <p class="text-slate-400 text-sm font-bold">Tidak ada jadwal cuti mendatang.</p>
+                        </div>
+                        @endforelse
+                    </div>
+                </div>
+
+                <!-- Pending Request -->
+                <div class="lg:col-span-2 mt-4">
+                    <h4 class="font-black text-slate-800 uppercase tracking-widest text-xs mb-4 flex justify-between items-center">
+                        Permintaan Menunggu Persetujuan
+                        @if(count($tabData['cutiPending'] ?? []) > 0)
+                        <span class="bg-rose-500 text-white text-[10px] px-2 py-0.5 rounded-full">{{ count($tabData['cutiPending']) }}</span>
+                        @endif
+                    </h4>
+                    @if(count($tabData['cutiPending'] ?? []) > 0)
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        @foreach($tabData['cutiPending'] as $cuti)
+                        <div class="p-4 rounded-2xl border border-rose-100 bg-rose-50/30 relative">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <p class="text-sm font-black text-slate-800">{{ $cuti->user->name }}</p>
+                                    <p class="text-[10px] text-slate-500">{{ $cuti->jenis_cuti }} • {{ $cuti->durasi }} Hari</p>
+                                </div>
+                                <span class="w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>
+                            </div>
+                            <p class="text-xs text-slate-600 italic mb-4">"{{ Str::limit($cuti->alasan, 50) }}"</p>
+                            <div class="flex gap-2">
+                                <button class="flex-1 py-1.5 bg-rose-600 text-white rounded-lg text-xs font-bold hover:bg-rose-700">Approve</button>
+                                <button class="flex-1 py-1.5 bg-white border border-slate-200 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-50">Detail</button>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                    @else
+                    <p class="text-slate-400 text-sm italic">Tidak ada permintaan cuti pending.</p>
+                    @endif
                 </div>
             </div>
             @endif
@@ -236,21 +361,20 @@
 
     @push('scripts')
     <script>
-        function chartRole() {
+        function chartStatus() {
             return {
                 init() {
-                    const roles = @json($tabData['komposisiRole'] ?? []);
+                    const statusData = @json($tabData['distribusiStatus'] ?? []);
                     const options = {
-                        series: roles.map(r => r.total),
-                        labels: roles.map(r => r.role.toUpperCase()),
-                        chart: { type: 'donut', height: 280, fontFamily: 'Plus Jakarta Sans' },
-                        colors: ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#64748b'],
+                        series: statusData.map(r => r.total),
+                        labels: statusData.map(r => r.status_kepegawaian),
+                        chart: { type: 'pie', height: 250, fontFamily: 'Plus Jakarta Sans' },
+                        colors: ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'],
                         legend: { position: 'bottom' },
-                        dataLabels: { enabled: false },
-                        stroke: { width: 0 },
-                        plotOptions: { pie: { donut: { size: '75%' } } }
+                        dataLabels: { enabled: true },
+                        stroke: { width: 0 }
                     };
-                    new ApexCharts(document.querySelector("#chart-komposisi-role"), options).render();
+                    new ApexCharts(document.querySelector("#chart-status-pegawai"), options).render();
                 }
             }
         }
