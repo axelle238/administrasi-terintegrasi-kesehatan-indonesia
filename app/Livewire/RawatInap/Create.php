@@ -64,10 +64,16 @@ class Create extends Component
         }
     }
 
+    public $searchPasien = '';
+
     public function render()
     {
         $availableKamars = Kamar::where('status', 'Tersedia')->get();
-        $pasiens = Pasien::orderBy('nama_lengkap')->limit(50)->get();
+        $pasiens = Pasien::where('nama_lengkap', 'like', '%' . $this->searchPasien . '%')
+            ->orWhere('nik', 'like', '%' . $this->searchPasien . '%')
+            ->orderBy('nama_lengkap')
+            ->limit(20)
+            ->get();
 
         return view('livewire.rawat-inap.create', [
             'availableKamars' => $availableKamars,
