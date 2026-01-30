@@ -1,220 +1,106 @@
-<!-- Utama -->
+<!-- COMMAND CENTER -->
 <div class="mb-2 px-4 mt-2">
-    <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Utama</p>
+    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 font-display">Command Center</p>
 </div>
 
-<x-nav-link-sidebar :href="route('dashboard')" :active="request()->routeIs('dashboard')" icon="home" color="blue">
-    Dashboard
+<x-nav-link-sidebar :href="route('dashboard')" :active="request()->routeIs('dashboard')" icon="chip" color="indigo">
+    Dashboard Utama
 </x-nav-link-sidebar>
 
-<!-- Klinis / Medis -->
-@if(Auth::user()->role === 'admin' || in_array(Auth::user()->role, ['dokter', 'perawat', 'staf']))
-    <div class="mt-8 mb-2 px-4">
-        <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Layanan Medis</p>
+<!-- KLASTER 1: MANAJEMEN -->
+@if(Auth::user()->role === 'admin' || Auth::user()->role === 'kapus')
+    <div class="mt-6 mb-2 px-4">
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 font-display">Klaster 1: Manajemen</p>
     </div>
     
-    <x-nav-link-sidebar :href="route('medical.dashboard')" :active="request()->routeIs('medical.dashboard')" icon="chart-bar" color="cyan">
-        Dashboard Medis
+    <x-nav-link-sidebar :href="route('hrd.dashboard')" :active="request()->routeIs('hrd.*') || request()->routeIs('pegawai.*')" icon="briefcase" color="slate">
+        SDM & Kepegawaian
     </x-nav-link-sidebar>
 
-    <x-nav-link-sidebar :href="route('antrean.index')" :active="request()->routeIs('antrean.*')" icon="ticket" color="cyan">
-        Antrean & Triase
+    <x-nav-link-sidebar :href="route('finance.dashboard')" :active="request()->routeIs('finance.*') || request()->routeIs('kasir.*')" icon="currency-dollar" color="slate">
+        Keuangan & Billing
     </x-nav-link-sidebar>
 
-    <x-nav-link-sidebar :href="route('pasien.index')" :active="request()->routeIs('pasien.*')" icon="users" color="cyan">
+    <x-nav-link-sidebar :href="route('barang.dashboard')" :active="request()->routeIs('barang.*') || request()->routeIs('supplier.*')" icon="archive" color="slate">
+        Aset & Logistik
+    </x-nav-link-sidebar>
+    
+    <x-nav-link-sidebar :href="route('system.setting.index')" :active="request()->routeIs('system.*') || request()->routeIs('security.*')" icon="cog" color="slate">
+        Sistem & Keamanan
+    </x-nav-link-sidebar>
+@endif
+
+<!-- KLASTER 2: IBU & ANAK -->
+@if(Auth::user()->role === 'admin' || in_array(Auth::user()->role, ['dokter', 'perawat', 'bidan']))
+    <div class="mt-6 mb-2 px-4">
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 font-display">Klaster 2: Ibu & Anak</p>
+    </div>
+
+    <x-nav-link-sidebar :href="route('antrean.index')" :active="request()->routeIs('antrean.*') && request()->query('cluster') == 2" icon="heart" color="rose">
+        Antrean KIA
+    </x-nav-link-sidebar>
+    
+    <!-- Placeholder untuk fitur spesifik KIA nanti -->
+    <x-nav-link-sidebar :href="route('medical.dashboard')" :active="request()->routeIs('medical.dashboard') && request()->query('cluster') == 2" icon="chart-pie" color="rose">
+        Statistik KIA
+    </x-nav-link-sidebar>
+@endif
+
+<!-- KLASTER 3: DEWASA & LANSIA -->
+@if(Auth::user()->role === 'admin' || in_array(Auth::user()->role, ['dokter', 'perawat']))
+    <div class="mt-6 mb-2 px-4">
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 font-display">Klaster 3: Usia Produktif</p>
+    </div>
+
+    <x-nav-link-sidebar :href="route('antrean.index')" :active="request()->routeIs('antrean.*') && !request()->query('cluster')" icon="users" color="blue">
+        Poliklinik Umum
+    </x-nav-link-sidebar>
+
+    <x-nav-link-sidebar :href="route('rekam-medis.index')" :active="request()->routeIs('rekam-medis.*')" icon="clipboard-list" color="blue">
+        Rekam Medis (RME)
+    </x-nav-link-sidebar>
+    
+    <x-nav-link-sidebar :href="route('surat.keterangan.index')" :active="request()->routeIs('surat.*')" icon="document-text" color="blue">
+        Persuratan Medis
+    </x-nav-link-sidebar>
+@endif
+
+<!-- KLASTER 4: PENYAKIT MENULAR -->
+@if(Auth::user()->role === 'admin' || in_array(Auth::user()->role, ['dokter', 'perawat', 'surveilans']))
+    <div class="mt-6 mb-2 px-4">
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 font-display">Klaster 4: P2P</p>
+    </div>
+
+    <x-nav-link-sidebar :href="route('medical.penyakit.index')" :active="request()->routeIs('medical.penyakit.*')" icon="shield-exclamation" color="orange">
+        Surveilans Penyakit
+    </x-nav-link-sidebar>
+@endif
+
+<!-- LINTAS KLASTER -->
+@if(Auth::user()->role === 'admin' || in_array(Auth::user()->role, ['dokter', 'perawat', 'apoteker', 'staf']))
+    <div class="mt-6 mb-2 px-4">
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 font-display">Lintas Klaster</p>
+    </div>
+
+    <x-nav-link-sidebar :href="route('pharmacy.dashboard')" :active="request()->routeIs('pharmacy.*') || request()->routeIs('apotek.*') || request()->routeIs('obat.*')" icon="beaker" color="emerald">
+        Farmasi & Obat
+    </x-nav-link-sidebar>
+    
+    <x-nav-link-sidebar :href="route('rawat-inap.index')" :active="request()->routeIs('rawat-inap.*')" icon="office-building" color="teal">
+        Rawat Inap
+    </x-nav-link-sidebar>
+    
+    <x-nav-link-sidebar :href="route('pasien.index')" :active="request()->routeIs('pasien.*')" icon="identification" color="teal">
         Database Pasien
     </x-nav-link-sidebar>
-
-    @if(Auth::user()->role === 'admin' || in_array(Auth::user()->role, ['dokter', 'perawat']))
-        <x-nav-link-sidebar :href="route('rekam-medis.index')" :active="request()->routeIs('rekam-medis.*')" icon="clipboard-list" color="cyan">
-            Rekam Medis (RME)
-        </x-nav-link-sidebar>
-
-        <x-nav-link-sidebar :href="route('rawat-inap.index')" :active="request()->routeIs('rawat-inap.index')" icon="office-building" color="cyan">
-            Rawat Inap
-        </x-nav-link-sidebar>
-        
-        <x-nav-link-sidebar :href="route('rawat-inap.kamar')" :active="request()->routeIs('rawat-inap.kamar')" icon="view-grid" color="cyan">
-            Monitoring Kamar
-        </x-nav-link-sidebar>
-        
-        <x-nav-link-sidebar :href="route('surat.keterangan.index')" :active="request()->routeIs('surat.keterangan.*')" icon="document-text" color="cyan">
-            Surat Keterangan
-        </x-nav-link-sidebar>
-        
-        <x-nav-link-sidebar :href="route('system.poli.index')" :active="request()->routeIs('system.poli.*')" icon="collection" color="cyan">
-            Data Poli/Unit
-        </x-nav-link-sidebar>
-
-        <x-nav-link-sidebar :href="route('medical.penyakit.index')" :active="request()->routeIs('medical.penyakit.index')" icon="book-open" color="cyan">
-            Kamus Penyakit
-        </x-nav-link-sidebar>
-    @endif
 @endif
 
-<!-- Farmasi -->
-@if(Auth::user()->role === 'admin' || Auth::user()->role === 'apoteker')
-    <div class="mt-8 mb-2 px-4">
-        <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Farmasi & Obat</p>
-    </div>
-
-    <x-nav-link-sidebar :href="route('pharmacy.dashboard')" :active="request()->routeIs('pharmacy.dashboard')" icon="chart-pie" color="emerald">
-        Dashboard Farmasi
-    </x-nav-link-sidebar>
-
-    <x-nav-link-sidebar :href="route('apotek.index')" :active="request()->routeIs('apotek.*')" icon="beaker" color="emerald">
-        Layanan Resep
-    </x-nav-link-sidebar>
-
-    <x-nav-link-sidebar :href="route('obat.index')" :active="request()->routeIs('obat.index') || request()->routeIs('obat.create') || request()->routeIs('obat.edit')" icon="cube" color="emerald">
-        Inventaris Obat
-    </x-nav-link-sidebar>
-
-    <x-nav-link-sidebar :href="route('obat.stock-opname')" :active="request()->routeIs('obat.stock-opname')" icon="refresh" color="emerald">
-        Stok Opname
-    </x-nav-link-sidebar>
-    
-    <x-nav-link-sidebar :href="route('laporan.lplpo')" :active="request()->routeIs('laporan.lplpo')" icon="document-report" color="emerald">
-        Laporan LPLPO
-    </x-nav-link-sidebar>
-@endif
-
-<!-- Keuangan -->
-@if(Auth::user()->role === 'admin' || Auth::user()->role === 'staf')
-    <div class="mt-8 mb-2 px-4">
-        <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Keuangan</p>
-    </div>
-
-    <x-nav-link-sidebar :href="route('finance.dashboard')" :active="request()->routeIs('finance.dashboard')" icon="chart-bar" color="teal">
-        Dashboard Keuangan
-    </x-nav-link-sidebar>
-
-    <x-nav-link-sidebar :href="route('kasir.index')" :active="request()->routeIs('kasir.*')" icon="credit-card" color="teal">
-        Kasir & Billing
-    </x-nav-link-sidebar>
-@endif
-
-<!-- SDM & Admin -->
-@if(Auth::user()->role === 'admin')
-    <div class="mt-8 mb-2 px-4">
-        <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Administrasi</p>
-    </div>
-
-    <x-nav-link-sidebar :href="route('hrd.dashboard')" :active="request()->routeIs('hrd.dashboard')" icon="chart-square-bar" color="violet">
-        Dashboard SDM
-    </x-nav-link-sidebar>
-
-    <x-nav-link-sidebar :href="route('pegawai.index')" :active="request()->routeIs('pegawai.*')" icon="identification" color="violet">
-        Data Pegawai
-    </x-nav-link-sidebar>
-
-    <x-nav-link-sidebar :href="route('jadwal-jaga.index')" :active="request()->routeIs('jadwal-jaga.*')" icon="calendar" color="violet">
-        Jadwal & Shift
-    </x-nav-link-sidebar>
-    
-    <x-nav-link-sidebar :href="route('kepegawaian.kinerja.index')" :active="request()->routeIs('kepegawaian.kinerja.*')" icon="chart-pie" color="violet">
-        Kinerja Pegawai
-    </x-nav-link-sidebar>
-
-    <x-nav-link-sidebar :href="route('kepegawaian.gaji.index')" :active="request()->routeIs('kepegawaian.gaji.*')" icon="cash" color="violet">
-        Penggajian
-    </x-nav-link-sidebar>
-    
-    <x-nav-link-sidebar :href="route('surat.index')" :active="request()->routeIs('surat.index') || request()->routeIs('surat.create')" icon="mail" color="violet">
-        Persuratan
-    </x-nav-link-sidebar>
-@endif
-
-<!-- Akses Umum -->
-<div class="mt-8 mb-2 px-4">
-    <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Umum</p>
+<!-- PORTAL PEGAWAI -->
+<div class="mt-6 mb-2 px-4">
+    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 font-display">Personal</p>
 </div>
-<x-nav-link-sidebar :href="route('kepegawaian.dashboard')" :active="request()->routeIs('kepegawaian.dashboard')" icon="home" color="orange">
-    Dashboard Pegawai
-</x-nav-link-sidebar>
-<x-nav-link-sidebar :href="route('kepegawaian.cuti.index')" :active="request()->routeIs('kepegawaian.cuti.*')" icon="document-text" color="orange">
-    Pengajuan Cuti
+<x-nav-link-sidebar :href="route('kepegawaian.dashboard')" :active="request()->routeIs('kepegawaian.*')" icon="user-circle" color="violet">
+    Portal Pegawai
 </x-nav-link-sidebar>
 
-<!-- Masyarakat -->
-@if(Auth::user()->role === 'admin' || Auth::user()->role === 'tata_usaha')
-    <div class="mt-8 mb-2 px-4">
-        <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Masyarakat</p>
-    </div>
-
-    <x-nav-link-sidebar :href="route('public.dashboard')" :active="request()->routeIs('public.dashboard')" icon="globe" color="orange">
-        Dashboard Publik
-    </x-nav-link-sidebar>
-
-    <x-nav-link-sidebar :href="route('masyarakat.index')" :active="request()->routeIs('masyarakat.index')" icon="user-group" color="orange">
-        Layanan Masyarakat
-    </x-nav-link-sidebar>
-
-    <x-nav-link-sidebar :href="route('admin.masyarakat.pengaduan.index')" :active="request()->routeIs('admin.masyarakat.pengaduan.*')" icon="mail" color="orange">
-        Pengaduan Masyarakat
-    </x-nav-link-sidebar>
-    
-    <x-nav-link-sidebar :href="route('survey.create')" :active="request()->routeIs('survey.create')" icon="thumb-up" color="orange">
-        Survei Kepuasan
-    </x-nav-link-sidebar>
-@endif
-
-<!-- Aset -->
-@if(Auth::user()->role === 'admin' || Auth::user()->role === 'staf')
-     <div class="mt-8 mb-2 px-4">
-        <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Aset & Fasilitas</p>
-    </div>
-
-    <x-nav-link-sidebar :href="route('barang.dashboard')" :active="request()->routeIs('barang.dashboard')" icon="chart-bar" color="indigo">
-        Dashboard Aset
-    </x-nav-link-sidebar>
-
-    <x-nav-link-sidebar :href="route('barang.index')" :active="request()->routeIs('barang.index')" icon="archive" color="indigo">
-        Data Aset
-    </x-nav-link-sidebar>
-
-    <x-nav-link-sidebar :href="route('supplier.index')" :active="request()->routeIs('supplier.*')" icon="truck" color="indigo">
-        Data Supplier
-    </x-nav-link-sidebar>
-    
-    <x-nav-link-sidebar :href="route('barang.pengadaan.index')" :active="request()->routeIs('barang.pengadaan.*')" icon="shopping-cart" color="indigo">
-        Pengadaan
-    </x-nav-link-sidebar>
-    
-    <x-nav-link-sidebar :href="route('barang.maintenance')" :active="request()->routeIs('barang.maintenance')" icon="tool" color="indigo">
-        Pemeliharaan
-    </x-nav-link-sidebar>
-    
-    <x-nav-link-sidebar :href="route('ruangan.index')" :active="request()->routeIs('ruangan.*')" icon="office-building" color="indigo">
-        Ruangan
-    </x-nav-link-sidebar>
-@endif
-
-<!-- Sistem -->
-@if(Auth::user()->role === 'admin')
-    <div class="mt-8 mb-2 px-4">
-        <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Sistem</p>
-    </div>
-
-    <x-nav-link-sidebar :href="route('security.dashboard')" :active="request()->routeIs('security.dashboard')" icon="shield-check" color="slate">
-        Dashboard Keamanan
-    </x-nav-link-sidebar>
-
-    <x-nav-link-sidebar :href="route('system.user.index')" :active="request()->routeIs('system.user.*')" icon="user" color="slate">
-        Manajemen Pengguna
-    </x-nav-link-sidebar>
-
-    <x-nav-link-sidebar :href="route('system.setting.index')" :active="request()->routeIs('system.setting.*')" icon="cog" color="slate">
-        Pengaturan Aplikasi
-    </x-nav-link-sidebar>
-    
-    <x-nav-link-sidebar :href="route('system.info')" :active="request()->routeIs('system.info')" icon="chart-bar" color="slate">
-        Informasi Sistem
-    </x-nav-link-sidebar>
-    
-    <x-nav-link-sidebar :href="route('activity-log')" :active="request()->routeIs('activity-log')" icon="clock" color="slate">
-        Log Aktivitas
-    </x-nav-link-sidebar>
-@endif
-
-<div class="pb-20"></div>
+<div class="pb-24"></div>

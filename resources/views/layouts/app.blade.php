@@ -1,99 +1,92 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="light">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'SATRIA') }} Sistem Kesehatan Terintegrasi</title>
+        <title>{{ config('app.name', 'SATRIA Health') }} - Enterprise System</title>
 
-        <!-- Fonts -->
+        <!-- Fonts: Plus Jakarta Sans (Main) & Outfit (Headings) -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 
-        <!-- Styles -->
-        @vite(['resources/css/app.css'])
-        @livewireStyles
-        
+        <!-- Scripts & Styles -->
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
         <style>
             :root {
-                --primary-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-                --secondary-gradient: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);
-                --success-gradient: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
-                --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
-                --danger-gradient: linear-gradient(135deg, #ef4444 0%, #f43f5e 100%);
+                --font-sans: 'Plus Jakarta Sans', sans-serif;
+                --font-display: 'Outfit', sans-serif;
             }
-
-            body { 
-                font-family: 'Plus Jakarta Sans', sans-serif; 
-                /* Background is handled by Tailwind class */
+            body {
+                font-family: var(--font-sans);
+                background-color: #f8fafc; /* Slate-50 */
+                background-image: 
+                    radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.03) 0px, transparent 50%), 
+                    radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.03) 0px, transparent 50%);
+                background-attachment: fixed;
             }
-
-            h1, h2, h3, h4, h5, h6 {
-                font-family: 'Outfit', sans-serif;
+            h1, h2, h3, h4, h5, h6, .font-display {
+                font-family: var(--font-display);
             }
             
-            [x-cloak] { display: none !important; }
-            
-            /* Glassmorphism Panel - Light Version */
-            .glass-panel {
-                background: rgba(255, 255, 255, 0.85);
+            /* High-Tech Scrollbar */
+            ::-webkit-scrollbar { width: 6px; height: 6px; }
+            ::-webkit-scrollbar-track { background: transparent; }
+            ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+            ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+            /* Glassmorphism Utilities */
+            .glass {
+                background: rgba(255, 255, 255, 0.7);
                 backdrop-filter: blur(12px);
                 -webkit-backdrop-filter: blur(12px);
-                border: 1px solid rgba(255, 255, 255, 0.6);
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+                border: 1px solid rgba(255, 255, 255, 0.5);
             }
+            .glass-dark {
+                background: rgba(15, 23, 42, 0.8);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            /* Animations */
+            .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+            @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+            
+            [x-cloak] { display: none !important; }
         </style>
     </head>
-    <body class="font-sans antialiased overflow-hidden bg-tech-pattern text-slate-800">
-        
-        <div class="flex h-screen w-full relative" x-data="{ sidebarOpen: false }">
+    <body class="font-sans antialiased text-slate-600 bg-slate-50 selection:bg-indigo-500 selection:text-white">
+        <div class="min-h-screen flex bg-slate-50/50" x-data="{ sidebarOpen: false }">
             
-            <!-- Sidebar -->
+            <!-- Sidebar Navigation (High Tech Style) -->
             @include('layouts.sidebar')
 
             <!-- Main Content Area -->
-            <div class="flex flex-col flex-1 min-w-0 overflow-hidden relative bg-slate-50/50">
+            <div class="flex-1 flex flex-col min-w-0 overflow-hidden transition-all duration-300">
                 
                 <!-- Topbar -->
                 @include('layouts.topbar')
 
-                <!-- Scrollable Body -->
-                <main class="flex-1 overflow-y-auto focus:outline-none relative z-10 p-4 md:p-8 custom-scrollbar">
-                    <!-- Background Decoration -->
-                    <div class="fixed top-0 left-0 w-full h-96 bg-gradient-to-b from-blue-50/40 to-transparent pointer-events-none -z-10"></div>
+                <!-- Page Content -->
+                <main class="flex-1 overflow-y-auto overflow-x-hidden p-6 lg:p-8 scroll-smooth relative">
+                    <!-- Notification Toast Overlay -->
+                    <livewire:components.toast-notification />
                     
-                    @if (isset($header))
-                        <div class="md:hidden mb-6">
-                            <h2 class="text-2xl font-bold text-slate-800 tracking-tight">{{ $header }}</h2>
-                        </div>
-                    @endif
-
                     {{ $slot }}
-
-                    <!-- Footer -->
-                    <footer class="mt-12 border-t border-dashed border-slate-200 pt-6 pb-8">
-                        <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400 font-medium">
-                            <div>
-                                <span class="font-bold text-slate-600">SATRIA Health System</span> &copy; {{ date('Y') }}. 
-                                <span class="hidden md:inline">Keunggulan dalam Pelayanan Kesehatan.</span>
-                            </div>
-                            <div class="flex items-center gap-4">
-                                <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-100 shadow-sm text-slate-500">v2.5.0-Stabil</span>
-                            </div>
-                        </div>
-                    </footer>
+                    
+                    <!-- Footer Info -->
+                    <div class="mt-12 py-6 border-t border-dashed border-slate-200 text-center">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                            {{ config('app.name') }} © {{ date('Y') }} • Enterprise Health System v2.0
+                        </p>
+                    </div>
                 </main>
             </div>
         </div>
-
-        <livewire:components.toast-notification />
-        
-        <!-- Scripts -->
-        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-        @vite(['resources/js/app.js'])
-        @livewireScripts
-        @stack('scripts')
     </body>
 </html>
