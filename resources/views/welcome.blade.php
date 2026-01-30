@@ -3,9 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="{{ $pengaturan['deskripsi'] }}">
+    <meta name="description" content="{{ $pengaturan['deskripsi'] ?? '' }}">
     <meta name="theme-color" content="{{ $pengaturan['primary_color'] ?? '#0d9488' }}">
-    <title>{{ $pengaturan['nama_aplikasi'] }} - {{ $pengaturan['tagline'] }}</title>
+    <title>{{ $pengaturan['nama_aplikasi'] ?? 'SATRIA' }} - {{ $pengaturan['tagline'] ?? '' }}</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,7 +17,7 @@
 
     <style>
         :root {
-            --primary-color: {{ $pengaturan['primary_color'] ?? '#0d9488' }}; 
+            --primary-color: {{ $pengaturan['primary_color'] ?? '#0d9488' }};
             --primary-rgb: {{ hexdec(substr($pengaturan['primary_color'] ?? '#0d9488', 1, 2)) }}, {{ hexdec(substr($pengaturan['primary_color'] ?? '#0d9488', 3, 2)) }}, {{ hexdec(substr($pengaturan['primary_color'] ?? '#0d9488', 5, 2)) }};
         }
         
@@ -69,7 +69,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h1 class="font-black text-xl text-slate-800 tracking-tight leading-none group-hover:text-primary transition-colors">{{ $pengaturan['nama_aplikasi'] }}</h1>
+                        <h1 class="font-black text-xl text-slate-800 tracking-tight leading-none group-hover:text-primary transition-colors">{{ $pengaturan['nama_aplikasi'] ?? 'SATRIA' }}</h1>
                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sistem Kesehatan</p>
                     </div>
                 </a>
@@ -148,25 +148,25 @@
                 
                 <!-- Text Content -->
                 <div class="w-full lg:w-1/2 text-center lg:text-left">
-                    @if(($pengaturan['announcement_active'] ?? '0') == '1')
+                    @if(isset($pengaturan['announcement_active']) && $pengaturan['announcement_active'] == '1')
                         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 border border-red-100 text-red-600 text-xs font-bold uppercase tracking-wider mb-8 shadow-sm">
                             <span class="flex h-2 w-2 relative">
                                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                                 <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
                             </span>
-                            {{ $pengaturan['announcement_text'] }}
+                            {{ $pengaturan['announcement_text'] ?? 'Pengumuman' }}
                         </div>
                     @endif
 
                     <h1 class="text-4xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.1] mb-6">
-                        {{ $pengaturan['judul_hero'] }} <br>
+                        {{ $pengaturan['judul_hero'] ?? 'Judul Hero' }} <br>
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-600" style="background-image: linear-gradient(to right, var(--primary-color), #059669);">
-                            {{ $pengaturan['subjudul_hero'] }}
+                            {{ $pengaturan['subjudul_hero'] ?? 'Subjudul' }}
                         </span>
                     </h1>
                     
                     <p class="text-lg text-slate-500 mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                        {{ $pengaturan['deskripsi'] }}
+                        {{ $pengaturan['deskripsi'] ?? 'Deskripsi aplikasi...' }}
                     </p>
                     
                     <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -174,7 +174,7 @@
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             Ambil Nomor Antrean
                         </a>
-                        @if(($pengaturan['show_pengaduan_cta'] ?? '1') == '1')
+                        @if(!isset($pengaturan['show_pengaduan_cta']) || $pengaturan['show_pengaduan_cta'] == '1')
                             <a href="{{ route('pengaduan.public') }}" class="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-2xl font-bold hover:border-primary hover:text-primary hover:shadow-lg transition-all flex items-center justify-center gap-3">
                                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
                                 Layanan Pengaduan
@@ -189,11 +189,11 @@
                             <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Layanan IGD</p>
                         </div>
                         <div>
-                            <p class="text-3xl font-black text-slate-900">{{ $stats['dokter_total'] }}+</p>
+                            <p class="text-3xl font-black text-slate-900">{{ $stats['dokter_total'] ?? 0 }}+</p>
                             <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Dokter Ahli</p>
                         </div>
                         <div>
-                            <p class="text-3xl font-black text-slate-900">{{ number_format($stats['layanan_total'], 0, ',', '.') }}+</p>
+                            <p class="text-3xl font-black text-slate-900">{{ number_format($stats['layanan_total'] ?? 0, 0, ',', '.') }}+</p>
                             <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pasien Terlayani</p>
                         </div>
                     </div>
@@ -204,7 +204,7 @@
                     <div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-primary opacity-10 rounded-full blur-3xl blob"></div>
                     <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-emerald-500 opacity-10 rounded-full blur-3xl blob" style="animation-delay: 2s"></div>
                     
-                    <div class="relative z-10">
+                    <div class="relative z-10"> 
                          <!-- Composition of Images/Cards -->
                         <div class="grid grid-cols-2 gap-4">
                             <div class="space-y-4 mt-8">
@@ -252,7 +252,7 @@
     </section>
 
     <!-- Layanan Section -->
-    @if(($pengaturan['show_layanan_poli'] ?? '1') == '1')
+    @if(!isset($pengaturan['show_layanan_poli']) || $pengaturan['show_layanan_poli'] == '1')
     <section id="layanan" class="py-24 bg-white relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
@@ -295,7 +295,7 @@
     @endif
 
     <!-- Jadwal Dokter -->
-    @if(($pengaturan['show_jadwal_dokter'] ?? '1') == '1')
+    @if(!isset($pengaturan['show_jadwal_dokter']) || $pengaturan['show_jadwal_dokter'] == '1')
     <section id="jadwal" class="py-24 bg-slate-900 text-white relative overflow-hidden">
         <!-- Decoration -->
         <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 30px 30px;"></div>
@@ -358,7 +358,7 @@
     @endif
 
     <!-- Fasilitas -->
-    @if(($pengaturan['show_fasilitas'] ?? '1') == '1')
+    @if(!isset($pengaturan['show_fasilitas']) || $pengaturan['show_fasilitas'] == '1')
     <section id="fasilitas" class="py-24 bg-slate-50 relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
@@ -399,7 +399,7 @@
             </div>
             @else
             <div class="text-center py-16 bg-white rounded-[2.5rem] border border-dashed border-slate-200">
-                <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
                     <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
                 </div>
                 <p class="text-slate-400 font-medium">Informasi fasilitas belum tersedia.</p>
@@ -407,6 +407,7 @@
             @endif
         </div>
     </section>
+    @endif
 
     <!-- FAQ Section -->
     <section class="py-24 bg-white relative overflow-hidden">
@@ -531,10 +532,10 @@
                         <div class="w-10 h-10 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-primary/20" style="background-image: linear-gradient(135deg, var(--primary-color), #2563eb);">
                             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                         </div>
-                        <span class="text-2xl font-black text-white tracking-tight">{{ $pengaturan['nama_aplikasi'] }}</span>
+                        <span class="text-2xl font-black text-white tracking-tight">{{ $pengaturan['nama_aplikasi'] ?? 'SATRIA' }}</span>
                     </a>
                     <p class="text-slate-400 leading-relaxed max-w-sm mb-8">
-                        {{ $pengaturan['deskripsi'] }}
+                        {{ $pengaturan['deskripsi'] ?? 'Sistem Informasi Kesehatan' }}
                     </p>
                     <div class="flex gap-4">
                         <a href="#" class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center hover:bg-primary hover:text-white transition-all">
@@ -563,19 +564,19 @@
                             <div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center shrink-0">
                                 <svg class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                             </div>
-                            <span class="mt-1.5">{{ $pengaturan['alamat'] }}</span>
+                            <span class="mt-1.5">{{ $pengaturan['alamat'] ?? '-' }}</span>
                         </li>
                         <li class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center shrink-0">
                                 <svg class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                             </div>
-                            <span>{{ $pengaturan['telepon'] }}</span>
+                            <span>{{ $pengaturan['telepon'] ?? '-' }}</span>
                         </li>
                         <li class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center shrink-0">
                                 <svg class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                             </div>
-                            <span>{{ $pengaturan['email'] }}</span>
+                            <span>{{ $pengaturan['email'] ?? '-' }}</span>
                         </li>
                     </ul>
                 </div>
@@ -583,7 +584,7 @@
             
             <div class="border-t border-slate-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
                 <p class="text-xs font-bold text-slate-600 uppercase tracking-widest text-center md:text-left">
-                    &copy; {{ date('Y') }} {{ $pengaturan['footer_text'] }}. Hak Cipta Dilindungi Undang-undang.
+                    &copy; {{ date('Y') }} {{ $pengaturan['footer_text'] ?? 'Sistem Kesehatan' }}. Hak Cipta Dilindungi Undang-undang.
                 </p>
                 <div class="flex items-center gap-6 text-xs font-bold text-slate-500 uppercase tracking-widest">
                     <a href="#" class="hover:text-white transition-colors">Privasi</a>
