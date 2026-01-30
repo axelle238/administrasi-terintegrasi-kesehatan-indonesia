@@ -49,6 +49,16 @@ class RekamMedis extends Model
         'pernapasan',
         
         'status_resep',     // Status penebusan obat: Menunggu, Selesai
+        'status_pemeriksaan', // Status flow: Dalam Proses, Selesai
+        'odontogram',       // Data JSON untuk status gigi
+    ];
+
+    /**
+     * Casts attributes.
+     */
+    protected $casts = [
+        'odontogram' => 'array',
+        'tanggal_periksa' => 'datetime',
     ];
 
     /**
@@ -66,14 +76,6 @@ class RekamMedis extends Model
     {
         return $this->belongsTo(User::class, 'dokter_id');
     }
-
-    /**
-     * Relasi: Poli tempat pemeriksaan dilakukan.
-     * (Asumsi: Perlu ditambahkan di migrasi jika belum ada, 
-     *  tapi bisa diambil lewat dokter -> poli jika relasi dokter-poli ada.
-     *  Untuk saat ini kita pakai relasi langsung jika ada kolom poli_id, 
-     *  tapi di fillable belum ada. Kita abaikan dulu, atau tambah nanti).
-     */
 
     /**
      * Relasi: Obat yang diresepkan dalam pemeriksaan ini.

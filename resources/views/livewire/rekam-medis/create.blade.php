@@ -112,6 +112,82 @@
                 </div>
             </div>
 
+            <!-- ODONTOGRAM (Khusus Poli Gigi) -->
+            @if($isPoliGigi)
+            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-slate-100 dark:border-gray-700 p-6 md:p-8">
+                <div class="flex items-center justify-between mb-8">
+                    <h3 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-3">
+                        <span class="w-8 h-8 bg-amber-50 dark:bg-amber-900/30 rounded-lg flex items-center justify-center text-amber-600">G</span>
+                        Odontogram (Pemeriksaan Gigi)
+                    </h3>
+                    <div class="flex gap-3 text-[10px] font-bold uppercase tracking-widest">
+                        <div class="flex items-center gap-1"><span class="w-3 h-3 bg-emerald-100 border border-emerald-500 rounded"></span> Normal</div>
+                        <div class="flex items-center gap-1"><span class="w-3 h-3 bg-amber-100 border border-amber-500 rounded"></span> Cavity</div>
+                        <div class="flex items-center gap-1"><span class="w-3 h-3 bg-rose-100 border border-rose-500 rounded"></span> Missing</div>
+                        <div class="flex items-center gap-1"><span class="w-3 h-3 bg-blue-100 border border-blue-500 rounded"></span> Filled</div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Rahang Atas (Dewasa) -->
+                    <div class="flex justify-center gap-4">
+                        <div class="flex gap-1">
+                            @foreach([18,17,16,15,14,13,12,11] as $t)
+                                <x-odontogram-tooth :number="$t" :status="$odontogram[$t] ?? 'N'" wire:click="toggleGigi({{ $t }})" />
+                            @endforeach
+                        </div>
+                        <div class="w-px bg-slate-300"></div>
+                        <div class="flex gap-1">
+                            @foreach([21,22,23,24,25,26,27,28] as $t)
+                                <x-odontogram-tooth :number="$t" :status="$odontogram[$t] ?? 'N'" wire:click="toggleGigi({{ $t }})" />
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- Rahang Bawah (Dewasa) -->
+                    <div class="flex justify-center gap-4">
+                        <div class="flex gap-1">
+                            @foreach([48,47,46,45,44,43,42,41] as $t)
+                                <x-odontogram-tooth :number="$t" :status="$odontogram[$t] ?? 'N'" wire:click="toggleGigi({{ $t }})" />
+                            @endforeach
+                        </div>
+                        <div class="w-px bg-slate-300"></div>
+                        <div class="flex gap-1">
+                            @foreach([31,32,33,34,35,36,37,38] as $t)
+                                <x-odontogram-tooth :number="$t" :status="$odontogram[$t] ?? 'N'" wire:click="toggleGigi({{ $t }})" />
+                            @endforeach
+                        </div>
+                    </div>
+                    
+                    <!-- Anak (Opsional - Simplified Display) -->
+                    <div class="flex justify-center gap-8 pt-4 border-t border-slate-100">
+                        <div class="flex flex-col items-center">
+                            <span class="text-[9px] font-bold text-slate-400 uppercase mb-2">Gigi Susu Atas</span>
+                            <div class="flex gap-4">
+                                <div class="flex gap-1">
+                                    @foreach([55,54,53,52,51] as $t) <x-odontogram-tooth :number="$t" :status="$odontogram[$t] ?? 'N'" wire:click="toggleGigi({{ $t }})" size="sm" /> @endforeach
+                                </div>
+                                <div class="flex gap-1">
+                                    @foreach([61,62,63,64,65] as $t) <x-odontogram-tooth :number="$t" :status="$odontogram[$t] ?? 'N'" wire:click="toggleGigi({{ $t }})" size="sm" /> @endforeach
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <span class="text-[9px] font-bold text-slate-400 uppercase mb-2">Gigi Susu Bawah</span>
+                            <div class="flex gap-4">
+                                <div class="flex gap-1">
+                                    @foreach([85,84,83,82,81] as $t) <x-odontogram-tooth :number="$t" :status="$odontogram[$t] ?? 'N'" wire:click="toggleGigi({{ $t }})" size="sm" /> @endforeach
+                                </div>
+                                <div class="flex gap-1">
+                                    @foreach([71,72,73,74,75] as $t) <x-odontogram-tooth :number="$t" :status="$odontogram[$t] ?? 'N'" wire:click="toggleGigi({{ $t }})" size="sm" /> @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <!-- Tindakan Medis (Inline List) -->
             <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-slate-100 dark:border-gray-700 p-6 md:p-8">
                 <h3 class="text-lg font-black text-slate-900 dark:text-white mb-8 flex items-center gap-3">
