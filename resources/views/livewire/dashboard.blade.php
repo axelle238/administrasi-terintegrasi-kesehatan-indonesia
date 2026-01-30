@@ -193,14 +193,14 @@
             new ApexCharts(document.querySelector("#chart-kunjungan"), {
                 series: [{
                     name: 'Pasien',
-                    data: [31, 40, 28, 51, 42, 109, 100]
+                    data: @json($dataGrafik['data'])
                 }],
                 chart: { height: 320, type: 'area', toolbar: { show: false }, fontFamily: 'Plus Jakarta Sans' },
                 colors: ['#6366f1'],
                 fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 90, 100] } },
                 dataLabels: { enabled: false },
                 stroke: { curve: 'smooth', width: 3 },
-                xaxis: { categories: ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"] },
+                xaxis: { categories: @json($dataGrafik['labels']) },
                 grid: { borderColor: '#f1f5f9' }
             }).render();
 
