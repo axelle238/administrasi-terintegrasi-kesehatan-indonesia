@@ -13,7 +13,7 @@ class Index extends Component
     public function render()
     {
         // Get prescriptions waiting for processing
-        $antreanResep = RekamMedis::where('status_resep', 'Menunggu')
+        $antreanResep = RekamMedis::where('status_resep', 'Menunggu Obat')
             ->with(['pasien', 'dokter'])
             ->latest()
             ->paginate(10);
