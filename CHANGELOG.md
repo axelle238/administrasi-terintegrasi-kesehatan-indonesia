@@ -12,6 +12,7 @@
   - **Dashboard HRD:** Visualisasi komposisi SDM, tren kinerja kolektif, dan monitoring dokumen STR/SIP.
   - **Dashboard Keamanan (SOC):** Mode Lockdown, Firewall IP manual, Session Kill, dan Audit Log forensik.
   - **Dashboard Publik:** Monitoring IKM (Indeks Kepuasan Masyarakat) dan tren pengaduan.
+  - **Dashboard Pegawai:** Portal mandiri untuk pegawai melihat statistik kinerja, jadwal jaga, slip gaji, dan sisa cuti.
 
 - **Halaman Depan (Landing Page):**
   - Redesign total menggunakan Tailwind CSS modern.
