@@ -105,6 +105,10 @@ class Dashboard extends Component
             'pendapatanBulanIni' => $pendapatanBulanIni,
             'pengeluaranGaji' => $pengeluaranGaji,
 
+            // Statistik Tambahan untuk View
+            'totalRekamMedisBulanIni' => RekamMedis::whereMonth('created_at', Carbon::now()->month)->count(),
+            'userOnlineTotal' => DB::table('sessions')->where('last_activity', '>=', Carbon::now()->subMinutes(5)->timestamp)->count(), // Asumsi driver session database
+
             // Data Visual & Detail
             'kunjunganPoli' => $kunjunganPoli,
             'ketersediaanBed' => $ketersediaanBed,
