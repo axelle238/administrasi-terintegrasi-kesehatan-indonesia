@@ -3,9 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="{{ $pengaturan['app_description'] ?? 'Sistem Kesehatan Terintegrasi' }}">
+    <meta name="description" content="{{ $pengaturan['app_description'] ?? 'Sistem Administrasi Kesehatan Terintegrasi Indonesia' }}">
     <meta name="theme-color" content="{{ $pengaturan['primary_color'] ?? '#0f172a' }}">
-    <title>{{ $pengaturan['app_name'] ?? 'SATRIA' }} - {{ $pengaturan['app_tagline'] ?? 'Future Health' }}</title>
+    <title>{{ $pengaturan['app_name'] ?? 'SATRIA' }} - {{ $pengaturan['app_tagline'] ?? 'Kesehatan Masa Depan' }}</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -76,7 +76,7 @@
 <body class="tech-bg selection:bg-cyan-500 selection:text-white" x-data="{ scrolled: false, mobileMenu: false }" @scroll.window="scrolled = (window.pageYOffset > 20)">
 
     <!-- Navbar -->
-    <nav :class="{ 'bg-slate-900/80 backdrop-blur-md border-b border-white/5 py-4': scrolled, 'bg-transparent py-6': !scrolled }" class="fixed w-full z-50 transition-all duration-300 top-0">
+    <nav :class="{ 'bg-slate-900/90 backdrop-blur-md border-b border-white/5 py-4': scrolled, 'bg-transparent py-6': !scrolled }" class="fixed w-full z-50 transition-all duration-300 top-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center">
                 <!-- Logo -->
@@ -89,7 +89,7 @@
                     </div>
                     <div>
                         <h1 class="font-black text-xl text-white tracking-tight leading-none font-display">{{ $pengaturan['app_name'] ?? 'SATRIA' }}</h1>
-                        <p class="text-[9px] font-bold text-cyan-400 uppercase tracking-[0.2em] opacity-80">Health Enterprise</p>
+                        <p class="text-[9px] font-bold text-cyan-400 uppercase tracking-[0.2em] opacity-80">Layanan Kesehatan Terpadu</p>
                     </div>
                 </a>
 
@@ -179,7 +179,7 @@
                 </div>
                 <div class="glass-card p-6 rounded-2xl text-center">
                     <p class="text-3xl font-black text-emerald-400 mb-1">100%</p>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Digital Record</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Rekam Digital</p>
                 </div>
             </div>
         </div>
@@ -241,6 +241,20 @@
                     </ul>
                 </div>
             </div>
+
+            <!-- Daftar Poli Dynamic -->
+            @if(isset($layanan) && count($layanan) > 0)
+            <div class="mt-16">
+                <h3 class="text-2xl font-bold text-white text-center mb-8">Poliklinik Tersedia</h3>
+                <div class="flex flex-wrap justify-center gap-4">
+                    @foreach($layanan as $poli)
+                        <div class="px-6 py-3 glass-panel rounded-xl border border-white/5 text-slate-300 hover:text-white hover:border-cyan-500/50 transition-all cursor-default">
+                            {{ $poli->nama_poli }}
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
         </div>
     </section>
     @endif
@@ -251,7 +265,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
                 <div>
-                    <span class="text-violet-400 font-bold tracking-[0.2em] uppercase text-xs mb-2 block">Live Schedule</span>
+                    <span class="text-violet-400 font-bold tracking-[0.2em] uppercase text-xs mb-2 block">Jadwal Langsung</span>
                     <h2 class="text-3xl md:text-4xl font-black text-white">Dokter Siaga Hari Ini</h2>
                 </div>
                 <div class="flex items-center gap-3 bg-white/5 px-5 py-3 rounded-xl backdrop-blur-sm border border-white/10">
@@ -291,6 +305,52 @@
         </div>
     </section>
     @endif
+
+    <!-- Berita / Informasi -->
+    <section id="berita" class="py-24 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16">
+                <span class="text-emerald-400 font-bold tracking-[0.2em] uppercase text-xs mb-2 block">Informasi Terkini</span>
+                <h2 class="text-3xl md:text-5xl font-black text-white mb-6">Berita & Artikel</h2>
+            </div>
+            
+             @if(isset($beritaTerbaru) && count($beritaTerbaru) > 0)
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    @foreach($beritaTerbaru as $berita)
+                    <div class="glass-card rounded-2xl overflow-hidden flex flex-col h-full group">
+                        <div class="h-48 bg-slate-800 relative overflow-hidden">
+                             @if($berita->thumbnail)
+                                <img src="{{ Storage::url($berita->thumbnail) }}" alt="{{ $berita->judul }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center bg-slate-800 text-slate-600">
+                                    <svg class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
+                                </div>
+                            @endif
+                            <div class="absolute top-4 left-4">
+                                <span class="bg-slate-900/80 backdrop-blur text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">{{ $berita->kategori ?? 'Umum' }}</span>
+                            </div>
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col">
+                            <div class="text-xs text-slate-400 mb-3 flex items-center gap-2">
+                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                {{ $berita->created_at->translatedFormat('d F Y') }}
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-3 leading-tight group-hover:text-cyan-400 transition-colors">{{ $berita->judul }}</h3>
+                            <p class="text-sm text-slate-400 line-clamp-3 mb-4 flex-1">{{ Str::limit(strip_tags($berita->konten), 100) }}</p>
+                            <a href="#" class="inline-flex items-center gap-2 text-sm font-bold text-cyan-400 hover:text-cyan-300 transition-colors">
+                                Baca Selengkapnya <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                            </a>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="glass-panel p-12 text-center rounded-3xl">
+                    <p class="text-slate-400">Belum ada berita terbaru.</p>
+                </div>
+            @endif
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer class="bg-slate-900 pt-24 pb-12 border-t border-white/5 relative">
