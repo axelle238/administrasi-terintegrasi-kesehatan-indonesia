@@ -24,14 +24,6 @@
     <x-nav-link-sidebar :href="route('barang.dashboard')" :active="request()->routeIs('barang.*') || request()->routeIs('supplier.*')" icon="archive" color="slate">
         Aset & Logistik
     </x-nav-link-sidebar>
-    
-    <x-nav-link-sidebar :href="route('system.info')" :active="request()->routeIs('system.*')" icon="cog" color="slate">
-        Sistem & Pengaturan
-    </x-nav-link-sidebar>
-
-    <x-nav-link-sidebar :href="route('security.dashboard')" :active="request()->routeIs('security.*')" icon="lock-closed" color="red">
-        Keamanan Siber (SecOps)
-    </x-nav-link-sidebar>
 @endif
 
 <!-- KLASTER 2: IBU & ANAK -->
@@ -114,6 +106,25 @@
 
     <x-nav-link-sidebar :href="route('admin.masyarakat.pengaduan.index')" :active="request()->routeIs('admin.masyarakat.*')" icon="chat-alt-2" color="cyan">
         Pusat Pengaduan
+    </x-nav-link-sidebar>
+@endif
+
+<!-- SYSTEM & SECURITY -->
+@if(Auth::user()->role === 'admin')
+    <div class="mt-6 mb-2 px-4">
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 font-display">Sistem & Keamanan</p>
+    </div>
+    
+    <x-nav-link-sidebar :href="route('system.info')" :active="request()->routeIs('system.info')" icon="server" color="slate">
+        Status Sistem
+    </x-nav-link-sidebar>
+
+    <x-nav-link-sidebar :href="route('system.setting.index')" :active="request()->routeIs('system.setting.*')" icon="cog" color="slate">
+        Pengaturan Global
+    </x-nav-link-sidebar>
+
+    <x-nav-link-sidebar :href="route('security.dashboard')" :active="request()->routeIs('security.*')" icon="lock-closed" color="red">
+        Keamanan Siber (SecOps)
     </x-nav-link-sidebar>
 @endif
 
