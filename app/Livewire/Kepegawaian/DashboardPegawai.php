@@ -24,10 +24,16 @@ class DashboardPegawai extends Component
         }
 
         // 1. Statistik Personal
-        $sisaCuti = 12 - PengajuanCuti::where('user_id', $user->id)
+        $cutiDiambil = PengajuanCuti::where('user_id', $user->id)
             ->where('status', 'Disetujui')
             ->whereYear('tanggal_mulai', date('Y'))
-            ->sum('durasi'); // Asumsi ada kolom durasi atau hitung tgl
+            ->get()
+            ->sum(function ($cuti) {
+                return Carbon::parse($cuti->tanggal_mulai)
+                    ->diffInDays(Carbon::parse($cuti->tanggal_selesai)) + 1;
+            });
+
+        $sisaCuti = 12 - $cutiDiambil;
 
         $jadwalHariIni = JadwalJaga::with('shift')
             ->where('pegawai_id', $pegawai->id)
