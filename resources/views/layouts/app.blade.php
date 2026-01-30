@@ -61,7 +61,7 @@
         </style>
     </head>
     <body class="font-sans antialiased text-slate-600 bg-slate-50 selection:bg-indigo-500 selection:text-white">
-        <div class="min-h-screen flex bg-slate-50/50" x-data="{ sidebarOpen: false }">
+        <div class="h-screen flex bg-slate-50/50 overflow-hidden" x-data="{ sidebarOpen: false }">
             
             <!-- Sidebar Navigation (High Tech Style) -->
             @include('layouts.sidebar')
