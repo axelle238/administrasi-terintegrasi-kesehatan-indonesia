@@ -40,7 +40,7 @@ class DashboardPegawai extends Component
             ->whereDate('tanggal', Carbon::today())
             ->first();
 
-        $gajiTerakhir = Penggajian::where('pegawai_id', $pegawai->id)
+        $gajiTerakhir = Penggajian::where('user_id', $user->id)
             ->latest()
             ->first();
 
