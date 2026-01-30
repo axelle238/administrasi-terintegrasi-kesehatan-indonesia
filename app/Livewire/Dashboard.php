@@ -20,6 +20,7 @@ use App\Models\Poli;
 use App\Models\Fasilitas;
 use App\Models\Berita;
 use App\Models\RiwayatLogin;
+use Spatie\Activitylog\Models\Activity;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -69,6 +70,9 @@ class Dashboard extends Component
         // Login Gagal Hari Ini (Indikator Keamanan)
         $loginGagal = RiwayatLogin::whereDate('created_at', Carbon::today())->where('status', 'Gagal')->count();
 
+        // Log Aktivitas Sistem (Audit Trail)
+        $riwayatLog = Activity::with('causer')->latest()->take(5)->get();
+
         return view('livewire.dashboard', [
             // Statistik Utama Global
             'totalPasien' => Pasien::count(),
@@ -108,6 +112,7 @@ class Dashboard extends Component
             'avgWaktuLayanan' => round($avgWaktuLayanan),
             'dataGrafik' => $this->ambilDataGrafik(), 
             'dataPendapatan' => $this->ambilDataPendapatan(),
+            'riwayatLog' => $riwayatLog,
         ])->layout('layouts.app', ['header' => 'Pusat Komando & Eksekutif Dashboard']);
     }
 
