@@ -121,6 +121,7 @@ Route::middleware('auth')->group(function () {
 
     // UKM & Lainnya
     Route::middleware('can:tata_usaha')->group(function () {
+        Route::get('/ukm/dashboard', \App\Livewire\Ukm\Dashboard::class)->name('ukm.dashboard');
         Route::get('/ukm', \App\Livewire\Ukm\Index::class)->name('ukm.index');
         Route::get('/ukm/create', \App\Livewire\Ukm\Create::class)->name('ukm.create');
         Route::get('/ruangan', \App\Livewire\Ruangan\Index::class)->name('ruangan.index');
