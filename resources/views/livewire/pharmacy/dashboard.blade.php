@@ -230,14 +230,14 @@
                         },
                         dataLabels: { enabled: false },
                         stroke: { curve: 'smooth', width: 3 },
-                        colors: ['#0d9488'],
+                        colors: ['#14b8a6'],
                         fill: {
                             type: 'gradient',
                             gradient: {
                                 shadeIntensity: 1,
-                                opacityFrom: 0.45,
+                                opacityFrom: 0.5,
                                 opacityTo: 0.05,
-                                stops: [20, 100]
+                                stops: [0, 90, 100]
                             }
                         },
                         xaxis: {
