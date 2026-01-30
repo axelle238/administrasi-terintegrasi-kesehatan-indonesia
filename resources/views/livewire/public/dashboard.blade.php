@@ -1,149 +1,224 @@
-<div class="space-y-8">
-    <!-- Row 1: Metrics -->
+<div class="space-y-8 animate-fade-in">
+    <!-- Header Dashboard Publik -->
+    <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+        <div>
+            <h2 class="text-3xl font-black text-slate-800 flex items-center gap-4">
+                <div class="p-3 bg-amber-50 rounded-2xl text-amber-600 shadow-sm">
+                    <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                </div>
+                Sentra Komunikasi Masyarakat
+            </h2>
+            <p class="text-slate-500 font-medium mt-2 ml-16 leading-relaxed">
+                Analisis kepuasan pelanggan, monitoring tindak lanjut pengaduan, dan pengelolaan opini publik secara terpadu.
+            </p>
+        </div>
+        <div class="flex items-center gap-3 ml-16 lg:ml-0">
+            <a href="{{ route('admin.masyarakat.pengaduan.index') }}" class="px-6 py-3 bg-slate-800 text-white rounded-2xl text-sm font-black hover:bg-slate-900 transition-all shadow-lg shadow-slate-200 flex items-center gap-2">
+                Tindak Lanjut Pengaduan
+            </a>
+        </div>
+    </div>
+
+    <!-- Global KPI Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-gray-700">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>
-                </div>
-                <div>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Total Pengaduan</p>
-                    <h3 class="text-2xl font-black text-slate-800 dark:text-white">{{ $totalPengaduan }}</h3>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-gray-700">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-green-600">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                </div>
-                <div>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Selesai</p>
-                    <h3 class="text-2xl font-black text-slate-800 dark:text-white">{{ $pengaduanSelesai }}</h3>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-gray-700">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                </div>
-                <div>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Diproses</p>
-                    <h3 class="text-2xl font-black text-slate-800 dark:text-white">{{ $pengaduanProses }}</h3>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-gray-700">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                </div>
-                <div>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Rata-rata Waktu Respon</p>
-                    <h3 class="text-2xl font-black text-slate-800 dark:text-white">{{ $avgResponseTime }} <span class="text-sm font-medium text-slate-400">Jam</span></h3>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Row 2: IKM & Chart -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- IKM Score -->
-        <div class="bg-gradient-to-br from-orange-500 to-amber-600 rounded-2xl p-6 text-white shadow-lg flex flex-col justify-center items-center text-center relative overflow-hidden group">
-            <div class="relative z-10">
-                <h3 class="text-5xl font-black mb-2">{{ number_format($ikmScore, 1) }}<span class="text-2xl opacity-75">/5.0</span></h3>
-                <p class="text-sm font-bold text-orange-100 uppercase tracking-widest mb-4">Indeks Kepuasan Masyarakat</p>
-                
-                <!-- Star Rating Visual -->
-                <div class="flex gap-1 mb-6 text-yellow-300">
-                    @for($i=1; $i<=5; $i++)
-                        @if($i <= round($ikmScore))
-                            <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                        @else
-                            <svg class="w-6 h-6 text-orange-400 fill-current opacity-50" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                        @endif
-                    @endfor
-                </div>
-
-                <div class="inline-flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">
-                    <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" /></svg>
-                    <span class="font-bold">{{ $totalResponden }} Responden</span>
-                </div>
-            </div>
-            <svg class="absolute bottom-0 right-0 w-48 h-48 text-white opacity-10 -mr-10 -mb-10 transform group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+        <div class="bg-gradient-to-br from-amber-500 to-orange-600 p-6 rounded-3xl text-white shadow-xl shadow-amber-500/20 relative overflow-hidden group">
+            <div class="absolute right-0 top-0 w-24 h-24 bg-white/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+            <p class="text-xs font-bold text-amber-100 uppercase tracking-widest mb-1 relative z-10">Skor IKM Real-time</p>
+            <h3 class="text-4xl font-black relative z-10">{{ number_format($ikmScore, 1) }}</h3>
+            <p class="mt-4 text-[10px] font-bold text-amber-100 uppercase relative z-10 italic">Indeks Kepuasan Masyarakat</p>
         </div>
 
-        <!-- Chart -->
-        <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-gray-700">
-            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Tren Pengaduan Bulanan</h3>
-            <div class="h-64 flex items-end justify-between gap-4 px-4">
-                @foreach($grafikPengaduan['data'] as $index => $val)
-                    <div class="flex flex-col items-center flex-1 group">
-                        <div class="w-full bg-orange-100 dark:bg-orange-900/30 rounded-t-lg relative transition-all duration-300 hover:bg-orange-200" 
-                             style="height: {{ $val > 0 ? ($val / (max($grafikPengaduan['data']) ?: 1) * 100) : 0 }}%">
-                             <span class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-bold text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity">{{ $val }}</span>
-                        </div>
-                        <span class="text-[10px] text-slate-400 mt-2 font-bold">{{ $grafikPengaduan['labels'][$index] }}</span>
-                    </div>
-                @endforeach
+        <!-- Total Pengaduan -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between group hover:border-amber-200 transition-all">
+            <div>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Total Pengaduan</p>
+                <h3 class="text-3xl font-black text-slate-800 mt-1">{{ number_format($totalPengaduan) }}</h3>
+            </div>
+            <div class="w-14 h-14 rounded-2xl bg-slate-50 text-slate-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+            </div>
+        </div>
+
+        <!-- Pending Resolution -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between group hover:border-rose-200 transition-all">
+            <div>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Belum Ditangani</p>
+                <h3 class="text-3xl font-black text-rose-600 mt-1">{{ number_format($pengaduanPending) }}</h3>
+            </div>
+            <div class="w-14 h-14 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center group-hover:animate-swing transition-transform">
+                <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </div>
+        </div>
+
+        <!-- Response Time -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between group hover:border-emerald-200 transition-all">
+            <div>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Rata-rata Respon</p>
+                <h3 class="text-3xl font-black text-emerald-600 mt-1">{{ $avgResponseTime }} <span class="text-sm font-medium text-slate-400">Jam</span></h3>
+            </div>
+            <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
             </div>
         </div>
     </div>
 
-    <!-- Row 3: Recent List & Channels -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Recent List -->
-        <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
-            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Aduan Terbaru</h3>
-            <div class="space-y-4">
-                @forelse($pengaduanTerbaru as $p)
-                    <div class="flex justify-between items-center p-4 bg-slate-50 dark:bg-slate-700/30 rounded-xl hover:bg-slate-100 transition-colors">
-                        <div>
-                            <h4 class="text-sm font-bold text-slate-800 dark:text-white">{{ $p->subjek }}</h4>
-                            <p class="text-xs text-slate-500 mt-1">{{ $p->nama_pelapor }} - {{ $p->created_at->diffForHumans() }}</p>
-                        </div>
-                        <span class="px-3 py-1 text-[10px] font-black rounded-full uppercase tracking-widest
-                            @if($p->status == 'Pending') bg-yellow-100 text-yellow-800
-                            @elseif($p->status == 'Diproses') bg-blue-100 text-blue-800
-                            @else bg-green-100 text-green-800 @endif">
-                            {{ $p->status }}
-                        </span>
-                    </div>
-                @empty
-                    <div class="text-center py-6 text-slate-400 text-sm">Belum ada pengaduan.</div>
-                @endforelse
+    <!-- Charts & Feed Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <!-- Main Trend Chart -->
+        <div class="lg:col-span-2 bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100" x-data="chartMasyarakat()">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h4 class="text-xl font-black text-slate-800">Tren Laporan Masyarakat</h4>
+                    <p class="text-xs text-slate-400 font-bold uppercase mt-1">Volume Keluhan 6 Bulan Terakhir</p>
+                </div>
+                <div class="px-4 py-2 bg-slate-50 rounded-xl text-[10px] font-black uppercase text-slate-500 border border-slate-100 italic">Data Terverifikasi</div>
             </div>
-            <div class="mt-6 text-center">
-                <a href="{{ route('admin.masyarakat.pengaduan.index') }}" wire:navigate class="text-xs font-bold text-blue-600 hover:text-blue-800 uppercase tracking-widest">Lihat Semua Pengaduan &rarr;</a>
-            </div>
+            <div id="chart-tren-publik" class="w-full h-[350px]"></div>
         </div>
 
-        <!-- Channels -->
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-700 p-6">
-            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Kanal Pengaduan Utama</h3>
-            <div class="space-y-4">
+        <!-- Channel Distribution -->
+        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+            <h4 class="text-lg font-black text-slate-800 mb-8">Kanal Pengaduan Teraktif</h4>
+            <div class="space-y-6">
                 @foreach($kanalPengaduan as $kanal)
-                    <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
-                                @if(Str::contains($kanal['nama'], 'Web'))
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
-                                @elseif(Str::contains($kanal['nama'], 'Whats'))
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
-                                @else
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                                @endif
-                            </div>
-                            <span class="text-sm font-bold text-slate-700 dark:text-gray-300">{{ $kanal['nama'] }}</span>
-                        </div>
-                        <span class="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded-lg text-xs font-black">{{ $kanal['total'] }}</span>
+                <div class="group">
+                    <div class="flex justify-between items-end mb-2">
+                        <span class="text-sm font-bold text-slate-700">{{ $kanal['nama'] }}</span>
+                        <span class="text-xs font-black text-slate-800">{{ number_format($kanal['total']) }} Lap.</span>
                     </div>
+                    <div class="w-full bg-slate-50 h-1.5 rounded-full overflow-hidden border border-slate-100">
+                        <div class="bg-amber-500 h-full rounded-full transition-all duration-1000 group-hover:bg-amber-600" style="width: {{ ($kanal['total'] / ($totalPengaduan ?: 1)) * 100 }}%"></div>
+                    </div>
+                </div>
                 @endforeach
+            </div>
+
+            <!-- Responden Info -->
+            <div class="mt-10 p-6 bg-slate-900 rounded-3xl text-white relative overflow-hidden group">
+                <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Total Partisipan Survei</p>
+                <div class="flex items-end gap-3">
+                    <h4 class="text-4xl font-black text-white">{{ number_format($totalResponden) }}</h4>
+                    <span class="text-xs font-bold text-emerald-400 mb-1">Masyarakat</span>
+                </div>
+                <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-blue-500/20 rounded-full blur-2xl group-hover:scale-150 transition-transform"></div>
             </div>
         </div>
     </div>
+
+    <!-- Feed Table -->
+    <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+        <div class="px-8 py-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+            <div>
+                <h4 class="text-lg font-black text-slate-800">Laporan & Pengaduan Terbaru</h4>
+                <p class="text-[10px] text-slate-400 font-black uppercase mt-0.5 tracking-wider italic">Real-time Public Voice Monitoring</p>
+            </div>
+            <a href="{{ route('admin.masyarakat.pengaduan.index') }}" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black text-slate-600 hover:text-amber-600 hover:border-amber-200 transition-all">Manajemen Pengaduan &rarr;</a>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="text-[10px] text-slate-400 uppercase bg-white font-black tracking-widest">
+                    <tr>
+                        <th class="px-8 py-5">Pelapor</th>
+                        <th class="px-8 py-5">Subjek / Isu</th>
+                        <th class="px-8 py-5">Waktu Lapor</th>
+                        <th class="px-8 py-5 text-center">Tingkat Urgensi</th>
+                        <th class="px-8 py-5 text-center">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    @forelse($pengaduanTerbaru as $p)
+                    <tr class="hover:bg-slate-50 transition-colors group">
+                        <td class="px-8 py-5 whitespace-nowrap">
+                            <div class="text-sm font-black text-slate-800">{{ $p->nama_pelapor }}</div>
+                            <div class="text-[10px] text-slate-400 font-bold uppercase">{{ $p->email_pelapor ?? '-' }}</div>
+                        </td>
+                        <td class="px-8 py-5">
+                            <span class="text-xs font-bold text-slate-600 px-2 py-1 bg-slate-100 rounded-lg">{{ $p->subjek }}</span>
+                        </td>
+                        <td class="px-8 py-5 whitespace-nowrap text-[10px] font-black text-slate-500 uppercase tracking-tighter">
+                            {{ $p->created_at->translatedFormat('d M Y, H:i') }}
+                        </td>
+                        <td class="px-8 py-5 text-center">
+                            @php
+                                $urgencyColor = match($p->prioritas) {
+                                    'Tinggi' => 'text-rose-600',
+                                    'Sedang' => 'text-amber-600',
+                                    'Rendah' => 'text-blue-600',
+                                    default => 'text-slate-600'
+                                };
+                            @endphp
+                            <span class="text-[10px] font-black uppercase tracking-widest {{ $urgencyColor }}">{{ $p->prioritas ?? 'Standar' }}</span>
+                        </td>
+                        <td class="px-8 py-5 whitespace-nowrap text-center">
+                            @php
+                                $statusStyle = match($p->status) {
+                                    'Selesai' => 'bg-emerald-100 text-emerald-700',
+                                    'Diproses' => 'bg-blue-100 text-blue-700',
+                                    'Pending' => 'bg-amber-100 text-amber-700',
+                                    default => 'bg-slate-100 text-slate-700'
+                                };
+                            @endphp
+                            <span class="px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest {{ $statusStyle }}">
+                                {{ $p->status }}
+                            </span>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr><td colspan="5" class="px-8 py-12 text-center text-slate-400 font-medium italic">Belum ada laporan masuk dari masyarakat.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @push('scripts')
+    <script>
+        function chartMasyarakat() {
+            return {
+                init() {
+                    const data = @json($grafikPengaduan);
+                    const options = {
+                        series: [{
+                            name: 'Laporan Masuk',
+                            data: data.data
+                        }],
+                        chart: {
+                            type: 'bar',
+                            height: 350,
+                            toolbar: { show: false },
+                            fontFamily: 'Plus Jakarta Sans, sans-serif'
+                        },
+                        plotOptions: {
+                            bar: {
+                                borderRadius: 10,
+                                columnWidth: '45%',
+                                dataLabels: { position: 'top' }
+                            }
+                        },
+                        dataLabels: {
+                            enabled: true,
+                            formatter: function (val) { return val },
+                            offsetY: -20,
+                            style: { fontSize: '10px', colors: ["#334155"], fontWeight: 900 }
+                        },
+                        xaxis: {
+                            categories: data.labels,
+                            axisBorder: { show: false },
+                            axisTicks: { show: false },
+                            labels: { style: { colors: '#94a3b8', fontWeight: 700 } }
+                        },
+                        yaxis: {
+                            labels: { style: { colors: '#94a3b8', fontWeight: 700 } }
+                        },
+                        grid: { borderColor: '#f1f5f9', strokeDashArray: 4 },
+                        colors: ['#f59e0b'],
+                        tooltip: { theme: 'dark' }
+                    };
+                    new ApexCharts(document.querySelector("#chart-tren-publik"), options).render();
+                }
+            }
+        }
+    </script>
+    @endpush
 </div>
