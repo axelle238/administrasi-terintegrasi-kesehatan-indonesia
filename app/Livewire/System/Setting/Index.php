@@ -4,11 +4,14 @@ namespace App\Livewire\System\Setting;
 
 use App\Models\Setting;
 use Livewire\Component;
+use Livewire\Attributes\Url;
 use Illuminate\Support\Facades\Cache;
 
 class Index extends Component
 {
+    #[Url(as: 'tab')]
     public $activeTab = 'umum';
+    
     public $form = [];
 
     // Definisi Schema Pengaturan Sistem Lengkap
@@ -125,6 +128,11 @@ class Index extends Component
 
     public function mount()
     {
+        // Jika activeTab tidak ada di schema (misal invalid URL param), reset ke 'umum'
+        if (!array_key_exists($this->activeTab, $this->schema())) {
+            $this->activeTab = 'umum';
+        }
+
         // Load settings from DB, merge with defaults
         $dbSettings = Setting::all()->pluck('value', 'key')->toArray();
         
