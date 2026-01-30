@@ -91,7 +91,9 @@
         <livewire:components.toast-notification />
         
         <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
         @vite(['resources/js/app.js'])
         @livewireScripts
+        @stack('scripts')
     </body>
 </html>
