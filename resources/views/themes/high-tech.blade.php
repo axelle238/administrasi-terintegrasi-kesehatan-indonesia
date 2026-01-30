@@ -306,6 +306,46 @@
     </section>
     @endif
 
+    <!-- Fasilitas Unggulan -->
+    @if(($pengaturan['show_fasilitas'] ?? '1') == '1')
+    <section id="fasilitas" class="py-24 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16">
+                <span class="text-blue-400 font-bold tracking-[0.2em] uppercase text-xs mb-2 block">Sarana & Prasarana</span>
+                <h2 class="text-3xl md:text-5xl font-black text-white mb-6">Fasilitas Unggulan</h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">Dilengkapi dengan peralatan medis modern berstandar internasional untuk menunjang akurasi diagnosa dan kenyamanan pasien.</p>
+            </div>
+
+            @if(isset($fasilitas) && count($fasilitas) > 0)
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    @foreach($fasilitas as $f)
+                    <div class="glass-card rounded-3xl overflow-hidden group">
+                        <div class="h-64 relative overflow-hidden">
+                            @if($f->gambar)
+                                <img src="{{ Storage::url($f->gambar) }}" alt="{{ $f->nama_fasilitas }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            @else
+                                <div class="w-full h-full bg-slate-800 flex items-center justify-center">
+                                    <svg class="w-16 h-16 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                                </div>
+                            @endif
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-80"></div>
+                            <div class="absolute bottom-6 left-6 right-6">
+                                <h3 class="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">{{ $f->nama_fasilitas }}</h3>
+                                <p class="text-sm text-slate-300 line-clamp-2 leading-relaxed">{{ $f->deskripsi }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="glass-panel p-12 text-center rounded-3xl">
+                    <p class="text-slate-400">Data fasilitas belum ditambahkan.</p>
+                </div>
+            @endif
+        </div>
+    </section>
+    @endif
+
     <!-- Berita / Informasi -->
     <section id="berita" class="py-24 relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
