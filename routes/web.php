@@ -73,6 +73,7 @@ Route::get('/survey', \App\Livewire\Survey\Create::class)->name('survey.create')
 Route::get('/pengaduan', \App\Livewire\Masyarakat\PengaduanPublic::class)->name('pengaduan.public');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard/pegawai', \App\Livewire\Kepegawaian\DashboardPegawai::class)->name('kepegawaian.dashboard');
     Route::get('/profile', \App\Livewire\Profile\Edit::class)->name('profile.edit');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/kepegawaian/cuti', \App\Livewire\Kepegawaian\Cuti\Index::class)->name('kepegawaian.cuti.index');

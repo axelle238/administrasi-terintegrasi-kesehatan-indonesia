@@ -129,6 +129,9 @@
 <div class="mt-8 mb-2 px-4">
     <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 font-[Outfit]">Umum</p>
 </div>
+<x-nav-link-sidebar :href="route('kepegawaian.dashboard')" :active="request()->routeIs('kepegawaian.dashboard')" icon="home" color="orange">
+    Dashboard Pegawai
+</x-nav-link-sidebar>
 <x-nav-link-sidebar :href="route('kepegawaian.cuti.index')" :active="request()->routeIs('kepegawaian.cuti.*')" icon="document-text" color="orange">
     Pengajuan Cuti
 </x-nav-link-sidebar>
