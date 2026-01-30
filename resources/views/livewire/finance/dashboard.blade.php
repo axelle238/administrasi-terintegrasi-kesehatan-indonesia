@@ -29,9 +29,20 @@
         <!-- Pendapatan Card -->
         <div class="bg-gradient-to-br from-emerald-600 to-teal-700 p-6 rounded-3xl text-white shadow-xl shadow-emerald-500/20 relative overflow-hidden group">
             <div class="absolute right-0 top-0 w-24 h-24 bg-white/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-            <p class="text-xs font-bold text-emerald-100 uppercase tracking-widest mb-1">Pendapatan Bulan Ini</p>
-            <h3 class="text-2xl font-black">Rp {{ number_format($pendapatanBulanIni, 0, ',', '.') }}</h3>
-            <div class="mt-4 flex items-center justify-between text-[10px] font-bold">
+            <div class="flex justify-between items-start mb-2">
+                <p class="text-xs font-bold text-emerald-100 uppercase tracking-widest relative z-10">Pendapatan Bulan Ini</p>
+                <div class="px-2 py-0.5 rounded bg-white/20 text-[10px] font-black backdrop-blur-sm flex items-center gap-1">
+                    @if($growthMoM >= 0)
+                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                        +{{ number_format($growthMoM, 1) }}%
+                    @else
+                        <svg class="w-3 h-3 text-rose-200" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6 6" /></svg>
+                        {{ number_format($growthMoM, 1) }}%
+                    @endif
+                </div>
+            </div>
+            <h3 class="text-2xl font-black relative z-10">Rp {{ number_format($pendapatanBulanIni, 0, ',', '.') }}</h3>
+            <div class="mt-4 flex items-center justify-between text-[10px] font-bold relative z-10">
                 <span class="bg-emerald-500/30 px-2 py-1 rounded">Hari Ini: Rp {{ number_format($pendapatanHariIni, 0, ',', '.') }}</span>
                 <span class="opacity-70">Gross Income</span>
             </div>
@@ -55,7 +66,16 @@
         <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 relative overflow-hidden">
             <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Beban Operasional</p>
             <h3 class="text-2xl font-black text-rose-600">Rp {{ number_format($totalPengeluaranBulan, 0, ',', '.') }}</h3>
-            <p class="mt-4 text-[10px] text-slate-500 font-bold">Gaji & Pengadaan Barang</p>
+            <div class="flex gap-2 mt-4">
+                <div class="flex-1 bg-slate-50 p-2 rounded-xl text-center border border-slate-100">
+                    <p class="text-[9px] text-slate-400 font-bold uppercase">Gaji</p>
+                    <p class="text-xs font-black text-slate-700">{{ number_format(($pengeluaranGajiBulan / ($totalPengeluaranBulan ?: 1)) * 100, 0) }}%</p>
+                </div>
+                <div class="flex-1 bg-slate-50 p-2 rounded-xl text-center border border-slate-100">
+                    <p class="text-[9px] text-slate-400 font-bold uppercase">Aset</p>
+                    <p class="text-xs font-black text-slate-700">{{ number_format(($pengeluaranBarangBulan / ($totalPengeluaranBulan ?: 1)) * 100, 0) }}%</p>
+                </div>
+            </div>
         </div>
 
         <!-- Piutang Card -->
@@ -85,18 +105,29 @@
 
         <!-- Right Side: Revenue Distribution -->
         <div class="space-y-6">
+            <!-- Revenue Sources (Donut) -->
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100" x-data="chartSources()">
+                <h3 class="font-black text-slate-800 text-lg mb-2">Sumber Pendapatan</h3>
+                <div id="chart-revenue-sources" class="flex justify-center h-[200px]"></div>
+                <div class="grid grid-cols-3 gap-2 mt-2 text-center">
+                    @foreach($distribusiPendapatan['labels'] as $index => $label)
+                    <div class="p-2 bg-slate-50 rounded-lg">
+                        <p class="text-[9px] text-slate-400 font-bold uppercase">{{ $label }}</p>
+                        <p class="text-[10px] font-black text-slate-800">Rp {{ number_format($distribusiPendapatan['data'][$index]/1000000, 1) }}jt</p>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+
             <!-- Revenue by Poli -->
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-                <h3 class="font-black text-slate-800 text-lg mb-6">Revenue by Poliklinik</h3>
-                <div class="space-y-5">
+                <h3 class="font-black text-slate-800 text-lg mb-4">Top 5 Poliklinik</h3>
+                <div class="space-y-4">
                     @foreach($pendapatanPoli as $poli)
                         <div class="group">
-                            <div class="flex justify-between items-end mb-2">
-                                <div>
-                                    <p class="text-sm font-bold text-slate-700">{{ $poli->nama_poli }}</p>
-                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Kontribusi: {{ number_format(($poli->total / ($pendapatanBulanIni ?: 1)) * 100, 1) }}%</p>
-                                </div>
-                                <span class="text-sm font-black text-slate-800">Rp {{ number_format($poli->total, 0, ',', '.') }}</span>
+                            <div class="flex justify-between items-end mb-1">
+                                <span class="text-xs font-bold text-slate-700">{{ $poli->nama_poli }}</span>
+                                <span class="text-xs font-black text-slate-800">Rp {{ number_format($poli->total, 0, ',', '.') }}</span>
                             </div>
                             <div class="w-full bg-slate-50 h-1.5 rounded-full overflow-hidden border border-slate-100">
                                 <div class="bg-emerald-500 h-full rounded-full transition-all duration-1000 group-hover:bg-emerald-600" style="width: {{ ($poli->total / ($pendapatanBulanIni ?: 1)) * 100 }}%"></div>
@@ -104,14 +135,6 @@
                         </div>
                     @endforeach
                 </div>
-            </div>
-
-            <!-- Average per Patient -->
-            <div class="bg-indigo-600 p-6 rounded-3xl shadow-xl shadow-indigo-500/20 text-white relative overflow-hidden group">
-                <div class="absolute right-0 bottom-0 w-24 h-24 bg-white/10 rounded-tl-full -mr-4 -mb-4 transition-transform group-hover:scale-110"></div>
-                <p class="text-xs font-bold text-indigo-100 uppercase tracking-widest mb-2">Metrik Pasien</p>
-                <h4 class="text-2xl font-black mb-1">Rp {{ number_format($rataTransaksiPasien, 0, ',', '.') }}</h4>
-                <p class="text-[10px] text-indigo-200 font-medium italic leading-relaxed">Rata-rata pendapatan yang dihasilkan per kunjungan pasien bulan ini.</p>
             </div>
         </div>
     </div>
@@ -201,14 +224,8 @@
                                 dataLabels: { position: 'top' },
                             },
                         },
-                        dataLabels: {
-                            enabled: false
-                        },
-                        stroke: {
-                            show: true,
-                            width: 2,
-                            colors: ['transparent']
-                        },
+                        dataLabels: { enabled: false },
+                        stroke: { show: true, width: 2, colors: ['transparent'] },
                         xaxis: {
                             categories: data.labels,
                             axisBorder: { show: false },
@@ -224,15 +241,32 @@
                         fill: { opacity: 1 },
                         colors: ['#10b981', '#f43f5e'],
                         tooltip: {
-                            y: {
-                                formatter: function (val) {
-                                    return "Rp " + new Intl.NumberFormat('id-ID').format(val)
-                                }
-                            }
+                            y: { formatter: function (val) { return "Rp " + new Intl.NumberFormat('id-ID').format(val) } }
                         },
                         legend: { show: false }
                     };
                     new ApexCharts(document.querySelector("#chart-finance-main"), options).render();
+                }
+            }
+        }
+
+        function chartSources() {
+            return {
+                init() {
+                    const data = @json($distribusiPendapatan);
+                    const options = {
+                        series: data.data,
+                        labels: data.labels,
+                        chart: { type: 'donut', height: 200, fontFamily: 'Plus Jakarta Sans' },
+                        colors: ['#3b82f6', '#10b981', '#f59e0b'],
+                        plotOptions: { pie: { donut: { size: '65%' } } },
+                        dataLabels: { enabled: false },
+                        legend: { show: false },
+                        tooltip: {
+                            y: { formatter: function (val) { return "Rp " + new Intl.NumberFormat('id-ID').format(val) } }
+                        }
+                    };
+                    new ApexCharts(document.querySelector("#chart-revenue-sources"), options).render();
                 }
             }
         }
