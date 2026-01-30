@@ -109,9 +109,11 @@
 <div class="mt-6 mb-2 px-4">
     <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 font-display">Personal</p>
 </div>
-<x-nav.link :href="route('kepegawaian.dashboard')" :active="request()->routeIs('kepegawaian.dashboard')" icon="user">
-    <x-slot:slot>
+<x-nav.dropdown label="Portal Pegawai" :active="request()->routeIs('kepegawaian.dashboard') || request()->routeIs('kepegawaian.cuti.*') || request()->routeIs('profile.*')">
+    <x-slot:icon>
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-    </x-slot:slot>
-    Portal Pegawai
-</x-nav.link>
+    </x-slot:icon>
+    <x-nav.link-child :href="route('kepegawaian.dashboard')" :active="request()->routeIs('kepegawaian.dashboard')">Dashboard Saya</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.cuti.index')" :active="request()->routeIs('kepegawaian.cuti.*')">Pengajuan Cuti</x-nav.link-child>
+    <x-nav.link-child :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">Profil Saya</x-nav.link-child>
+</x-nav.dropdown>

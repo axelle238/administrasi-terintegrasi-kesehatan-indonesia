@@ -42,6 +42,7 @@
         </style>
     </head>
     <body class="font-sans text-gray-900 dark:text-gray-100 antialiased transition-colors duration-300">
+        <livewire:components.toast-notification />
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-pattern dark:bg-gray-900 relative">
             
             <!-- Dark Mode Toggle -->
