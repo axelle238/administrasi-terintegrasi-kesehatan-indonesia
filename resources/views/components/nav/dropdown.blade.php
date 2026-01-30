@@ -10,7 +10,7 @@ $isActive = $active ?? false;
         <div class="flex items-center gap-3">
             @if($icon)
                 <div class="{{ $isActive ? 'text-blue-600' : 'text-slate-400 group-hover:text-blue-500' }} transition-colors">
-                    {{ $slot }} <!-- Icon Slot -->
+                    {{ $icon }} <!-- Corrected: Use $icon variable for icon slot -->
                 </div>
             @endif
             <span class="tracking-wide">{{ $label }}</span>
@@ -28,6 +28,6 @@ $isActive = $active ?? false;
          x-transition:leave-start="opacity-100 translate-y-0"
          x-transition:leave-end="opacity-0 -translate-y-2"
          class="mt-1 ml-4 pl-4 border-l-2 border-slate-100 space-y-1">
-         {{ $children }}
+         {{ $slot }} <!-- Corrected: Use $slot for content -->
     </div>
 </div>
