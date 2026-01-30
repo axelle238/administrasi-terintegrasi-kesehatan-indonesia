@@ -85,7 +85,7 @@
                     <h3 class="text-xl font-black text-slate-800">Tren Penggunaan Obat</h3>
                     <p class="text-sm text-slate-400 font-medium">Volume distribusi obat harian selama 7 hari terakhir.</p>
                 </div>
-                <span class="px-3 py-1.5 bg-teal-50 text-teal-600 rounded-lg text-xs font-bold uppercase tracking-wider border border-teal-100">Live Data</span>
+                <span class="px-3 py-1.5 bg-teal-50 text-teal-600 rounded-lg text-xs font-bold uppercase tracking-wider border border-teal-100">Data Terkini</span>
             </div>
             <div id="chart-tren-farmasi" class="w-full h-[350px]"></div>
         </div>

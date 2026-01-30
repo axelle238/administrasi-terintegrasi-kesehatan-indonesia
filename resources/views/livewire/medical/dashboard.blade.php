@@ -24,7 +24,7 @@
 
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between group hover:border-purple-200 transition-colors">
             <div>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Avg Waktu Layanan</p>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Rata-rata Waktu</p>
                 <h3 class="text-3xl font-black text-slate-800 mt-1">{{ number_format($avgWaktuLayanan, 0) }} <span class="text-sm font-medium text-slate-400">Min</span></h3>
             </div>
             <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform">

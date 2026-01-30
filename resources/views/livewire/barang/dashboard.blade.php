@@ -174,7 +174,7 @@
                                     </div>
                                     <div>
                                         <p class="text-sm font-black text-slate-800">{{ $m->barang->nama_barang ?? 'Alat Medis' }}</p>
-                                        <p class="text-[10px] text-slate-400 font-bold uppercase">SN: {{ $m->barang->nomor_seri ?? '-' }}</p>
+                                        <p class="text-[10px] text-slate-400 font-bold uppercase">No. Seri: {{ $m->barang->nomor_seri ?? '-' }}</p>
                                     </div>
                                 </div>
                                 <span class="px-3 py-1 bg-amber-100 text-amber-700 rounded-lg text-[10px] font-black uppercase">Segera</span>
