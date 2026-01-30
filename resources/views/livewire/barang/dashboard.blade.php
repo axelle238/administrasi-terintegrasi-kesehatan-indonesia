@@ -25,26 +25,28 @@
         <!-- Total Aset -->
         <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between group hover:border-indigo-200 transition-all">
             <div>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Total Populasi Aset</p>
-                <h3 class="text-3xl font-black text-slate-800 mt-1">{{ number_format($totalAset) }} <span class="text-sm font-medium text-slate-400">Unit</span></h3>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Total Inventaris</p>
+                <h3 class="text-3xl font-black text-slate-800 mt-1">{{ number_format($totalAset) }} <span class="text-sm font-medium text-slate-400">Item</span></h3>
             </div>
             <div class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:rotate-6 transition-transform">
                 <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
             </div>
         </div>
 
-        <!-- Nilai Perolehan -->
-        <div class="bg-indigo-600 p-6 rounded-3xl shadow-xl shadow-indigo-500/20 text-white relative overflow-hidden group">
+        <!-- Alat Kesehatan (Priority) -->
+        <div class="bg-gradient-to-br from-indigo-600 to-violet-700 p-6 rounded-3xl text-white shadow-xl shadow-indigo-500/20 relative overflow-hidden group">
             <div class="absolute right-0 top-0 w-20 h-24 bg-white/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-            <p class="text-xs font-bold text-indigo-100 uppercase tracking-widest mb-1 relative z-10">Nilai Perolehan Aset</p>
-            <h3 class="text-xl font-black relative z-10 truncate">Rp {{ number_format($nilaiAsetTotal, 0, ',', '.') }}</h3>
-            <p class="mt-4 text-[10px] font-bold text-indigo-200 uppercase relative z-10 italic">Evaluasi Nilai Kapital</p>
+            <p class="text-xs font-bold text-indigo-100 uppercase tracking-widest mb-1 relative z-10">Alat Kesehatan (Alkes)</p>
+            <h3 class="text-3xl font-black relative z-10">{{ number_format($totalAlkes) }} <span class="text-sm font-medium text-indigo-200">Unit</span></h3>
+            <p class="mt-4 text-[10px] font-bold text-indigo-200 uppercase relative z-10 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Critical Assets
+            </p>
         </div>
 
         <!-- Kondisi Baik -->
         <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between group hover:border-emerald-200 transition-all">
             <div>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Aset Kondisi Baik</p>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Kondisi Prima</p>
                 <h3 class="text-3xl font-black text-emerald-600 mt-1">{{ number_format($kondisiStats['Baik'] ?? 0) }}</h3>
             </div>
             <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -52,33 +54,36 @@
             </div>
         </div>
 
-        <!-- Maintenance Alert -->
-        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between group hover:border-rose-200 transition-all">
-            @php $jmlMaintenance = \App\Models\Maintenance::where('status', 'Terjadwal')->count(); @endphp
+        <!-- Nilai Aset -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between group hover:border-amber-200 transition-all">
             <div>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Maintenance Terjadwal</p>
-                <h3 class="text-3xl font-black text-rose-600 mt-1">{{ $jmlMaintenance }} <span class="text-sm font-medium text-slate-400">Unit</span></h3>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Total Valuasi</p>
+                <h3 class="text-xl font-black text-amber-600 mt-1 truncate">Rp {{ number_format($nilaiAsetTotal/1000000, 0, ',', '.') }} Jt</h3>
             </div>
-            <div class="w-14 h-14 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center group-hover:animate-swing transition-transform">
-                <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:animate-swing transition-transform">
+                <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             </div>
         </div>
     </div>
 
     <!-- Detailed Analysis & Tabs -->
     <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
-        <div class="px-8 pt-6 border-b border-slate-50 flex gap-10">
-            <button wire:click="setTab('ikhtisar')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative {{ $activeTab == 'ikhtisar' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600' }}">
+        <div class="px-8 pt-6 border-b border-slate-50 flex gap-10 overflow-x-auto">
+            <button wire:click="setTab('ikhtisar')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $activeTab == 'ikhtisar' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600' }}">
                 Ikhtisar & Lokasi
                 @if($activeTab == 'ikhtisar') <div class="absolute bottom-0 left-0 w-full h-1 bg-indigo-600 rounded-t-full"></div> @endif
             </button>
-            <button wire:click="setTab('stok')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative {{ $activeTab == 'stok' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600' }}">
+            <button wire:click="setTab('stok')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $activeTab == 'stok' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600' }}">
                 Alur Inventaris
                 @if($activeTab == 'stok') <div class="absolute bottom-0 left-0 w-full h-1 bg-indigo-600 rounded-t-full"></div> @endif
             </button>
-            <button wire:click="setTab('maintenance')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative {{ $activeTab == 'maintenance' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600' }}">
+            <button wire:click="setTab('maintenance')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $activeTab == 'maintenance' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600' }}">
                 Jadwal Pemeliharaan
                 @if($activeTab == 'maintenance') <div class="absolute bottom-0 left-0 w-full h-1 bg-indigo-600 rounded-t-full"></div> @endif
+            </button>
+            <button wire:click="setTab('pengadaan')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $activeTab == 'pengadaan' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600' }}">
+                Pengadaan Baru
+                @if($activeTab == 'pengadaan') <div class="absolute bottom-0 left-0 w-full h-1 bg-indigo-600 rounded-t-full"></div> @endif
             </button>
         </div>
 
@@ -155,6 +160,25 @@
                     </div>
                 </div>
                 <div id="chart-flow-stok" class="w-full h-[350px]"></div>
+                
+                <div class="mt-8">
+                    <h4 class="font-black text-slate-800 uppercase tracking-widest text-xs mb-4">Peringatan Stok Menipis (BHP)</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        @forelse($tabData['lowStockItems'] ?? [] as $item)
+                        <div class="p-4 bg-rose-50 border border-rose-100 rounded-2xl flex justify-between items-center">
+                            <div>
+                                <p class="text-sm font-black text-slate-800">{{ $item->nama_barang }}</p>
+                                <p class="text-[10px] text-rose-500 font-bold">Stok: {{ $item->stok }} {{ $item->satuan }}</p>
+                            </div>
+                            <a href="{{ route('barang.pengadaan.create') }}" class="px-3 py-1.5 bg-white text-rose-600 text-[10px] font-black rounded-lg hover:bg-rose-600 hover:text-white transition-colors shadow-sm">Reorder</a>
+                        </div>
+                        @empty
+                        <div class="col-span-3 p-6 text-center text-slate-400 text-sm font-medium border-2 border-dashed border-slate-100 rounded-2xl">
+                            Stok aman. Tidak ada barang di bawah batas minimum.
+                        </div>
+                        @endforelse
+                    </div>
+                </div>
             </div>
             @endif
 
@@ -163,17 +187,25 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
                     <!-- Upcoming Maintenance -->
                     <div class="space-y-6">
-                        <h4 class="text-lg font-black text-slate-800">Pemeliharaan Mendatang (14 Hari)</h4>
-                        <div class="space-y-4">
+                        <h4 class="text-lg font-black text-slate-800">Pemeliharaan Mendatang (30 Hari)</h4>
+                        <div class="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                             @forelse($tabData['maintenanceDue'] ?? [] as $m)
-                            <div class="p-5 bg-white border border-slate-100 rounded-3xl shadow-sm flex items-center justify-between group hover:border-indigo-200 transition-all">
+                            @php
+                                $isAlkes = str_contains(strtolower($m->barang->kategori->nama_kategori ?? ''), 'medis') || str_contains(strtolower($m->barang->kategori->nama_kategori ?? ''), 'alat');
+                            @endphp
+                            <div class="p-5 bg-white border {{ $isAlkes ? 'border-indigo-100 shadow-indigo-500/5' : 'border-slate-100' }} rounded-3xl shadow-sm flex items-center justify-between group hover:border-indigo-200 transition-all">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-black text-xs">
+                                    <div class="w-12 h-12 rounded-2xl {{ $isAlkes ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-50 text-slate-600' }} flex items-center justify-center font-black text-xs shrink-0">
                                         {{ \Carbon\Carbon::parse($m->tanggal_berikutnya)->format('d') }}<br>
                                         {{ \Carbon\Carbon::parse($m->tanggal_berikutnya)->format('M') }}
                                     </div>
                                     <div>
-                                        <p class="text-sm font-black text-slate-800">{{ $m->barang->nama_barang ?? 'Alat Medis' }}</p>
+                                        <div class="flex items-center gap-2">
+                                            <p class="text-sm font-black text-slate-800">{{ $m->barang->nama_barang ?? 'Aset' }}</p>
+                                            @if($isAlkes)
+                                                <span class="px-1.5 py-0.5 bg-indigo-100 text-indigo-600 rounded text-[8px] font-black uppercase tracking-wider">Medis</span>
+                                            @endif
+                                        </div>
                                         <p class="text-[10px] text-slate-400 font-bold uppercase">No. Seri: {{ $m->barang->nomor_seri ?? '-' }}</p>
                                     </div>
                                 </div>
@@ -200,6 +232,48 @@
                             <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-indigo-200/30 rounded-full blur-2xl"></div>
                         </div>
                     </div>
+                </div>
+            </div>
+            @endif
+
+            @if($activeTab == 'pengadaan')
+            <div class="space-y-8 animate-fade-in-up">
+                <div class="flex justify-between items-center">
+                    <h4 class="text-lg font-black text-slate-800">Daftar Pengajuan Pengadaan</h4>
+                    <span class="text-xs font-bold text-slate-500">Total Approved Tahun Ini: Rp {{ number_format($tabData['totalPengadaanTahunIni'] ?? 0, 0, ',', '.') }}</span>
+                </div>
+                
+                <div class="overflow-x-auto border border-slate-100 rounded-3xl">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-50 text-slate-400 font-black uppercase tracking-wider">
+                            <tr>
+                                <th class="px-6 py-4">No. Pengajuan</th>
+                                <th class="px-6 py-4">Tanggal</th>
+                                <th class="px-6 py-4">Diajukan Oleh</th>
+                                <th class="px-6 py-4">Keterangan</th>
+                                <th class="px-6 py-4 text-center">Status</th>
+                                <th class="px-6 py-4 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50">
+                            @forelse($tabData['pengadaanPending'] ?? [] as $p)
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-bold text-indigo-600">{{ $p->no_pengajuan }}</td>
+                                <td class="px-6 py-4 font-medium text-slate-600">{{ \Carbon\Carbon::parse($p->tanggal_pengajuan)->translatedFormat('d M Y') }}</td>
+                                <td class="px-6 py-4 font-bold text-slate-800">{{ $p->user->name ?? 'Staff' }}</td>
+                                <td class="px-6 py-4 text-slate-500">{{ Str::limit($p->keterangan, 30) }}</td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="px-2 py-1 bg-amber-100 text-amber-700 rounded text-[10px] font-black uppercase">Pending</span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <a href="#" class="text-indigo-600 hover:text-indigo-800 font-bold hover:underline">Review</a>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr><td colspan="6" class="px-6 py-10 text-center text-slate-400 font-medium">Tidak ada pengajuan pending.</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
             @endif

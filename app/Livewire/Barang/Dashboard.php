@@ -25,9 +25,17 @@ class Dashboard extends Component
     {
         // === GLOBAL METRICS ===
         $totalAset = Barang::count();
-        $nilaiAsetTotal = Barang::where('is_asset', true)->sum(DB::raw('harga_perolehan * stok')); // Asumsi simplified valuation
+        // Nilai Aset (Estimasi Valuasi)
+        $nilaiAsetTotal = Barang::where('is_asset', true)->sum(DB::raw('harga_perolehan * stok'));
         
-        // Kondisi Aset
+        // Alat Kesehatan (Alkes) Specific Metric
+        $totalAlkes = Barang::whereHas('kategori', function($q) {
+            $q->where('nama_kategori', 'like', '%Medis%')
+              ->orWhere('nama_kategori', 'like', '%Kesehatan%')
+              ->orWhere('nama_kategori', 'like', '%Alat%');
+        })->count();
+
+        // Kondisi Aset Stats
         $kondisiStats = [
             'Baik' => Barang::where('kondisi', 'Baik')->count(),
             'PerluPerbaikan' => Barang::where('kondisi', 'Rusak Ringan')->count(),
@@ -56,30 +64,37 @@ class Dashboard extends Component
 
         // === TAB 2: MONITORING STOK ===
         if ($this->activeTab == 'stok') {
-            $tabData['lowStockItems'] = Barang::where('is_asset', false) // Consumables only
-                ->where('stok', '<=', 10) // Threshold warning
+            $tabData['lowStockItems'] = Barang::where('is_asset', false) // Consumables / BHP
+                ->where('stok', '<=', 10) // Alert Threshold
                 ->orderBy('stok')
+                ->take(10)
                 ->get();
             
-            // Barang Masuk vs Keluar (7 Hari Terakhir) - Simulasi via Riwayat
+            // Grafik Arus Stok 7 Hari
             $tabData['flowStok'] = $this->getStockFlow();
         }
 
         // === TAB 3: MAINTENANCE & KALIBRASI ===
         if ($this->activeTab == 'maintenance') {
-            $tabData['maintenanceDue'] = Maintenance::with('barang')
-                ->whereDate('tanggal_berikutnya', '<=', now()->addDays(14))
-                ->whereDate('tanggal_berikutnya', '>=', now())
-                ->orderBy('tanggal_berikutnya')
-                ->get();
+            // Semua Maintenance Terjadwal
+            $maintenanceQuery = Maintenance::with(['barang.kategori'])
+                ->where('status', 'Terjadwal')
+                ->whereDate('tanggal_berikutnya', '<=', now()->addDays(30)); // 30 hari kedepan
+
+            // Prioritaskan Alkes
+            $tabData['maintenanceDue'] = $maintenanceQuery->get()->sortBy(function($m) {
+                $isAlkes = str_contains(strtolower($m->barang->kategori->nama_kategori ?? ''), 'medis');
+                return $isAlkes ? 0 : 1; // Alkes first
+            });
             
             $tabData['biayaMaintenanceBulanIni'] = Maintenance::whereMonth('tanggal_maintenance', Carbon::now()->month)
+                ->whereYear('tanggal_maintenance', Carbon::now()->year)
                 ->sum('biaya');
         }
 
         // === TAB 4: PENGADAAN ===
         if ($this->activeTab == 'pengadaan') {
-            $tabData['pengadaanPending'] = PengadaanBarang::where('status', 'Pending')->get();
+            $tabData['pengadaanPending'] = PengadaanBarang::where('status', 'Pending')->latest()->get();
             $tabData['totalPengadaanTahunIni'] = PengadaanBarang::whereYear('tanggal_pengadaan', Carbon::now()->year)
                 ->where('status', 'Selesai')
                 ->sum('total_harga');
@@ -88,6 +103,7 @@ class Dashboard extends Component
         return view('livewire.barang.dashboard', compact(
             'totalAset',
             'nilaiAsetTotal',
+            'totalAlkes',
             'kondisiStats',
             'tabData'
         ))->layout('layouts.app', ['header' => 'Manajemen Aset & Inventaris']);
@@ -95,7 +111,6 @@ class Dashboard extends Component
 
     private function getStockFlow()
     {
-        // Logika grafik sederhana Masuk vs Keluar
         $dates = [];
         $in = [];
         $out = [];
