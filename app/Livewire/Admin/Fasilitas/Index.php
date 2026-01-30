@@ -33,7 +33,16 @@ class Index extends Component
             ->latest()
             ->paginate(10);
 
-        return view('livewire.admin.fasilitas.index', compact('fasilitas'))
-            ->layout('layouts.app', ['header' => 'Manajemen Fasilitas & Sarana']);
+        // Statistik Dashboard Fasilitas
+        $totalFasilitas = Fasilitas::count();
+        $totalAktif = Fasilitas::where('is_active', true)->count();
+        $totalNonAktif = Fasilitas::where('is_active', false)->count();
+
+        return view('livewire.admin.fasilitas.index', compact(
+            'fasilitas',
+            'totalFasilitas',
+            'totalAktif',
+            'totalNonAktif'
+        ))->layout('layouts.app', ['header' => 'Manajemen Fasilitas & Sarana']);
     }
 }

@@ -32,7 +32,18 @@ class Index extends Component
             ->latest()
             ->paginate(10);
 
-        return view('livewire.admin.berita.index', compact('berita'))
-            ->layout('layouts.app', ['header' => 'Manajemen Informasi & Berita']);
+        // Statistik Dashboard Berita
+        $totalBerita = Berita::count();
+        $totalPublished = Berita::where('status', 'published')->count();
+        $totalDraft = Berita::where('status', 'draft')->count();
+        $totalViews = Berita::sum('views'); // Pastikan kolom views ada, jika tidak, hapus atau ganti logika
+
+        return view('livewire.admin.berita.index', compact(
+            'berita', 
+            'totalBerita', 
+            'totalPublished', 
+            'totalDraft',
+            'totalViews'
+        ))->layout('layouts.app', ['header' => 'Manajemen Informasi & Berita']);
     }
 }
