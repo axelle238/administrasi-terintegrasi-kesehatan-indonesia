@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Lembur extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'user_id', 'tanggal',
+        'jam_mulai', 'jam_selesai',
+        'alasan_lembur', 'output_kerja',
+        'status', 'catatan_approval'
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+}
