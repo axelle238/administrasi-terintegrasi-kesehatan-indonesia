@@ -59,8 +59,19 @@ class MaintenanceLog extends Component
         // Optional: Update asset condition if it was repair
         if ($this->jenis_kegiatan == 'Perbaikan') {
             $barang = Barang::find($this->barang_id);
-            if ($barang->kondisi == 'Rusak') {
+            if ($barang->kondisi == 'Rusak' || $barang->kondisi == 'Rusak Berat') {
                 $barang->update(['kondisi' => 'Baik']);
+            }
+        }
+
+        // Auto-update Calibration Data for Medical Assets
+        if ($this->jenis_kegiatan == 'Kalibrasi') {
+            $barang = Barang::with('detailMedis')->find($this->barang_id);
+            if ($barang && $barang->detailMedis) {
+                $barang->detailMedis->update([
+                    'kalibrasi_terakhir' => $this->tanggal_maintenance,
+                    'kalibrasi_selanjutnya' => $this->tanggal_berikutnya,
+                ]);
             }
         }
 
