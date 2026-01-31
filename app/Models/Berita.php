@@ -16,6 +16,7 @@ class Berita extends Model
         'thumbnail',
         'kategori',
         'status',
+        'views',
         'user_id'
     ];
 
