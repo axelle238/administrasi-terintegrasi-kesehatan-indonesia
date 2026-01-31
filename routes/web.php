@@ -173,6 +173,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/barang/mutasi', \App\Livewire\Barang\Mutasi\Index::class)->name('barang.mutasi.index');
         Route::get('/barang/mutasi/{mutasi}/print', [\App\Http\Controllers\MutasiController::class, 'print'])->name('barang.mutasi.print');
         Route::get('/barang/penghapusan/{penghapusan}/print', [\App\Http\Controllers\PenghapusanController::class, 'print'])->name('barang.penghapusan.print');
+        Route::get('/barang/peminjaman/create', \App\Livewire\Barang\Peminjaman\Create::class)->name('barang.peminjaman.create');
+        Route::get('/barang/peminjaman/{peminjaman}/kembali', \App\Livewire\Barang\Peminjaman\Kembali::class)->name('barang.peminjaman.kembali');
         Route::get('/barang/peminjaman', \App\Livewire\Barang\Peminjaman\Index::class)->name('barang.peminjaman.index');
         Route::get('/barang/peminjaman/{peminjaman}/print', [\App\Http\Controllers\PeminjamanController::class, 'print'])->name('barang.peminjaman.print');
         Route::get('/barang/print-labels', \App\Livewire\Barang\PrintLabelsBulk::class)->name('barang.print-labels-bulk');
