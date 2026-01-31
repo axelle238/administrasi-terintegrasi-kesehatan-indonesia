@@ -85,6 +85,31 @@
                     @endforeach
                 </div>
             </div>
+
+            <!-- Dokter Jaga Hari Ini (NEW) -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <h4 class="font-bold text-slate-800 mb-4">Dokter Bertugas Hari Ini</h4>
+                <div class="space-y-3 max-h-[300px] overflow-y-auto custom-scrollbar">
+                    @forelse($dataTab['jadwalDokter'] ?? [] as $jadwal)
+                    <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-transparent hover:border-blue-100 transition-colors">
+                        <div class="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-blue-600 font-bold text-xs shadow-sm">
+                            {{ substr($jadwal->pegawai->nama ?? 'Dr', 0, 1) }}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-bold text-slate-800 truncate">{{ $jadwal->pegawai->nama ?? '-' }}</p>
+                            <div class="flex items-center gap-2 text-xs text-slate-500">
+                                <span class="bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-[4px] font-bold text-[10px] uppercase">{{ $jadwal->poli->nama_poli ?? 'Umum' }}</span>
+                                <span>{{ $jadwal->shift->nama_shift ?? 'Shift' }} ({{ \Carbon\Carbon::parse($jadwal->shift->jam_masuk ?? '00:00')->format('H:i') }} - {{ \Carbon\Carbon::parse($jadwal->shift->jam_keluar ?? '00:00')->format('H:i') }})</span>
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="text-center py-8 text-slate-400 text-sm">
+                        Tidak ada jadwal dokter hari ini.
+                    </div>
+                    @endforelse
+                </div>
+            </div>
         </div>
         @endif
 

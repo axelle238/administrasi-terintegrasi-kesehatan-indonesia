@@ -51,6 +51,12 @@ class Dashboard extends Component
                 ->select('poli_id', DB::raw('count(*) as total'))
                 ->groupBy('poli_id')
                 ->get();
+            
+            // Tambahan: Jadwal Dokter Hari Ini
+            $dataTab['jadwalDokter'] = \App\Models\JadwalJaga::with(['pegawai', 'shift', 'poli'])
+                ->whereDate('tanggal', Carbon::today())
+                ->get();
+
             $dataTab['pasienBaru'] = Pasien::whereMonth('created_at', Carbon::now()->month)->count();
             $dataTab['pasienLama'] = max(0, $totalKunjunganBulanIni - $dataTab['pasienBaru']);
         }
