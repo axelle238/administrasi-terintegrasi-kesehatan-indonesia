@@ -3,91 +3,96 @@
 namespace App\Livewire\Barang\Pengadaan;
 
 use App\Models\PengadaanBarang;
+use App\Models\Barang;
+use App\Models\RiwayatBarang;
+use App\Models\KategoriBarang;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class Index extends Component
 {
     use WithPagination;
 
     public $search = '';
-
+    
+    // Approval
     public function approve($id)
+    {
+        $pengadaan = PengadaanBarang::find($id);
+        
+        if ($pengadaan && $pengadaan->status === 'Pending') {
+            $pengadaan->update([
+                'status' => 'Disetujui', // Menunggu barang datang
+                'disetujui_oleh' => Auth::id(),
+                'tanggal_disetujui' => now(),
+            ]);
+            $this->dispatch('notify', 'success', 'Pengajuan disetujui. Menunggu penerimaan barang.');
+        }
+    }
+
+    // Goods Receipt (Penerimaan Barang)
+    public function receive($id)
     {
         $pengadaan = PengadaanBarang::with('details')->find($id);
         
-        if (!$pengadaan) {
-            $this->dispatch('notify', 'error', 'Data tidak ditemukan.');
+        if (!$pengadaan || $pengadaan->status !== 'Disetujui') {
+            $this->dispatch('notify', 'error', 'Hanya pengadaan disetujui yang bisa diproses terima.');
             return;
         }
 
-        if ($pengadaan->status !== 'Pending') {
-            $this->dispatch('notify', 'error', 'Hanya pengajuan status Pending yang bisa disetujui.');
-            return;
-        }
-
-        \Illuminate\Support\Facades\DB::transaction(function () use ($pengadaan) {
+        DB::transaction(function () use ($pengadaan) {
             foreach ($pengadaan->details as $detail) {
-                // Update Approved Quantity (assume approved = requested for now, or use a modal to edit this later)
-                $detail->update(['jumlah_disetujui' => $detail->jumlah_minta]);
-
-                $qty = $detail->jumlah_disetujui;
+                // Gunakan jumlah disetujui, jika null gunakan jumlah minta
+                $qty = $detail->jumlah_disetujui ?? $detail->jumlah_minta;
                 $barang = null;
 
                 if ($detail->barang_id) {
-                    // Existing Item
-                    $barang = \App\Models\Barang::find($detail->barang_id);
+                    $barang = Barang::find($detail->barang_id);
                     if ($barang) {
                         $barang->increment('stok', $qty);
                     }
                 } else {
-                    // New Item - Create Master Data
-                    // We need a category. Since we don't have it in the form, we might set a default or just pick the first one?
-                    // Better approach: Prompt user to map it, but for now let's auto-create with a "Umum" category or null if nullable.
-                    // The 'kategori_barang_id' is NOT NULL in migration. We have a problem.
-                    // Workaround: Find first category or create 'Uncategorized'.
-                    $kategori = \App\Models\KategoriBarang::first();
-                    $kategoriId = $kategori ? $kategori->id : 1; // Fallback
+                    // Auto-create new item if not mapped
+                    $kategori = KategoriBarang::first();
+                    $kategoriId = $kategori ? $kategori->id : 1; 
 
-                    $barang = \App\Models\Barang::create([
+                    $barang = Barang::create([
                         'kategori_barang_id' => $kategoriId,
-                        'kode_barang' => 'BRG-' . strtoupper(uniqid()),
+                        'kode_barang' => 'BRG-' . strtoupper(uniqid()), // Sebaiknya auto-numbering sequence
                         'nama_barang' => $detail->nama_barang_baru,
                         'stok' => $qty,
                         'satuan' => $detail->satuan,
                         'kondisi' => 'Baik',
                         'tanggal_pengadaan' => now(),
-                        'lokasi_penyimpanan' => 'Gudang Utama', // Default
-                        'is_asset' => false // Default to consumable? Or asset? Safe to say false.
+                        'lokasi_penyimpanan' => 'Gudang Utama',
+                        'is_asset' => false
                     ]);
                     
-                    // Link the detail to the new barang
                     $detail->update(['barang_id' => $barang->id]);
                 }
 
+                // Log History
                 if ($barang) {
-                    // Log History
-                    \App\Models\RiwayatBarang::create([
+                    RiwayatBarang::create([
                         'barang_id' => $barang->id,
                         'user_id' => Auth::id(),
-                        'jenis_transaksi' => 'Masuk',
+                        'jenis_transaksi' => 'Pengadaan', // Procurement
                         'jumlah' => $qty,
                         'stok_terakhir' => $barang->stok,
                         'tanggal' => now(),
-                        'keterangan' => 'Pengadaan No: ' . $pengadaan->nomor_pengajuan
+                        'keterangan' => 'Penerimaan Pengadaan No: ' . $pengadaan->nomor_pengajuan
                     ]);
                 }
             }
 
             $pengadaan->update([
-                'status' => 'Disetujui',
-                'disetujui_oleh' => Auth::id(),
-                'tanggal_disetujui' => now(),
+                'status' => 'Selesai', // Closed/Received
             ]);
         });
 
-        $this->dispatch('notify', 'success', 'Pengajuan disetujui dan stok telah ditambahkan.');
+        $this->dispatch('notify', 'success', 'Barang diterima dan stok telah ditambahkan.');
     }
 
     public function reject($id)

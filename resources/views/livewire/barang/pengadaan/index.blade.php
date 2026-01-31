@@ -1,98 +1,101 @@
-<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="space-y-6">
+    <!-- Header & Action -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
         <div>
-            <h2 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Pengadaan Barang
-            </h2>
-            <p class="text-sm text-gray-500 mt-1 ml-10">
-                Kelola pengajuan kebutuhan barang dan aset baru.
-            </p>
+            <h2 class="text-2xl font-black text-slate-800">Pengadaan Barang</h2>
+            <p class="text-sm text-slate-500">Kelola pengajuan pembelian, persetujuan, dan penerimaan barang masuk.</p>
         </div>
-        <a href="{{ route('barang.pengadaan.create') }}" wire:navigate class="inline-flex items-center px-5 py-2.5 bg-teal-600 text-white rounded-xl font-semibold text-sm shadow-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-all transform hover:-translate-y-0.5">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
+        <a href="{{ route('barang.pengadaan.create') }}" class="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/30 flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
             Buat Pengajuan
         </a>
     </div>
 
-    <!-- List -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <!-- Table -->
+    <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+        <div class="p-6 border-b border-slate-100">
+            <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari nomor pengajuan..." class="w-full md:w-64 pl-4 pr-4 py-2 bg-slate-50 border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500">
+        </div>
+        
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-100">
-                <thead class="bg-gray-50/50">
+            <table class="w-full text-sm text-left">
+                <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
                     <tr>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">No. Pengajuan</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Tanggal</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Pemohon</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider hidden md:table-cell">Supplier</th>
-                        <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Aksi</th>
+                        <th class="px-6 py-4 font-bold">No. Pengajuan</th>
+                        <th class="px-6 py-4 font-bold">Tanggal</th>
+                        <th class="px-6 py-4 font-bold">Pemohon</th>
+                        <th class="px-6 py-4 font-bold">Supplier</th>
+                        <th class="px-6 py-4 font-bold text-right">Total Estimasi</th>
+                        <th class="px-6 py-4 font-bold text-center">Status</th>
+                        <th class="px-6 py-4 font-bold text-center">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100 bg-white">
-                    @forelse($pengadaans as $pengadaan)
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-bold text-gray-900">{{ $pengadaan->nomor_pengajuan }}</div>
-                                <div class="text-xs text-gray-500">{{ $pengadaan->keterangan ?? 'Tanpa keterangan' }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                {{ \Carbon\Carbon::parse($pengadaan->tanggal_pengajuan)->translatedFormat('d F Y') }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
-                                    <div class="h-6 w-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">
-                                        {{ substr($pengadaan->pemohon->name ?? '?', 0, 1) }}
-                                    </div>
-                                    <span class="text-sm text-gray-700">{{ $pengadaan->pemohon->name ?? 'Unknown' }}</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
-                                <span class="text-sm text-gray-600">{{ $pengadaan->supplier->nama_supplier ?? '-' }}</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                @php
-                                    $statusClass = match($pengadaan->status) {
-                                        'Pending' => 'bg-yellow-100 text-yellow-800 border-yellow-200',
-                                        'Disetujui' => 'bg-green-100 text-green-800 border-green-200',
-                                        'Ditolak' => 'bg-red-100 text-red-800 border-red-200',
-                                        default => 'bg-gray-100 text-gray-800'
-                                    };
-                                @endphp
-                                <span class="px-2.5 py-0.5 rounded-full text-xs font-medium border {{ $statusClass }}">
-                                    {{ $pengadaan->status }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <div class="flex items-center justify-end gap-2">
-                                    @if($pengadaan->status == 'Pending')
-                                        <button wire:click="approve({{ $pengadaan->id }})" class="p-1 text-green-600 hover:text-green-800" title="Setujui">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                                        </button>
-                                        <button wire:click="reject({{ $pengadaan->id }})" class="p-1 text-red-600 hover:text-red-800" title="Tolak">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                                        </button>
-                                    @endif
-                                    <!-- View Detail would go here -->
-                                </div>
-                            </td>
-                        </tr>
+                <tbody class="divide-y divide-slate-100">
+                    @forelse($pengadaans as $p)
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-4 font-mono font-bold text-slate-700">
+                            {{ $p->nomor_pengajuan }}
+                        </td>
+                        <td class="px-6 py-4 text-slate-600">
+                            {{ \Carbon\Carbon::parse($p->tanggal_pengajuan)->format('d/m/Y') }}
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-slate-800">{{ $p->pemohon->name ?? '-' }}</div>
+                        </td>
+                        <td class="px-6 py-4 text-slate-600">
+                            {{ $p->supplier->nama_supplier ?? 'Umum' }}
+                        </td>
+                        <td class="px-6 py-4 text-right font-mono">
+                            Rp {{ number_format($p->total_harga, 0, ',', '.') }}
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            @php
+                                $statusClasses = [
+                                    'Pending' => 'bg-amber-100 text-amber-700',
+                                    'Disetujui' => 'bg-blue-100 text-blue-700',
+                                    'Ditolak' => 'bg-red-100 text-red-700',
+                                    'Selesai' => 'bg-emerald-100 text-emerald-700',
+                                ];
+                                $statusLabel = [
+                                    'Pending' => 'Menunggu Approval',
+                                    'Disetujui' => 'Menunggu Barang',
+                                    'Ditolak' => 'Ditolak',
+                                    'Selesai' => 'Diterima (Stok Masuk)',
+                                ];
+                            @endphp
+                            <span class="px-3 py-1 rounded-full text-xs font-bold {{ $statusClasses[$p->status] ?? 'bg-slate-100' }}">
+                                {{ $statusLabel[$p->status] ?? $p->status }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                @if($p->status == 'Pending')
+                                    <button wire:click="approve({{ $p->id }})" class="p-2 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100" title="Setujui">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                    </button>
+                                    <button wire:click="reject({{ $p->id }})" class="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100" title="Tolak">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                    </button>
+                                @elseif($p->status == 'Disetujui')
+                                    <button wire:click="receive({{ $p->id }})" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 shadow-sm flex items-center gap-1" title="Terima Barang">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                        Terima Barang
+                                    </button>
+                                @else
+                                    <span class="text-slate-300">-</span>
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-gray-500">
-                                Belum ada pengajuan pengadaan.
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center text-slate-400">Belum ada data pengadaan.</td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-        <div class="px-6 py-4 border-t border-gray-100">
+        <div class="px-6 py-4 border-t border-slate-100">
             {{ $pengadaans->links() }}
         </div>
     </div>
