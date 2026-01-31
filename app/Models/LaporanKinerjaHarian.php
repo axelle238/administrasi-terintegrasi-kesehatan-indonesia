@@ -14,16 +14,17 @@ class LaporanKinerjaHarian extends Model
         'tanggal',
         'jam_mulai',
         'jam_selesai',
+        'durasi_menit', // New
         'aktivitas',
+        'kategori_kegiatan', // New
         'deskripsi',
         'output', // legacy
         'status', // Pending, Disetujui
         'catatan_verifikator',
-        
-        // New Fields
         'persentase_selesai',
         'kendala_teknis',
         'file_bukti_kerja',
+        'tautan_dokumen', // New
         'prioritas'
     ];
 

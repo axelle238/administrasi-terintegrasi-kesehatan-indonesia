@@ -3,6 +3,7 @@
 namespace App\Livewire\Kepegawaian\Presensi;
 
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use App\Models\Presensi;
 use App\Models\LaporanKinerjaHarian;
 use App\Models\PengajuanCuti;
@@ -11,6 +12,8 @@ use Carbon\Carbon;
 
 class History extends Component
 {
+    use WithFileUploads;
+
     public $bulan;
     public $tahun;
     public $daysInMonth = [];
@@ -27,18 +30,34 @@ class History extends Component
         'Cuti' => 0
     ];
 
-    // Modal State
+    // Selected Date State
     public $selectedDate = null;
-    public $isOpen = false;
-    
-    // LKH Form State
-    public $aktivitas;
-    public $deskripsi;
     public $isCuti = false;
+    public $selectedPresensi = null;
+    public $selectedLkhList = []; // List LKH hari itu
+    
+    // LKH Form State (Input Fields)
+    public $aktivitas;
+    public $kategori_kegiatan = 'Tugas Utama';
+    public $deskripsi;
+    public $jam_mulai;
+    public $jam_selesai;
+    public $durasi_menit;
+    public $persentase_selesai = 100;
+    public $prioritas = 'Normal';
+    public $kendala_teknis;
+    public $tautan_dokumen;
+    public $file_bukti_kerja;
 
     protected $rules = [
         'aktivitas' => 'required|string|max:255',
+        'kategori_kegiatan' => 'required|string',
         'deskripsi' => 'required|string',
+        'jam_mulai' => 'required',
+        'jam_selesai' => 'required|after:jam_mulai',
+        'durasi_menit' => 'required|integer|min:1',
+        'persentase_selesai' => 'required|integer|min:0|max:100',
+        'file_bukti_kerja' => 'nullable|file|mimes:pdf,jpg,png,doc,docx|max:5120',
     ];
 
     public function mount()
@@ -52,6 +71,18 @@ class History extends Component
     {
         if ($field == 'bulan' || $field == 'tahun') {
             $this->loadData();
+            $this->selectedDate = null; // Reset selection on month change
+        }
+        
+        // Auto calculate duration
+        if ($field == 'jam_mulai' || $field == 'jam_selesai') {
+            if ($this->jam_mulai && $this->jam_selesai) {
+                $start = Carbon::parse($this->jam_mulai);
+                $end = Carbon::parse($this->jam_selesai);
+                if ($end > $start) {
+                    $this->durasi_menit = $start->diffInMinutes($end);
+                }
+            }
         }
     }
 
@@ -60,7 +91,7 @@ class History extends Component
         // 1. Generate Struktur Kalender
         $date = Carbon::createFromDate($this->tahun, $this->bulan, 1);
         $daysInMonth = $date->daysInMonth;
-        $startDayOfWeek = $date->dayOfWeek; // 0 (Sun) - 6 (Sat)
+        $startDayOfWeek = $date->dayOfWeek; 
         
         $this->daysInMonth = [];
         for ($i = 0; $i < $startDayOfWeek; $i++) {
@@ -73,7 +104,6 @@ class History extends Component
         // 2. Ambil Data
         $userId = Auth::id();
 
-        // Presensi
         $this->attendanceData = Presensi::where('user_id', $userId)
             ->whereMonth('tanggal', $this->bulan)
             ->whereYear('tanggal', $this->tahun)
@@ -82,7 +112,6 @@ class History extends Component
                 return Carbon::parse($item->tanggal)->day;
             });
 
-        // LKH
         $this->lkhData = LaporanKinerjaHarian::where('user_id', $userId)
             ->whereMonth('tanggal', $this->bulan)
             ->whereYear('tanggal', $this->tahun)
@@ -91,8 +120,6 @@ class History extends Component
                 return Carbon::parse($item->tanggal)->day;
             });
 
-        // Cuti (Disetujui)
-        // Cuti bisa rentang tanggal, jadi perlu loop
         $cutis = PengajuanCuti::where('user_id', $userId)
             ->where('status', 'Disetujui')
             ->where(function($q) {
@@ -107,8 +134,6 @@ class History extends Component
         foreach ($cutis as $cuti) {
             $start = Carbon::parse($cuti->tanggal_mulai);
             $end = Carbon::parse($cuti->tanggal_selesai);
-            
-            // Loop setiap hari dalam range cuti
             for ($date = $start; $date->lte($end); $date->addDay()) {
                 if ($date->month == $this->bulan && $date->year == $this->tahun) {
                     $this->cutiData[$date->day] = $cuti;
@@ -116,7 +141,7 @@ class History extends Component
             }
         }
 
-        // 3. Hitung Statistik
+        // 3. Stats
         $this->stats['Hadir'] = $this->attendanceData->where('status_kehadiran', 'Hadir')->count();
         $this->stats['Terlambat'] = $this->attendanceData->where('status_kehadiran', 'Terlambat')->count();
         $this->stats['Dinas Luar'] = $this->attendanceData->filter(function($p) {
@@ -131,38 +156,83 @@ class History extends Component
 
         $this->selectedDate = Carbon::createFromDate($this->tahun, $this->bulan, $day)->format('Y-m-d');
         $this->isCuti = isset($this->cutiData[$day]);
+        $this->selectedPresensi = $this->attendanceData[$day] ?? null;
+        
+        // Refresh LKH List for selected day
+        $this->selectedLkhList = LaporanKinerjaHarian::where('user_id', Auth::id())
+            ->whereDate('tanggal', $this->selectedDate)
+            ->latest()
+            ->get();
         
         // Reset Form
+        $this->resetForm();
+    }
+
+    public function resetForm()
+    {
         $this->aktivitas = '';
+        $this->kategori_kegiatan = 'Tugas Utama';
         $this->deskripsi = '';
-        
-        $this->isOpen = true;
+        $this->jam_mulai = '08:00';
+        $this->jam_selesai = '09:00';
+        $this->durasi_menit = 60;
+        $this->persentase_selesai = 100;
+        $this->prioritas = 'Normal';
+        $this->kendala_teknis = '';
+        $this->tautan_dokumen = '';
+        $this->file_bukti_kerja = null;
     }
 
     public function saveLKH()
     {
-        if ($this->isCuti) {
-            $this->addError('aktivitas', 'Anda sedang cuti pada tanggal ini.');
-            return;
-        }
+        if ($this->isCuti) return;
 
         $this->validate();
+
+        $path = null;
+        if ($this->file_bukti_kerja) {
+            $path = $this->file_bukti_kerja->store('bukti-kerja', 'public');
+        }
 
         LaporanKinerjaHarian::create([
             'user_id' => Auth::id(),
             'tanggal' => $this->selectedDate,
-            'jam_mulai' => '08:00', // Default jam kerja jika input cepat
-            'jam_selesai' => '16:00',
+            'jam_mulai' => $this->jam_mulai,
+            'jam_selesai' => $this->jam_selesai,
+            'durasi_menit' => $this->durasi_menit,
             'aktivitas' => $this->aktivitas,
+            'kategori_kegiatan' => $this->kategori_kegiatan,
             'deskripsi' => $this->deskripsi,
-            'persentase_selesai' => 100, // Quick add assumes completed
-            'prioritas' => 'Normal',
+            'persentase_selesai' => $this->persentase_selesai,
+            'prioritas' => $this->prioritas,
+            'kendala_teknis' => $this->kendala_teknis,
+            'tautan_dokumen' => $this->tautan_dokumen,
+            'file_bukti_kerja' => $path,
             'status' => 'Pending'
         ]);
 
-        $this->dispatch('notify', 'success', 'Laporan aktivitas berhasil ditambahkan.');
-        $this->loadData(); // Refresh data kalender
-        $this->isOpen = false;
+        $this->dispatch('notify', 'success', 'Aktivitas berhasil dicatat.');
+        $this->loadData(); // Refresh calendar counts
+        
+        // Refresh local list without reload
+        $this->selectedLkhList = LaporanKinerjaHarian::where('user_id', Auth::id())
+            ->whereDate('tanggal', $this->selectedDate)
+            ->latest()
+            ->get();
+            
+        $this->resetForm();
+    }
+
+    public function deleteLKH($id)
+    {
+        LaporanKinerjaHarian::where('user_id', Auth::id())->find($id)->delete();
+        $this->dispatch('notify', 'success', 'Laporan dihapus.');
+        
+        $this->loadData(); 
+        $this->selectedLkhList = LaporanKinerjaHarian::where('user_id', Auth::id())
+            ->whereDate('tanggal', $this->selectedDate)
+            ->latest()
+            ->get();
     }
 
     public function previousMonth()
@@ -171,6 +241,7 @@ class History extends Component
         $this->bulan = $date->month;
         $this->tahun = $date->year;
         $this->loadData();
+        $this->selectedDate = null;
     }
 
     public function nextMonth()
@@ -179,6 +250,7 @@ class History extends Component
         $this->bulan = $date->month;
         $this->tahun = $date->year;
         $this->loadData();
+        $this->selectedDate = null;
     }
 
     public function render()
