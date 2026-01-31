@@ -101,6 +101,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/hrd/dashboard', \App\Livewire\Hrd\Dashboard::class)->name('hrd.dashboard');
         Route::get('/kepegawaian/gaji', \App\Livewire\Kepegawaian\Gaji\Index::class)->name('kepegawaian.gaji.index');
         Route::get('/kepegawaian/gaji/create', \App\Livewire\Kepegawaian\Gaji\Create::class)->name('kepegawaian.gaji.create');
+        Route::get('/kepegawaian/gaji/{id}/print', function($id) {
+            $gaji = \App\Models\Penggajian::with('user.pegawai')->findOrFail($id);
+            if(auth()->user()->role !== 'admin' && $gaji->user_id !== auth()->id()) abort(403);
+            return view('print.slip-gaji', compact('gaji'));
+        })->name('kepegawaian.gaji.print');
         Route::get('/pegawai', \App\Livewire\Pegawai\Index::class)->name('pegawai.index');
         Route::get('/pegawai/create', \App\Livewire\Pegawai\Create::class)->name('pegawai.create');
         Route::get('/pegawai/{pegawai}/edit', \App\Livewire\Pegawai\Edit::class)->name('pegawai.edit');
