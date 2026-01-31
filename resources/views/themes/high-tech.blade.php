@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="{{ $pengaturan['app_description'] ?? 'Sistem Administrasi Kesehatan Terintegrasi Indonesia' }}">
     <meta name="theme-color" content="{{ $pengaturan['primary_color'] ?? '#0f172a' }}">
-    <title>{{ $pengaturan['app_name'] ?? 'SATRIA' }} - {{ $pengaturan['app_tagline'] ?? 'Kesehatan Masa Depan' }}</title>
+    <title>{{ $pengaturan['app_name'] ?? 'SATRIA' }} - {{ $pengaturan['app_tagline'] ?? 'Layanan Kesehatan Masa Depan' }}</title>
     
-    <!-- Fonts -->
+    <!-- Huruf / Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Scripts & Styles -->
+    <!-- Skrip & Gaya -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
@@ -25,7 +25,7 @@
         body { font-family: var(--font-body); background-color: #0f172a; color: #e2e8f0; overflow-x: hidden; }
         h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); }
         
-        /* High-Tech Background */
+        /* Latar Belakang Teknologi Tinggi */
         .tech-bg {
             background-color: #0f172a;
             background-image: 
@@ -35,7 +35,7 @@
             background-attachment: fixed;
         }
 
-        /* Glassmorphism */
+        /* Efek Kaca (Glassmorphism) */
         .glass-panel {
             background: rgba(30, 41, 59, 0.4);
             backdrop-filter: blur(12px);
@@ -56,14 +56,14 @@
             box-shadow: 0 20px 40px -5px rgba(56, 189, 248, 0.15);
         }
 
-        /* Animations */
+        /* Animasi */
         .animate-float { animation: float 6s ease-in-out infinite; }
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
         
         .animate-pulse-glow { animation: pulseGlow 3s infinite; }
         @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(56, 189, 248, 0); } 100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); } }
 
-        /* Grid Background Pattern */
+        /* Pola Latar Grid */
         .grid-pattern {
             background-size: 40px 40px;
             background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
@@ -75,7 +75,7 @@
 </head>
 <body class="tech-bg selection:bg-cyan-500 selection:text-white" x-data="{ scrolled: false, mobileMenu: false }" @scroll.window="scrolled = (window.pageYOffset > 20)">
 
-    <!-- Navbar -->
+    <!-- Navigasi -->
     <nav :class="{ 'bg-slate-900/90 backdrop-blur-md border-b border-white/5 py-4': scrolled, 'bg-transparent py-6': !scrolled }" class="fixed w-full z-50 transition-all duration-300 top-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center">
@@ -93,28 +93,28 @@
                     </div>
                 </a>
 
-                <!-- Desktop Menu -->
+                <!-- Menu Desktop -->
                 <div class="hidden md:flex items-center gap-1">
                     @foreach(['Beranda', 'Layanan', 'Jadwal', 'Fasilitas', 'Berita'] as $item)
                         <a href="#{{ strtolower($item) }}" class="px-4 py-2 text-xs font-bold text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-all uppercase tracking-wider">{{ $item }}</a>
                     @endforeach
                 </div>
 
-                <!-- CTA -->
+                <!-- Tombol Aksi (CTA) -->
                 <div class="hidden md:flex items-center gap-4">
                     @if (Route::has('login'))
                         @auth
                             <a href="{{ url('/dashboard') }}" class="px-5 py-2.5 bg-white/10 border border-white/10 text-white text-xs font-bold rounded-xl hover:bg-white/20 hover:border-white/20 transition-all flex items-center gap-2 backdrop-blur-sm">
-                                Dashboard Utama
+                                Dashboard Sistem
                                 <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                             </a>
                         @else
                             <a href="{{ route('antrean.monitor') }}" class="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold rounded-xl hover:shadow-[0_0_20px_rgba(6,182,212,0.5)] transition-all flex items-center gap-2 transform hover:-translate-y-0.5">
                                 <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                                Ambil Antrean
+                                Daftar Antrean
                             </a>
                             <a href="{{ route('login') }}" class="px-5 py-2.5 text-slate-300 hover:text-white text-xs font-bold transition-colors">
-                                Masuk Staf
+                                Login Pegawai
                             </a>
                         @endauth
                     @endif
@@ -123,9 +123,9 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- Bagian Hero -->
     <section id="beranda" class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
-        <!-- Background Effects -->
+        <!-- Efek Latar Belakang -->
         <div class="absolute inset-0 grid-pattern opacity-20"></div>
         <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-[100px] animate-pulse"></div>
         <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-violet-500/20 rounded-full blur-[100px] animate-pulse" style="animation-delay: 2s"></div>
@@ -147,7 +147,7 @@
             </h1>
             
             <p class="text-lg text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed animate-fade-in" style="animation-delay: 0.1s">
-                {{ $pengaturan['app_description'] ?? 'Platform kesehatan terintegrasi berbasis teknologi tinggi untuk pelayanan yang presisi, cepat, dan aman.' }}
+                {{ $pengaturan['app_description'] ?? 'Platform kesehatan terintegrasi berbasis teknologi tinggi untuk pelayanan yang presisi, cepat, dan aman bagi masyarakat Indonesia.' }}
             </p>
             
             <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style="animation-delay: 0.2s">
@@ -163,7 +163,7 @@
                 @endif
             </div>
 
-            <!-- Stats Grid -->
+            <!-- Grid Statistik -->
             <div class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-in" style="animation-delay: 0.4s">
                 <div class="glass-card p-6 rounded-2xl text-center">
                     <p class="text-3xl font-black text-white mb-1">{{ $stats['dokter_total'] ?? '24' }}</p>
@@ -185,7 +185,7 @@
         </div>
     </section>
 
-    <!-- Layanan / Services (Klaster ILP) -->
+    <!-- Layanan (Klaster ILP) -->
     @if(($pengaturan['show_layanan_poli'] ?? '1') == '1')
     <section id="layanan" class="py-24 relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -242,7 +242,7 @@
                 </div>
             </div>
 
-            <!-- Daftar Poli Dynamic -->
+            <!-- Daftar Poli Dinamis -->
             @if(isset($layanan) && count($layanan) > 0)
             <div class="mt-16">
                 <h3 class="text-2xl font-bold text-white text-center mb-8">Poliklinik Tersedia</h3>
@@ -259,7 +259,7 @@
     </section>
     @endif
 
-    <!-- Jadwal Dokter (Live Dashboard Style) -->
+    <!-- Jadwal Dokter (Gaya Dashboard Langsung) -->
     @if(($pengaturan['show_jadwal_dokter'] ?? '1') == '1')
     <section id="jadwal" class="py-24 relative overflow-hidden bg-slate-900/50 border-y border-white/5">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -392,7 +392,7 @@
         </div>
     </section>
 
-    <!-- Footer -->
+    <!-- Kaki Halaman (Footer) -->
     <footer class="bg-slate-900 pt-24 pb-12 border-t border-white/5 relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
@@ -404,7 +404,7 @@
                         <span class="text-2xl font-black text-white tracking-tight font-display">{{ $pengaturan['app_name'] ?? 'SATRIA' }}</span>
                     </a>
                     <p class="text-slate-400 leading-relaxed max-w-sm mb-8">
-                        {{ $pengaturan['app_address'] ?? 'Alamat instansi kesehatan...' }}
+                        {{ $pengaturan['app_address'] ?? 'Alamat instansi kesehatan belum diatur.' }}
                     </p>
                     <div class="flex gap-4">
                         <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-400 hover:bg-cyan-500 hover:text-white transition-all">
@@ -434,11 +434,11 @@
             
             <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
                 <p class="text-xs font-bold text-slate-500 uppercase tracking-widest text-center md:text-left">
-                    &copy; {{ date('Y') }} {{ $pengaturan['footer_text'] ?? 'SATRIA Health System' }}. Hak Cipta Dilindungi.
+                    &copy; {{ date('Y') }} {{ $pengaturan['footer_text'] ?? 'Sistem Kesehatan Terintegrasi' }}. Hak Cipta Dilindungi.
                 </p>
                 <div class="flex items-center gap-6 text-xs font-bold text-slate-500 uppercase tracking-widest">
                     <a href="#" class="hover:text-white transition-colors">Privasi</a>
-                    <a href="#" class="hover:text-white transition-colors">Syarat</a>
+                    <a href="#" class="hover:text-white transition-colors">Syarat Ketentuan</a>
                 </div>
             </div>
         </div>
