@@ -82,6 +82,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', \App\Livewire\Profile\Edit::class)->name('profile.edit');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/kepegawaian/cuti', \App\Livewire\Kepegawaian\Cuti\Index::class)->name('kepegawaian.cuti.index');
+    Route::get('/kepegawaian/jadwal/tukar', \App\Livewire\Kepegawaian\Jadwal\Swap::class)->name('kepegawaian.jadwal.swap');
 
     // ADMIN routes...
     Route::middleware('can:admin')->group(function () {
