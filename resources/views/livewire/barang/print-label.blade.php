@@ -22,45 +22,59 @@
         </div>
 
         <!-- Body -->
-        <div class="flex-1 p-4 flex flex-col justify-center items-center text-center">
-            <p class="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Kode Inventaris</p>
-            <p class="text-3xl font-mono font-black text-gray-900 tracking-widest mb-3">{{ $barang->kode_barang }}</p>
+        <div class="flex-1 p-4 flex flex-row items-center justify-between gap-4">
+            <div class="flex-1 text-left">
+                <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-0.5">Kode Inventaris</p>
+                <p class="text-2xl font-mono font-black text-gray-900 tracking-tighter mb-2">{{ $barang->kode_barang }}</p>
+                
+                <h3 class="text-sm font-bold text-gray-800 leading-tight mb-1 line-clamp-2">{{ $barang->nama_barang }}</h3>
+                <p class="text-[10px] text-gray-600 font-medium">{{ $barang->merk ?? '-' }} • {{ $barang->tanggal_pengadaan ? \Carbon\Carbon::parse($barang->tanggal_pengadaan)->year : '' }}</p>
+                
+                @if($barang->detailMedis && $barang->detailMedis->kalibrasi_selanjutnya)
+                    <div class="mt-2 bg-black/5 rounded px-2 py-1 inline-block">
+                        <p class="text-[8px] font-bold uppercase">Next Kalibrasi:</p>
+                        <p class="text-[10px] font-mono font-black">{{ \Carbon\Carbon::parse($barang->detailMedis->kalibrasi_selanjutnya)->format('d M Y') }}</p>
+                    </div>
+                @endif
+            </div>
             
-            <h3 class="text-lg font-bold text-gray-800 leading-tight mb-1">{{ $barang->nama_barang }}</h3>
-            <p class="text-xs text-gray-600 font-medium">{{ $barang->merk ?? 'Tanpa Merk' }} - {{ $barang->tanggal_pengadaan ? \Carbon\Carbon::parse($barang->tanggal_pengadaan)->year : '-' }}</p>
+            <div id="qrcode-main" class="bg-white p-1 rounded border border-gray-200"></div>
         </div>
 
         <!-- Footer -->
-        <div class="bg-gray-100 p-2 flex justify-between items-center text-[10px] font-mono text-gray-500 border-t border-gray-200">
-            <span>LOC: {{ strtoupper($barang->lokasi_penyimpanan ?? 'GUDANG') }}</span>
-            <span>SATRIA SYSTEM v2.0</span>
+        <div class="bg-gray-100 p-1.5 flex justify-between items-center text-[9px] font-mono text-gray-500 border-t border-gray-200">
+            <span class="truncate max-w-[60%]">LOC: {{ strtoupper($barang->ruangan->nama_ruangan ?? $barang->lokasi_penyimpanan ?? 'GUDANG') }}</span>
+            <span>SATRIA v2.0</span>
         </div>
     </div>
 
     <!-- Small Labels Preview (Grid) -->
     <div class="no-print mt-12 pt-8 border-t border-gray-200">
-        <h3 class="text-lg font-bold text-gray-800 mb-4">Opsi Ukuran Kecil (QR Style)</h3>
-        <div class="flex gap-4">
-            <div class="border border-gray-300 rounded p-2 w-48 h-24 flex items-center gap-2 bg-white">
-                <div id="qrcode-small" class="flex-shrink-0"></div>
-                <div class="flex-1 overflow-hidden">
-                    <p class="text-[10px] font-bold truncate">{{ $barang->kode_barang }}</p>
-                    <p class="text-[9px] leading-tight line-clamp-2">{{ $barang->nama_barang }}</p>
-                </div>
-            </div>
-        </div>
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Pratinjau QR Code</h3>
+        <p class="text-sm text-gray-500 mb-4">QR Code berisi tautan langsung ke halaman detail aset.</p>
     </div>
 
     <!-- QR Generation Script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
+        // Main Label QR
+        new QRCode(document.getElementById("qrcode-main"), {
+            text: "{{ route('barang.show', $barang->id) }}",
+            width: 80,
+            height: 80,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.M
+        });
+        
+        // Small Label QR
         new QRCode(document.getElementById("qrcode-small"), {
             text: "{{ route('barang.show', $barang->id) }}",
             width: 64,
             height: 64,
             colorDark : "#000000",
             colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H
+            correctLevel : QRCode.CorrectLevel.L
         });
     </script>
 </div>
