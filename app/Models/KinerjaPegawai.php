@@ -34,11 +34,6 @@ class KinerjaPegawai extends Model
         return ($this->orientasi_pelayanan + $this->integritas + $this->komitmen + $this->disiplin + $this->kerjasama) / 5;
     }
 
-    public function getNilaiRataRataAttribute()
-    {
-        return ($this->orientasi_pelayanan + $this->integritas + $this->komitmen + $this->disiplin + $this->kerjasama) / 5;
-    }
-
     public function getPredikatAttribute()
     {
         $avg = $this->nilai_rata_rata;
