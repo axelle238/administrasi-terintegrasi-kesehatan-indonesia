@@ -30,11 +30,11 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Jumlah</label>
-                            <input type="number" wire:model="items.{{ $index }}.jumlah" class="w-full rounded-lg border-gray-300 focus:ring-red-500 focus:border-red-500">
+                            <input type="number" wire:model.blur="items.{{ $index }}.jumlah" class="w-full rounded-lg border-gray-300 focus:ring-red-500 focus:border-red-500">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Kondisi</label>
-                            <select wire:model="items.{{ $index }}.kondisi_terakhir" class="w-full rounded-lg border-gray-300 focus:ring-red-500 focus:border-red-500">
+                            <select wire:model.blur="items.{{ $index }}.kondisi_terakhir" class="w-full rounded-lg border-gray-300 focus:ring-red-500 focus:border-red-500">
                                 <option value="Rusak Berat">Rusak Berat</option>
                                 <option value="Hilang">Hilang</option>
                                 <option value="Kadaluarsa">Kadaluarsa</option>
@@ -43,7 +43,7 @@
                         </div>
                         <div class="md:col-span-2">
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Alasan Detail</label>
-                            <input type="text" wire:model="items.{{ $index }}.alasan" class="w-full rounded-lg border-gray-300 focus:ring-red-500 focus:border-red-500" placeholder="Jelaskan kerusakan atau alasan penghapusan...">
+                            <input type="text" wire:model.blur="items.{{ $index }}.alasan" class="w-full rounded-lg border-gray-300 focus:ring-red-500 focus:border-red-500" placeholder="Jelaskan kerusakan atau alasan penghapusan...">
                             @error("items.{$index}.alasan") <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
                     </div>
