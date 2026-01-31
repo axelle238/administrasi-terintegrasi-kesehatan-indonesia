@@ -223,7 +223,7 @@
                      <span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-black uppercase">Rawat Jalan</span>
                 </div>
             </div>
-            <div id="chart-kunjungan" class="w-full h-[300px]"></div>
+            <div id="kunjunganChart" class="w-full h-[300px]"></div>
         </div>
 
         <!-- Feed Aktivitas -->
@@ -255,23 +255,49 @@
     @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Chart Kunjungan
+            // Chart Kunjungan (ApexCharts)
             var optionsKunjungan = {
                 series: [{
-                    name: 'Pasien',
+                    name: 'Total Pasien',
                     data: @json($dataGrafik['data'])
                 }],
-                chart: { height: 300, type: 'area', toolbar: { show: false }, fontFamily: 'Plus Jakarta Sans' },
+                chart: {
+                    type: 'area',
+                    height: 300,
+                    toolbar: { show: false },
+                    fontFamily: 'Plus Jakarta Sans, sans-serif'
+                },
                 colors: ['#3b82f6'],
-                fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 90, 100] } },
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shadeIntensity: 1,
+                        opacityFrom: 0.7,
+                        opacityTo: 0.1,
+                        stops: [0, 90, 100]
+                    }
+                },
                 dataLabels: { enabled: false },
                 stroke: { curve: 'smooth', width: 3 },
-                xaxis: { categories: @json($dataGrafik['labels']) },
-                grid: { borderColor: '#f1f5f9' },
+                xaxis: {
+                    categories: @json($dataGrafik['labels']),
+                    axisBorder: { show: false },
+                    axisTicks: { show: false },
+                    labels: { style: { colors: '#94a3b8', fontSize: '10px', fontWeight: 'bold' } }
+                },
+                yaxis: {
+                    labels: { style: { colors: '#94a3b8', fontSize: '10px', fontWeight: 'bold' } }
+                },
+                grid: {
+                    borderColor: '#f1f5f9',
+                    strokeDashArray: 4,
+                    padding: { top: 0, right: 0, bottom: 0, left: 10 }
+                },
                 tooltip: { theme: 'light' }
             };
-            var chartKunjungan = new ApexCharts(document.querySelector("#chart-kunjungan"), optionsKunjungan);
-            chartKunjungan.render();
+
+            var chart = new ApexCharts(document.querySelector("#kunjunganChart"), optionsKunjungan);
+            chart.render();
         });
     </script>
     @endpush
