@@ -31,35 +31,90 @@
             </div>
             <div>
                 <h3 class="text-lg font-black text-white">Scan Barcode / QR</h3>
-                <p class="text-slate-400 text-sm">Arahkan scanner ke kode aset untuk pencarian instan.</p>
+                <p class="text-slate-400 text-sm">Gunakan scanner fisik atau kamera perangkat.</p>
             </div>
         </div>
 
         <div class="flex-1 w-full relative z-10" 
-             x-data 
+             x-data="{ showScanner: false, scanner: null }"
              x-on:focus-scan.window="$refs.scanInput.focus()">
-            <form wire:submit.prevent="performScan">
-                <div class="relative">
+            
+            <form wire:submit.prevent="performScan" class="flex gap-2">
+                <div class="relative flex-1">
                     <input type="text" 
                            x-ref="scanInput"
                            wire:model="scanCode" 
                            class="w-full pl-12 pr-4 py-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white font-mono font-bold text-lg placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:bg-slate-700 transition-all" 
-                           placeholder="Klik di sini & Scan Kode Aset..." 
+                           placeholder="Klik & Scan..." 
                            autofocus>
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <span class="animate-pulse w-3 h-3 bg-red-500 rounded-full"></span>
                     </div>
-                    <button type="submit" class="absolute right-2 top-2 bottom-2 px-4 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-xs uppercase tracking-wider transition">
-                        Cari
-                    </button>
                 </div>
-                @error('scanCode') 
-                    <p class="text-rose-400 text-sm font-bold mt-2 flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                        {{ $message }}
-                    </p> 
-                @enderror
+                
+                <button type="button" @click="showScanner = true; $nextTick(() => initScanner())" class="px-4 bg-slate-700 hover:bg-slate-600 border border-slate-600 text-white rounded-xl flex flex-col items-center justify-center transition group">
+                    <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    <span class="text-[10px] font-bold uppercase mt-1">Kamera</span>
+                </button>
+
+                <button type="submit" class="px-6 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-sm uppercase tracking-wider transition shadow-lg shadow-blue-500/30">
+                    Cari
+                </button>
             </form>
+
+            @error('scanCode') 
+                <p class="text-rose-400 text-sm font-bold mt-2 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    {{ $message }}
+                </p> 
+            @enderror
+
+            <!-- Camera Modal -->
+            <div x-show="showScanner" style="display: none" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0">
+                
+                <div class="bg-white rounded-2xl p-4 w-full max-w-lg relative shadow-2xl">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-slate-800">Pindai QR / Barcode</h3>
+                        <button @click="showScanner = false; if(scanner) { scanner.clear(); }" class="text-slate-400 hover:text-red-500">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </div>
+                    
+                    <div id="reader" class="rounded-xl overflow-hidden bg-black"></div>
+                    <p class="text-center text-xs text-slate-500 mt-4 font-medium">Arahkan kamera ke kode aset.</p>
+                </div>
+            </div>
+
+            <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+            <script>
+                function initScanner() {
+                    const html5QrCode = new Html5Qrcode("reader");
+                    const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+                    
+                    html5QrCode.start({ facingMode: "environment" }, config, (decodedText, decodedResult) => {
+                        // Success callback
+                        @this.set('scanCode', decodedText);
+                        html5QrCode.stop().then(() => {
+                            @this.performScan(); // Auto submit
+                            this.showScanner = false;
+                        });
+                    }, (errorMessage) => {
+                        // Error callback (ignore for scanning noise)
+                    }).catch(err => {
+                        console.error("Camera start failed.", err);
+                        alert("Gagal membuka kamera. Pastikan izin diberikan.");
+                        this.showScanner = false;
+                    });
+
+                    this.scanner = html5QrCode;
+                }
+            </script>
         </div>
     </div>
 
