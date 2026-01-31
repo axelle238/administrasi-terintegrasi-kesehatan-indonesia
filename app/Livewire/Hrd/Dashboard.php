@@ -80,6 +80,12 @@ class Dashboard extends Component
             $dataTab['gajiBulanIni'] = Penggajian::where('bulan', $now->translatedFormat('F'))
                 ->where('tahun', $now->year)
                 ->sum('total_gaji');
+
+            // Ulang Tahun Bulan Ini (Engagement)
+            $dataTab['ulangTahunBulanIni'] = Pegawai::whereMonth('tanggal_lahir', $now->month)
+                ->with('user')
+                ->orderByRaw('DAY(tanggal_lahir)')
+                ->get();
         }
 
         // === TAB 2: PRESENSI & JADWAL ===

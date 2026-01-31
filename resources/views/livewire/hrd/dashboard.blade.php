@@ -161,6 +161,29 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- Widget Ulang Tahun -->
+                <div class="lg:col-span-1 p-6 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/20 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-16 -mt-16"></div>
+                    <h4 class="font-black text-white uppercase tracking-widest text-xs mb-4 flex items-center gap-2 relative z-10">
+                        🎉 Ulang Tahun Bulan Ini
+                    </h4>
+                    <div class="space-y-4 relative z-10 max-h-[250px] overflow-y-auto custom-scrollbar-white">
+                        @forelse($dataTab['ulangTahunBulanIni'] ?? [] as $ultah)
+                        <div class="flex items-center gap-3 bg-white/10 p-2 rounded-xl border border-white/5">
+                            <div class="w-10 h-10 rounded-full bg-white text-indigo-600 flex items-center justify-center font-black text-xs shadow-sm">
+                                {{ \Carbon\Carbon::parse($ultah->tanggal_lahir)->format('d') }}
+                            </div>
+                            <div>
+                                <p class="text-sm font-black text-white">{{ $ultah->user->name ?? 'N/A' }}</p>
+                                <p class="text-[10px] text-indigo-100 font-bold uppercase">{{ $ultah->jabatan }}</p>
+                            </div>
+                        </div>
+                        @empty
+                        <p class="text-xs text-indigo-100 italic text-center py-4">Tidak ada yang ulang tahun bulan ini.</p>
+                        @endforelse
+                    </div>
+                </div>
             </div>
             @endif
 
