@@ -68,11 +68,22 @@
     <x-slot:icon>
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
     </x-slot:icon>
+    
+    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Monitoring</div>
     <x-nav.link-child :href="route('barang.dashboard')" :active="request()->routeIs('barang.dashboard')">Dashboard Aset</x-nav.link-child>
+
+    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Operasional Stok</div>
     <x-nav.link-child :href="route('barang.index')" :active="request()->routeIs('barang.index')">Data Barang</x-nav.link-child>
-    <x-nav.link-child :href="route('barang.pengadaan.index')" :active="request()->routeIs('barang.pengadaan.*')">Pengadaan Barang</x-nav.link-child>
     <x-nav.link-child :href="route('barang.opname.index')" :active="request()->routeIs('barang.opname.*')">Stok Opname</x-nav.link-child>
-    <x-nav.link-child :href="route('barang.maintenance')" :active="request()->routeIs('barang.maintenance')">Maintenance</x-nav.link-child>
+    <x-nav.link-child :href="route('barang.mutasi.index')" :active="request()->routeIs('barang.mutasi.*')">Mutasi / Perpindahan</x-nav.link-child>
+
+    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Siklus Hidup</div>
+    <x-nav.link-child :href="route('barang.pengadaan.index')" :active="request()->routeIs('barang.pengadaan.*')">Pengadaan Barang</x-nav.link-child>
+    <x-nav.link-child :href="route('barang.peminjaman.index')" :active="request()->routeIs('barang.peminjaman.*')">Peminjaman</x-nav.link-child>
+    <x-nav.link-child :href="route('barang.maintenance')" :active="request()->routeIs('barang.maintenance')">Maintenance & Servis</x-nav.link-child>
+    <!-- <x-nav.link-child :href="route('barang.penghapusan.index')" :active="request()->routeIs('barang.penghapusan.*')">Penghapusan Aset</x-nav.link-child> -->
+
+    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Data Master</div>
     <x-nav.link-child :href="route('ruangan.index')" :active="request()->routeIs('ruangan.*')">Data Ruangan</x-nav.link-child>
     <x-nav.link-child :href="route('supplier.index')" :active="request()->routeIs('supplier.*')">Data Supplier</x-nav.link-child>
 </x-nav.dropdown>
