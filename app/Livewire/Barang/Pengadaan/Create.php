@@ -89,7 +89,6 @@ class Create extends Component
                     'jumlah_disetujui' => 0, // Default
                     'satuan' => $item['satuan'],
                     'harga_satuan_estimasi' => $item['estimasi_harga_satuan'],
-                    'total_harga' => $item['jumlah_permintaan'] * $item['estimasi_harga_satuan'],
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);

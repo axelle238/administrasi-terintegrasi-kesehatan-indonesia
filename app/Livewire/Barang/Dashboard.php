@@ -158,9 +158,10 @@ class Dashboard extends Component
         // === TAB 4: PENGADAAN ===
         if ($this->activeTab == 'pengadaan') {
             $tabData['pengadaanPending'] = PengadaanBarang::where('status', 'Pending')->latest()->get();
-            $tabData['totalPengadaanTahunIni'] = PengadaanBarang::whereYear('tanggal_pengadaan', Carbon::now()->year)
-                ->where('status', 'Selesai')
-                ->sum('total_harga');
+            $tabData['totalPengadaanTahunIni'] = PengadaanBarang::join('pengadaan_barang_details', 'pengadaan_barangs.id', '=', 'pengadaan_barang_details.pengadaan_barang_id')
+                ->whereYear('pengadaan_barangs.tanggal_pengadaan', Carbon::now()->year)
+                ->where('pengadaan_barangs.status', 'Selesai')
+                ->sum(DB::raw('pengadaan_barang_details.jumlah_permintaan * pengadaan_barang_details.estimasi_harga_satuan'));
         }
 
         return view('livewire.barang.dashboard', compact(
