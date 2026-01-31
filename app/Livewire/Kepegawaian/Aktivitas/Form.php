@@ -79,20 +79,11 @@ class Form extends Component
     public function loadShiftInfo()
     {
         $jadwal = JadwalJaga::with('shift')
-            ->where('user_id', Auth::id()) // Asumsi relasi user ada di jadwal, atau via pegawai
+            ->whereHas('pegawai', function ($q) {
+                $q->where('user_id', Auth::id());
+            })
             ->whereDate('tanggal', $this->tanggal)
             ->first();
-            
-        // Fallback check via Pegawai relation if needed
-        if(!$jadwal) {
-            $pegawai = \App\Models\Pegawai::where('user_id', Auth::id())->first();
-            if($pegawai) {
-                $jadwal = JadwalJaga::with('shift')
-                    ->where('pegawai_id', $pegawai->id)
-                    ->whereDate('tanggal', $this->tanggal)
-                    ->first();
-            }
-        }
 
         $this->shiftInfo = $jadwal ? $jadwal->shift->nama_shift . ' (' . $jadwal->shift->jam_masuk . ' - ' . $jadwal->shift->jam_keluar . ')' : 'Tidak ada jadwal shift';
     }
@@ -166,7 +157,7 @@ class Form extends Component
         $msg = $status === 'Diajukan' ? 'Laporan berhasil dikirim ke atasan.' : 'Draft laporan berhasil disimpan.';
         session()->flash('message', $msg);
         
-        return redirect()->route('aktivitas.index');
+        return redirect()->route('kepegawaian.aktivitas.index');
     }
 
     public function render()

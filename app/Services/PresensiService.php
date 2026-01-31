@@ -18,7 +18,9 @@ class PresensiService
 
         // 1. Ambil Jadwal Shift Hari Ini
         $jadwal = JadwalJaga::with('shift')
-            ->where('user_id', $userId)
+            ->whereHas('pegawai', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })
             ->whereDate('tanggal', $today)
             ->first();
             

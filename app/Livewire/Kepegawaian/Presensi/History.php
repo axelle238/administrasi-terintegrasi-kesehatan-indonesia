@@ -14,12 +14,29 @@ class History extends Component
 {
     public $bulan;
     public $tahun;
-    public $selectedDate = null; // Tanggal yang diklik user untuk detail
+    public $selectedDate = null;
 
     public function mount()
     {
         $this->bulan = Carbon::now()->month;
         $this->tahun = Carbon::now()->year;
+    }
+
+    // Navigasi Bulan Modern
+    public function prevMonth()
+    {
+        $date = Carbon::createFromDate($this->tahun, $this->bulan, 1)->subMonth();
+        $this->bulan = $date->month;
+        $this->tahun = $date->year;
+        $this->selectedDate = null; // Reset seleksi
+    }
+
+    public function nextMonth()
+    {
+        $date = Carbon::createFromDate($this->tahun, $this->bulan, 1)->addMonth();
+        $this->bulan = $date->month;
+        $this->tahun = $date->year;
+        $this->selectedDate = null;
     }
 
     public function selectDate($date)
@@ -29,46 +46,49 @@ class History extends Component
 
     public function render()
     {
-        // 1. Siapkan Struktur Kalender
         $startOfMonth = Carbon::createFromDate($this->tahun, $this->bulan, 1);
         $daysInMonth = $startOfMonth->daysInMonth;
         $endOfMonth = $startOfMonth->copy()->endOfMonth();
-        $firstDayOfWeek = $startOfMonth->dayOfWeekIso; // 1 (Senin) - 7 (Minggu)
+        $firstDayOfWeek = $startOfMonth->dayOfWeekIso; 
 
-        // 2. Ambil Data Presensi Bulan Ini
-        $presensiData = Presensi::where('user_id', Auth::id())
+        // Data Fetching
+        $userId = Auth::id();
+        
+        $presensiData = Presensi::where('user_id', $userId)
             ->whereMonth('tanggal', $this->bulan)
             ->whereYear('tanggal', $this->tahun)
             ->get()
             ->keyBy(fn($item) => $item->tanggal->format('Y-m-d'));
 
-        // 3. Ambil Data Hari Libur
         $hariLiburData = HariLibur::whereMonth('tanggal', $this->bulan)
             ->whereYear('tanggal', $this->tahun)
             ->get()
             ->keyBy(fn($item) => $item->tanggal->format('Y-m-d'));
 
-        // 4. Ambil Data Cuti (Rentang Tanggal)
-        $cutiData = PengajuanCuti::where('user_id', Auth::id())
+        $cutiData = PengajuanCuti::where('user_id', $userId)
             ->where('status', 'Disetujui')
             ->where(function($q) use ($startOfMonth, $endOfMonth) {
                  $q->whereBetween('tanggal_mulai', [$startOfMonth, $endOfMonth])
-                   ->orWhereBetween('tanggal_selesai', [$startOfMonth, $endOfMonth])
-                   ->orWhere(function($sub) use ($startOfMonth, $endOfMonth) {
-                       $sub->where('tanggal_mulai', '<=', $startOfMonth)
-                           ->where('tanggal_selesai', '>=', $endOfMonth);
-                   });
+                   ->orWhereBetween('tanggal_selesai', [$startOfMonth, $endOfMonth]);
             })
             ->get();
 
+        // Statistik Bulanan (Real-time Calculation)
+        $stats = [
+            'hadir' => $presensiData->where('status_masuk', '!=', 'Terlambat')->count(),
+            'terlambat' => $presensiData->where('status_masuk', 'Terlambat')->count(),
+            'cuti' => 0, // Hitung nanti di loop
+            'alpha' => 0 // Hitung nanti
+        ];
+
         $calendar = [];
         
-        // Padding hari kosong di awal bulan (jika tgl 1 bukan Senin)
+        // Padding
         for ($i = 1; $i < $firstDayOfWeek; $i++) {
             $calendar[] = null;
         }
 
-        // Isi tanggal
+        // Logic Loop Tanggal
         for ($day = 1; $day <= $daysInMonth; $day++) {
             $currentDate = Carbon::createFromDate($this->tahun, $this->bulan, $day);
             $dateString = $currentDate->format('Y-m-d');
@@ -77,7 +97,6 @@ class History extends Component
             $libur = $hariLiburData[$dateString] ?? null;
             $presensi = $presensiData[$dateString] ?? null;
             
-            // Cek Cuti
             $cuti = $cutiData->first(function($item) use ($currentDate) {
                 return $currentDate->between(
                     Carbon::parse($item->tanggal_mulai), 
@@ -85,7 +104,7 @@ class History extends Component
                 );
             });
             
-            $status = 'Absen'; // Default alpha
+            $status = 'Absen'; 
             if ($presensi) {
                 $status = $presensi->status_masuk == 'Terlambat' ? 'Terlambat' : 'Hadir';
                 if ($presensi->status_keluar == 'Pulang Cepat') $status = 'Pulang Cepat';
@@ -93,12 +112,17 @@ class History extends Component
                 if ($presensi->kategori == 'WFH') $status = 'WFH';
             } elseif ($cuti) {
                 $status = 'Cuti';
+                $stats['cuti']++;
             } elseif ($libur) {
                 $status = 'Libur';
             } elseif ($isWeekend) {
                 $status = 'Akhir Pekan';
             } elseif ($currentDate->isFuture()) {
                 $status = 'Future';
+            } else {
+                // Jika masa lalu, bukan weekend, bukan libur, dan tidak ada presensi
+                $status = 'Alpha';
+                $stats['alpha']++;
             }
 
             $calendar[] = [
@@ -112,18 +136,18 @@ class History extends Component
             ];
         }
 
-        // Detail Data untuk Panel Bawah (Selected Date)
+        // Detail Data
         $detailPresensi = null;
         $detailLaporan = null;
         $detailCuti = null;
         
         if ($this->selectedDate) {
-            $detailPresensi = Presensi::where('user_id', Auth::id())
+            $detailPresensi = Presensi::where('user_id', $userId)
                 ->whereDate('tanggal', $this->selectedDate)
                 ->first();
                 
             $detailLaporan = LaporanHarian::with('details')
-                ->where('user_id', Auth::id())
+                ->where('user_id', $userId)
                 ->whereDate('tanggal', $this->selectedDate)
                 ->first();
 
@@ -138,6 +162,7 @@ class History extends Component
 
         return view('livewire.kepegawaian.presensi.history', [
             'calendar' => $calendar,
+            'stats' => $stats, // Pass stats to view
             'detailPresensi' => $detailPresensi,
             'detailLaporan' => $detailLaporan,
             'detailCuti' => $detailCuti,

@@ -95,7 +95,7 @@
         <div class="max-w-7xl mx-auto flex justify-between items-center px-4">
             <p class="text-xs font-bold text-slate-400 hidden md:block">Pastikan data yang diinput benar sebelum dikirim.</p>
             <div class="flex gap-3 ml-auto">
-                <a href="{{ route('aktivitas.index') }}" class="px-6 py-3 rounded-xl border border-slate-300 text-slate-600 font-bold hover:bg-slate-50 transition-colors">
+                <a href="{{ route('kepegawaian.aktivitas.index') }}" class="px-6 py-3 rounded-xl border border-slate-300 text-slate-600 font-bold hover:bg-slate-50 transition-colors">
                     Batal
                 </a>
                 <button wire:click="save('Draft')" class="px-6 py-3 rounded-xl bg-slate-800 text-white font-bold hover:bg-slate-900 transition-colors shadow-lg shadow-slate-200">
