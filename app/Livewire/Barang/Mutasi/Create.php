@@ -19,6 +19,16 @@ class Create extends Component
         $this->penanggung_jawab = Auth::user()->name ?? 'Admin';
     }
 
+    public function updatedBarangId($value)
+    {
+        if ($value) {
+            $barang = Barang::find($value);
+            if ($barang && $barang->ruangan_id) {
+                $this->ruangan_id_asal = $barang->ruangan_id;
+            }
+        }
+    }
+
     public function store()
     {
         $this->validate([
@@ -51,7 +61,7 @@ class Create extends Component
     public function render()
     {
         return view('livewire.barang.mutasi.create', [
-            'barangs' => Barang::select('id', 'nama_barang', 'kode_barang')->orderBy('nama_barang')->get(),
+            'barangs' => Barang::select('id', 'nama_barang', 'kode_barang', 'stok', 'ruangan_id')->orderBy('nama_barang')->get(),
             'ruangans' => Ruangan::select('id', 'nama_ruangan')->orderBy('nama_ruangan')->get(),
         ])->layout('layouts.app', ['header' => 'Catat Mutasi Baru']);
     }
