@@ -1,10 +1,14 @@
 <!-- A. DASHBOARD UTAMA -->
-<x-nav.link :href="route('dashboard')" :active="request()->routeIs('dashboard')" icon="chip">
-    <x-slot:slot>
+<x-nav.dropdown label="Dashboard Utama" :active="request()->routeIs('dashboard') || request()->routeIs('system.notification.*') || request()->routeIs('admin.berita.*')">
+    <x-slot:icon>
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-    </x-slot:slot>
-    Dashboard Utama
-</x-nav.link>
+    </x-slot:icon>
+    <x-nav.link-child :href="route('dashboard')" :active="request()->routeIs('dashboard')">Ringkasan Eksekutif</x-nav.link-child>
+    <x-nav.link-child :href="route('system.notification.index')" :active="request()->routeIs('system.notification.*')">Pusat Notifikasi</x-nav.link-child>
+    @if(Auth::user()->can('admin'))
+    <x-nav.link-child :href="route('admin.berita.index')" :active="request()->routeIs('admin.berita.*')">Kelola Berita & Info</x-nav.link-child>
+    @endif
+</x-nav.dropdown>
 
 <!-- B. KESEHATAN -->
 @if(Auth::user()->can('medis') || Auth::user()->role === 'admin')
