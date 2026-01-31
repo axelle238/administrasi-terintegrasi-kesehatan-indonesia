@@ -12,6 +12,7 @@ use Livewire\WithFileUploads;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class Edit extends Component
 {
@@ -47,7 +48,14 @@ class Edit extends Component
     public $nilai_residu = 0;
     public $keterangan;
 
-    // Medical Specifics
+    // Warranty
+    public $garansi_mulai;
+    public $garansi_selesai;
+    public $penanggung_garansi;
+    public $cakupan_garansi;
+    public $nomor_kontrak_servis;
+
+    // Detail Medis (Specific)
     public $is_medis = false;
     public $nomor_izin_edar;
     public $distributor_resmi;
@@ -70,10 +78,11 @@ class Edit extends Component
             'satuan', 'kondisi', 'status_ketersediaan', 'tanggal_pengadaan', 'lokasi_penyimpanan',
             'ruangan_id', 'supplier_id', 'is_asset', 'spesifikasi', 'nomor_seri', 'nomor_pabrik',
             'nomor_registrasi', 'sumber_dana', 'harga_perolehan', 'nilai_buku', 'masa_manfaat',
-            'nilai_residu', 'keterangan'
+            'nilai_residu', 'keterangan',
+            'garansi_mulai', 'garansi_selesai', 'penanggung_garansi', 'cakupan_garansi', 'nomor_kontrak_servis'
         ]));
 
-        // Hydrate Medical
+        // Load Medical Details
         $this->detectMedisState();
         if ($barang->detailMedis) {
             $this->nomor_izin_edar = $barang->detailMedis->nomor_izin_edar;
@@ -104,18 +113,6 @@ class Edit extends Component
                                   str_contains($nama, 'obat') ||
                                   str_contains($nama, 'alkes');
             }
-        }
-    }
-
-    public function updatedHargaPerolehan()
-    {
-        // Auto update nilai buku if harga changed (assuming no depreciation yet, or reset)
-        // In reality, updating historical cost of depreciated asset is complex.
-        // We keep it simple: if asset, update book value to match cost initially.
-        if ($this->is_asset) {
-            // Check if depreciation already runs (logs exist)
-            // If exists, maybe don't auto update? Or Recalculate?
-            // Let's leave manual update or recalculate via button in show.
         }
     }
 
@@ -168,6 +165,8 @@ class Edit extends Component
             'nomor_seri' => 'nullable|string',
             'harga_perolehan' => 'nullable|numeric|min:0',
             'sumber_dana' => 'nullable|string',
+            'garansi_mulai' => 'nullable|date',
+            'garansi_selesai' => 'nullable|date|after_or_equal:garansi_mulai',
             'nomor_izin_edar' => 'nullable|string',
             'frekuensi_kalibrasi_bulan' => 'nullable|integer|min:1',
             'newPhotos.*' => 'image|max:2048', // 2MB Max
@@ -199,9 +198,14 @@ class Edit extends Component
                 'masa_manfaat' => $this->masa_manfaat ?: 0,
                 'nilai_residu' => $this->nilai_residu ?: 0,
                 'keterangan' => $this->keterangan,
+                'garansi_mulai' => $this->garansi_mulai,
+                'garansi_selesai' => $this->garansi_selesai,
+                'penanggung_garansi' => $this->penanggung_garansi,
+                'cakupan_garansi' => $this->cakupan_garansi,
+                'nomor_kontrak_servis' => $this->nomor_kontrak_servis,
             ]);
 
-            // Update Medical Details
+            // Update or Create Detail Medis
             if ($this->is_medis) {
                 $this->barang->detailMedis()->updateOrCreate(
                     ['barang_id' => $this->barang->id],
@@ -211,14 +215,16 @@ class Edit extends Component
                         'frekuensi_kalibrasi_bulan' => $this->frekuensi_kalibrasi_bulan,
                         'kalibrasi_terakhir' => $this->kalibrasi_terakhir,
                         'kalibrasi_selanjutnya' => ($this->frekuensi_kalibrasi_bulan && $this->kalibrasi_terakhir)
-                            ? \Carbon\Carbon::parse($this->kalibrasi_terakhir)->addMonths($this->frekuensi_kalibrasi_bulan)
+                            ? Carbon::parse($this->kalibrasi_terakhir)->addMonths($this->frekuensi_kalibrasi_bulan)
                             : null,
                         'suhu_penyimpanan' => $this->suhu_penyimpanan,
                         'catatan_teknis' => $this->catatan_teknis,
                     ]
                 );
             } else {
-                $this->barang->detailMedis()->delete();
+                if ($this->barang->detailMedis) {
+                    $this->barang->detailMedis()->delete();
+                }
             }
 
             // Handle New Photos

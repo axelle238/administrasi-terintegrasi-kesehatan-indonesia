@@ -212,6 +212,48 @@
                 </div>
             </div>
 
+            <!-- Section 4: Jaminan & Garansi -->
+            <div class="bg-indigo-50/50 p-6 rounded-3xl border border-indigo-100 animate-fade-in">
+                <div class="flex items-center gap-3 pb-2 border-b border-indigo-200">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold">4</div>
+                    <h3 class="text-lg font-bold text-indigo-900">Jaminan Purna Jual</h3>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                    <div>
+                        <label class="block text-sm font-bold text-indigo-900 mb-2">Penanggung Garansi / Principal</label>
+                        <input type="text" wire:model="penanggung_garansi" class="w-full px-4 py-3 bg-white border border-indigo-200 rounded-xl" placeholder="Nama Perusahaan...">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-bold text-indigo-900 mb-2">Nomor Kontrak Servis / Kartu Garansi</label>
+                        <input type="text" wire:model="nomor_kontrak_servis" class="w-full px-4 py-3 bg-white border border-indigo-200 rounded-xl">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-indigo-900 mb-2">Mulai Garansi</label>
+                            <input type="date" wire:model="garansi_mulai" class="w-full px-4 py-3 bg-white border border-indigo-200 rounded-xl">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-indigo-900 mb-2">Habis Garansi</label>
+                            <input type="date" wire:model="garansi_selesai" class="w-full px-4 py-3 bg-white border border-indigo-200 rounded-xl">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-indigo-900 mb-2">Cakupan Garansi</label>
+                        <select wire:model="cakupan_garansi" class="w-full px-4 py-3 bg-white border border-indigo-200 rounded-xl">
+                            <option value="">-- Pilih Cakupan --</option>
+                            <option value="Full Cover">Full Cover (Sparepart & Jasa)</option>
+                            <option value="Service Only">Jasa Servis Saja</option>
+                            <option value="Sparepart Only">Sparepart Saja</option>
+                            <option value="Limited">Terbatas (Limited)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
             <!-- Action Buttons -->
             <div class="flex justify-end gap-4 pt-6 border-t border-slate-100">
                 <a href="{{ route('barang.index') }}" class="px-6 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition-colors">Batal</a>

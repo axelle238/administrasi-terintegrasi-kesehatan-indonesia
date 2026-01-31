@@ -92,6 +92,13 @@
                     <h3 class="text-2xl font-black text-slate-800 mb-1">{{ $disposalPending }}</h3>
                     <p class="text-xs text-slate-400">Disposal</p>
                 </div>
+                @if($garansiExpiring > 0)
+                <div class="w-px bg-slate-100 h-10"></div>
+                <div>
+                    <h3 class="text-2xl font-black text-red-600 mb-1">{{ $garansiExpiring }}</h3>
+                    <p class="text-xs text-red-400 font-bold">Garansi Exp</p>
+                </div>
+                @endif
             </div>
         </div>
     </div>

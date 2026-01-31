@@ -42,6 +42,20 @@
                         <span class="text-sm font-bold {{ $barang->kondisi == 'Baik' ? 'text-emerald-600' : 'text-rose-600' }}">{{ $barang->kondisi }}</span>
                     </div>
                     <div>
+                        <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Garansi</p>
+                        @if($barang->garansi_selesai)
+                            @php
+                                $isExpired = \Carbon\Carbon::parse($barang->garansi_selesai)->isPast();
+                            @endphp
+                            <span class="text-sm font-bold {{ $isExpired ? 'text-red-500' : 'text-indigo-600' }}">
+                                {{ $isExpired ? 'Habis' : 'Aktif' }}
+                                <span class="text-[10px] text-slate-400 font-normal">({{ \Carbon\Carbon::parse($barang->garansi_selesai)->format('d/m/y') }})</span>
+                            </span>
+                        @else
+                            <span class="text-sm font-bold text-slate-400">-</span>
+                        @endif
+                    </div>
+                    <div>
                         <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Stok Total</p>
                         <p class="text-xl font-black text-blue-600">{{ $barang->stok }} <span class="text-xs font-normal text-slate-500">{{ $barang->satuan }}</span></p>
                     </div>

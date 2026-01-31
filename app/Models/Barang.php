@@ -52,6 +52,11 @@ class Barang extends Model
         'spesifikasi_teknis',
         'ruangan_id',
         'supplier_id',
+        'garansi_mulai',
+        'garansi_selesai',
+        'penanggung_garansi',
+        'cakupan_garansi',
+        'nomor_kontrak_servis',
     ];
 
     protected $casts = [
@@ -62,6 +67,8 @@ class Barang extends Model
         'tanggal_pengadaan' => 'date',
         'tanggal_kalibrasi_terakhir' => 'date',
         'tanggal_kalibrasi_berikutnya' => 'date',
+        'garansi_mulai' => 'date',
+        'garansi_selesai' => 'date',
     ];
 
     public function scopeAsset($query)

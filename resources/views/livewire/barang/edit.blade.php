@@ -114,6 +114,41 @@
                 </div>
                 @endif
 
+                <!-- Warranty Section -->
+                <div class="bg-indigo-50/50 rounded-2xl shadow-sm border border-indigo-100 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-indigo-100 flex items-center gap-3">
+                         <div class="p-2 bg-indigo-100 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-indigo-900">Status Garansi</h3>
+                    </div>
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <x-input-label for="penanggung_garansi" value="Principal / Vendor" class="mb-2" />
+                            <x-text-input wire:model="penanggung_garansi" id="penanggung_garansi" class="block w-full" type="text" />
+                        </div>
+                        <div>
+                            <x-input-label for="cakupan_garansi" value="Cakupan" class="mb-2" />
+                            <select wire:model="cakupan_garansi" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                <option value="">-- Pilih --</option>
+                                <option value="Full Cover">Full Cover</option>
+                                <option value="Service Only">Jasa Saja</option>
+                                <option value="Sparepart Only">Sparepart Saja</option>
+                            </select>
+                        </div>
+                        <div>
+                            <x-input-label for="garansi_mulai" value="Mulai" class="mb-2" />
+                            <x-text-input wire:model="garansi_mulai" id="garansi_mulai" class="block w-full" type="date" />
+                        </div>
+                        <div>
+                            <x-input-label for="garansi_selesai" value="Berakhir" class="mb-2" />
+                            <x-text-input wire:model="garansi_selesai" id="garansi_selesai" class="block w-full" type="date" />
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Gallery Section (NEW) -->
                 <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
                     <div class="px-8 py-6 border-b border-gray-100 bg-gray-50/50">

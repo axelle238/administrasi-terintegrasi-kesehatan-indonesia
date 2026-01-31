@@ -42,6 +42,13 @@ class Create extends Component
     public $nilai_residu = 0;
     public $keterangan;
 
+    // Warranty & Service
+    public $garansi_mulai;
+    public $garansi_selesai;
+    public $penanggung_garansi;
+    public $cakupan_garansi;
+    public $nomor_kontrak_servis;
+
     // Upload Foto
     public $photos = [];
 
@@ -70,6 +77,8 @@ class Create extends Component
         'nomor_seri' => 'nullable|string',
         'harga_perolehan' => 'nullable|numeric|min:0',
         'sumber_dana' => 'nullable|string',
+        'garansi_mulai' => 'nullable|date',
+        'garansi_selesai' => 'nullable|date|after_or_equal:garansi_mulai',
         
         // Validation for Medis (Conditional)
         'nomor_izin_edar' => 'nullable|string',
@@ -132,6 +141,11 @@ class Create extends Component
                 'masa_manfaat' => $this->masa_manfaat ?: 0,
                 'nilai_residu' => $this->nilai_residu ?: 0,
                 'keterangan' => $this->keterangan,
+                'garansi_mulai' => $this->garansi_mulai,
+                'garansi_selesai' => $this->garansi_selesai,
+                'penanggung_garansi' => $this->penanggung_garansi,
+                'cakupan_garansi' => $this->cakupan_garansi,
+                'nomor_kontrak_servis' => $this->nomor_kontrak_servis,
             ]);
             
             // Save Detail Medis if applicable

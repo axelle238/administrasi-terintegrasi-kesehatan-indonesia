@@ -77,6 +77,13 @@ class Dashboard extends Component
 
         $peminjamanAktif = PeminjamanBarang::where('status', 'Dipinjam')->count();
         $disposalPending = PenghapusanBarang::where('status', 'Pending')->count();
+        
+        $garansiExpiring = 0;
+        if ($this->tipeFilter != 'umum') {
+            $garansiExpiring = Barang::whereNotNull('garansi_selesai')
+                ->whereBetween('garansi_selesai', [now(), now()->addDays(30)])
+                ->count();
+        }
 
         $dataTab = [];
 
@@ -196,6 +203,7 @@ class Dashboard extends Component
             'statistikKondisi',
             'peminjamanAktif',
             'disposalPending',
+            'garansiExpiring',
             'dataTab'
         ))->layout('layouts.app', ['header' => 'Manajemen Aset & Inventaris']);
     }
