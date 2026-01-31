@@ -18,8 +18,32 @@ class Index extends Component
     public $jenisBarang = 'semua'; // semua, aset_tetap, habis_pakai
     public $perHalaman = 10;
     
+    // Fitur Barcode Scanner
+    public $scanCode = '';
+
     // Fitur Recycle Bin
     public $modeTampilan = 'aktif'; // aktif, sampah
+
+    public function performScan()
+    {
+        $this->validate([
+            'scanCode' => 'required|string'
+        ]);
+
+        // Cari Barang (Exact Match)
+        $barang = Barang::where('kode_barang', $this->scanCode)->first();
+
+        if ($barang) {
+            // Jika ditemukan, redirect langsung ke detail
+            $this->reset('scanCode');
+            return redirect()->route('barang.show', $barang->id);
+        } else {
+            // Jika tidak, beri notifikasi error dan reset input
+            $this->addError('scanCode', 'Aset dengan kode tersebut tidak ditemukan.');
+            $this->scanCode = '';
+            $this->dispatch('focus-scan'); // Kembalikan fokus ke input
+        }
+    }
 
     public function updatingCari()
     {

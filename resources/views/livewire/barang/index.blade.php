@@ -19,6 +19,50 @@
         </div>
     </div>
 
+    <!-- Terminal Quick Scan (Barcode) -->
+    <div class="bg-gradient-to-r from-slate-800 to-slate-900 rounded-[2rem] p-6 shadow-lg border border-slate-700 flex flex-col md:flex-row items-center gap-6 relative overflow-hidden group">
+        <div class="absolute top-0 right-0 p-4 opacity-10">
+            <svg class="w-40 h-40 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M3 5h2V3c-1.1 0-2 .9-2 2zm0 8h2v-6H3v6zm4 8h2v-2H7v2zm-4 0h2v-6H3v6zm8-18h2V3h-2v2zm10-2h-2v2h2V3zm-4 18h2v-2h-2v2zm4 0h2v-6h-2v6zm-4-8h2v-6h-2v6zm-4 8h2v-2h-2v2zm4-18h-2v6h2V3zM7 3v2h2V3H7zm10 0v2h2V3h-2zM7 19v2h2v-2H7z"/></svg>
+        </div>
+        
+        <div class="flex items-center gap-4 relative z-10">
+            <div class="w-14 h-14 bg-blue-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg>
+            </div>
+            <div>
+                <h3 class="text-lg font-black text-white">Scan Barcode / QR</h3>
+                <p class="text-slate-400 text-sm">Arahkan scanner ke kode aset untuk pencarian instan.</p>
+            </div>
+        </div>
+
+        <div class="flex-1 w-full relative z-10" 
+             x-data 
+             x-on:focus-scan.window="$refs.scanInput.focus()">
+            <form wire:submit.prevent="performScan">
+                <div class="relative">
+                    <input type="text" 
+                           x-ref="scanInput"
+                           wire:model="scanCode" 
+                           class="w-full pl-12 pr-4 py-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white font-mono font-bold text-lg placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:bg-slate-700 transition-all" 
+                           placeholder="Klik di sini & Scan Kode Aset..." 
+                           autofocus>
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <span class="animate-pulse w-3 h-3 bg-red-500 rounded-full"></span>
+                    </div>
+                    <button type="submit" class="absolute right-2 top-2 bottom-2 px-4 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-xs uppercase tracking-wider transition">
+                        Cari
+                    </button>
+                </div>
+                @error('scanCode') 
+                    <p class="text-rose-400 text-sm font-bold mt-2 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        {{ $message }}
+                    </p> 
+                @enderror
+            </form>
+        </div>
+    </div>
+
     <!-- Mode Switcher (Recycle Bin) -->
     <div class="flex gap-4 border-b border-slate-200">
         <button wire:click="gantiModeTampilan('aktif')" class="px-6 py-3 text-sm font-bold border-b-2 transition-colors {{ $modeTampilan == 'aktif' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700' }}">
