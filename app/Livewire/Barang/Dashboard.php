@@ -87,6 +87,22 @@ class Dashboard extends Component
                 return $isAlkes ? 0 : 1; // Alkes first
             });
             
+            // Analisis Biaya 6 Bulan Terakhir
+            $tabData['biayaTrend'] = Maintenance::select(
+                    DB::raw("DATE_FORMAT(tanggal_maintenance, '%Y-%m') as bulan"),
+                    DB::raw("SUM(biaya) as total_biaya")
+                )
+                ->where('tanggal_maintenance', '>=', now()->subMonths(6))
+                ->groupBy('bulan')
+                ->orderBy('bulan')
+                ->get();
+
+            // Rasio Preventif vs Korektif
+            $tabData['maintenanceRatio'] = [
+                'preventif' => Maintenance::where('jenis_kegiatan', 'Preventif')->count(),
+                'korektif' => Maintenance::where('jenis_kegiatan', 'Perbaikan')->count(),
+            ];
+            
             $tabData['biayaMaintenanceBulanIni'] = Maintenance::whereMonth('tanggal_maintenance', Carbon::now()->month)
                 ->whereYear('tanggal_maintenance', Carbon::now()->year)
                 ->sum('biaya');

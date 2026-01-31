@@ -1,328 +1,193 @@
-<div class="space-y-8 animate-fade-in">
-    <!-- Header Dashboard -->
-    <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-        <div>
-            <h2 class="text-3xl font-black text-slate-800 flex items-center gap-4">
-                <div class="p-3 bg-indigo-50 rounded-2xl text-indigo-600 shadow-sm">
-                    <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
-                </div>
-                Pusat Kendali Aset & Inventaris
-            </h2>
-            <p class="text-slate-500 font-medium mt-2 ml-16 leading-relaxed">
-                Pemantauan status kondisi, nilai perolehan, jadwal pemeliharaan, dan siklus hidup seluruh aset fasilitas kesehatan.
-            </p>
-        </div>
-        <div class="flex items-center gap-3 ml-16 lg:ml-0">
-            <a href="{{ route('barang.create') }}" class="px-6 py-3 bg-slate-800 text-white rounded-2xl text-sm font-black hover:bg-slate-900 transition-all shadow-lg shadow-slate-200 flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                Registrasi Aset Baru
-            </a>
-        </div>
-    </div>
-
-    <!-- Global Key Metrics -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="space-y-8 animate-fade-in" x-data="{ activeTab: @entangle('activeTab') }">
+    
+    <!-- Hero Stats -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <!-- Total Aset -->
-        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between group hover:border-indigo-200 transition-all">
-            <div>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Total Inventaris</p>
-                <h3 class="text-3xl font-black text-slate-800 mt-1">{{ number_format($totalAset) }} <span class="text-sm font-medium text-slate-400">Item</span></h3>
+        <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-[2rem] p-6 text-white relative overflow-hidden shadow-xl group hover:scale-[1.02] transition-transform duration-300">
+            <div class="absolute right-0 top-0 opacity-10 p-4">
+                <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
             </div>
-            <div class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:rotate-6 transition-transform">
-                <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-            </div>
-        </div>
-
-        <!-- Alat Kesehatan (Priority) -->
-        <div class="bg-gradient-to-br from-indigo-600 to-violet-700 p-6 rounded-3xl text-white shadow-xl shadow-indigo-500/20 relative overflow-hidden group">
-            <div class="absolute right-0 top-0 w-20 h-24 bg-white/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-            <p class="text-xs font-bold text-indigo-100 uppercase tracking-widest mb-1 relative z-10">Alat Kesehatan (Alkes)</p>
-            <h3 class="text-3xl font-black relative z-10">{{ number_format($totalAlkes) }} <span class="text-sm font-medium text-indigo-200">Unit</span></h3>
-            <p class="mt-4 text-[10px] font-bold text-indigo-200 uppercase relative z-10 flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Aset Kritis
-            </p>
-        </div>
-
-        <!-- Kondisi Baik -->
-        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between group hover:border-emerald-200 transition-all">
-            <div>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Kondisi Prima</p>
-                <h3 class="text-3xl font-black text-emerald-600 mt-1">{{ number_format($kondisiStats['Baik'] ?? 0) }}</h3>
-            </div>
-            <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <div class="relative z-10">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Total Aset Tercatat</p>
+                <h2 class="text-4xl font-black mb-4">{{ number_format($totalAset) }} <span class="text-lg font-medium text-slate-500">Unit</span></h2>
+                <div class="flex gap-2">
+                    <span class="px-2 py-1 rounded bg-blue-500/20 text-blue-300 text-[10px] font-bold border border-blue-500/30">{{ $kondisiStats['Baik'] }} Baik</span>
+                    <span class="px-2 py-1 rounded bg-red-500/20 text-red-300 text-[10px] font-bold border border-red-500/30">{{ $kondisiStats['Rusak'] }} Rusak</span>
+                </div>
             </div>
         </div>
 
-        <!-- Nilai Aset -->
-        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between group hover:border-amber-200 transition-all">
-            <div>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Total Valuasi</p>
-                <h3 class="text-xl font-black text-amber-600 mt-1 truncate">Rp {{ number_format($nilaiAsetTotal/1000000, 0, ',', '.') }} Jt</h3>
+        <!-- Valuasi -->
+        <div class="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-sm group hover:border-emerald-200 transition-colors">
+            <div class="flex justify-between items-start mb-4">
+                <div class="p-3 bg-emerald-50 rounded-2xl text-emerald-600">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </div>
+                <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg uppercase tracking-wider">Valuasi</span>
             </div>
-            <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:animate-swing transition-transform">
-                <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <h3 class="text-2xl font-black text-slate-800 mb-1">Rp {{ number_format($nilaiAsetTotal / 1000000, 1) }} M</h3>
+            <p class="text-xs text-slate-400">Estimasi total nilai aset saat ini.</p>
+        </div>
+
+        <!-- Alkes -->
+        <div class="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-sm group hover:border-blue-200 transition-colors">
+            <div class="flex justify-between items-start mb-4">
+                <div class="p-3 bg-blue-50 rounded-2xl text-blue-600">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+                </div>
+                <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg uppercase tracking-wider">Alat Medis</span>
             </div>
+            <h3 class="text-3xl font-black text-slate-800 mb-1">{{ number_format($totalAlkes) }}</h3>
+            <p class="text-xs text-slate-400">Unit alat kesehatan terdaftar.</p>
+        </div>
+
+        <!-- Maintenance -->
+        <div class="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-sm group hover:border-amber-200 transition-colors">
+            <div class="flex justify-between items-start mb-4">
+                <div class="p-3 bg-amber-50 rounded-2xl text-amber-600">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </div>
+                <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-lg uppercase tracking-wider">Perbaikan</span>
+            </div>
+            <h3 class="text-3xl font-black text-slate-800 mb-1">{{ $kondisiStats['PerluPerbaikan'] }}</h3>
+            <p class="text-xs text-slate-400">Aset butuh tindakan segera.</p>
         </div>
     </div>
 
-    <!-- Detailed Analysis & Tabs -->
-    <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
-        <div class="px-8 pt-6 border-b border-slate-50 flex gap-10 overflow-x-auto">
-            <button wire:click="setTab('ikhtisar')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $activeTab == 'ikhtisar' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600' }}">
-                Ikhtisar & Lokasi
-                @if($activeTab == 'ikhtisar') <div class="absolute bottom-0 left-0 w-full h-1 bg-indigo-600 rounded-t-full"></div> @endif
-            </button>
-            <button wire:click="setTab('stok')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $activeTab == 'stok' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600' }}">
-                Alur Inventaris
-                @if($activeTab == 'stok') <div class="absolute bottom-0 left-0 w-full h-1 bg-indigo-600 rounded-t-full"></div> @endif
-            </button>
-            <button wire:click="setTab('maintenance')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $activeTab == 'maintenance' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600' }}">
-                Jadwal Pemeliharaan
-                @if($activeTab == 'maintenance') <div class="absolute bottom-0 left-0 w-full h-1 bg-indigo-600 rounded-t-full"></div> @endif
-            </button>
-            <button wire:click="setTab('pengadaan')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $activeTab == 'pengadaan' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600' }}">
-                Pengadaan Baru
-                @if($activeTab == 'pengadaan') <div class="absolute bottom-0 left-0 w-full h-1 bg-indigo-600 rounded-t-full"></div> @endif
-            </button>
+    <!-- Navigation Tabs -->
+    <div class="border-b border-slate-200">
+        <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+            @foreach(['ikhtisar' => 'Ikhtisar & Lokasi', 'stok' => 'Monitoring Stok', 'maintenance' => 'Jadwal Maintenance', 'pengadaan' => 'Pengadaan Baru'] as $key => $label)
+                <button wire:click="setTab('{{ $key }}')" 
+                    class="{{ $activeTab === $key ? 'border-blue-500 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-bold text-sm transition-colors uppercase tracking-wider">
+                    {{ $label }}
+                </button>
+            @endforeach
+        </nav>
+    </div>
+
+    <!-- Tab Contents -->
+    <div class="mt-6">
+        
+        <!-- IKHTISAR -->
+        <div x-show="activeTab === 'ikhtisar'" class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in-up">
+            <!-- Lokasi Aset -->
+            <div class="lg:col-span-2 bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
+                <h4 class="font-bold text-slate-800 mb-6 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    Distribusi Aset per Ruangan
+                </h4>
+                <div class="space-y-4">
+                    @foreach($tabData['lokasiAset'] ?? [] as $lokasi)
+                    <div class="group">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="font-bold text-slate-700">{{ $lokasi->nama_ruangan }}</span>
+                            <span class="font-bold text-slate-500">{{ $lokasi->barangs_count }} Item</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                            <div class="bg-blue-500 h-2 rounded-full transition-all duration-1000 group-hover:bg-blue-400" style="width: {{ ($lokasi->barangs_count / ($totalAset > 0 ? $totalAset : 1)) * 100 }}%"></div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
+                <h4 class="font-bold text-slate-800 mb-6">Aktivitas Terkini</h4>
+                <div class="space-y-6 relative border-l-2 border-slate-100 ml-3">
+                    @foreach($tabData['recentActivities'] ?? [] as $log)
+                    <div class="relative pl-6">
+                        <div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 border-white {{ $log->jenis_transaksi == 'Masuk' ? 'bg-emerald-500' : 'bg-amber-500' }}"></div>
+                        <p class="text-xs text-slate-400 font-bold mb-0.5">{{ $log->created_at->diffForHumans() }}</p>
+                        <p class="text-sm font-bold text-slate-800">{{ $log->jenis_transaksi }} - {{ $log->barang->nama_barang ?? 'Unknown' }}</p>
+                        <p class="text-xs text-slate-500">Oleh: {{ $log->user->name ?? 'System' }}</p>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
         </div>
 
-        <div class="p-8">
-            @if($activeTab == 'ikhtisar')
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 animate-fade-in-up">
-                <!-- Visual Kondisi -->
-                <div class="space-y-6" x-data="chartKondisi()">
-                    <h4 class="font-black text-slate-800 uppercase tracking-widest text-xs">Proporsi Kondisi Aset</h4>
-                    <div id="chart-kondisi-aset" class="w-full flex justify-center"></div>
-                    <div class="grid grid-cols-3 gap-2">
-                        <div class="p-3 bg-emerald-50 rounded-2xl text-center">
-                            <p class="text-[10px] font-black text-emerald-600 uppercase">Baik</p>
-                            <p class="text-lg font-black text-emerald-700">{{ $kondisiStats['Baik'] }}</p>
-                        </div>
-                        <div class="p-3 bg-amber-50 rounded-2xl text-center">
-                            <p class="text-[10px] font-black text-amber-600 uppercase">Perlu Perbaikan</p>
-                            <p class="text-lg font-black text-amber-700">{{ $kondisiStats['PerluPerbaikan'] }}</p>
-                        </div>
-                        <div class="p-3 bg-rose-50 rounded-2xl text-center">
-                            <p class="text-[10px] font-black text-rose-600 uppercase">Rusak</p>
-                            <p class="text-lg font-black text-rose-700">{{ $kondisiStats['Rusak'] }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Distribusi Lokasi -->
-                <div class="space-y-6">
-                    <h4 class="font-black text-slate-800 uppercase tracking-widest text-xs">Penempatan Aset Terbanyak</h4>
-                    <div class="space-y-4">
-                        @foreach($tabData['lokasiAset'] ?? [] as $lokasi)
-                        <div class="group">
-                            <div class="flex justify-between items-end mb-2">
-                                <span class="text-sm font-bold text-slate-700">{{ $lokasi->nama_ruangan }}</span>
-                                <span class="text-xs font-black text-slate-800">{{ $lokasi->barangs_count }} Unit</span>
-                            </div>
-                            <div class="w-full bg-slate-50 h-1.5 rounded-full overflow-hidden border border-slate-100">
-                                <div class="bg-indigo-500 h-full rounded-full transition-all duration-1000 group-hover:bg-indigo-600" style="width: {{ ($lokasi->barangs_count / ($tabData['lokasiAset']->max('barangs_count') ?: 1)) * 100 }}%"></div>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
-
-                <!-- Audit Trail -->
-                <div class="space-y-6">
-                    <h4 class="font-black text-slate-800 uppercase tracking-widest text-xs">Log Aktivitas Terbaru</h4>
-                    <div class="space-y-4 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
-                        @foreach($tabData['recentActivities'] ?? [] as $log)
-                        <div class="flex gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 relative group hover:bg-white hover:shadow-md transition-all">
-                            <div class="w-1 bg-indigo-500 rounded-full h-full absolute left-0 top-0"></div>
-                            <div class="flex-1">
-                                <p class="text-xs font-black text-slate-800">{{ $log->barang->nama_barang ?? 'Aset' }}</p>
-                                <p class="text-[10px] text-slate-500 font-bold uppercase mt-0.5">{{ $log->jenis_transaksi }} • {{ $log->created_at->diffForHumans() }}</p>
-                                <p class="text-[10px] text-indigo-600 font-black mt-1 italic">Oleh: {{ $log->user->name ?? 'Sistem' }}</p>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-            @endif
-
-            @if($activeTab == 'stok')
-            <div class="space-y-10 animate-fade-in-up" x-data="chartStokFlow()">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <h4 class="text-lg font-black text-slate-800">Analisis Pergerakan Barang</h4>
-                        <p class="text-xs text-slate-400 font-bold uppercase mt-1">Data 7 Hari Terakhir</p>
-                    </div>
-                    <div class="flex gap-6 text-[10px] font-black uppercase tracking-widest">
-                        <span class="flex items-center gap-2 text-emerald-600"><div class="w-3 h-3 bg-emerald-500 rounded-sm shadow-sm"></div> Barang Masuk</span>
-                        <span class="flex items-center gap-2 text-rose-500"><div class="w-3 h-3 bg-rose-500 rounded-sm shadow-sm"></div> Barang Keluar</span>
-                    </div>
-                </div>
-                <div id="chart-flow-stok" class="w-full h-[350px]"></div>
-                
-                <div class="mt-8">
-                    <h4 class="font-black text-slate-800 uppercase tracking-widest text-xs mb-4">Peringatan Stok Menipis (BHP)</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        @forelse($tabData['lowStockItems'] ?? [] as $item)
-                        <div class="p-4 bg-rose-50 border border-rose-100 rounded-2xl flex justify-between items-center">
-                            <div>
-                                <p class="text-sm font-black text-slate-800">{{ $item->nama_barang }}</p>
-                                <p class="text-[10px] text-rose-500 font-bold">Stok: {{ $item->stok }} {{ $item->satuan }}</p>
-                            </div>
-                            <a href="{{ route('barang.pengadaan.create') }}" class="px-3 py-1.5 bg-white text-rose-600 text-[10px] font-black rounded-lg hover:bg-rose-600 hover:text-white transition-colors shadow-sm">Pesan Ulang</a>
-                        </div>
-                        @empty
-                        <div class="col-span-3 p-6 text-center text-slate-400 text-sm font-medium border-2 border-dashed border-slate-100 rounded-2xl">
-                            Stok aman. Tidak ada barang di bawah batas minimum.
-                        </div>
-                        @endforelse
-                    </div>
-                </div>
-            </div>
-            @endif
-
-            @if($activeTab == 'maintenance')
-            <div class="space-y-8 animate-fade-in-up">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                    <!-- Upcoming Maintenance -->
-                    <div class="space-y-6">
-                        <h4 class="text-lg font-black text-slate-800">Pemeliharaan Mendatang (30 Hari)</h4>
-                        <div class="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
-                            @forelse($tabData['maintenanceDue'] ?? [] as $m)
-                            @php
-                                $isAlkes = str_contains(strtolower($m->barang->kategori->nama_kategori ?? ''), 'medis') || str_contains(strtolower($m->barang->kategori->nama_kategori ?? ''), 'alat');
-                            @endphp
-                            <div class="p-5 bg-white border {{ $isAlkes ? 'border-indigo-100 shadow-indigo-500/5' : 'border-slate-100' }} rounded-3xl shadow-sm flex items-center justify-between group hover:border-indigo-200 transition-all">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 rounded-2xl {{ $isAlkes ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-50 text-slate-600' }} flex items-center justify-center font-black text-xs shrink-0">
-                                        {{ \Carbon\Carbon::parse($m->tanggal_berikutnya)->format('d') }}<br>
-                                        {{ \Carbon\Carbon::parse($m->tanggal_berikutnya)->format('M') }}
-                                    </div>
-                                    <div>
-                                        <div class="flex items-center gap-2">
-                                            <p class="text-sm font-black text-slate-800">{{ $m->barang->nama_barang ?? 'Aset' }}</p>
-                                            @if($isAlkes)
-                                                <span class="px-1.5 py-0.5 bg-indigo-100 text-indigo-600 rounded text-[8px] font-black uppercase tracking-wider">Medis</span>
-                                            @endif
-                                        </div>
-                                        <p class="text-[10px] text-slate-400 font-bold uppercase">No. Seri: {{ $m->barang->nomor_seri ?? '-' }}</p>
-                                    </div>
-                                </div>
-                                <span class="px-3 py-1 bg-amber-100 text-amber-700 rounded-lg text-[10px] font-black uppercase">Segera</span>
-                            </div>
-                            @empty
-                            <p class="text-center text-slate-400 py-10">Tidak ada jadwal pemeliharaan mendesak.</p>
-                            @endforelse
-                        </div>
-                    </div>
-
-                    <!-- Cost Summary -->
-                    <div class="space-y-6">
-                        <h4 class="text-lg font-black text-slate-800">Ringkasan Biaya Pemeliharaan</h4>
-                        <div class="p-8 bg-indigo-50 rounded-[2rem] border border-indigo-100 relative overflow-hidden">
-                            <p class="text-xs font-black text-indigo-400 uppercase tracking-widest mb-2">Total Biaya Bulan Ini</p>
-                            <h3 class="text-4xl font-black text-indigo-700">Rp {{ number_format($tabData['biayaMaintenanceBulanIni'] ?? 0, 0, ',', '.') }}</h3>
-                            <div class="mt-6 flex items-center gap-3">
-                                <div class="p-2 bg-white rounded-xl text-indigo-600 shadow-sm">
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                                </div>
-                                <p class="text-[10px] text-indigo-500 font-bold uppercase leading-tight">Optimalkan performa alat kesehatan dengan perawatan rutin berbiaya efisien.</p>
-                            </div>
-                            <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-indigo-200/30 rounded-full blur-2xl"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @endif
-
-            @if($activeTab == 'pengadaan')
-            <div class="space-y-8 animate-fade-in-up">
-                <div class="flex justify-between items-center">
-                    <h4 class="text-lg font-black text-slate-800">Daftar Pengajuan Pengadaan</h4>
-                    <span class="text-xs font-bold text-slate-500">Total Disetujui Tahun Ini: Rp {{ number_format($tabData['totalPengadaanTahunIni'] ?? 0, 0, ',', '.') }}</span>
+        <!-- MAINTENANCE -->
+        <div x-show="activeTab === 'maintenance'" style="display: none;" class="animate-fade-in-up">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Stat Biaya -->
+                <div class="bg-amber-50 rounded-[2rem] p-6 border border-amber-100">
+                    <p class="text-xs font-bold text-amber-600 uppercase tracking-wider mb-2">Biaya Servis Bulan Ini</p>
+                    <h3 class="text-3xl font-black text-amber-900">Rp {{ number_format($tabData['biayaMaintenanceBulanIni'] ?? 0) }}</h3>
                 </div>
                 
-                <div class="overflow-x-auto border border-slate-100 rounded-3xl">
-                    <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-50 text-slate-400 font-black uppercase tracking-wider">
+                <!-- Rasio -->
+                <div class="bg-white rounded-[2rem] p-6 border border-slate-100 col-span-2 flex items-center justify-around">
+                    <div class="text-center">
+                        <p class="text-3xl font-black text-blue-600">{{ $tabData['maintenanceRatio']['preventif'] ?? 0 }}</p>
+                        <p class="text-xs font-bold text-slate-400 uppercase">Preventif</p>
+                    </div>
+                    <div class="h-12 w-px bg-slate-200"></div>
+                    <div class="text-center">
+                        <p class="text-3xl font-black text-red-500">{{ $tabData['maintenanceRatio']['korektif'] ?? 0 }}</p>
+                        <p class="text-xs font-bold text-slate-400 uppercase">Perbaikan (Rusak)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
+                <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                    <h4 class="font-bold text-slate-800">Jadwal Maintenance Mendatang (30 Hari)</h4>
+                    <a href="{{ route('barang.maintenance') }}" class="text-xs font-bold text-blue-600 hover:underline">Kelola Jadwal &rarr;</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
                             <tr>
-                                <th class="px-6 py-4">No. Pengajuan</th>
                                 <th class="px-6 py-4">Tanggal</th>
-                                <th class="px-6 py-4">Diajukan Oleh</th>
-                                <th class="px-6 py-4">Keterangan</th>
-                                <th class="px-6 py-4 text-center">Status</th>
-                                <th class="px-6 py-4 text-right">Aksi</th>
+                                <th class="px-6 py-4">Aset / Barang</th>
+                                <th class="px-6 py-4">Kategori</th>
+                                <th class="px-6 py-4">Status</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-50">
-                            @forelse($tabData['pengadaanPending'] ?? [] as $p)
+                        <tbody class="divide-y divide-slate-100">
+                            @forelse($tabData['maintenanceDue'] ?? [] as $m)
                             <tr class="hover:bg-slate-50 transition-colors">
-                                <td class="px-6 py-4 font-bold text-indigo-600">{{ $p->no_pengajuan }}</td>
-                                <td class="px-6 py-4 font-medium text-slate-600">{{ \Carbon\Carbon::parse($p->tanggal_pengajuan)->translatedFormat('d M Y') }}</td>
-                                <td class="px-6 py-4 font-bold text-slate-800">{{ $p->user->name ?? 'Staff' }}</td>
-                                <td class="px-6 py-4 text-slate-500">{{ Str::limit($p->keterangan, 30) }}</td>
-                                <td class="px-6 py-4 text-center">
-                                    <span class="px-2 py-1 bg-amber-100 text-amber-700 rounded text-[10px] font-black uppercase">Pending</span>
+                                <td class="px-6 py-4 font-bold text-slate-700">
+                                    {{ \Carbon\Carbon::parse($m->tanggal_berikutnya)->format('d M Y') }}
+                                    <br>
+                                    <span class="text-[10px] {{ \Carbon\Carbon::parse($m->tanggal_berikutnya)->isPast() ? 'text-red-500' : 'text-slate-400' }}">
+                                        {{ \Carbon\Carbon::parse($m->tanggal_berikutnya)->diffForHumans() }}
+                                    </span>
                                 </td>
-                                <td class="px-6 py-4 text-right">
-                                    <a href="#" class="text-indigo-600 hover:text-indigo-800 font-bold hover:underline">Tinjau</a>
+                                <td class="px-6 py-4">
+                                    <div class="font-bold text-slate-800">{{ $m->barang->nama_barang }}</div>
+                                    <div class="text-xs text-slate-400">{{ $m->barang->kode_barang }}</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 rounded text-[10px] font-bold uppercase {{ str_contains(strtolower($m->barang->kategori->nama_kategori ?? ''), 'medis') ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-600' }}">
+                                        {{ $m->barang->kategori->nama_kategori ?? 'Umum' }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-bold">Terjadwal</span>
                                 </td>
                             </tr>
                             @empty
-                            <tr><td colspan="6" class="px-6 py-10 text-center text-slate-400 font-medium">Tidak ada pengajuan tertunda.</td></tr>
+                            <tr>
+                                <td colspan="4" class="px-6 py-12 text-center text-slate-400">Tidak ada jadwal maintenance dalam 30 hari ke depan.</td>
+                            </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
             </div>
-            @endif
         </div>
+
+        <!-- STOK & PENGADAAN (Simple View) -->
+        <div x-show="activeTab === 'stok' || activeTab === 'pengadaan'" style="display: none;" class="bg-white p-12 rounded-[2rem] text-center border-2 border-dashed border-slate-200">
+            <p class="text-slate-400">Detail data untuk tab ini dapat dilihat pada menu operasional masing-masing.</p>
+            <div class="flex justify-center gap-4 mt-4">
+                <a href="{{ route('barang.index') }}" class="px-4 py-2 bg-slate-100 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-200">Ke Data Barang</a>
+                <a href="{{ route('barang.pengadaan.index') }}" class="px-4 py-2 bg-slate-100 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-200">Ke Pengadaan</a>
+            </div>
+        </div>
+
     </div>
-
-    @push('scripts')
-    <script>
-        function chartKondisi() {
-            return {
-                init() {
-                    const stats = @json($kondisiStats);
-                    const options = {
-                        series: [stats.Baik, stats.PerluPerbaikan, stats.Rusak],
-                        labels: ['Baik', 'Perlu Perbaikan', 'Rusak Berat'],
-                        chart: { type: 'donut', height: 280, fontFamily: 'Plus Jakarta Sans' },
-                        colors: ['#10b981', '#f59e0b', '#f43f5e'],
-                        legend: { position: 'bottom', markers: { radius: 12 } },
-                        dataLabels: { enabled: false },
-                        stroke: { width: 0 },
-                        plotOptions: { pie: { donut: { size: '75%' } } }
-                    };
-                    new ApexCharts(document.querySelector("#chart-kondisi-aset"), options).render();
-                }
-            }
-        }
-
-        function chartStokFlow() {
-            return {
-                init() {
-                    const data = @json($tabData['flowStok'] ?? ['labels' => [], 'in' => [], 'out' => []]);
-                    const options = {
-                        series: [
-                            { name: 'Barang Masuk', data: data.in },
-                            { name: 'Barang Keluar', data: data.out }
-                        ],
-                        chart: { type: 'bar', height: 350, stacked: true, toolbar: { show: false }, fontFamily: 'Plus Jakarta Sans' },
-                        plotOptions: { bar: { borderRadius: 8, columnWidth: '35%' } },
-                        xaxis: { categories: data.labels, axisBorder: { show: false }, labels: { style: { colors: '#94a3b8', fontWeight: 700 } } },
-                        yaxis: { labels: { style: { colors: '#94a3b8', fontWeight: 700 } } },
-                        colors: ['#10b981', '#f43f5e'],
-                        legend: { show: false },
-                        grid: { borderColor: '#f1f5f9', strokeDashArray: 4 },
-                        dataLabels: { enabled: false }
-                    };
-                    new ApexCharts(document.querySelector("#chart-flow-stok"), options).render();
-                }
-            }
-        }
-    </script>
-    @endpush
 </div>
