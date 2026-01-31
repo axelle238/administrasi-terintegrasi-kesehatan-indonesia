@@ -81,6 +81,46 @@
         </div>
     </div>
 
+    <!-- Quick Access Modules (Gateway) -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <a href="{{ route('medical.dashboard') }}" class="group bg-white p-4 rounded-2xl shadow-sm border border-slate-100 hover:border-blue-400 hover:shadow-md transition-all flex flex-col items-center text-center gap-2">
+            <div class="p-3 bg-blue-50 text-blue-600 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+            </div>
+            <span class="text-xs font-bold text-slate-600 group-hover:text-slate-800">Medis</span>
+        </a>
+        <a href="{{ route('ukm.dashboard') }}" class="group bg-white p-4 rounded-2xl shadow-sm border border-slate-100 hover:border-emerald-400 hover:shadow-md transition-all flex flex-col items-center text-center gap-2">
+            <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+            </div>
+            <span class="text-xs font-bold text-slate-600 group-hover:text-slate-800">UKM / Masyarakat</span>
+        </a>
+        <a href="{{ route('hrd.dashboard') }}" class="group bg-white p-4 rounded-2xl shadow-sm border border-slate-100 hover:border-pink-400 hover:shadow-md transition-all flex flex-col items-center text-center gap-2">
+            <div class="p-3 bg-pink-50 text-pink-600 rounded-xl group-hover:bg-pink-600 group-hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            </div>
+            <span class="text-xs font-bold text-slate-600 group-hover:text-slate-800">Kepegawaian</span>
+        </a>
+        <a href="{{ route('finance.dashboard') }}" class="group bg-white p-4 rounded-2xl shadow-sm border border-slate-100 hover:border-teal-400 hover:shadow-md transition-all flex flex-col items-center text-center gap-2">
+            <div class="p-3 bg-teal-50 text-teal-600 rounded-xl group-hover:bg-teal-600 group-hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </div>
+            <span class="text-xs font-bold text-slate-600 group-hover:text-slate-800">Keuangan</span>
+        </a>
+        <a href="{{ route('barang.dashboard') }}" class="group bg-white p-4 rounded-2xl shadow-sm border border-slate-100 hover:border-amber-400 hover:shadow-md transition-all flex flex-col items-center text-center gap-2">
+            <div class="p-3 bg-amber-50 text-amber-600 rounded-xl group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+            </div>
+            <span class="text-xs font-bold text-slate-600 group-hover:text-slate-800">Aset</span>
+        </a>
+        <a href="{{ route('security.dashboard') }}" class="group bg-white p-4 rounded-2xl shadow-sm border border-slate-100 hover:border-rose-400 hover:shadow-md transition-all flex flex-col items-center text-center gap-2">
+            <div class="p-3 bg-rose-50 text-rose-600 rounded-xl group-hover:bg-rose-600 group-hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+            </div>
+            <span class="text-xs font-bold text-slate-600 group-hover:text-slate-800">Keamanan</span>
+        </a>
+    </div>
+
     <!-- Grafik Utama & Statistik Poli -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Grafik Kunjungan -->
