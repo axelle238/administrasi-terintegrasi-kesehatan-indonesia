@@ -69,28 +69,44 @@
                 </div>
                 <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg uppercase tracking-wider">Kategori</span>
             </div>
-            <h3 class="text-3xl font-black text-slate-800 mb-1">{{ $dataTab['distribusiKategori']->count() ?? 0 }}</h3>
+            <h3 class="text-3xl font-black text-slate-800 mb-1">{{ count($dataTab['distribusiKategori'] ?? []) }}</h3>
             <p class="text-xs text-slate-400">Jenis kategori aktif.</p>
         </div>
         @endif
 
-        <!-- Maintenance -->
+        <!-- Operational Alert -->
         <div class="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-sm group hover:border-amber-200 transition-colors">
             <div class="flex justify-between items-start mb-4">
                 <div class="p-3 bg-amber-50 rounded-2xl text-amber-600">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
                 </div>
-                <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-lg uppercase tracking-wider">Perbaikan</span>
+                <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-lg uppercase tracking-wider">Alert</span>
             </div>
-            <h3 class="text-3xl font-black text-slate-800 mb-1">{{ $statistikKondisi['PerluPerbaikan'] }}</h3>
-            <p class="text-xs text-slate-400">Aset perlu tindakan.</p>
+            <div class="flex gap-4">
+                <div>
+                    <h3 class="text-2xl font-black text-slate-800 mb-1">{{ $peminjamanAktif }}</h3>
+                    <p class="text-xs text-slate-400">Dipinjam</p>
+                </div>
+                <div class="w-px bg-slate-100 h-10"></div>
+                <div>
+                    <h3 class="text-2xl font-black text-slate-800 mb-1">{{ $disposalPending }}</h3>
+                    <p class="text-xs text-slate-400">Disposal</p>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Navigation Tabs -->
     <div class="border-b border-slate-200">
-        <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-            @foreach(['ikhtisar' => 'Ikhtisar & Lokasi', 'stok' => 'Monitoring Stok', 'maintenance' => 'Jadwal Maintenance', 'pengadaan' => 'Pengadaan Baru'] as $key => $label)
+        <nav class="-mb-px flex space-x-8 overflow-x-auto" aria-label="Tabs">
+            @foreach([
+                'ikhtisar' => 'Ikhtisar & Lokasi', 
+                'stok' => 'Monitoring Stok', 
+                'maintenance' => 'Jadwal Maintenance', 
+                'pengadaan' => 'Pengadaan & Penghapusan',
+                'peminjaman' => 'Peminjaman & Mutasi',
+                'audit' => 'Audit & Opname'
+            ] as $key => $label)
                 <button wire:click="aturTab('{{ $key }}')"
                     class="{{ $tabAktif === $key ? 'border-blue-500 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-bold text-sm transition-colors uppercase tracking-wider relative block">
                     {{ $label }}
@@ -259,39 +275,155 @@
         </div>
         @endif
 
-        <!-- PENGADAAN -->
+        <!-- PENGADAAN & PENGHAPUSAN -->
         @if($tabAktif === 'pengadaan')
-        <div class="grid grid-cols-1 gap-6 animate-fade-in-up" wire:key="tab-content-pengadaan">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in-up" wire:key="tab-content-pengadaan">
+            <!-- Pengadaan -->
             <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
                 <div class="flex justify-between items-center mb-6">
-                    <h4 class="font-bold text-slate-800">Pengajuan Pending</h4>
-                    <a href="{{ route('barang.pengadaan.index') }}" class="text-xs font-bold text-blue-600 hover:underline">Kelola Pengadaan &rarr;</a>
+                    <h4 class="font-bold text-slate-800">Pengadaan Pending</h4>
+                    <a href="{{ route('barang.pengadaan.index') }}" class="text-xs font-bold text-blue-600 hover:underline">Kelola &rarr;</a>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left">
                         <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
                             <tr>
-                                <th class="px-4 py-3 rounded-l-xl">No. Pengajuan</th>
-                                <th class="px-4 py-3">Tanggal</th>
+                                <th class="px-4 py-3 rounded-l-xl">No. Request</th>
                                 <th class="px-4 py-3 rounded-r-xl">Status</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             @forelse($dataTab['pengadaanPending'] ?? [] as $p)
                             <tr>
-                                <td class="px-4 py-3 font-bold text-slate-700">{{ $p->nomor_pengajuan }}</td>
-                                <td class="px-4 py-3">{{ \Carbon\Carbon::parse($p->tanggal_pengajuan)->format('d M Y') }}</td>
+                                <td class="px-4 py-3 font-bold text-slate-700">
+                                    {{ $p->nomor_pengajuan }}<br>
+                                    <span class="text-[10px] text-slate-400">{{ $p->created_at->format('d M') }}</span>
+                                </td>
                                 <td class="px-4 py-3">
                                     <span class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded-lg text-xs font-bold">Pending</span>
                                 </td>
                             </tr>
                             @empty
-                            <tr>
-                                <td colspan="3" class="px-4 py-6 text-center text-slate-400">Tidak ada pengajuan pending.</td>
-                            </tr>
+                            <tr><td colspan="2" class="px-4 py-6 text-center text-slate-400">Nihil.</td></tr>
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- Penghapusan -->
+            <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
+                <div class="flex justify-between items-center mb-6">
+                    <h4 class="font-bold text-slate-800">Usulan Penghapusan</h4>
+                    <a href="{{ route('barang.penghapusan.index') }}" class="text-xs font-bold text-red-600 hover:underline">Kelola &rarr;</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                            <tr>
+                                <th class="px-4 py-3 rounded-l-xl">No. Dokumen</th>
+                                <th class="px-4 py-3 rounded-r-xl">Diajukan Oleh</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            @forelse($dataTab['penghapusanPending'] ?? [] as $ph)
+                            <tr>
+                                <td class="px-4 py-3 font-bold text-slate-700">
+                                    {{ $ph->nomor_dokumen }}<br>
+                                    <span class="text-[10px] text-slate-400">{{ $ph->created_at->format('d M') }}</span>
+                                </td>
+                                <td class="px-4 py-3 text-xs">{{ $ph->pemohon->name ?? '-' }}</td>
+                            </tr>
+                            @empty
+                            <tr><td colspan="2" class="px-4 py-6 text-center text-slate-400">Nihil.</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        <!-- PEMINJAMAN & MUTASI -->
+        @if($tabAktif === 'peminjaman')
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in-up" wire:key="tab-content-peminjaman">
+            <!-- Peminjaman -->
+            <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
+                <div class="flex justify-between items-center mb-6">
+                    <h4 class="font-bold text-slate-800">Sedang Dipinjam</h4>
+                    <a href="{{ route('barang.peminjaman.index') }}" class="text-xs font-bold text-indigo-600 hover:underline">Lihat Semua &rarr;</a>
+                </div>
+                <div class="space-y-4">
+                    @forelse($dataTab['peminjamanAktif'] ?? [] as $pinjam)
+                    <div class="flex items-center justify-between p-3 rounded-xl border border-slate-100">
+                        <div>
+                            <p class="font-bold text-slate-800 text-sm">{{ $pinjam->barang->nama_barang ?? '-' }}</p>
+                            <p class="text-xs text-slate-500">Oleh: {{ $pinjam->pegawai->user->name ?? '-' }}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs font-bold {{ \Carbon\Carbon::parse($pinjam->tanggal_kembali_rencana)->isPast() ? 'text-red-500' : 'text-slate-600' }}">
+                                Kembali: {{ \Carbon\Carbon::parse($pinjam->tanggal_kembali_rencana)->format('d M') }}
+                            </p>
+                        </div>
+                    </div>
+                    @empty
+                    <p class="text-center text-slate-400 py-6">Tidak ada aset yang sedang dipinjam.</p>
+                    @endforelse
+                </div>
+            </div>
+
+            <!-- Mutasi -->
+            <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
+                <div class="flex justify-between items-center mb-6">
+                    <h4 class="font-bold text-slate-800">Mutasi Terakhir</h4>
+                    <a href="{{ route('barang.mutasi.index') }}" class="text-xs font-bold text-blue-600 hover:underline">Lihat Log &rarr;</a>
+                </div>
+                <div class="space-y-4 relative border-l-2 border-slate-100 ml-2">
+                    @forelse($dataTab['mutasiTerbaru'] ?? [] as $mutasi)
+                    <div class="pl-4 relative">
+                        <div class="absolute -left-[5px] top-1 w-2.5 h-2.5 bg-blue-500 rounded-full"></div>
+                        <p class="text-xs font-bold text-slate-400 mb-0.5">{{ $mutasi->tanggal_mutasi->format('d M') }}</p>
+                        <p class="text-sm font-bold text-slate-800">{{ $mutasi->barang->nama_barang ?? '-' }}</p>
+                        <p class="text-xs text-slate-500">
+                            {{ $mutasi->ruanganAsal->nama_ruangan ?? '?' }} &rarr; {{ $mutasi->ruanganTujuan->nama_ruangan ?? '?' }}
+                        </p>
+                    </div>
+                    @empty
+                    <p class="text-center text-slate-400 py-6">Belum ada data mutasi.</p>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+        @endif
+
+        <!-- AUDIT -->
+        @if($tabAktif === 'audit')
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in-up" wire:key="tab-content-audit">
+            <div class="bg-teal-50 p-6 rounded-[2rem] border border-teal-100">
+                <p class="text-xs font-bold text-teal-600 uppercase tracking-widest mb-2">Akurasi Stok (Terakhir)</p>
+                <h3 class="text-4xl font-black text-teal-800">{{ number_format($dataTab['akurasiStok'] ?? 0, 1) }}%</h3>
+                <p class="text-xs text-teal-600 mt-2">Berdasarkan opname terakhir.</p>
+            </div>
+
+            <div class="md:col-span-2 bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
+                <div class="flex justify-between items-center mb-6">
+                    <h4 class="font-bold text-slate-800">Riwayat Opname</h4>
+                    <a href="{{ route('barang.opname.index') }}" class="text-xs font-bold text-teal-600 hover:underline">Mulai Audit Baru &rarr;</a>
+                </div>
+                <div class="space-y-4">
+                    @forelse($dataTab['opnameTerakhir'] ?? [] as $op)
+                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
+                        <div>
+                            <p class="font-bold text-slate-800 text-sm">Opname #{{ $op->id }}</p>
+                            <p class="text-xs text-slate-500">{{ $op->tanggal->format('d F Y') }} • Oleh: {{ $op->user->name ?? '-' }}</p>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold {{ $op->status == 'Final' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
+                            {{ $op->status }}
+                        </span>
+                    </div>
+                    @empty
+                    <p class="text-center text-slate-400 py-6">Belum ada riwayat opname.</p>
+                    @endforelse
                 </div>
             </div>
         </div>

@@ -8,6 +8,10 @@ use App\Models\Maintenance;
 use App\Models\PengadaanBarang;
 use App\Models\RiwayatBarang;
 use App\Models\Ruangan;
+use App\Models\PeminjamanBarang;
+use App\Models\MutasiBarang;
+use App\Models\PenghapusanBarang;
+use App\Models\Opname;
 use Livewire\Component;
 use Livewire\Attributes\Url;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +20,7 @@ use Carbon\Carbon;
 class Dashboard extends Component
 {
     #[Url(keep: true)]
-    public $tabAktif = 'ikhtisar'; // ikhtisar, stok, maintenance, pengadaan
+    public $tabAktif = 'ikhtisar'; // ikhtisar, stok, maintenance, pengadaan, peminjaman, audit
 
     #[Url(keep: true)]
     public $tipeFilter = 'all'; // all, medis, umum
@@ -50,35 +54,36 @@ class Dashboard extends Component
             });
         }
 
-        // === METRIK GLOBAL ===
+        // === METRIK GLOBAL (Top Cards) ===
         $totalAset = (clone $queryBarang)->count();
-        // Nilai Aset (Estimasi Valuasi)
         $nilaiAsetTotal = (clone $queryBarang)->where('is_asset', true)->sum(DB::raw('harga_perolehan * stok'));
         
-        // Statistik Kondisi Aset
         $statistikKondisi = [
             'Baik' => (clone $queryBarang)->where('kondisi', 'Baik')->count(),
             'PerluPerbaikan' => (clone $queryBarang)->where('kondisi', 'Rusak Ringan')->count(),
             'Rusak' => (clone $queryBarang)->where('kondisi', 'Rusak Berat')->count(),
         ];
 
-        // Metrik Spesifik Medis: Kalibrasi Jatuh Tempo
+        // Alert Global
         $kalibrasiJatuhTempo = 0;
         if ($this->tipeFilter == 'medis' || $this->tipeFilter == 'all') {
             $kalibrasiJatuhTempo = Maintenance::whereHas('barang.kategori', function($q) {
                     $q->where('nama_kategori', 'like', '%Medis%');
                 })
                 ->where('jenis_kegiatan', 'Kalibrasi')
-                ->whereDate('tanggal_berikutnya', '<=', now()->addDays(60)) // Peringatan 2 bulan sebelum
+                ->whereDate('tanggal_berikutnya', '<=', now()->addDays(60))
                 ->count();
         }
+
+        $peminjamanAktif = PeminjamanBarang::where('status', 'Dipinjam')->count();
+        $disposalPending = PenghapusanBarang::where('status', 'Pending')->count();
 
         $dataTab = [];
 
         // === TAB 1: IKHTISAR ===
         if ($this->tabAktif == 'ikhtisar') {
             $dataTab['distribusiKategori'] = KategoriBarang::withCount(['barangs' => function($q) use ($queryBarang) {
-                    // Filter count based on main filter logic
+                    // Filter count logic
                 }])
                 ->orderByDesc('barangs_count')
                 ->take(6)
@@ -86,6 +91,7 @@ class Dashboard extends Component
             
             $dataTab['aktivitasTerbaru'] = RiwayatBarang::with(['barang', 'user'])
                 ->whereHas('barang', function($q) use ($queryBarang) {
+                    // Reuse filter logic
                     if ($this->tipeFilter == 'medis') {
                         $q->whereHas('kategori', fn($k) => $k->where('nama_kategori', 'like', '%Medis%'));
                     } elseif ($this->tipeFilter == 'umum') {
@@ -104,13 +110,12 @@ class Dashboard extends Component
 
         // === TAB 2: MONITORING STOK ===
         if ($this->tabAktif == 'stok') {
-            $dataTab['stokMenipis'] = (clone $queryBarang)->where('is_asset', false) // Bahan Habis Pakai
-                ->where('stok', '<=', 10) // Ambang Batas
+            $dataTab['stokMenipis'] = (clone $queryBarang)->where('is_asset', false)
+                ->where('stok', '<=', 10)
                 ->orderBy('stok')
                 ->take(10)
                 ->get();
             
-            // Grafik Arus Stok 7 Hari
             $dataTab['arusStok'] = $this->dapatkanArusStok();
         }
 
@@ -132,16 +137,6 @@ class Dashboard extends Component
 
             $dataTab['jadwalMaintenance'] = $queryMaintenance->orderBy('tanggal_berikutnya')->get();
             
-            // Analisis Biaya
-            $dataTab['trenBiaya'] = Maintenance::select(
-                    DB::raw("DATE_FORMAT(tanggal_maintenance, '%Y-%m') as bulan"),
-                    DB::raw("SUM(biaya) as total_biaya")
-                )
-                ->where('tanggal_maintenance', '>=', now()->subMonths(6))
-                ->groupBy('bulan')
-                ->orderBy('bulan')
-                ->get();
-
             $dataTab['rasioMaintenance'] = [
                 'preventif' => Maintenance::where('jenis_kegiatan', 'Preventif')->count(),
                 'korektif' => Maintenance::where('jenis_kegiatan', 'Perbaikan')->count(),
@@ -153,13 +148,45 @@ class Dashboard extends Component
                 ->sum('biaya');
         }
 
-        // === TAB 4: PENGADAAN ===
+        // === TAB 4: PENGADAAN & PENGHAPUSAN ===
         if ($this->tabAktif == 'pengadaan') {
             $dataTab['pengadaanPending'] = PengadaanBarang::where('status', 'Pending')->latest()->get();
+            $dataTab['penghapusanPending'] = PenghapusanBarang::where('status', 'Pending')->with('pemohon')->latest()->get();
+            
             $dataTab['totalPengadaanTahunIni'] = PengadaanBarang::join('pengadaan_barang_details', 'pengadaan_barangs.id', '=', 'pengadaan_barang_details.pengadaan_barang_id')
                 ->whereYear('pengadaan_barangs.tanggal_pengajuan', Carbon::now()->year)
                 ->where('pengadaan_barangs.status', 'Selesai')
                 ->sum(DB::raw('pengadaan_barang_details.jumlah_permintaan * pengadaan_barang_details.estimasi_harga_satuan'));
+        }
+
+        // === TAB 5: PEMINJAMAN & MUTASI (OPERASIONAL) ===
+        if ($this->tabAktif == 'peminjaman') {
+            $dataTab['peminjamanAktif'] = PeminjamanBarang::with(['barang', 'pegawai.user'])
+                ->where('status', 'Dipinjam')
+                ->orderBy('tanggal_kembali_rencana', 'asc') // Yang deadline duluan diatas
+                ->get();
+
+            $dataTab['mutasiTerbaru'] = MutasiBarang::with(['barang', 'ruanganAsal', 'ruanganTujuan'])
+                ->latest('tanggal_mutasi')
+                ->take(10)
+                ->get();
+        }
+
+        // === TAB 6: AUDIT (OPNAME) ===
+        if ($this->tabAktif == 'audit') {
+            $dataTab['opnameTerakhir'] = Opname::with(['user', 'ruangan'])
+                ->latest('tanggal')
+                ->take(5)
+                ->get();
+            
+            // Hitung akurasi stok (barang dengan selisih 0 di detail opname terakhir)
+            $lastOpname = Opname::latest()->first();
+            $dataTab['akurasiStok'] = 100;
+            if($lastOpname) {
+                $totalItems = $lastOpname->details()->count();
+                $matchItems = $lastOpname->details()->where('selisih', 0)->count();
+                $dataTab['akurasiStok'] = $totalItems > 0 ? ($matchItems / $totalItems) * 100 : 100;
+            }
         }
 
         return view('livewire.barang.dashboard', compact(
@@ -167,6 +194,8 @@ class Dashboard extends Component
             'nilaiAsetTotal',
             'kalibrasiJatuhTempo',
             'statistikKondisi',
+            'peminjamanAktif',
+            'disposalPending',
             'dataTab'
         ))->layout('layouts.app', ['header' => 'Manajemen Aset & Inventaris']);
     }
