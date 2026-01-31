@@ -6,6 +6,7 @@ use App\Models\Barang;
 use App\Models\KategoriBarang;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Storage;
 
 class Index extends Component
 {
@@ -16,6 +17,9 @@ class Index extends Component
     public $tipeAset = 'semua'; // semua, medis, umum
     public $jenisBarang = 'semua'; // semua, aset_tetap, habis_pakai
     public $perHalaman = 10;
+    
+    // Fitur Recycle Bin
+    public $modeTampilan = 'aktif'; // aktif, sampah
 
     public function updatingCari()
     {
@@ -34,9 +38,61 @@ class Index extends Component
         $this->resetPage();
     }
 
+    public function gantiModeTampilan($mode)
+    {
+        $this->modeTampilan = $mode;
+        $this->resetPage();
+    }
+
+    // 1. Hapus Sementara (Soft Delete)
+    public function buangKeSampah($id)
+    {
+        $barang = Barang::find($id);
+        if ($barang) {
+            $barang->delete(); // Soft delete via Trait
+            $this->dispatch('notify', 'success', 'Aset dipindahkan ke Tong Sampah.');
+        }
+    }
+
+    // 2. Pulihkan Data (Restore)
+    public function pulihkan($id)
+    {
+        $barang = Barang::onlyTrashed()->find($id);
+        if ($barang) {
+            $barang->restore();
+            $this->dispatch('notify', 'success', 'Aset berhasil dipulihkan kembali.');
+        }
+    }
+
+    // 3. Hapus Permanen (Force Delete)
+    public function hapusPermanen($id)
+    {
+        $barang = Barang::onlyTrashed()->find($id);
+        if ($barang) {
+            // Hapus gambar fisik jika ada
+            if ($barang->gambar) {
+                Storage::disk('public')->delete($barang->gambar);
+            }
+            // Hapus galeri terkait
+            foreach($barang->images as $img) {
+                Storage::disk('public')->delete($img->image_path);
+                $img->delete();
+            }
+            
+            $barang->forceDelete();
+            $this->dispatch('notify', 'success', 'Aset dihapus permanen dari sistem.');
+        }
+    }
+
     public function render()
     {
+        // Query Dasar
         $query = Barang::with(['kategori', 'ruangan']);
+
+        // Filter Mode: Aktif vs Sampah
+        if ($this->modeTampilan == 'sampah') {
+            $query->onlyTrashed();
+        }
 
         // Pencarian
         if ($this->cari) {
@@ -52,7 +108,7 @@ class Index extends Component
             $query->where('kategori_barang_id', $this->filterKategori);
         }
 
-        // Filter Tipe (Medis/Umum) - Menggunakan kolom jenis_aset baru
+        // Filter Tipe (Medis/Umum)
         if ($this->tipeAset == 'medis') {
             $query->where('jenis_aset', 'Medis');
         } elseif ($this->tipeAset == 'umum') {
@@ -67,11 +123,15 @@ class Index extends Component
         }
 
         $barangs = $query->latest()->paginate($this->perHalaman);
+        
+        // Data Tambahan
         $kategoris = KategoriBarang::orderBy('nama_kategori')->get();
+        $jumlahSampah = Barang::onlyTrashed()->count();
 
         return view('livewire.barang.index', [
             'barangs' => $barangs,
-            'kategoris' => $kategoris
+            'kategoris' => $kategoris,
+            'jumlahSampah' => $jumlahSampah
         ])->layout('layouts.app', ['header' => 'Master Data Barang']);
     }
 }
