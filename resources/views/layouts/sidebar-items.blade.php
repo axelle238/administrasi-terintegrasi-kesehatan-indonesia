@@ -58,7 +58,7 @@
     <x-nav.link-child :href="route('kepegawaian.kinerja.index')" :active="request()->routeIs('kepegawaian.kinerja.*')">Penilaian Kinerja (KPI)</x-nav.link-child>
     
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Validasi Pusat</div>
-    <x-nav.link-child :href="route('kepegawaian.cuti.index')" :active="request()->routeIs('kepegawaian.cuti.*')">Kelola Permohonan Cuti</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.cuti.index')" :active="request()->routeIs('kepegawaian.cuti.*')">Approval Cuti Pegawai</x-nav.link-child>
 </x-nav.dropdown>
 @endif
 
@@ -158,15 +158,15 @@
     
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Area Kerja Saya</div>
     <x-nav.link-child :href="route('kepegawaian.dashboard')" :active="request()->routeIs('kepegawaian.dashboard')">Dashboard Saya</x-nav.link-child>
-    <x-nav.link-child :href="route('kepegawaian.presensi.index')" :active="request()->routeIs('kepegawaian.presensi.*')">Presensi & Kehadiran</x-nav.link-child>
-    <x-nav.link-child :href="route('kepegawaian.aktivitas.index')" :active="request()->routeIs('kepegawaian.aktivitas.*')">Laporan Kinerja (LKH)</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.presensi.index')" :active="request()->routeIs('kepegawaian.presensi.*')">Riwayat Presensi</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.aktivitas.index')" :active="request()->routeIs('kepegawaian.aktivitas.*')">Laporan Aktivitas (LKH)</x-nav.link-child>
 
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Layanan Mandiri</div>
-    <x-nav.link-child :href="route('kepegawaian.cuti.index')" :active="request()->routeIs('kepegawaian.cuti.*')">Ajukan Cuti / Izin</x-nav.link-child>
-    <x-nav.link-child :href="route('kepegawaian.lembur.index')" :active="request()->routeIs('kepegawaian.lembur.*')">Ajukan Lembur</x-nav.link-child>
-    <x-nav.link-child :href="route('kepegawaian.jadwal.swap')" :active="request()->routeIs('kepegawaian.jadwal.swap')">Request Tukar Jaga</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.cuti.index')" :active="request()->routeIs('kepegawaian.cuti.*')">Permohonan Cuti Saya</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.lembur.index')" :active="request()->routeIs('kepegawaian.lembur.*')">Pengajuan Lembur Saya</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.jadwal.swap')" :active="request()->routeIs('kepegawaian.jadwal.swap')">Tukar Jadwal Saya</x-nav.link-child>
     
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Arsip & Profil</div>
     <x-nav.link-child :href="route('kepegawaian.pelatihan.index')" :active="request()->routeIs('kepegawaian.pelatihan.*')">Sertifikat & Kompetensi</x-nav.link-child>
-    <x-nav.link-child :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">Data Profil & Akun</x-nav.link-child>
+    <x-nav.link-child :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">Profil & Akun Saya</x-nav.link-child>
 </x-nav.dropdown>
