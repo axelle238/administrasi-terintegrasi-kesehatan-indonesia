@@ -41,7 +41,11 @@ class DashboardPegawai extends Component
             'lembur_bulan_ini' => \App\Models\Lembur::where('user_id', $user->id)
                 ->whereMonth('tanggal', Carbon::now()->month)
                 ->where('status', 'Disetujui')
-                ->sum('durasi_jam'),
+                ->get()
+                ->sum(function($item) {
+                    return \Carbon\Carbon::parse($item->jam_mulai)
+                        ->diffInMinutes(\Carbon\Carbon::parse($item->jam_selesai)) / 60;
+                }),
             'poin_kinerja' => KinerjaPegawai::where('pegawai_id', $pegawai->id ?? 0)
                 ->whereMonth('created_at', Carbon::now()->month)
                 ->avg('nilai_total') ?? 0,
