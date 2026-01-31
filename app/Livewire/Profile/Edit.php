@@ -4,11 +4,13 @@ namespace App\Livewire\Profile;
 
 use App\Models\User;
 use App\Models\Pegawai;
+use App\Models\DokumenPegawai;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Storage;
 
 class Edit extends Component
 {
@@ -30,6 +32,12 @@ class Edit extends Component
     public $foto_profil;
     public $new_foto_profil;
 
+    // Dokumen Data
+    public $documents;
+    public $doc_type;
+    public $doc_name;
+    public $doc_file;
+
     public function mount()
     {
         $this->user = Auth::user();
@@ -44,6 +52,13 @@ class Edit extends Component
             $this->kontak_darurat_telp = $this->pegawai->kontak_darurat_telp;
             $this->foto_profil = $this->pegawai->foto_profil;
         }
+
+        $this->refreshDocuments();
+    }
+
+    public function refreshDocuments()
+    {
+        $this->documents = DokumenPegawai::where('user_id', $this->user->id)->latest()->get();
     }
 
     public function updateProfileInformation()
@@ -103,6 +118,38 @@ class Edit extends Component
 
         $this->reset(['current_password', 'password', 'password_confirmation']);
         $this->dispatch('notify', 'success', 'Kata sandi berhasil diubah.');
+    }
+
+    public function uploadDocument()
+    {
+        $this->validate([
+            'doc_type' => 'required|string',
+            'doc_name' => 'required|string|max:255',
+            'doc_file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        ]);
+
+        $path = $this->doc_file->store('dokumen-pegawai', 'public');
+
+        DokumenPegawai::create([
+            'user_id' => $this->user->id,
+            'jenis_dokumen' => $this->doc_type,
+            'nama_dokumen' => $this->doc_name,
+            'file_path' => $path,
+        ]);
+
+        $this->dispatch('notify', 'success', 'Dokumen berhasil diunggah.');
+        $this->reset(['doc_type', 'doc_name', 'doc_file']);
+        $this->refreshDocuments();
+    }
+
+    public function deleteDocument($id)
+    {
+        $doc = DokumenPegawai::where('user_id', $this->user->id)->findOrFail($id);
+        Storage::disk('public')->delete($doc->file_path);
+        $doc->delete();
+        
+        $this->dispatch('notify', 'success', 'Dokumen dihapus.');
+        $this->refreshDocuments();
     }
 
     public function render()

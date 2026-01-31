@@ -2,25 +2,25 @@
 
 namespace App\Livewire\Kepegawaian\Presensi;
 
-use Livewire\Component;
 use App\Models\Presensi;
 use App\Models\JadwalJaga;
+use App\Models\Pegawai;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 use Carbon\Carbon;
 
 class Index extends Component
 {
     public $todayPresensi;
-    public $latitude;
-    public $longitude;
-    public $currentStep = 'check-in'; // check-in, working, check-out, done
+    public $currentStep = 'check-in'; // check-in, check-out, done
+    public $history;
 
     public function mount()
     {
-        $this->checkTodayStatus();
+        $this->refreshData();
     }
 
-    public function checkTodayStatus()
+    public function refreshData()
     {
         $this->todayPresensi = Presensi::where('user_id', Auth::id())
             ->whereDate('tanggal', Carbon::today())
@@ -33,29 +33,33 @@ class Index extends Component
         } else {
             $this->currentStep = 'done';
         }
+
+        $this->history = Presensi::where('user_id', Auth::id())
+            ->whereMonth('tanggal', Carbon::now()->month)
+            ->orderByDesc('tanggal')
+            ->get();
     }
 
-    public function clockIn($lat, $long)
+    public function clockIn($lat, $lng)
     {
-        // Validasi Lokasi (Optional: Geofencing Logic here)
-        // Untuk sekarang kita simpan saja koordinatnya
-        
-        // Cek Jadwal untuk hitung keterlambatan
+        // 1. Cek Jadwal
+        $pegawai = Pegawai::where('user_id', Auth::id())->first();
         $jadwal = JadwalJaga::with('shift')
-            ->where('pegawai_id', Auth::user()->pegawai->id ?? 0)
+            ->where('pegawai_id', $pegawai->id ?? 0)
             ->whereDate('tanggal', Carbon::today())
             ->first();
 
-        $lateMinutes = 0;
         $status = 'Hadir';
+        $keterlambatan = 0;
 
         if ($jadwal) {
-            $shiftStart = Carbon::parse($jadwal->tanggal . ' ' . $jadwal->shift->jam_masuk);
-            $now = Carbon::now();
+            $jamMasukJadwal = Carbon::parse($jadwal->shift->jam_masuk);
+            $jamSekarang = Carbon::now();
             
-            if ($now->gt($shiftStart)) {
-                $lateMinutes = $now->diffInMinutes($shiftStart);
+            // Toleransi 15 menit
+            if ($jamSekarang->gt($jamMasukJadwal->addMinutes(15))) {
                 $status = 'Terlambat';
+                $keterlambatan = $jamMasukJadwal->diffInMinutes($jamSekarang);
             }
         }
 
@@ -63,39 +67,31 @@ class Index extends Component
             'user_id' => Auth::id(),
             'tanggal' => Carbon::today(),
             'jam_masuk' => Carbon::now(),
-            'lokasi_masuk' => "$lat,$long",
+            'lokasi_masuk' => $lat . ',' . $lng,
             'status_kehadiran' => $status,
-            'keterlambatan_menit' => $lateMinutes,
-            // Foto masuk akan dihandle via upload terpisah jika perlu, 
-            // disini kita asumsikan capture base64 dikirim via parameter (simplified for CLI)
+            'keterlambatan_menit' => $keterlambatan,
         ]);
 
-        $this->dispatch('notify', 'success', 'Berhasil Absen Masuk! Selamat Bekerja.');
-        $this->checkTodayStatus();
+        $this->dispatch('notify', 'success', 'Berhasil Absen Masuk! Semangat bekerja.');
+        $this->refreshData();
     }
 
-    public function clockOut($lat, $long)
+    public function clockOut($lat, $lng)
     {
         if ($this->todayPresensi) {
             $this->todayPresensi->update([
                 'jam_keluar' => Carbon::now(),
-                'lokasi_keluar' => "$lat,$long",
+                'lokasi_keluar' => $lat . ',' . $lng,
             ]);
             
             $this->dispatch('notify', 'success', 'Berhasil Absen Pulang. Hati-hati di jalan!');
-            $this->checkTodayStatus();
+            $this->refreshData();
         }
     }
 
     public function render()
     {
-        $history = Presensi::where('user_id', Auth::id())
-            ->whereMonth('tanggal', Carbon::now()->month)
-            ->orderByDesc('tanggal')
-            ->get();
-
-        return view('livewire.kepegawaian.presensi.index', [
-            'history' => $history
-        ])->layout('layouts.app', ['header' => 'Presensi Digital']);
+        return view('livewire.kepegawaian.presensi.index')
+            ->layout('layouts.app', ['header' => 'Presensi Digital']);
     }
 }
