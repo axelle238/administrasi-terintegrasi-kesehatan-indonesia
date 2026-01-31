@@ -12,7 +12,7 @@
 
         <div class="space-y-4">
             @foreach($items as $index => $item)
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 relative">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 relative" wire:key="item-{{ $index }}">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Barang</label>

@@ -12,7 +12,8 @@
     </div>
 
     <!-- Form Input Section (Non-Modal) -->
-    <div x-show="$wire.isModalOpen" x-transition class="bg-white p-8 rounded-[2.5rem] shadow-lg border border-blue-100 relative overflow-hidden">
+    @if($isModalOpen)
+    <div class="bg-white p-8 rounded-[2.5rem] shadow-lg border border-blue-100 relative overflow-hidden">
         <div class="absolute top-0 right-0 p-8 opacity-5">
             <svg class="w-64 h-64 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
         </div>
@@ -89,6 +90,7 @@
             </div>
         </form>
     </div>
+    @endif
 
     <!-- Data Table -->
     <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">

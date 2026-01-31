@@ -12,7 +12,8 @@
     </div>
 
     <!-- Modal Input -->
-    <div x-show="$wire.isOpen" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+    @if($isOpen)
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
         <div class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-2xl overflow-hidden">
             <div class="p-8 border-b border-slate-100 bg-slate-50">
                 <h3 class="text-xl font-black text-slate-800">Input Data Pemeliharaan</h3>
@@ -97,6 +98,7 @@
             </form>
         </div>
     </div>
+    @endif
 
     <!-- Table -->
     <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">

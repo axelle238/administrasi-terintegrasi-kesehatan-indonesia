@@ -12,7 +12,8 @@
     </div>
 
     <!-- Modal Create Sesi -->
-    <div x-show="$wire.isOpen" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+    @if($isOpen)
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
         <div class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-lg p-8">
             <h3 class="text-xl font-black text-slate-800 mb-6">Mulai Sesi Opname</h3>
             <form wire:submit.prevent="store" class="space-y-6">
@@ -66,6 +67,7 @@
             </form>
         </div>
     </div>
+    @endif
 
     <!-- Table List Opname -->
     <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">

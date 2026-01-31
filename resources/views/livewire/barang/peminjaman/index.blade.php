@@ -12,7 +12,8 @@
     </div>
 
     <!-- Create Modal (Inline) -->
-    <div x-show="$wire.isModalOpen" x-transition class="bg-white p-8 rounded-[2.5rem] shadow-lg border border-blue-100 mb-8">
+    @if($isModalOpen)
+    <div class="bg-white p-8 rounded-[2.5rem] shadow-lg border border-blue-100 mb-8">
         <h3 class="text-xl font-bold text-slate-800 mb-6">Form Peminjaman Baru</h3>
         <form wire:submit.prevent="store" class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -64,9 +65,11 @@
             </div>
         </form>
     </div>
+    @endif
 
     <!-- Return Modal (Inline) -->
-    <div x-show="$wire.isReturnModalOpen" x-transition class="bg-amber-50 p-8 rounded-[2.5rem] shadow-lg border border-amber-100 mb-8">
+    @if($isReturnModalOpen)
+    <div class="bg-amber-50 p-8 rounded-[2.5rem] shadow-lg border border-amber-100 mb-8">
         <h3 class="text-xl font-bold text-amber-800 mb-6">Form Pengembalian Barang</h3>
         <form wire:submit.prevent="processReturn" class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -87,6 +90,7 @@
             </div>
         </form>
     </div>
+    @endif
 
     <!-- Table -->
     <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
