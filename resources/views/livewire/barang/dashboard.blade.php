@@ -143,6 +143,41 @@
         </div>
         @endif
 
+        <!-- STOK (Monitoring) -->
+        @if($activeTab === 'stok')
+        <div class="grid grid-cols-1 gap-6 animate-fade-in-up">
+            <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
+                <h4 class="font-bold text-slate-800 mb-6">Stok Menipis (Consumables)</h4>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                            <tr>
+                                <th class="px-4 py-3 rounded-l-xl">Barang</th>
+                                <th class="px-4 py-3 text-center">Stok</th>
+                                <th class="px-4 py-3 rounded-r-xl text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            @forelse($tabData['lowStockItems'] ?? [] as $item)
+                            <tr>
+                                <td class="px-4 py-3 font-bold text-slate-700">{{ $item->nama_barang }}</td>
+                                <td class="px-4 py-3 text-center font-black text-red-600">{{ $item->stok }}</td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="px-2 py-1 bg-red-100 text-red-700 rounded-lg text-xs font-bold">Low</span>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="3" class="px-4 py-6 text-center text-slate-400">Stok aman.</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        @endif
+
         <!-- MAINTENANCE -->
         @if($activeTab === 'maintenance')
         <div class="animate-fade-in-up">
@@ -224,13 +259,40 @@
         </div>
         @endif
 
-        <!-- STOK & PENGADAAN (Simple View) -->
-        @if($activeTab === 'stok' || $activeTab === 'pengadaan')
-        <div class="bg-white p-12 rounded-[2rem] text-center border-2 border-dashed border-slate-200">
-            <p class="text-slate-400">Detail data untuk tab ini dapat dilihat pada menu operasional masing-masing.</p>
-            <div class="flex justify-center gap-4 mt-4">
-                <a href="{{ route('barang.index') }}" class="px-4 py-2 bg-slate-100 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-200">Ke Data Barang</a>
-                <a href="{{ route('barang.pengadaan.index') }}" class="px-4 py-2 bg-slate-100 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-200">Ke Pengadaan</a>
+        <!-- PENGADAAN -->
+        @if($activeTab === 'pengadaan')
+        <div class="grid grid-cols-1 gap-6 animate-fade-in-up">
+            <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
+                <div class="flex justify-between items-center mb-6">
+                    <h4 class="font-bold text-slate-800">Pengajuan Pending</h4>
+                    <a href="{{ route('barang.pengadaan.index') }}" class="text-xs font-bold text-blue-600 hover:underline">Kelola Pengadaan &rarr;</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                            <tr>
+                                <th class="px-4 py-3 rounded-l-xl">No. Pengajuan</th>
+                                <th class="px-4 py-3">Tanggal</th>
+                                <th class="px-4 py-3 rounded-r-xl">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            @forelse($tabData['pengadaanPending'] ?? [] as $p)
+                            <tr>
+                                <td class="px-4 py-3 font-bold text-slate-700">{{ $p->nomor_pengajuan }}</td>
+                                <td class="px-4 py-3">{{ \Carbon\Carbon::parse($p->tanggal_pengajuan)->format('d M Y') }}</td>
+                                <td class="px-4 py-3">
+                                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded-lg text-xs font-bold">Pending</span>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="3" class="px-4 py-6 text-center text-slate-400">Tidak ada pengajuan pending.</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         @endif
