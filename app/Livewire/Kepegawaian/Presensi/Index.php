@@ -14,6 +14,10 @@ class Index extends Component
     public $todayPresensi;
     public $currentStep = 'check-in'; // check-in, check-out, done
     public $history;
+    
+    // Fitur Baru: Jenis Presensi Dinamis
+    public $jenis_presensi = 'WFO'; // Default
+    public $keterangan_tambahan;
 
     public function mount()
     {
@@ -30,6 +34,7 @@ class Index extends Component
             $this->currentStep = 'check-in';
         } elseif ($this->todayPresensi->jam_masuk && !$this->todayPresensi->jam_keluar) {
             $this->currentStep = 'check-out';
+            $this->jenis_presensi = $this->todayPresensi->jenis_presensi; // Load existing type for checkout
         } else {
             $this->currentStep = 'done';
         }
@@ -38,6 +43,11 @@ class Index extends Component
             ->whereMonth('tanggal', Carbon::now()->month)
             ->orderByDesc('tanggal')
             ->get();
+    }
+
+    public function setJenis($jenis)
+    {
+        $this->jenis_presensi = $jenis;
     }
 
     public function clockIn($lat, $lng)
@@ -63,8 +73,18 @@ class Index extends Component
             }
         }
 
+        // Logic Khusus berdasarkan Jenis
+        $catatan = $this->keterangan_tambahan;
+        if ($this->jenis_presensi == 'WFH') {
+            $catatan = '[WFH] ' . $catatan;
+        } elseif ($this->jenis_presensi == 'Dinas Luar') {
+            $catatan = '[DL] ' . $catatan;
+        }
+
         Presensi::create([
             'user_id' => Auth::id(),
+            'jenis_presensi' => $this->jenis_presensi,
+            'keterangan' => $catatan,
             'tanggal' => Carbon::today(),
             'jam_masuk' => Carbon::now(),
             'lokasi_masuk' => $lat . ',' . $lng,
@@ -72,7 +92,7 @@ class Index extends Component
             'keterlambatan_menit' => $keterlambatan,
         ]);
 
-        $this->dispatch('notify', 'success', 'Berhasil Absen Masuk! Semangat bekerja.');
+        $this->dispatch('notify', 'success', 'Absen Masuk (' . $this->jenis_presensi . ') Berhasil!');
         $this->refreshData();
     }
 
@@ -84,7 +104,7 @@ class Index extends Component
                 'lokasi_keluar' => $lat . ',' . $lng,
             ]);
             
-            $this->dispatch('notify', 'success', 'Berhasil Absen Pulang. Hati-hati di jalan!');
+            $this->dispatch('notify', 'success', 'Absen Pulang Berhasil. Terima kasih!');
             $this->refreshData();
         }
     }
