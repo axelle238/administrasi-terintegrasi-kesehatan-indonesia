@@ -17,87 +17,6 @@
         </button>
     </div>
 
-    <!-- Create Modal (Inline) -->
-    @if($isModalOpen)
-    <div class="bg-white p-8 rounded-[2.5rem] shadow-lg border border-blue-100 mb-8">
-        <h3 class="text-xl font-bold text-slate-800 mb-6">Form Peminjaman Baru</h3>
-        <form wire:submit.prevent="store" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Barang -->
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Barang</label>
-                    <select wire:model="barang_id" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500">
-                        <option value="">-- Pilih Barang --</option>
-                        @foreach($barangs as $b)
-                            <option value="{{ $b->id }}">{{ $b->kode_barang }} - {{ $b->nama_barang }}</option>
-                        @endforeach
-                    </select>
-                    @error('barang_id') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
-                </div>
-
-                <!-- Peminjam -->
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Pegawai Peminjam</label>
-                    <select wire:model="pegawai_id" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500">
-                        <option value="">-- Pilih Pegawai --</option>
-                        @foreach($pegawais as $p)
-                            <option value="{{ $p->id }}">{{ $p->nip }} - {{ $p->user->name ?? 'Tanpa Nama' }}</option>
-                        @endforeach
-                    </select>
-                    @error('pegawai_id') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
-                </div>
-
-                <!-- Tanggal -->
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Tanggal Pinjam</label>
-                    <input type="date" wire:model="tanggal_pinjam" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl">
-                    @error('tanggal_pinjam') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
-                </div>
-
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Rencana Kembali</label>
-                    <input type="date" wire:model="tanggal_kembali_rencana" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl">
-                </div>
-            </div>
-            
-            <div>
-                <label class="block text-sm font-bold text-slate-700 mb-2">Kondisi Saat Keluar</label>
-                <textarea wire:model="kondisi_keluar" rows="2" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl" placeholder="Contoh: Baik, Lecet sedikit..."></textarea>
-            </div>
-
-            <div class="flex justify-end gap-3">
-                <button type="button" wire:click="$set('isModalOpen', false)" class="px-6 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold">Batal</button>
-                <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700">Simpan</button>
-            </div>
-        </form>
-    </div>
-    @endif
-
-    <!-- Return Modal (Inline) -->
-    @if($isReturnModalOpen)
-    <div class="bg-amber-50 p-8 rounded-[2.5rem] shadow-lg border border-amber-100 mb-8">
-        <h3 class="text-xl font-bold text-amber-800 mb-6">Form Pengembalian Barang</h3>
-        <form wire:submit.prevent="processReturn" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-sm font-bold text-amber-800 mb-2">Tanggal Kembali Realisasi</label>
-                    <input type="date" wire:model="tanggal_kembali_realisasi" class="w-full px-4 py-3 bg-white border border-amber-200 rounded-xl">
-                    @error('tanggal_kembali_realisasi') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
-                </div>
-                <div>
-                    <label class="block text-sm font-bold text-amber-800 mb-2">Kondisi Akhir</label>
-                    <input type="text" wire:model="kondisi_kembali" class="w-full px-4 py-3 bg-white border border-amber-200 rounded-xl" placeholder="Baik / Rusak">
-                    @error('kondisi_kembali') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
-                </div>
-            </div>
-            <div class="flex justify-end gap-3">
-                <button type="button" wire:click="$set('isReturnModalOpen', false)" class="px-6 py-3 bg-white text-slate-600 rounded-xl font-bold">Batal</button>
-                <button type="submit" class="px-6 py-3 bg-amber-600 text-white rounded-xl font-bold hover:bg-amber-700">Proses Pengembalian</button>
-            </div>
-        </form>
-    </div>
-    @endif
-
     <!-- Table -->
     <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
         <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between gap-4 items-center">
@@ -176,4 +95,89 @@
             {{ $peminjaman->links() }}
         </div>
     </div>
+
+    <!-- Create Modal -->
+    @if($isModalOpen)
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-[2.5rem] shadow-lg border border-blue-100 w-full max-w-2xl relative">
+            <h3 class="text-xl font-bold text-slate-800 mb-6">Form Peminjaman Baru</h3>
+            <form wire:submit.prevent="store" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Barang -->
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Barang</label>
+                        <select wire:model="barang_id" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500">
+                            <option value="">-- Pilih Barang --</option>
+                            @foreach($barangs as $b)
+                                <option value="{{ $b->id }}">{{ $b->kode_barang }} - {{ $b->nama_barang }}</option>
+                            @endforeach
+                        </select>
+                        @error('barang_id') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Peminjam -->
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Pegawai Peminjam</label>
+                        <select wire:model="pegawai_id" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500">
+                            <option value="">-- Pilih Pegawai --</option>
+                            @foreach($pegawais as $p)
+                                <option value="{{ $p->id }}">{{ $p->nip }} - {{ $p->user->name ?? 'Tanpa Nama' }}</option>
+                            @endforeach
+                        </select>
+                        @error('pegawai_id') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Tanggal -->
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Tanggal Pinjam</label>
+                        <input type="date" wire:model="tanggal_pinjam" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl">
+                        @error('tanggal_pinjam') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Rencana Kembali</label>
+                        <input type="date" wire:model="tanggal_kembali_rencana" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Kondisi Saat Keluar</label>
+                    <textarea wire:model="kondisi_keluar" rows="2" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl" placeholder="Contoh: Baik, Lecet sedikit..."></textarea>
+                </div>
+
+                <div class="flex justify-end gap-3">
+                    <button type="button" wire:click="$set('isModalOpen', false)" class="px-6 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold">Batal</button>
+                    <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endif
+
+    <!-- Return Modal -->
+    @if($isReturnModalOpen)
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+        <div class="bg-amber-50 p-8 rounded-[2.5rem] shadow-lg border border-amber-100 w-full max-w-lg relative">
+            <h3 class="text-xl font-bold text-amber-800 mb-6">Form Pengembalian Barang</h3>
+            <form wire:submit.prevent="processReturn" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-bold text-amber-800 mb-2">Tanggal Kembali Realisasi</label>
+                        <input type="date" wire:model="tanggal_kembali_realisasi" class="w-full px-4 py-3 bg-white border border-amber-200 rounded-xl">
+                        @error('tanggal_kembali_realisasi') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-amber-800 mb-2">Kondisi Akhir</label>
+                        <input type="text" wire:model="kondisi_kembali" class="w-full px-4 py-3 bg-white border border-amber-200 rounded-xl" placeholder="Baik / Rusak">
+                        @error('kondisi_kembali') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button type="button" wire:click="$set('isReturnModalOpen', false)" class="px-6 py-3 bg-white text-slate-600 rounded-xl font-bold">Batal</button>
+                    <button type="submit" class="px-6 py-3 bg-amber-600 text-white rounded-xl font-bold hover:bg-amber-700">Proses Pengembalian</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endif
 </div>

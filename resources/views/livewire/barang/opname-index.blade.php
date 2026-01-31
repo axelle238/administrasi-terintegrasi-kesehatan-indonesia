@@ -17,10 +17,63 @@
         </button>
     </div>
 
+    <!-- Table List Opname -->
+    <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                    <tr>
+                        <th class="px-6 py-4 font-bold">Tanggal</th>
+                        <th class="px-6 py-4 font-bold">Lokasi Audit</th>
+                        <th class="px-6 py-4 font-bold">Petugas</th>
+                        <th class="px-6 py-4 font-bold text-center">Status</th>
+                        <th class="px-6 py-4 font-bold text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    @forelse($opnames as $op)
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-4 font-bold text-slate-700">
+                            {{ \Carbon\Carbon::parse($op->tanggal)->format('d M Y') }}
+                        </td>
+                        <td class="px-6 py-4">
+                            @if($op->ruangan)
+                                <span class="px-2 py-1 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold">{{ $op->ruangan->nama_ruangan }}</span>
+                            @else
+                                <span class="px-2 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold">Global / Gudang</span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 text-slate-600">{{ $op->user->name ?? 'Admin' }}</td>
+                        <td class="px-6 py-4 text-center">
+                            @if($op->status == 'Draft')
+                                <span class="px-2 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-bold">Draft (Proses)</span>
+                            @else
+                                <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold">Final (Selesai)</span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            <a href="{{ route('barang.opname.input', $op->id) }}" wire:navigate class="text-xs font-bold text-purple-600 hover:underline">
+                                {{ $op->status == 'Draft' ? 'Input Hasil Hitung' : 'Lihat Laporan' }} &rarr;
+                            </a>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="px-6 py-12 text-center text-slate-400">Belum ada sesi stok opname.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        <div class="px-6 py-4 border-t border-slate-100">
+            {{ $opnames->links() }}
+        </div>
+    </div>
+
     <!-- Modal Create Sesi -->
     @if($isOpen)
     <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-        <div class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-lg p-8">
+        <div class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-lg p-8 relative">
             <h3 class="text-xl font-black text-slate-800 mb-6">Mulai Sesi Opname</h3>
             <form wire:submit.prevent="store" class="space-y-6">
                 <div>
@@ -74,57 +127,3 @@
         </div>
     </div>
     @endif
-
-    <!-- Table List Opname -->
-    <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left">
-                <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
-                    <tr>
-                        <th class="px-6 py-4 font-bold">Tanggal</th>
-                        <th class="px-6 py-4 font-bold">Lokasi Audit</th>
-                        <th class="px-6 py-4 font-bold">Petugas</th>
-                        <th class="px-6 py-4 font-bold text-center">Status</th>
-                        <th class="px-6 py-4 font-bold text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100">
-                    @forelse($opnames as $op)
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-6 py-4 font-bold text-slate-700">
-                            {{ \Carbon\Carbon::parse($op->tanggal)->format('d M Y') }}
-                        </td>
-                        <td class="px-6 py-4">
-                            @if($op->ruangan)
-                                <span class="px-2 py-1 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold">{{ $op->ruangan->nama_ruangan }}</span>
-                            @else
-                                <span class="px-2 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold">Global / Gudang</span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 text-slate-600">{{ $op->user->name ?? 'Admin' }}</td>
-                        <td class="px-6 py-4 text-center">
-                            @if($op->status == 'Draft')
-                                <span class="px-2 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-bold">Draft (Proses)</span>
-                            @else
-                                <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold">Final (Selesai)</span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 text-center">
-                            <a href="{{ route('barang.opname.input', $op->id) }}" wire:navigate class="text-xs font-bold text-purple-600 hover:underline">
-                                {{ $op->status == 'Draft' ? 'Input Hasil Hitung' : 'Lihat Laporan' }} &rarr;
-                            </a>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="5" class="px-6 py-12 text-center text-slate-400">Belum ada sesi stok opname.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-        <div class="px-6 py-4 border-t border-slate-100">
-            {{ $opnames->links() }}
-        </div>
-    </div>
-</div>
