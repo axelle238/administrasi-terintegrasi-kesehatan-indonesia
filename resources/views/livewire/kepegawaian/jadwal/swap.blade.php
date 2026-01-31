@@ -3,7 +3,7 @@
         <h2 class="text-2xl font-black text-slate-800 mb-2">Tukar Jadwal Jaga</h2>
         <p class="text-slate-500 mb-8">Ajukan pertukaran shift dengan rekan kerja jika berhalangan hadir.</p>
 
-        <!-- Wizard Steps -->
+        <!-- Wizard Steps (Only shown for creating new request) -->
         <div class="flex justify-between items-center mb-10 relative">
             <div class="absolute top-1/2 left-0 w-full h-1 bg-slate-100 -z-10"></div>
             <div class="flex flex-col items-center gap-2 bg-white px-2">
@@ -82,32 +82,89 @@
         @endif
     </div>
 
-    <!-- History -->
-    <div class="space-y-4">
-        <h3 class="text-lg font-bold text-slate-800 px-2">Riwayat Pertukaran</h3>
-        @foreach($requests as $req)
-        <div class="bg-white p-6 rounded-3xl border border-slate-100 flex flex-col md:flex-row items-center gap-6 relative overflow-hidden">
-            <div class="absolute left-0 top-0 w-2 h-full {{ $req->status == 'Disetujui Admin' ? 'bg-emerald-500' : 'bg-amber-500' }}"></div>
-            
-            <div class="flex-1 text-center md:text-left">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Jadwal Asal</p>
-                <p class="font-black text-slate-800">{{ \Carbon\Carbon::parse($req->jadwalAsal->tanggal)->format('d M') }} ({{ $req->jadwalAsal->shift->nama_shift }})</p>
-            </div>
-
-            <div class="flex items-center gap-2 text-slate-300">
-                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
-            </div>
-
-            <div class="flex-1 text-center md:text-right">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Ditukar Dengan</p>
-                <p class="font-black text-indigo-600">{{ $req->pengganti->name }}</p>
-                <p class="text-sm font-medium text-slate-600">{{ \Carbon\Carbon::parse($req->jadwalTujuan->tanggal)->format('d M') }} ({{ $req->jadwalTujuan->shift->nama_shift }})</p>
-            </div>
-
-            <div class="px-4 py-2 rounded-xl bg-slate-100 font-bold text-xs text-slate-600 uppercase">
-                {{ $req->status }}
-            </div>
+    <!-- History & Inbox -->
+    <div class="space-y-6">
+        <div class="flex gap-6 border-b border-slate-200 pb-1">
+            <button wire:click="setTab('sent')" class="text-sm font-black uppercase tracking-widest pb-3 border-b-2 transition-colors {{ $activeTab == 'sent' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-400 hover:text-slate-600' }}">
+                Riwayat Pengajuan
+            </button>
+            <button wire:click="setTab('received')" class="text-sm font-black uppercase tracking-widest pb-3 border-b-2 transition-colors {{ $activeTab == 'received' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-400 hover:text-slate-600' }}">
+                Permintaan Masuk <span class="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full ml-1">{{ count($receivedRequests->where('status', 'Menunggu Respon')) }}</span>
+            </button>
         </div>
-        @endforeach
+
+        @if($activeTab == 'sent')
+            @foreach($sentRequests as $req)
+            <div class="bg-white p-6 rounded-3xl border border-slate-100 flex flex-col md:flex-row items-center gap-6 relative overflow-hidden">
+                <div class="absolute left-0 top-0 w-2 h-full {{ $req->status == 'Disetujui Admin' ? 'bg-emerald-500' : 'bg-amber-500' }}"></div>
+                
+                <div class="flex-1 text-center md:text-left">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Jadwal Asal</p>
+                    <p class="font-black text-slate-800">{{ \Carbon\Carbon::parse($req->jadwalAsal->tanggal)->format('d M') }} ({{ $req->jadwalAsal->shift->nama_shift }})</p>
+                </div>
+
+                <div class="flex items-center gap-2 text-slate-300">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+                </div>
+
+                <div class="flex-1 text-center md:text-right">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Ditukar Dengan</p>
+                    <p class="font-black text-indigo-600">{{ $req->pengganti->name }}</p>
+                    <p class="text-sm font-medium text-slate-600">{{ \Carbon\Carbon::parse($req->jadwalTujuan->tanggal)->format('d M') }} ({{ $req->jadwalTujuan->shift->nama_shift }})</p>
+                </div>
+
+                <div class="px-4 py-2 rounded-xl bg-slate-100 font-bold text-xs text-slate-600 uppercase">
+                    {{ $req->status }}
+                </div>
+            </div>
+            @endforeach
+        @endif
+
+        @if($activeTab == 'received')
+            @forelse($receivedRequests as $req)
+            <div class="bg-white p-6 rounded-3xl border border-slate-100 relative overflow-hidden">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center font-bold text-indigo-600">
+                            {{ substr($req->pemohon->name, 0, 1) }}
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800">{{ $req->pemohon->name }}</h4>
+                            <p class="text-xs text-slate-500">Meminta tukar jadwal</p>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest 
+                        {{ $req->status == 'Menunggu Respon' ? 'bg-amber-100 text-amber-700' : ($req->status == 'Ditolak' ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700') }}">
+                        {{ $req->status }}
+                    </span>
+                </div>
+
+                <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100 mb-4">
+                    <div class="flex-1 text-center border-r border-slate-200 pr-4">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Jadwal Dia</p>
+                        <p class="font-bold text-slate-800">{{ \Carbon\Carbon::parse($req->jadwalAsal->tanggal)->format('d M') }}</p>
+                        <p class="text-xs text-slate-500">{{ $req->jadwalAsal->shift->nama_shift }}</p>
+                    </div>
+                    <div class="text-slate-400">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+                    </div>
+                    <div class="flex-1 text-center border-l border-slate-200 pl-4">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Jadwal Anda</p>
+                        <p class="font-bold text-slate-800">{{ \Carbon\Carbon::parse($req->jadwalTujuan->tanggal)->format('d M') }}</p>
+                        <p class="text-xs text-slate-500">{{ $req->jadwalTujuan->shift->nama_shift }}</p>
+                    </div>
+                </div>
+
+                @if($req->status == 'Menunggu Respon')
+                <div class="flex gap-3">
+                    <button wire:click="approve({{ $req->id }})" class="flex-1 py-3 bg-emerald-600 text-white rounded-xl font-bold text-sm hover:bg-emerald-700 shadow-lg shadow-emerald-500/20">Setujui</button>
+                    <button wire:click="reject({{ $req->id }})" class="flex-1 py-3 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold text-sm hover:bg-red-50 hover:text-red-600 hover:border-red-200">Tolak</button>
+                </div>
+                @endif
+            </div>
+            @empty
+            <div class="text-center py-12 text-slate-400 font-medium">Tidak ada permintaan masuk.</div>
+            @endforelse
+        @endif
     </div>
 </div>

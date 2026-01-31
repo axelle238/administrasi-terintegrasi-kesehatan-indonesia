@@ -79,12 +79,21 @@
             <h3 class="text-2xl font-black text-slate-800">{{ $stats['lembur_bulan_ini'] }} <span class="text-xs text-slate-400 font-medium">Jam</span></h3>
         </div>
 
-        <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 hover:border-rose-200 transition-colors group">
-            <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" /></svg>
+        <!-- Cuti dengan Visual Circular -->
+        <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 hover:border-rose-200 transition-colors group relative overflow-hidden">
+            <div class="absolute right-0 bottom-0 w-16 h-16 mr-[-10px] mb-[-10px]">
+                <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
+                    <path class="text-slate-100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="4" />
+                    <path class="text-rose-500" stroke-dasharray="{{ min(100, ($stats['sisa_cuti'] / 12) * 100) }}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="4" />
+                </svg>
             </div>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Sisa Cuti</p>
-            <h3 class="text-2xl font-black text-slate-800">{{ $stats['sisa_cuti'] }} <span class="text-xs text-slate-400 font-medium">Hari</span></h3>
+            <div class="relative z-10">
+                <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" /></svg>
+                </div>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Sisa Cuti</p>
+                <h3 class="text-2xl font-black text-slate-800">{{ $stats['sisa_cuti'] }} <span class="text-xs text-slate-400 font-medium">/ 12 Hari</span></h3>
+            </div>
         </div>
 
         <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 hover:border-amber-200 transition-colors group">
@@ -141,11 +150,11 @@
                         <span class="text-sm font-bold text-slate-700 group-hover:text-blue-700">Tukar Shift</span>
                     </a>
 
-                    <a href="{{ route('profile.edit') }}" class="p-4 bg-white rounded-2xl border border-slate-100 hover:border-purple-200 hover:shadow-lg transition-all group text-center flex flex-col items-center gap-3">
-                        <div class="w-12 h-12 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                    <a href="{{ route('kepegawaian.gaji.index') }}" class="p-4 bg-white rounded-2xl border border-slate-100 hover:border-teal-200 hover:shadow-lg transition-all group text-center flex flex-col items-center gap-3">
+                        <div class="w-12 h-12 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         </div>
-                        <span class="text-sm font-bold text-slate-700 group-hover:text-purple-700">Profil Saya</span>
+                        <span class="text-sm font-bold text-slate-700 group-hover:text-teal-700">Slip Gaji</span>
                     </a>
                 </div>
             </div>
@@ -208,22 +217,13 @@
             <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
                 <h4 class="text-sm font-bold text-slate-800 uppercase tracking-widest mb-4">Dokumen Digital</h4>
                 <div class="space-y-3">
-                    <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors group">
-                        <div class="p-2 bg-red-50 text-red-600 rounded-lg group-hover:bg-red-100">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                        </div>
-                        <span class="text-sm font-bold text-slate-600">Slip Gaji Terakhir</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors group">
+                    <a href="{{ route('profile.edit') }}#documents" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors group">
                         <div class="p-2 bg-blue-50 text-blue-600 rounded-lg group-hover:bg-blue-100">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                         </div>
-                        <span class="text-sm font-bold text-slate-600">Kontrak Kerja</span>
+                        <span class="text-sm font-bold text-slate-600">Kelola Arsip</span>
                     </a>
                 </div>
-                <button class="w-full mt-4 py-2 border border-dashed border-slate-300 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-800 hover:border-slate-400 transition-all">
-                    + Upload Dokumen Baru
-                </button>
             </div>
         </div>
     </div>
