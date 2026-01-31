@@ -1,5 +1,16 @@
 <div class="space-y-6">
     <!-- Mini Dashboard: Realtime Queue Stats -->
+    <div class="flex flex-col md:flex-row justify-end gap-3 mb-4">
+        <a href="{{ route('pasien.create') }}" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+            <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
+            Pendaftaran Pasien Baru
+        </a>
+        <a href="{{ route('antrean.kiosk') }}" target="_blank" class="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+            Buka Mode Kiosk
+        </a>
+    </div>
+
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="bg-gradient-to-br from-indigo-600 to-blue-700 p-5 rounded-2xl text-white shadow-lg relative overflow-hidden">
             <div class="absolute right-0 top-0 w-20 h-20 bg-white/10 rounded-bl-full -mr-4 -mt-4"></div>

@@ -2,114 +2,142 @@
 
 namespace App\Livewire\Antrean;
 
-use App\Models\Antrean;
 use App\Models\Pasien;
 use App\Models\Poli;
+use App\Services\AntreanService;
 use App\Services\BpjsBridgingService;
+use App\Services\NotifikasiService;
 use Carbon\Carbon;
 use Livewire\Component;
 
 class Kiosk extends Component
 {
-    public $step = 1; // 1: Input NIK/BPJS, 2: Pilih Poli, 3: Cetak Tiket
-    public $identifier; // NIK or No BPJS
+    // State Halaman (Wizard)
+    public $tahap = 1; // 1: Input Identitas, 2: Konfirmasi Pasien, 3: Pilih Poli, 4: Cetak Tiket
+    
+    // Data Input
+    public $identitas; // NIK atau No. BPJS
+    public $metodeBayar = 'Umum'; // Umum / BPJS
+    
+    // Data Model
     public $pasien;
-    public $polis;
-    public $selected_poli_id;
-    public $nomor_antrean;
-    public $message;
+    public $daftarPoli;
+    public $poliTerpilih;
+    public $tiketAntrean;
+    
+    // Pesan UI
+    public $pesanError = '';
 
     public function mount()
     {
-        $this->polis = Poli::all();
+        // Ambil hanya poli yang buka (logic sederhana dulu)
+        $this->daftarPoli = Poli::where('status_aktif', true)->get();
     }
 
-    public function checkPasien(BpjsBridgingService $bpjs)
+    // Tahap 1 -> 2: Cek Data Pasien
+    public function cekPasien(BpjsBridgingService $bpjs)
     {
+        $this->resetErrorBag();
+        $this->pesanError = '';
+
         $this->validate([
-            'identifier' => 'required|numeric|digits_between:10,16'
+            'identitas' => 'required|numeric|digits_between:10,16'
+        ], [
+            'identitas.required' => 'Mohon masukkan NIK atau Nomor Kartu BPJS Anda.',
+            'identitas.numeric' => 'Format nomor tidak valid, hanya angka diperbolehkan.',
+            'identitas.digits_between' => 'Panjang nomor harus antara 10 sampai 16 digit.'
         ]);
 
-        // 1. Cek DB Lokal
-        $this->pasien = Pasien::where('nik', $this->identifier)
-            ->orWhere('no_bpjs', $this->identifier)
+        // 1. Cari di Database Lokal
+        $this->pasien = Pasien::where('nik', $this->identitas)
+            ->orWhere('no_bpjs', $this->identitas)
             ->first();
 
-        // 2. Jika tidak ada, Cek BPJS (Bridging) dan Auto Register
+        // 2. Jika tidak ada, coba Bridging BPJS (Auto-Register)
         if (!$this->pasien) {
-            $res = $bpjs->getPeserta($this->identifier);
-            if ($res['status'] == 'success') {
-                $data = $res['data'];
-                // Auto Create Pasien
-                $this->pasien = Pasien::create([
-                    'nik' => $data['nik'],
-                    'no_bpjs' => $data['noKartu'],
-                    'nama_lengkap' => $data['nama'],
-                    'tanggal_lahir' => $data['tglLahir'],
-                    'jenis_kelamin' => $data['sex'] == 'L' ? 'Laki-laki' : 'Perempuan',
-                    'alamat' => 'Alamat BPJS', // Placeholder
-                    'no_telepon' => '0000000000', // Placeholder
-                    'asuransi' => 'BPJS',
-                ]);
-            } else {
-                $this->addError('identifier', 'Pasien tidak ditemukan. Silakan ke loket pendaftaran manual.');
+            try {
+                $res = $bpjs->getPeserta($this->identitas);
+                
+                if ($res['status'] == 'success') {
+                    $data = $res['data'];
+                    // Auto Register
+                    $this->pasien = Pasien::create([
+                        'nik' => $data['nik'],
+                        'no_bpjs' => $data['noKartu'],
+                        'nama_lengkap' => $data['nama'],
+                        'tanggal_lahir' => $data['tglLahir'],
+                        'jenis_kelamin' => $data['sex'] == 'L' ? 'Laki-laki' : 'Perempuan',
+                        'alamat' => 'Alamat sesuai KTP (Data BPJS)', 
+                        'no_telepon' => '-', 
+                        'asuransi' => 'BPJS',
+                        'faskes_asal' => $data['provUmum']['nmProvider'] ?? '-'
+                    ]);
+                    
+                    // Simpan Log Notifikasi ke Admin bahwa ada pasien baru auto-register
+                    NotifikasiService::sendToAdmin(
+                        'Pendaftaran Pasien Baru (Kiosk)', 
+                        'Pasien baru a.n ' . $this->pasien->nama_lengkap . ' terdaftar otomatis via Kiosk.',
+                        route('pasien.show', $this->pasien->id)
+                    );
+
+                } else {
+                    // Jika gagal bridging
+                    $this->pesanError = 'Data tidak ditemukan. Silakan menuju Loket Pendaftaran Manual untuk bantuan petugas.';
+                    return;
+                }
+            } catch (\Exception $e) {
+                // Fallback jika koneksi error
+                $this->pesanError = 'Terjadi gangguan koneksi. Mohon menuju Loket Pendaftaran.';
                 return;
             }
         }
 
-        // Cek apakah sudah ambil antrean hari ini
-        $exists = Antrean::where('pasien_id', $this->pasien->id)
+        // 3. Validasi Antrean Ganda (Hari Ini)
+        $sudahDaftar = \App\Models\Antrean::where('pasien_id', $this->pasien->id)
             ->whereDate('tanggal_antrean', Carbon::today())
             ->exists();
 
-        if ($exists) {
-            $this->addError('identifier', 'Anda sudah mengambil antrean hari ini.');
+        if ($sudahDaftar) {
+            $this->pesanError = 'Anda sudah mengambil antrean hari ini. Silakan cek riwayat atau hubungi petugas.';
             return;
         }
 
-        $this->step = 2;
+        // Sukses, lanjut konfirmasi
+        $this->tahap = 2;
     }
 
-    public function selectPoli($poli_id)
+    // Tahap 2 -> 3: Konfirmasi Data & Pilih Poli
+    public function konfirmasiPasien()
     {
-        $this->selected_poli_id = $poli_id;
-        $this->processAntrean();
+        $this->tahap = 3;
     }
 
-    public function processAntrean()
+    public function pilihPoli($poliId, AntreanService $antreanService)
     {
-        $poli = Poli::find($this->selected_poli_id);
+        $this->poliTerpilih = Poli::find($poliId);
         
-        // Generate Nomor
-        $prefix = 'A'; // Default
-        if (str_contains(strtolower($poli->nama_poli), 'gigi')) $prefix = 'B';
-        if (str_contains(strtolower($poli->nama_poli), 'kia')) $prefix = 'C';
+        if (!$this->poliTerpilih) {
+            $this->pesanError = 'Poli tidak valid.';
+            return;
+        }
 
-        $count = Antrean::whereDate('tanggal_antrean', Carbon::today())
-                 ->where('poli_id', $this->selected_poli_id)
-                 ->count();
-        
-        $this->nomor_antrean = $prefix . '-' . str_pad($count + 1, 3, '0', STR_PAD_LEFT);
+        // Generate Tiket
+        $this->tiketAntrean = $antreanService->buatAntrean(
+            $this->pasien->id, 
+            $this->poliTerpilih->id, 
+            'kiosk'
+        );
 
-        Antrean::create([
-            'pasien_id' => $this->pasien->id,
-            'poli_id' => $this->selected_poli_id,
-            'nomor_antrean' => $this->nomor_antrean,
-            'tanggal_antrean' => Carbon::today(),
-            'status' => 'Menunggu',
-            'task_id_last' => 1 // Checkin
-        ]);
-
-        $this->step = 3;
+        $this->tahap = 4;
     }
 
     public function resetKiosk()
     {
-        $this->reset(['step', 'identifier', 'pasien', 'selected_poli_id', 'nomor_antrean']);
+        $this->reset(['tahap', 'identitas', 'pasien', 'poliTerpilih', 'tiketAntrean', 'pesanError']);
     }
 
     public function render()
     {
-        return view('livewire.antrean.kiosk')->layout('layouts.guest'); // Fullscreen layout
+        return view('livewire.antrean.kiosk')->layout('layouts.guest');
     }
 }

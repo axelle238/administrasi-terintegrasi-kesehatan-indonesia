@@ -1,233 +1,178 @@
-<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
-    
-    <!-- Page Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="space-y-6">
+    <!-- Header Page -->
+    <div class="flex items-center justify-between">
         <div>
-            <h2 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                </svg>
-                Pendaftaran Pasien Baru
-            </h2>
-            <p class="text-sm text-gray-500 mt-1 ml-10">
-                Isi formulir lengkap untuk mendaftarkan pasien baru ke dalam database SATRIA.
-            </p>
+            <h2 class="text-2xl font-black text-slate-800 font-display">Pendaftaran Pasien Baru</h2>
+            <p class="text-sm text-slate-500">Isi formulir lengkap untuk mendaftarkan pasien manual.</p>
         </div>
-        <a href="{{ route('pasien.index') }}" wire:navigate class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Kembali ke Daftar
+        <a href="{{ route('pasien.index') }}" class="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+            Kembali
         </a>
     </div>
 
-    <form wire:submit="save" class="space-y-8">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <!-- Left Panel: Identitas & Domisili -->
-            <div class="lg:col-span-2 space-y-6">
-                <!-- Identitas -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex items-center gap-3">
-                        <div class="p-2 bg-blue-100 rounded-lg">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-900">Identitas Utama</h3>
+    <!-- Form Container -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Kolom Kiri: Pencarian BPJS -->
+        <div class="lg:col-span-1 space-y-6">
+            <div class="bg-blue-600 rounded-2xl p-6 text-white shadow-lg shadow-blue-600/20 relative overflow-hidden">
+                <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    Cek Kepesertaan BPJS
+                </h3>
+                
+                <div class="space-y-4 relative z-10">
+                    <div>
+                        <label class="text-xs font-bold text-blue-100 uppercase tracking-wider mb-1 block">Nomor Kartu BPJS / NIK</label>
+                        <input type="text" wire:model="no_bpjs" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-white placeholder-blue-200 focus:outline-none focus:bg-white/20 focus:border-white transition-colors" placeholder="0000000000000">
                     </div>
                     
-                    <div class="p-6 space-y-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <x-input-label for="nik" value="NIK (Nomor Induk Kependudukan)" class="mb-2" />
-                                <x-text-input wire:model="nik" id="nik" class="block w-full bg-gray-50 focus:bg-white transition-colors" type="text" maxlength="16" placeholder="16 Digit NIK" required />
-                                <x-input-error :messages="$errors->get('nik')" class="mt-2" />
-                            </div>
+                    <button wire:click="checkBpjs" wire:loading.attr="disabled" class="w-full py-3 bg-white text-blue-600 rounded-xl font-bold hover:bg-blue-50 transition-colors flex items-center justify-center gap-2">
+                        <span wire:loading.remove wire:target="checkBpjs">Cek Data Peserta</span>
+                        <span wire:loading wire:target="checkBpjs">
+                            <svg class="animate-spin h-4 w-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        </span>
+                    </button>
+                </div>
 
-                            <div>
-                                <x-input-label for="nama_lengkap" value="Nama Lengkap" class="mb-2" />
-                                <x-text-input wire:model="nama_lengkap" id="nama_lengkap" class="block w-full font-medium" type="text" placeholder="Sesuai KTP" required />
-                                <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
-                            </div>
+                <!-- Hasil Cek -->
+                @if($bpjsStatus)
+                <div class="mt-6 pt-6 border-t border-white/20 animate-fade-in">
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                            @if($bpjsStatus == 'active') <span class="text-emerald-300 text-lg">✔</span>
+                            @elseif($bpjsStatus == 'inactive') <span class="text-red-300 text-lg">✖</span>
+                            @else <span class="text-yellow-300 text-lg">!</span> @endif
                         </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <x-input-label for="tempat_lahir" value="Tempat Lahir" class="mb-2" />
-                                <x-text-input wire:model="tempat_lahir" id="tempat_lahir" class="block w-full" type="text" required />
-                                <x-input-error :messages="$errors->get('tempat_lahir')" class="mt-2" />
-                            </div>
-                            <div>
-                                <x-input-label for="tanggal_lahir" value="Tanggal Lahir" class="mb-2" />
-                                <x-text-input wire:model="tanggal_lahir" id="tanggal_lahir" class="block w-full" type="date" required />
-                                <x-input-error :messages="$errors->get('tanggal_lahir')" class="mt-2" />
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <x-input-label for="jenis_kelamin" value="Jenis Kelamin" class="mb-2" />
-                                <div class="grid grid-cols-2 gap-3">
-                                    <label class="cursor-pointer">
-                                        <input type="radio" wire:model="jenis_kelamin" value="Laki-laki" class="peer sr-only">
-                                        <div class="text-center p-3 rounded-lg border border-gray-200 peer-checked:bg-blue-50 peer-checked:border-blue-500 peer-checked:text-blue-700 hover:bg-gray-50 transition-all">
-                                            <span class="block text-sm font-semibold">Laki-laki</span>
-                                        </div>
-                                    </label>
-                                    <label class="cursor-pointer">
-                                        <input type="radio" wire:model="jenis_kelamin" value="Perempuan" class="peer sr-only">
-                                        <div class="text-center p-3 rounded-lg border border-gray-200 peer-checked:bg-pink-50 peer-checked:border-pink-500 peer-checked:text-pink-700 hover:bg-gray-50 transition-all">
-                                            <span class="block text-sm font-semibold">Perempuan</span>
-                                        </div>
-                                    </label>
-                                </div>
-                                <x-input-error :messages="$errors->get('jenis_kelamin')" class="mt-2" />
-                            </div>
-                            <div>
-                                <x-input-label for="golongan_darah" value="Golongan Darah" class="mb-2" />
-                                <select wire:model="golongan_darah" id="golongan_darah" class="appearance-none w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block p-3 pr-8">
-                                    <option value="">Tidak Tahu</option>
-                                    <option value="A">A</option>
-                                    <option value="B">B</option>
-                                    <option value="AB">AB</option>
-                                    <option value="O">O</option>
-                                </select>
-                                <x-input-error :messages="$errors->get('golongan_darah')" class="mt-2" />
-                            </div>
+                        <div>
+                            <p class="text-sm font-bold leading-tight">{{ $bpjsMessage }}</p>
+                            @if($is_prb)
+                                <span class="inline-block mt-2 px-2 py-1 bg-yellow-500 text-white text-[10px] font-bold rounded uppercase">Peserta PRB</span>
+                                <p class="text-xs mt-1 text-blue-100">{{ $catatan_prb }}</p>
+                            @endif
                         </div>
                     </div>
                 </div>
-
-                <!-- Kontak -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex items-center gap-3">
-                        <div class="p-2 bg-purple-100 rounded-lg">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-900">Kontak & Domisili</h3>
-                    </div>
-                    <div class="p-6 space-y-6">
-                        <div>
-                            <x-input-label for="no_telepon" value="Nomor Telepon / WhatsApp" class="mb-2" />
-                            <x-text-input wire:model="no_telepon" id="no_telepon" class="block w-full" type="text" placeholder="08..." required />
-                            <x-input-error :messages="$errors->get('no_telepon')" class="mt-2" />
-                        </div>
-
-                        <div>
-                            <x-input-label for="alamat" value="Alamat Lengkap" class="mb-2" />
-                            <textarea wire:model="alamat" id="alamat" rows="3" class="block w-full rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-500 shadow-sm transition-colors" placeholder="Nama Jalan, RT/RW, Kelurahan, Kecamatan" required></textarea>
-                            <x-input-error :messages="$errors->get('alamat')" class="mt-2" />
-                        </div>
-                    </div>
-                </div>
+                @endif
             </div>
 
-            <!-- Right Panel: Penjamin & Aksi -->
-            <div class="space-y-6">
-                <!-- Penjamin -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden sticky top-8">
-                     <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex items-center gap-3">
-                        <div class="p-2 bg-green-100 rounded-lg">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-900">Penjamin (BPJS/JKN)</h3>
+            <!-- Info Tambahan -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                <h4 class="font-bold text-slate-800 mb-2">Catatan Penting</h4>
+                <ul class="list-disc list-inside text-sm text-slate-500 space-y-1">
+                    <li>Pastikan NIK terdiri dari 16 digit.</li>
+                    <li>Data bertanda (*) wajib diisi.</li>
+                    <li>Jika pasien darurat, isi data seminimal mungkin dan lengkapi kemudian.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Kolom Kanan: Form Data -->
+        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 p-6 md:p-8">
+            <form wire:submit.prevent="save" class="space-y-6">
+                
+                <!-- Identitas Utama -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-1">
+                        <label class="text-sm font-bold text-slate-700">NIK (Nomor Induk Kependudukan) <span class="text-red-500">*</span></label>
+                        <input type="text" wire:model="nik" class="form-input w-full rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500" maxlength="16">
+                        @error('nik') <span class="text-xs text-red-500 font-bold">{{ $message }}</span> @enderror
                     </div>
 
-                    <div class="p-6 space-y-6">
-                        <div>
-                            <x-input-label for="asuransi" value="Jenis Penjamin" class="mb-2" />
-                            <select wire:model="asuransi" id="asuransi" class="appearance-none w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block p-3 pr-8">
-                                <option value="Umum">Umum (Mandiri)</option>
+                    <div class="space-y-1">
+                        <label class="text-sm font-bold text-slate-700">Nama Lengkap <span class="text-red-500">*</span></label>
+                        <input type="text" wire:model="nama_lengkap" class="form-input w-full rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 uppercase">
+                        @error('nama_lengkap') <span class="text-xs text-red-500 font-bold">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-sm font-bold text-slate-700">Tempat Lahir <span class="text-red-500">*</span></label>
+                        <input type="text" wire:model="tempat_lahir" class="form-input w-full rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 uppercase">
+                        @error('tempat_lahir') <span class="text-xs text-red-500 font-bold">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-sm font-bold text-slate-700">Tanggal Lahir <span class="text-red-500">*</span></label>
+                        <input type="date" wire:model="tanggal_lahir" class="form-input w-full rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500">
+                        @error('tanggal_lahir') <span class="text-xs text-red-500 font-bold">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-sm font-bold text-slate-700">Jenis Kelamin <span class="text-red-500">*</span></label>
+                        <select wire:model="jenis_kelamin" class="form-select w-full rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500">
+                            <option value="">Pilih...</option>
+                            <option value="Laki-laki">Laki-laki</option>
+                            <option value="Perempuan">Perempuan</option>
+                        </select>
+                        @error('jenis_kelamin') <span class="text-xs text-red-500 font-bold">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-sm font-bold text-slate-700">Golongan Darah</label>
+                        <select wire:model="golongan_darah" class="form-select w-full rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500">
+                            <option value="">Tidak Tahu</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="AB">AB</option>
+                            <option value="O">O</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Kontak & Alamat -->
+                <div class="space-y-4 pt-4 border-t border-slate-100">
+                    <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider">Kontak & Alamat</h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-1">
+                            <label class="text-sm font-bold text-slate-700">Nomor Telepon / HP <span class="text-red-500">*</span></label>
+                            <input type="text" wire:model="no_telepon" class="form-input w-full rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500" placeholder="08...">
+                            @error('no_telepon') <span class="text-xs text-red-500 font-bold">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="space-y-1 md:col-span-2">
+                            <label class="text-sm font-bold text-slate-700">Alamat Lengkap <span class="text-red-500">*</span></label>
+                            <textarea wire:model="alamat" rows="3" class="form-textarea w-full rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500" placeholder="Nama Jalan, RT/RW, Kelurahan, Kecamatan..."></textarea>
+                            @error('alamat') <span class="text-xs text-red-500 font-bold">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Medis Tambahan -->
+                <div class="space-y-4 pt-4 border-t border-slate-100">
+                    <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider">Penjamin & Faskes</h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                         <div class="space-y-1">
+                            <label class="text-sm font-bold text-slate-700">Jenis Penjamin / Asuransi <span class="text-red-500">*</span></label>
+                            <select wire:model="asuransi" class="form-select w-full rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500">
+                                <option value="Umum">Umum / Mandiri</option>
                                 <option value="BPJS">BPJS Kesehatan</option>
-                                <option value="Jamkesda">Jamkesda</option>
-                                <option value="Asuransi Swasta">Asuransi Swasta</option>
+                                <option value="Asuransi Lain">Asuransi Lainnya</option>
                             </select>
                         </div>
 
-                        <div class="pt-2 pb-2 border-t border-b border-gray-100 bg-gray-50/50 rounded-lg px-3">
-                            <x-input-label for="no_bpjs" value="Cek Kepesertaan BPJS" class="mb-2 text-xs font-bold uppercase text-gray-500" />
-                            <div class="flex gap-2">
-                                <x-text-input wire:model="no_bpjs" id="no_bpjs" class="block w-full text-sm" type="text" placeholder="No. Kartu BPJS" />
-                                <button type="button" wire:click="checkBpjs" wire:loading.attr="disabled" class="px-3 py-2 bg-teal-600 text-white rounded-lg shadow-sm hover:bg-teal-700 focus:ring-2 focus:ring-teal-500 transition-colors disabled:opacity-50">
-                                    <svg wire:loading.remove wire:target="checkBpjs" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
-                                    <svg wire:loading wire:target="checkBpjs" class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                            
-                            <!-- BPJS Status Feedback -->
-                            @if($bpjsStatus === 'active')
-                                <div class="mt-3 flex items-start gap-2 text-green-700 bg-green-50 p-2 rounded border border-green-100 text-xs">
-                                    <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    <span>{{ $bpjsMessage }}</span>
-                                </div>
-                            @elseif($bpjsStatus === 'inactive')
-                                <div class="mt-3 flex items-start gap-2 text-red-700 bg-red-50 p-2 rounded border border-red-100 text-xs">
-                                    <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    <span>{{ $bpjsMessage }}</span>
-                                </div>
-                            @elseif($bpjsStatus === 'error')
-                                <div class="mt-3 flex items-start gap-2 text-gray-600 bg-gray-50 p-2 rounded border border-gray-200 text-xs">
-                                    <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    <span>{{ $bpjsMessage }}</span>
-                                </div>
-                            @endif
-                            <x-input-error :messages="$errors->get('no_bpjs')" class="mt-2" />
-                        </div>
-
-                        <div>
-                            <x-input-label for="faskes_asal" value="Faskes Perujuk" class="mb-2" />
-                            <x-text-input wire:model="faskes_asal" id="faskes_asal" class="block w-full" type="text" placeholder="Jika ada rujukan" />
-                        </div>
-
-                        <!-- PRB -->
-                        <div class="pt-4 border-t border-gray-100">
-                            <label class="flex items-center space-x-3 cursor-pointer group">
-                                <input type="checkbox" wire:model="is_prb" class="rounded-md border-gray-300 text-teal-600 shadow-sm focus:ring-teal-500 h-5 w-5 transition ease-in-out duration-150">
-                                <span class="text-sm font-semibold text-gray-700 group-hover:text-teal-700 transition">Peserta Program Rujuk Balik (PRB)</span>
-                            </label>
-                            
-                            <div x-show="$wire.is_prb" x-transition class="mt-4 space-y-4 pl-8 border-l-2 border-teal-100">
-                                <div>
-                                    <x-input-label for="no_prb" value="Nomor PRB / SRB" class="mb-1 text-xs" />
-                                    <x-text-input wire:model="no_prb" id="no_prb" class="block w-full text-sm" type="text" placeholder="No. Surat Rujuk Balik" />
-                                </div>
-                                <div>
-                                    <x-input-label for="catatan_prb" value="Catatan / Obat Rutin" class="mb-1 text-xs" />
-                                    <textarea wire:model="catatan_prb" id="catatan_prb" class="block w-full rounded-lg border-gray-300 shadow-sm text-sm focus:border-teal-500 focus:ring-teal-500" rows="2"></textarea>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="pt-4 border-t border-gray-100">
-                            <x-primary-button class="w-full justify-center py-3 text-base bg-teal-600 hover:bg-teal-700 active:bg-teal-800 focus:ring-teal-500 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5" wire:loading.attr="disabled">
-                                <span wire:loading.remove>Simpan Data Pasien</span>
-                                <span wire:loading class="flex items-center gap-2">
-                                    <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    Menyimpan...
-                                </span>
-                            </x-primary-button>
-                            
-                            <a href="{{ route('pasien.index') }}" wire:navigate class="mt-3 block w-full text-center py-2 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition">
-                                Batalkan
-                            </a>
+                        <div class="space-y-1">
+                            <label class="text-sm font-bold text-slate-700">Faskes Tingkat 1 (Asal)</label>
+                            <input type="text" wire:model="faskes_asal" class="form-input w-full rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: Puskesmas Sukamaju">
                         </div>
                     </div>
                 </div>
-            </div>
+
+                <!-- Tombol Aksi -->
+                <div class="pt-8 flex items-center justify-end gap-4 border-t border-slate-100">
+                    <button type="button" onclick="history.back()" class="px-6 py-3 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition-colors">
+                        Batal
+                    </button>
+                    <button type="submit" class="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-600/30 transition-all transform hover:-translate-y-0.5">
+                        Simpan Data Pasien
+                    </button>
+                </div>
+
+            </form>
         </div>
-    </form>
+    </div>
 </div>
