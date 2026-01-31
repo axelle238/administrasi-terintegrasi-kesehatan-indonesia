@@ -34,13 +34,17 @@ class KinerjaPegawai extends Model
         return ($this->orientasi_pelayanan + $this->integritas + $this->komitmen + $this->disiplin + $this->kerjasama) / 5;
     }
 
+    public function getNilaiRataRataAttribute()
+    {
+        return ($this->orientasi_pelayanan + $this->integritas + $this->komitmen + $this->disiplin + $this->kerjasama) / 5;
+    }
+
     public function getPredikatAttribute()
     {
-        $nilai = $this->nilai_rata_rata;
-        if ($nilai >= 90) return 'Sangat Baik';
-        if ($nilai >= 76) return 'Baik';
-        if ($nilai >= 61) return 'Cukup';
-        if ($nilai >= 51) return 'Kurang';
-        return 'Buruk';
+        $avg = $this->nilai_rata_rata;
+        if ($avg >= 90) return 'Sangat Baik';
+        if ($avg >= 75) return 'Baik';
+        if ($avg >= 60) return 'Cukup';
+        return 'Kurang';
     }
 }
