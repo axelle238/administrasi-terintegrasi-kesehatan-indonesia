@@ -35,6 +35,7 @@ class History extends Component
     public $isCuti = false;
     public $selectedPresensi = null;
     public $selectedLkhList = []; // List LKH hari itu
+    public $totalDurasiHariIni = 0; // Total menit
     
     // LKH Form State (Input Fields)
     public $aktivitas;
@@ -161,11 +162,16 @@ class History extends Component
         // Refresh LKH List for selected day
         $this->selectedLkhList = LaporanKinerjaHarian::where('user_id', Auth::id())
             ->whereDate('tanggal', $this->selectedDate)
-            ->latest()
+            ->orderBy('jam_mulai')
             ->get();
         
-        // Reset Form
+        $this->calculateDailyStats();
         $this->resetForm();
+    }
+
+    public function calculateDailyStats()
+    {
+        $this->totalDurasiHariIni = $this->selectedLkhList->sum('durasi_menit');
     }
 
     public function resetForm()
@@ -173,8 +179,16 @@ class History extends Component
         $this->aktivitas = '';
         $this->kategori_kegiatan = 'Tugas Utama';
         $this->deskripsi = '';
-        $this->jam_mulai = '08:00';
-        $this->jam_selesai = '09:00';
+        // Auto set next time slot based on last activity
+        $lastActivity = $this->selectedLkhList->last();
+        if ($lastActivity) {
+            $this->jam_mulai = Carbon::parse($lastActivity->jam_selesai)->format('H:i');
+            $this->jam_selesai = Carbon::parse($lastActivity->jam_selesai)->addHour()->format('H:i');
+        } else {
+            $this->jam_mulai = '08:00';
+            $this->jam_selesai = '09:00';
+        }
+        
         $this->durasi_menit = 60;
         $this->persentase_selesai = 100;
         $this->prioritas = 'Normal';
@@ -217,9 +231,10 @@ class History extends Component
         // Refresh local list without reload
         $this->selectedLkhList = LaporanKinerjaHarian::where('user_id', Auth::id())
             ->whereDate('tanggal', $this->selectedDate)
-            ->latest()
+            ->orderBy('jam_mulai')
             ->get();
             
+        $this->calculateDailyStats();
         $this->resetForm();
     }
 
@@ -231,8 +246,10 @@ class History extends Component
         $this->loadData(); 
         $this->selectedLkhList = LaporanKinerjaHarian::where('user_id', Auth::id())
             ->whereDate('tanggal', $this->selectedDate)
-            ->latest()
+            ->orderBy('jam_mulai')
             ->get();
+            
+        $this->calculateDailyStats();
     }
 
     public function previousMonth()

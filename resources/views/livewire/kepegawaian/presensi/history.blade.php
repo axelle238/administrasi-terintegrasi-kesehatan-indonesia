@@ -80,24 +80,26 @@
                             }
                         @endphp
 
-                        <div wire:click="selectDate({{ $day }})" class="relative group h-24 p-2 rounded-2xl border-2 {{ $bgClass }} transition-all flex flex-col justify-between overflow-hidden cursor-pointer">
+                        <div wire:click="selectDate({{ $day }})" class="relative group h-28 p-2 rounded-2xl border-2 {{ $bgClass }} transition-all flex flex-col justify-between overflow-hidden cursor-pointer">
                             <div class="flex justify-between items-start">
                                 <span class="font-black text-lg {{ $textClass }}">{{ $day }}</span>
                                 @if($lkhCount > 0)
-                                    <span class="{{ $isSelected ? 'bg-white/20 text-white' : 'bg-indigo-100 text-indigo-700' }} text-[9px] font-bold px-1.5 py-0.5 rounded-full">{{ $lkhCount }}</span>
+                                    <span class="{{ $isSelected ? 'bg-white/20 text-white' : 'bg-indigo-100 text-indigo-700' }} text-[9px] font-bold px-1.5 py-0.5 rounded-full">{{ $lkhCount }} Keg</span>
                                 @endif
                             </div>
+                            
                             @if($cuti)
-                                <div class="mt-auto text-center"><span class="px-2 py-0.5 rounded bg-white/50 backdrop-blur-sm text-[9px] font-black uppercase tracking-wider text-purple-700">CUTI</span></div>
+                                <div class="mt-auto text-center"><span class="px-2 py-0.5 rounded bg-white/50 backdrop-blur-sm text-[10px] font-black uppercase tracking-wider text-purple-700">CUTI</span></div>
                             @elseif($presensi)
                                 <div class="text-[9px] font-bold {{ $textClass }} mt-1 truncate">
                                     {{ \Carbon\Carbon::parse($presensi->jam_masuk)->format('H:i') }}
+                                    @if($presensi->jam_keluar) - {{ \Carbon\Carbon::parse($presensi->jam_keluar)->format('H:i') }} @endif
                                 </div>
                             @endif
                             @if($isToday && !$isSelected) <div class="absolute top-2 right-2 w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div> @endif
                         </div>
                     @else
-                        <div class="h-24"></div>
+                        <div class="h-28"></div>
                     @endif
                 @endforeach
             </div>
@@ -111,7 +113,15 @@
                     <div class="bg-indigo-600 p-6 text-white relative overflow-hidden">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
                         <h3 class="text-xl font-black relative z-10">{{ \Carbon\Carbon::parse($selectedDate)->translatedFormat('l, d F Y') }}</h3>
-                        <p class="text-indigo-200 text-xs relative z-10 font-bold uppercase tracking-widest mt-1">Detail Harian</p>
+                        <div class="flex items-center justify-between relative z-10 mt-2">
+                            <p class="text-indigo-200 text-xs font-bold uppercase tracking-widest">Aktivitas Harian</p>
+                            @if(!$isCuti)
+                                <span class="bg-white/20 px-2 py-1 rounded-lg text-xs font-bold">{{ number_format($totalDurasiHariIni / 60, 1) }} Jam Kerja</span>
+                            @endif
+                        </div>
+                        <button wire:click="$set('selectedDate', null)" class="absolute top-6 right-6 text-white/70 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
                     </div>
 
                     <div class="p-6 space-y-6 max-h-[80vh] overflow-y-auto custom-scrollbar">
@@ -132,106 +142,109 @@
                                     <p class="text-lg font-black text-slate-700">{{ $selectedPresensi->jam_keluar ? \Carbon\Carbon::parse($selectedPresensi->jam_keluar)->format('H:i') : '--:--' }}</p>
                                 </div>
                             </div>
-                        @else
-                            <div class="p-4 bg-amber-50 rounded-2xl border border-amber-100 text-center text-xs text-amber-700 font-bold">Belum ada data presensi.</div>
                         @endif
 
                         <!-- 2. Form Input LKH (Complex) -->
                         @if(!$isCuti)
-                            <div class="pt-6 border-t border-dashed border-slate-200">
-                                <h4 class="font-bold text-slate-800 mb-4 text-sm flex items-center gap-2"><span class="w-1.5 h-4 bg-indigo-500 rounded-full"></span> Input Aktivitas</h4>
-                                <form wire:submit.prevent="saveLKH" class="space-y-4">
+                            <div class="pt-2">
+                                <form wire:submit.prevent="saveLKH" class="space-y-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                                    <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2 mb-2">
+                                        <svg class="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg> 
+                                        Input Kegiatan Baru
+                                    </h4>
+                                    
                                     <div>
-                                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Judul Kegiatan</label>
-                                        <input type="text" wire:model="aktivitas" class="w-full rounded-xl border-slate-200 text-sm font-bold placeholder-slate-300 focus:ring-indigo-500" placeholder="Apa yang dikerjakan?">
+                                        <input type="text" wire:model="aktivitas" class="w-full rounded-xl border-slate-200 text-sm font-bold placeholder-slate-400 focus:ring-indigo-500 bg-white" placeholder="Judul kegiatan...">
                                         @error('aktivitas') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                                     </div>
                                     
                                     <div class="grid grid-cols-2 gap-3">
-                                        <div>
-                                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Kategori</label>
-                                            <select wire:model="kategori_kegiatan" class="w-full rounded-xl border-slate-200 text-xs font-bold bg-slate-50">
-                                                <option value="Tugas Utama">Utama</option>
-                                                <option value="Tugas Tambahan">Tambahan</option>
-                                                <option value="Rapat">Rapat</option>
-                                                <option value="Dinas Luar">Dinas Luar</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Prioritas</label>
-                                            <select wire:model="prioritas" class="w-full rounded-xl border-slate-200 text-xs font-bold bg-slate-50">
-                                                <option value="Normal">Normal</option>
-                                                <option value="High">High</option>
-                                                <option value="Urgent">Urgent</option>
-                                            </select>
-                                        </div>
+                                        <select wire:model="kategori_kegiatan" class="w-full rounded-xl border-slate-200 text-xs font-bold bg-white">
+                                            <option value="Tugas Utama">Utama</option>
+                                            <option value="Tugas Tambahan">Tambahan</option>
+                                            <option value="Rapat">Rapat</option>
+                                            <option value="Dinas Luar">Dinas Luar</option>
+                                        </select>
+                                        <select wire:model="prioritas" class="w-full rounded-xl border-slate-200 text-xs font-bold bg-white">
+                                            <option value="Normal">Normal</option>
+                                            <option value="High">High</option>
+                                            <option value="Urgent">Urgent</option>
+                                        </select>
                                     </div>
 
                                     <div class="grid grid-cols-2 gap-3">
-                                        <div>
-                                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Mulai</label>
-                                            <input type="time" wire:model.live="jam_mulai" class="w-full rounded-xl border-slate-200 text-xs font-bold">
+                                        <div class="relative">
+                                            <span class="absolute left-2 top-2 text-[9px] font-bold text-slate-400">Mulai</span>
+                                            <input type="time" wire:model.live="jam_mulai" class="w-full rounded-xl border-slate-200 text-xs font-bold pt-5 pb-1 px-2 bg-white">
                                         </div>
-                                        <div>
-                                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Selesai</label>
-                                            <input type="time" wire:model.live="jam_selesai" class="w-full rounded-xl border-slate-200 text-xs font-bold">
+                                        <div class="relative">
+                                            <span class="absolute left-2 top-2 text-[9px] font-bold text-slate-400">Selesai</span>
+                                            <input type="time" wire:model.live="jam_selesai" class="w-full rounded-xl border-slate-200 text-xs font-bold pt-5 pb-1 px-2 bg-white">
                                         </div>
                                     </div>
                                     
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Deskripsi Hasil</label>
-                                        <textarea wire:model="deskripsi" rows="2" class="w-full rounded-xl border-slate-200 text-sm font-medium focus:ring-indigo-500" placeholder="Detail output..."></textarea>
-                                        @error('deskripsi') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
+                                    <textarea wire:model="deskripsi" rows="2" class="w-full rounded-xl border-slate-200 text-xs font-medium focus:ring-indigo-500 bg-white" placeholder="Detail hasil kerja..."></textarea>
+
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[10px] font-bold text-slate-500">Progress</span>
+                                        <input type="range" wire:model.live="persentase_selesai" class="flex-1 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                                        <span class="text-[10px] font-black text-indigo-600 w-6 text-right">{{ $persentase_selesai }}%</span>
                                     </div>
 
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Progress & Bukti</label>
-                                        <div class="flex items-center gap-3 mb-2">
-                                            <input type="range" wire:model.live="persentase_selesai" class="flex-1 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
-                                            <span class="text-xs font-black text-indigo-600 w-8">{{ $persentase_selesai }}%</span>
-                                        </div>
-                                        <input type="file" wire:model="file_bukti_kerja" class="block w-full text-[10px] text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                                    </div>
-
-                                    <button type="submit" class="w-full py-3 bg-slate-800 text-white rounded-xl font-bold text-sm hover:bg-slate-900 transition shadow-lg flex justify-center items-center gap-2">
-                                        <span wire:loading.remove>Simpan Aktivitas</span>
-                                        <span wire:loading><svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg></span>
+                                    <button type="submit" class="w-full py-2.5 bg-slate-800 text-white rounded-xl font-bold text-xs hover:bg-slate-900 transition shadow-lg flex justify-center items-center gap-2">
+                                        <span wire:loading.remove>Tambahkan ke Daftar</span>
+                                        <span wire:loading>Menyimpan...</span>
                                     </button>
                                 </form>
                             </div>
                         @endif
 
-                        <!-- 3. List Aktivitas Hari Ini -->
-                        <div class="pt-2 space-y-3">
-                            @forelse($selectedLkhList as $l)
-                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 group hover:bg-white hover:shadow-sm transition-all relative">
-                                <div class="flex justify-between items-start mb-1">
-                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-white border border-slate-200 text-slate-500">{{ $l->kategori_kegiatan }}</span>
-                                    <button wire:click="deleteLKH({{ $l->id }})" class="text-slate-300 hover:text-red-500"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
-                                </div>
-                                <h4 class="font-bold text-slate-800 text-xs">{{ $l->aktivitas }}</h4>
-                                <p class="text-[10px] text-slate-500 mt-0.5 line-clamp-2">{{ $l->deskripsi }}</p>
-                                <div class="mt-2 flex justify-between items-center border-t border-slate-100 pt-2">
-                                    <span class="text-[10px] font-mono font-bold text-slate-400">{{ \Carbon\Carbon::parse($l->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($l->jam_selesai)->format('H:i') }}</span>
-                                    @if($l->file_bukti_kerja)
-                                    <a href="{{ Storage::url($l->file_bukti_kerja) }}" target="_blank" class="text-[10px] font-bold text-blue-500 hover:underline">Bukti</a>
-                                    @endif
+                        <!-- 3. Timeline Kegiatan Hari Ini -->
+                        @if($selectedLkhList->count() > 0)
+                            <div class="pt-4 border-t border-dashed border-slate-200 relative">
+                                <div class="absolute left-4 top-4 bottom-0 w-0.5 bg-slate-200"></div>
+                                <div class="space-y-6">
+                                    @foreach($selectedLkhList as $l)
+                                    <div class="relative pl-10 group">
+                                        <div class="absolute left-[13px] top-1 w-2.5 h-2.5 rounded-full border-2 border-white bg-indigo-500 z-10"></div>
+                                        
+                                        <div class="bg-white p-3 rounded-xl border border-slate-100 shadow-sm group-hover:border-indigo-200 transition-all relative">
+                                            <div class="flex justify-between items-start mb-1">
+                                                <span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-slate-100 text-slate-500">{{ $l->kategori_kegiatan }}</span>
+                                                <button wire:click="deleteLKH({{ $l->id }})" class="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
+                                            </div>
+                                            
+                                            <h4 class="font-bold text-slate-800 text-sm">{{ $l->aktivitas }}</h4>
+                                            <p class="text-[10px] text-slate-500 mt-1 line-clamp-2">{{ $l->deskripsi }}</p>
+                                            
+                                            <div class="mt-2 flex justify-between items-center pt-2 border-t border-slate-50">
+                                                <span class="text-[10px] font-mono font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded">
+                                                    {{ \Carbon\Carbon::parse($l->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($l->jam_selesai)->format('H:i') }}
+                                                </span>
+                                                <span class="text-[10px] font-black text-indigo-600">{{ $l->persentase_selesai }}%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endforeach
                                 </div>
                             </div>
-                            @empty
-                                @if(!$isCuti) <p class="text-center text-xs text-slate-400 italic">Belum ada aktivitas hari ini.</p> @endif
-                            @endforelse
-                        </div>
+                        @else
+                            @if(!$isCuti) 
+                                <div class="text-center py-8">
+                                    <p class="text-xs text-slate-400 italic">Belum ada kegiatan tercatat hari ini.</p> 
+                                </div>
+                            @endif
+                        @endif
                     </div>
                 </div>
             @else
                 <!-- Placeholder State -->
-                <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2.5rem] h-full min-h-[400px] flex flex-col items-center justify-center text-center p-8">
-                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm">
+                <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2.5rem] h-full min-h-[400px] flex flex-col items-center justify-center text-center p-8 sticky top-6">
+                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm animate-bounce-slow">
                         <svg class="w-8 h-8 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                     </div>
                     <h3 class="font-bold text-slate-600">Pilih Tanggal</h3>
-                    <p class="text-xs text-slate-400 mt-1 max-w-[200px]">Klik salah satu tanggal di kalender untuk melihat detail atau input aktivitas.</p>
+                    <p class="text-xs text-slate-400 mt-1 max-w-[200px]">Klik tanggal di kalender untuk mulai mencatat aktivitas harian Anda.</p>
                 </div>
             @endif
         </div>
