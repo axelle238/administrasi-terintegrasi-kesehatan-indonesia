@@ -83,6 +83,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/kepegawaian/cuti', \App\Livewire\Kepegawaian\Cuti\Index::class)->name('kepegawaian.cuti.index');
     Route::get('/kepegawaian/jadwal/tukar', \App\Livewire\Kepegawaian\Jadwal\Swap::class)->name('kepegawaian.jadwal.swap');
+    Route::get('/kepegawaian/aktivitas', \App\Livewire\Kepegawaian\Aktivitas\Index::class)->name('kepegawaian.aktivitas.index');
+    Route::get('/kepegawaian/pelatihan', \App\Livewire\Kepegawaian\Pelatihan\Index::class)->name('kepegawaian.pelatihan.index');
 
     // ADMIN routes...
     Route::middleware('can:admin')->group(function () {

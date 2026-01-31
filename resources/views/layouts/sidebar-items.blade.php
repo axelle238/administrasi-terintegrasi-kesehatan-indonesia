@@ -146,6 +146,9 @@
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
     </x-slot:icon>
     <x-nav.link-child :href="route('kepegawaian.dashboard')" :active="request()->routeIs('kepegawaian.dashboard')">Dashboard Saya</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.aktivitas.index')" :active="request()->routeIs('kepegawaian.aktivitas.*')">Laporan Aktivitas (LKH)</x-nav.link-child>
     <x-nav.link-child :href="route('kepegawaian.cuti.index')" :active="request()->routeIs('kepegawaian.cuti.*')">Pengajuan Cuti</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.jadwal.swap')" :active="request()->routeIs('kepegawaian.jadwal.swap')">Tukar Jadwal</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.pelatihan.index')" :active="request()->routeIs('kepegawaian.pelatihan.*')">Kompetensi & Sertifikat</x-nav.link-child>
     <x-nav.link-child :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">Profil Saya</x-nav.link-child>
 </x-nav.dropdown>
