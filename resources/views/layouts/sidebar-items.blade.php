@@ -1,4 +1,4 @@
-<!-- DASHBOARD UTAMA -->
+<!-- A. DASHBOARD UTAMA -->
 <x-nav.link :href="route('dashboard')" :active="request()->routeIs('dashboard')" icon="chip">
     <x-slot:slot>
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
@@ -6,7 +6,7 @@
     Dashboard Utama
 </x-nav.link>
 
-<!-- A. KESEHATAN -->
+<!-- B. KESEHATAN -->
 @if(Auth::user()->can('medis') || Auth::user()->role === 'admin')
 <x-nav.dropdown label="Kesehatan" :active="request()->routeIs('medical.*') || request()->routeIs('antrean.*') || request()->routeIs('rekam-medis.*') || request()->routeIs('rawat-inap.*') || request()->routeIs('pharmacy.*') || request()->routeIs('obat.*')">
     <x-slot:icon>
@@ -21,7 +21,7 @@
 </x-nav.dropdown>
 @endif
 
-<!-- B. KESEHATAN MASYARAKAT -->
+<!-- C. KESEHATAN MASYARAKAT -->
 @if(Auth::user()->can('tata_usaha') || Auth::user()->role === 'admin')
 <x-nav.dropdown label="Kesehatan Masyarakat" :active="request()->routeIs('ukm.*') || request()->routeIs('masyarakat.*') || request()->routeIs('public.*')">
     <x-slot:icon>
@@ -34,7 +34,7 @@
 </x-nav.dropdown>
 @endif
 
-<!-- C. MANAJEMEN KEPEGAWAIAN -->
+<!-- D. MANAJEMEN KEPEGAWAIAN -->
 @if(Auth::user()->can('admin'))
 <x-nav.dropdown label="Manajemen Kepegawaian" :active="request()->routeIs('hrd.*') || request()->routeIs('pegawai.*') || request()->routeIs('shift.*') || request()->routeIs('kepegawaian.*')">
     <x-slot:icon>
@@ -49,7 +49,7 @@
 </x-nav.dropdown>
 @endif
 
-<!-- D. MANAJEMEN KEUANGAN -->
+<!-- E. MANAJEMEN KEUANGAN -->
 @if(Auth::user()->can('admin'))
 <x-nav.dropdown label="Manajemen Keuangan" :active="request()->routeIs('finance.*') || request()->routeIs('kasir.*') || request()->routeIs('kepegawaian.gaji.*')">
     <x-slot:icon>
@@ -62,7 +62,7 @@
 </x-nav.dropdown>
 @endif
 
-<!-- E. MANAJEMEN ASET & INVENTARIS -->
+<!-- F. MANAJEMEN ASET DAN INVENTARIS BARANG -->
 @if(Auth::user()->can('tata_usaha') || Auth::user()->role === 'admin')
 <x-nav.dropdown label="Manajemen Aset dan Inventaris barang" :active="request()->routeIs('barang.*') || request()->routeIs('supplier.*') || request()->routeIs('ruangan.*') || request()->routeIs('kategori-barang.*')">
     <x-slot:icon>
@@ -78,7 +78,7 @@
 </x-nav.dropdown>
 @endif
 
-<!-- F. SISTEM PENGATURAN TERPUSAT -->
+<!-- G. MANAJEMEN SISTEM PENGATURAN TERPUSAT -->
 @if(Auth::user()->role === 'admin')
 <x-nav.dropdown label="Manajemen Sistem Pengaturan Terpusat" :active="request()->routeIs('system.*') && !request()->routeIs('system.backup')">
     <x-slot:icon>
@@ -93,7 +93,7 @@
 </x-nav.dropdown>
 @endif
 
-<!-- G. KEAMANAN TERPUSAT -->
+<!-- H. MANAJEMEN KEAMANAN TERPUSAT -->
 @if(Auth::user()->role === 'admin')
 <x-nav.dropdown label="Manajemen Keamanan Terpusat" :active="request()->routeIs('security.*') || request()->routeIs('activity-log') || request()->routeIs('system.backup')">
     <x-slot:icon>
