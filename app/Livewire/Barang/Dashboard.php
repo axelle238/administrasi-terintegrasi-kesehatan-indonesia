@@ -9,11 +9,13 @@ use App\Models\PengadaanBarang;
 use App\Models\RiwayatBarang;
 use App\Models\Ruangan;
 use Livewire\Component;
+use Livewire\Attributes\Url;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class Dashboard extends Component
 {
+    #[Url(keep: true)]
     public $activeTab = 'ikhtisar'; // ikhtisar, stok, maintenance, pengadaan
     public $filterTipe = 'all'; // all, medis, umum
 
