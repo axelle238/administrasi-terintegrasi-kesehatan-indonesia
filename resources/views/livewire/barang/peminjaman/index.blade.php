@@ -140,13 +140,18 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 text-center">
-                            @if($p->status == 'Dipinjam')
-                                <button wire:click="openReturnModal({{ $p->id }})" class="text-xs font-bold text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg hover:bg-amber-100 transition-colors">
-                                    Kembalikan
-                                </button>
-                            @else
-                                <span class="text-slate-300">-</span>
-                            @endif
+                            <div class="flex items-center justify-center gap-2">
+                                @if($p->status == 'Dipinjam')
+                                    <button wire:click="openReturnModal({{ $p->id }})" class="text-xs font-bold text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg hover:bg-amber-100 transition-colors">
+                                        Kembalikan
+                                    </button>
+                                    <a href="{{ route('barang.peminjaman.print', $p->id) }}" target="_blank" class="text-slate-400 hover:text-blue-600 p-1 rounded-full hover:bg-slate-100 transition">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                                    </a>
+                                @else
+                                    <span class="text-slate-300">-</span>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                     @empty

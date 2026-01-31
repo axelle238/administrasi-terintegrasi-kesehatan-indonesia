@@ -171,7 +171,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/barang/opname/{opname}/input', \App\Livewire\Barang\OpnameCreate::class)->name('barang.opname.input');
         Route::get('/barang/mutasi', \App\Livewire\Barang\Mutasi\Index::class)->name('barang.mutasi.index');
         Route::get('/barang/mutasi/{mutasi}/print', [\App\Http\Controllers\MutasiController::class, 'print'])->name('barang.mutasi.print');
+        Route::get('/barang/penghapusan/{penghapusan}/print', [\App\Http\Controllers\PenghapusanController::class, 'print'])->name('barang.penghapusan.print');
         Route::get('/barang/peminjaman', \App\Livewire\Barang\Peminjaman\Index::class)->name('barang.peminjaman.index');
+        Route::get('/barang/peminjaman/{peminjaman}/print', [\App\Http\Controllers\PeminjamanController::class, 'print'])->name('barang.peminjaman.print');
         Route::get('/barang/print-labels', \App\Livewire\Barang\PrintLabelsBulk::class)->name('barang.print-labels-bulk');
         Route::get('/barang/maintenance/logs', \App\Livewire\Barang\MaintenanceLog::class)->name('barang.maintenance');
         Route::get('/barang/{barang}/maintenance/create', \App\Livewire\Barang\Maintenance\Create::class)->name('barang.maintenance.create');
