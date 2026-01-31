@@ -22,6 +22,7 @@ class Create extends Component
     public function addItem()
     {
         $this->items[] = [
+            'key' => uniqid(),
             'barang_id' => '',
             'jumlah' => 1,
             'kondisi_terakhir' => 'Rusak Berat',

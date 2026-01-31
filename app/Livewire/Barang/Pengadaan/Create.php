@@ -23,6 +23,7 @@ class Create extends Component
     public function addItem()
     {
         $this->items[] = [
+            'key' => uniqid(),
             'type' => 'existing', // existing | new
             'barang_id' => '',
             'nama_barang' => '', // For new items

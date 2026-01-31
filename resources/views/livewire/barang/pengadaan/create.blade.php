@@ -45,7 +45,7 @@
                 <div class="space-y-4">
                     <h4 class="font-bold text-gray-800">Daftar Barang</h4>
                     @foreach($items as $index => $item)
-                        <div class="flex flex-col lg:flex-row gap-4 p-4 border border-gray-200 rounded-xl bg-gray-50 items-start lg:items-center relative" wire:key="item-{{ $index }}">
+                        <div class="flex flex-col lg:flex-row gap-4 p-4 border border-gray-200 rounded-xl bg-gray-50 items-start lg:items-center relative" wire:key="item-{{ $item['key'] }}">
                             
                             <!-- Type Selection -->
                             <div class="w-full lg:w-32">
