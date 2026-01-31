@@ -17,6 +17,7 @@ class Maintenance extends Model
         'keterangan',
         'teknisi',
         'biaya',
+        'file_sertifikat',
         'tanggal_berikutnya',
         'status'
     ];
