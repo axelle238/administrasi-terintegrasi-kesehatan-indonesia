@@ -2,83 +2,111 @@
 
 namespace App\Livewire\Profile;
 
-use Livewire\Component;
+use App\Models\User;
+use App\Models\Pegawai;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Edit extends Component
 {
+    use WithFileUploads;
+
+    public User $user;
     public $name;
     public $email;
-    
     public $current_password;
     public $password;
     public $password_confirmation;
 
+    // Pegawai Data
+    public $pegawai;
+    public $no_telepon;
+    public $alamat;
+    public $kontak_darurat_nama;
+    public $kontak_darurat_telp;
+    public $foto_profil;
+    public $new_foto_profil;
+
     public function mount()
     {
-        $user = Auth::user();
-        $this->name = $user->name;
-        $this->email = $user->email;
+        $this->user = Auth::user();
+        $this->name = $this->user->name;
+        $this->email = $this->user->email;
+
+        $this->pegawai = Pegawai::where('user_id', $this->user->id)->first();
+        if ($this->pegawai) {
+            $this->no_telepon = $this->pegawai->no_telepon;
+            $this->alamat = $this->pegawai->alamat;
+            $this->kontak_darurat_nama = $this->pegawai->kontak_darurat_nama;
+            $this->kontak_darurat_telp = $this->pegawai->kontak_darurat_telp;
+            $this->foto_profil = $this->pegawai->foto_profil;
+        }
     }
 
     public function updateProfileInformation()
     {
-        $user = Auth::user();
-
-        $validated = $this->validate([
+        $this->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($this->user->id)],
+            'no_telepon' => ['nullable', 'string', 'max:20'],
+            'alamat' => ['nullable', 'string'],
+            'kontak_darurat_nama' => ['nullable', 'string'],
+            'kontak_darurat_telp' => ['nullable', 'string'],
+            'new_foto_profil' => ['nullable', 'image', 'max:1024'],
         ]);
 
-        $user->fill($validated);
+        $this->user->fill([
+            'name' => $this->name,
+            'email' => $this->email,
+        ]);
 
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
+        if ($this->user->isDirty('email')) {
+            $this->user->email_verified_at = null;
         }
 
-        $user->save();
+        $this->user->save();
+
+        // Update Pegawai Data
+        $pegawaiData = [
+            'no_telepon' => $this->no_telepon,
+            'alamat' => $this->alamat,
+            'kontak_darurat_nama' => $this->kontak_darurat_nama,
+            'kontak_darurat_telp' => $this->kontak_darurat_telp,
+        ];
+
+        if ($this->new_foto_profil) {
+            $path = $this->new_foto_profil->store('foto-profil', 'public');
+            $pegawaiData['foto_profil'] = $path;
+        }
+
+        Pegawai::updateOrCreate(
+            ['user_id' => $this->user->id],
+            $pegawaiData
+        );
 
         $this->dispatch('notify', 'success', 'Profil berhasil diperbarui.');
     }
 
     public function updatePassword()
     {
-        $validated = $this->validate([
+        $this->validate([
             'current_password' => ['required', 'current_password'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'min:8', 'confirmed'],
         ]);
 
-        Auth::user()->update([
-            'password' => Hash::make($validated['password']),
+        $this->user->update([
+            'password' => Hash::make($this->password),
         ]);
 
         $this->reset(['current_password', 'password', 'password_confirmation']);
-
-        $this->dispatch('notify', 'success', 'Password berhasil diperbarui.');
-    }
-
-    public function deleteUser()
-    {
-        $this->validate([
-            'current_password' => ['required', 'current_password'],
-        ]);
-
-        $user = Auth::user();
-
-        Auth::logout();
-
-        $user->delete();
-
-        session()->invalidate();
-        session()->regenerateToken();
-
-        return redirect('/');
+        $this->dispatch('notify', 'success', 'Kata sandi berhasil diubah.');
     }
 
     public function render()
     {
-        return view('livewire.profile.edit')->layout('layouts.app', ['header' => 'Pengaturan Profil']);
+        return view('livewire.profile.edit')->layout('layouts.app', ['header' => 'Profil Saya']);
     }
 }

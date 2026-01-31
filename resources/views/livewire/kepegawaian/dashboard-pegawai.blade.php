@@ -20,7 +20,7 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 w-full lg:w-max relative z-10">
             <div class="bg-orange-50 p-4 rounded-3xl border border-orange-100 text-center">
                 <p class="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1">Sisa Cuti</p>
-                <h4 class="text-2xl font-black text-orange-600">{{ $sisaCuti }} <span class="text-xs font-bold text-orange-400">Hari</span></h4>
+                <h4 class="text-2xl font-black text-orange-600">{{ $pegawai->sisa_cuti ?? 0 }} <span class="text-xs font-bold text-orange-400">Hari</span></h4>
             </div>
             <div class="bg-blue-50 p-4 rounded-3xl border border-blue-100 text-center">
                 <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1">Kehadiran</p>

@@ -48,6 +48,11 @@ class Pegawai extends Model
         'file_sip',         // Path file SIP
         'file_ijazah',      // Path file Ijazah
         'file_sertifikat_pelatihan', // Path file sertifikat (bisa multiple/zip)
+        'kuota_cuti_tahunan',
+        'sisa_cuti',
+        'foto_profil',
+        'kontak_darurat_nama',
+        'kontak_darurat_telp',
     ];
 
     /**

@@ -22,7 +22,9 @@ class PengajuanCuti extends Model
         'tanggal_selesai',
         'keterangan',
         'status',
-        'catatan_admin'
+        'catatan_admin',
+        'durasi_hari',
+        'file_bukti'
     ];
 
     public function user(): BelongsTo
