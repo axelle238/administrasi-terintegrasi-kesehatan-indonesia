@@ -67,6 +67,11 @@
             <button wire:click="nextMonth" class="p-3 hover:bg-slate-50 rounded-2xl text-slate-400 hover:text-slate-800 transition-all border border-transparent hover:border-slate-200 group">
                 <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
             </button>
+
+            <!-- Cetak Button -->
+            <button onclick="window.print()" class="p-3 bg-slate-800 text-white rounded-2xl hover:bg-slate-700 transition-all shadow-lg shadow-slate-200 ml-2" title="Cetak Laporan">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+            </button>
         </div>
 
         <!-- Grid Header -->
@@ -216,6 +221,14 @@
                                 <p class="text-xs font-bold text-slate-500">{{ Str::limit($detailPresensi->alamat_masuk ?? 'Lokasi GPS', 30) }}</p>
                             </div>
                         </div>
+
+                        <!-- Shift Info -->
+                        <div class="p-4 bg-white rounded-2xl border border-dashed border-slate-200">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="font-bold text-slate-500 uppercase">Jadwal Shift</span>
+                                <span class="font-mono font-black text-slate-700">{{ \Carbon\Carbon::parse($detailPresensi->shift_jam_masuk)->format('H:i') }} - {{ \Carbon\Carbon::parse($detailPresensi->shift_jam_keluar)->format('H:i') }}</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Kolom Kanan: Timeline Laporan -->
@@ -263,11 +276,11 @@
         </div>
     </div>
     @endif
-</div>
 
-<style>
-    @keyframes slide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    .animate-slide-up { animation: slide-up 0.4s ease-out forwards; }
-    .animate-fade-in { animation: fadeIn 0.5s ease-out; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-</style>
+    <style>
+        @keyframes slide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-slide-up { animation: slide-up 0.4s ease-out forwards; }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</div>
