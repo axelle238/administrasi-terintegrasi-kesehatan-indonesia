@@ -1,4 +1,4 @@
-<div class="space-y-6">
+<div class="space-y-6 animate-fade-in">
     <!-- Header Command Center -->
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -9,7 +9,7 @@
                 Pusat Analitik Keuangan
             </h2>
             <p class="text-sm text-slate-500 mt-1 ml-12 font-medium">
-                Monitoring real-time pendapatan, margin laba, dan efisiensi biaya operasional.
+                Pantauan waktu nyata pendapatan, margin laba, dan efisiensi biaya operasional.
             </p>
         </div>
 
@@ -44,7 +44,7 @@
             <h3 class="text-2xl font-black relative z-10">Rp {{ number_format($pendapatanBulanIni, 0, ',', '.') }}</h3>
             <div class="mt-4 flex items-center justify-between text-[10px] font-bold relative z-10">
                 <span class="bg-emerald-500/30 px-2 py-1 rounded">Hari Ini: Rp {{ number_format($pendapatanHariIni, 0, ',', '.') }}</span>
-                <span class="opacity-70">Gross Income</span>
+                <span class="opacity-70">Pendapatan Kotor</span>
             </div>
         </div>
 
@@ -54,7 +54,7 @@
             <h3 class="text-2xl font-black text-slate-800">Rp {{ number_format($labaBersihBulan, 0, ',', '.') }}</h3>
             <div class="mt-4">
                 <div class="flex justify-between items-center mb-1">
-                    <span class="text-[10px] font-black text-emerald-600">{{ number_format($rasioMargin, 1) }}% Net Margin</span>
+                    <span class="text-[10px] font-black text-emerald-600">{{ number_format($rasioMargin, 1) }}% Margin Bersih</span>
                 </div>
                 <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
                     <div class="bg-emerald-500 h-full rounded-full" style="width: {{ min(100, $rasioMargin) }}%"></div>
@@ -96,8 +96,8 @@
             <div class="flex justify-between items-center mb-6">
                 <h3 class="font-black text-slate-800 text-lg">Performa Arus Kas (6 Bulan)</h3>
                 <div class="flex items-center gap-4 text-[10px] font-black uppercase">
-                    <span class="flex items-center gap-1.5 text-emerald-600"><div class="w-3 h-3 bg-emerald-500 rounded-sm"></div> Income</span>
-                    <span class="flex items-center gap-1.5 text-rose-500"><div class="w-3 h-3 bg-rose-500 rounded-sm"></div> Expense</span>
+                    <span class="flex items-center gap-1.5 text-emerald-600"><div class="w-3 h-3 bg-emerald-500 rounded-sm"></div> Pendapatan</span>
+                    <span class="flex items-center gap-1.5 text-rose-500"><div class="w-3 h-3 bg-rose-500 rounded-sm"></div> Pengeluaran</span>
                 </div>
             </div>
             <div id="chart-finance-main" class="w-full h-[350px]"></div>
@@ -113,7 +113,7 @@
                     @foreach($distribusiPendapatan['labels'] as $index => $label)
                     <div class="p-2 bg-slate-50 rounded-lg">
                         <p class="text-[9px] text-slate-400 font-bold uppercase">{{ $label }}</p>
-                        <p class="text-[10px] font-black text-slate-800">Rp {{ number_format($distribusiPendapatan['data'][$index]/1000000, 1) }}jt</p>
+                        <p class="text-[10px] font-black text-slate-800">Rp {{ number_format(($distribusiPendapatan['data'][$index] ?? 0)/1000000, 1) }}jt</p>
                     </div>
                     @endforeach
                 </div>
@@ -123,7 +123,7 @@
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
                 <h3 class="font-black text-slate-800 text-lg mb-4">Top 5 Poliklinik</h3>
                 <div class="space-y-4">
-                    @foreach($pendapatanPoli as $poli)
+                    @forelse($pendapatanPoli as $poli)
                         <div class="group">
                             <div class="flex justify-between items-end mb-1">
                                 <span class="text-xs font-bold text-slate-700">{{ $poli->nama_poli }}</span>
@@ -133,7 +133,9 @@
                                 <div class="bg-emerald-500 h-full rounded-full transition-all duration-1000 group-hover:bg-emerald-600" style="width: {{ ($poli->total / ($pendapatanBulanIni ?: 1)) * 100 }}%"></div>
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <p class="text-center text-xs text-slate-400 font-medium py-4">Belum ada data pendapatan poli.</p>
+                    @endforelse
                 </div>
             </div>
         </div>
@@ -144,7 +146,7 @@
         <div class="px-8 py-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
             <div>
                 <h4 class="text-lg font-black text-slate-800">Riwayat Transaksi Terbaru</h4>
-                <p class="text-xs text-slate-500 font-medium mt-0.5 uppercase tracking-wider">Audit Trail Keuangan</p>
+                <p class="text-xs text-slate-500 font-medium mt-0.5 uppercase tracking-wider">Jejak Audit Keuangan</p>
             </div>
             <a href="{{ route('kasir.index') }}" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:text-emerald-600 hover:border-emerald-200 transition-all shadow-sm">Buka Buku Kas &rarr;</a>
         </div>
