@@ -12,109 +12,98 @@ use Livewire\Component;
 
 class OpnameCreate extends Component
 {
-    public $opnameId;
+    public Opname $opname;
+    
+    // Properties for View
     public $tanggal;
     public $keterangan;
     public $ruangan_id;
     
     public $items = [];
-    public $physicalStocks = []; // [barang_id => quantity]
-    public $itemNotes = []; // [barang_id => note]
+    public $physicalStocks = []; // [detail_id => quantity]
+    public $itemNotes = []; // [detail_id => note]
 
-    public function mount()
+    public function mount(Opname $opname)
     {
-        $this->tanggal = date('Y-m-d');
-        $this->loadItems();
-    }
+        $this->opname = $opname->load('details.barang', 'ruangan');
+        
+        $this->tanggal = $opname->tanggal;
+        $this->keterangan = $opname->keterangan;
+        $this->ruangan_id = $opname->ruangan_id;
 
-    public function updatedRuanganId()
-    {
         $this->loadItems();
     }
 
     public function loadItems()
     {
-        $query = Barang::query();
+        // Load from existing details
+        $this->items = $this->opname->details;
         
-        // Filter by Ruangan if selected
-        if ($this->ruangan_id) {
-            $query->where('ruangan_id', $this->ruangan_id);
-        } else {
-            // If no room selected, maybe just load consumables or those without room?
-            // Or default to all? Let's default to all but limit to consumables if desired.
-            // But assets are also opname-able. Let's include everything or just consumables.
-            // Usually opname is for everything.
-            // Let's keep it broad but maybe order by room.
-        }
-
-        $this->items = $query->orderBy('nama_barang')->get();
-        
-        // Reset stocks array to avoid stale data
-        $this->physicalStocks = [];
-        $this->itemNotes = [];
-
-        foreach ($this->items as $item) {
-            $this->physicalStocks[$item->id] = $item->stok; // Default to current stock
-            $this->itemNotes[$item->id] = '';
+        // Initialize input fields
+        foreach ($this->items as $detail) {
+            $this->physicalStocks[$detail->id] = $detail->stok_fisik; 
+            $this->itemNotes[$detail->id] = $detail->keterangan;
         }
     }
 
     public function save($finalize = false)
     {
+        if ($this->opname->status == 'Final') {
+            $this->dispatch('notify', 'error', 'Opname sudah final dan tidak dapat diubah.');
+            return;
+        }
+
         $this->validate([
-            'tanggal' => 'required|date',
-            'keterangan' => 'nullable|string',
             'physicalStocks.*' => 'required|integer|min:0',
-            'ruangan_id' => 'nullable|exists:ruangans,id',
         ]);
 
         DB::beginTransaction();
         try {
-            $opname = Opname::create([
-                'tanggal' => $this->tanggal,
-                'user_id' => auth()->id(),
-                'ruangan_id' => $this->ruangan_id,
+            // Update Header (Optional updates)
+            $this->opname->update([
                 'keterangan' => $this->keterangan,
                 'status' => $finalize ? 'Final' : 'Draft',
             ]);
 
-            foreach ($this->items as $item) {
-                // Only process items that are in the list (in case of tampering)
-                if (!isset($this->physicalStocks[$item->id])) continue;
+            foreach ($this->items as $detail) {
+                // Skip if somehow input is missing
+                if (!isset($this->physicalStocks[$detail->id])) continue;
 
-                $fisik = (int) $this->physicalStocks[$item->id];
-                $sistem = $item->stok;
+                $fisik = (int) $this->physicalStocks[$detail->id];
+                $sistem = $detail->stok_sistem; // Keep original snapshot
                 $selisih = $fisik - $sistem;
 
-                OpnameDetail::create([
-                    'opname_id' => $opname->id,
-                    'barang_id' => $item->id,
-                    'stok_sistem' => $sistem,
+                // Update Detail
+                $detail->update([
                     'stok_fisik' => $fisik,
                     'selisih' => $selisih,
-                    'keterangan' => $this->itemNotes[$item->id] ?? null,
+                    'keterangan' => $this->itemNotes[$detail->id] ?? null,
                 ]);
 
+                // Finalize Logic
                 if ($finalize && $selisih != 0) {
-                    // Update Item Stock
-                    $item->update(['stok' => $fisik]);
+                    $barang = $detail->barang;
+                    if ($barang) {
+                        // Update Master Stock
+                        $barang->update(['stok' => $fisik]);
 
-                    // Log History
-                    RiwayatBarang::create([
-                        'barang_id' => $item->id,
-                        'user_id' => auth()->id(),
-                        'jenis_transaksi' => $selisih > 0 ? 'Masuk' : 'Keluar',
-                        'jumlah' => abs($selisih),
-                        'stok_terakhir' => $fisik,
-                        'tanggal' => $this->tanggal,
-                        'keterangan' => "Opname Stok: " . ($this->itemNotes[$item->id] ?? 'Penyesuaian'),
-                    ]);
+                        // Log History
+                        RiwayatBarang::create([
+                            'barang_id' => $barang->id,
+                            'user_id' => auth()->id(),
+                            'jenis_transaksi' => $selisih > 0 ? 'Masuk' : 'Keluar',
+                            'jumlah' => abs($selisih),
+                            'stok_terakhir' => $fisik,
+                            'tanggal' => now(), // Use execution time for log
+                            'keterangan' => "Opname Stok (Adj): " . ($this->itemNotes[$detail->id] ?? 'Penyesuaian Audit'),
+                        ]);
+                    }
                 }
             }
 
             DB::commit();
             
-            $this->dispatch('notify', 'success', $finalize ? 'Opname berhasil diselesaikan.' : 'Opname disimpan sebagai draft.');
+            $this->dispatch('notify', 'success', $finalize ? 'Opname berhasil diselesaikan.' : 'Progress disimpan.');
             return redirect()->route('barang.opname.index');
 
         } catch (\Exception $e) {

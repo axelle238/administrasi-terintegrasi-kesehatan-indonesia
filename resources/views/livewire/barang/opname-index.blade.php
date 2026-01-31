@@ -102,9 +102,9 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 text-center">
-                            <button class="text-xs font-bold text-purple-600 hover:underline">
+                            <a href="{{ route('barang.opname.input', $op->id) }}" wire:navigate class="text-xs font-bold text-purple-600 hover:underline">
                                 {{ $op->status == 'Draft' ? 'Input Hasil Hitung' : 'Lihat Laporan' }} &rarr;
-                            </button>
+                            </a>
                         </td>
                     </tr>
                     @empty

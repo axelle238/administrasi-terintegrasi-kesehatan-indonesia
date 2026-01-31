@@ -8,73 +8,64 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
-                    Input Stok Opname
+                    Input Stok Opname #{{ $opname->id }}
                 </h2>
                 <p class="text-sm text-gray-500 mt-1">
-                    Pastikan Anda memasukkan jumlah fisik yang sebenarnya ada di gudang/penyimpanan.
+                    {{ $opname->keterangan ?? 'Sesi audit stok.' }}
                 </p>
             </div>
             
             <div class="flex flex-col sm:flex-row gap-4 items-end">
                 <div class="w-full sm:w-auto">
                     <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Lokasi Ruangan</label>
-                    <select wire:model.live="ruangan_id" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm">
-                        <option value="">Semua Ruangan</option>
-                        @foreach($ruangans as $r)
-                            <option value="{{ $r->id }}">{{ $r->nama_ruangan }}</option>
-                        @endforeach
-                    </select>
+                    <input type="text" value="{{ $opname->ruangan->nama_ruangan ?? 'Global / Semua' }}" class="block w-full rounded-lg border-gray-200 bg-gray-50 text-gray-500 text-sm font-bold" readonly disabled>
                 </div>
                 <div class="w-full sm:w-auto">
                     <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Tanggal Opname</label>
-                    <input type="date" wire:model="tanggal" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm">
+                    <input type="date" wire:model="tanggal" class="block w-full rounded-lg border-gray-200 bg-gray-50 text-gray-500 text-sm font-bold" readonly disabled>
                 </div>
             </div>
-        </div>
-        
-        <div class="mt-4">
-            <textarea wire:model="keterangan" rows="2" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm" placeholder="Catatan tambahan untuk sesi opname ini (Opsional)..."></textarea>
         </div>
     </div>
 
     <!-- Mobile View (Cards) -->
     <div class="md:hidden space-y-4">
-        @forelse($items as $item)
-            <div wire:key="mobile-item-{{ $item->id }}" class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 relative overflow-hidden" 
-                 x-data="{ fisik: @entangle('physicalStocks.'.$item->id) }"
-                 :class="fisik != {{ $item->stok }} ? 'border-l-4 border-l-yellow-400' : 'border-l-4 border-l-green-400'">
+        @forelse($items as $detail)
+            <div wire:key="mobile-detail-{{ $detail->id }}" class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 relative overflow-hidden" 
+                 x-data="{ fisik: @entangle('physicalStocks.'.$detail->id) }"
+                 :class="fisik != {{ $detail->stok_sistem }} ? 'border-l-4 border-l-yellow-400' : 'border-l-4 border-l-green-400'">
                 
                 <div class="flex justify-between items-start mb-3">
                     <div>
-                        <h3 class="font-bold text-gray-900">{{ $item->nama_barang }}</h3>
-                        <p class="text-xs text-gray-500 font-mono">{{ $item->kode_barang }}</p>
+                        <h3 class="font-bold text-gray-900">{{ $detail->barang->nama_barang ?? 'Unknown' }}</h3>
+                        <p class="text-xs text-gray-500 font-mono">{{ $detail->barang->kode_barang ?? '-' }}</p>
                     </div>
                     <span class="text-xs font-semibold bg-gray-100 text-gray-600 px-2 py-1 rounded">
-                        Sistem: {{ $item->stok }} {{ $item->satuan }}
+                        Sistem: {{ $detail->stok_sistem }} {{ $detail->barang->satuan ?? '' }}
                     </span>
                 </div>
 
                 <div class="flex items-center gap-3">
                     <div class="flex-1">
                         <label class="block text-xs font-bold text-gray-700 mb-1">Fisik</label>
-                        <input type="number" wire:model.blur="physicalStocks.{{ $item->id }}" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-lg font-bold text-center" inputmode="numeric">
+                        <input type="number" wire:model.blur="physicalStocks.{{ $detail->id }}" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-lg font-bold text-center" inputmode="numeric">
                     </div>
                     <div class="flex-1">
                         <label class="block text-xs font-bold text-gray-500 mb-1">Selisih</label>
                         <div class="text-lg font-bold text-center py-2 bg-gray-50 rounded-lg"
-                             :class="fisik - {{ $item->stok }} < 0 ? 'text-red-600' : (fisik - {{ $item->stok }} > 0 ? 'text-blue-600' : 'text-gray-400')">
-                            <span x-text="fisik - {{ $item->stok }} > 0 ? '+' + (fisik - {{ $item->stok }}) : (fisik - {{ $item->stok }})">0</span>
+                             :class="fisik - {{ $detail->stok_sistem }} < 0 ? 'text-red-600' : (fisik - {{ $detail->stok_sistem }} > 0 ? 'text-blue-600' : 'text-gray-400')">
+                            <span x-text="fisik - {{ $detail->stok_sistem }} > 0 ? '+' + (fisik - {{ $detail->stok_sistem }}) : (fisik - {{ $detail->stok_sistem }})">0</span>
                         </div>
                     </div>
                 </div>
                 
                 <div class="mt-3">
-                    <input type="text" wire:model.blur="itemNotes.{{ $item->id }}" class="block w-full text-xs border-gray-200 rounded-md focus:border-teal-500 focus:ring-teal-500" placeholder="Catatan item...">
+                    <input type="text" wire:model.blur="itemNotes.{{ $detail->id }}" class="block w-full text-xs border-gray-200 rounded-md focus:border-teal-500 focus:ring-teal-500" placeholder="Catatan item...">
                 </div>
             </div>
         @empty
             <div class="text-center py-10 bg-white rounded-xl text-gray-500">
-                Tidak ada barang ditemukan.
+                Tidak ada barang dalam sesi opname ini.
             </div>
         @endforelse
     </div>
@@ -93,33 +84,33 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 bg-white">
-                    @forelse($items as $item)
-                        <tr wire:key="desktop-item-{{ $item->id }}" class="hover:bg-gray-50 transition-colors" x-data="{ fisik: @entangle('physicalStocks.'.$item->id) }">
+                    @forelse($items as $detail)
+                        <tr wire:key="desktop-detail-{{ $detail->id }}" class="hover:bg-gray-50 transition-colors" x-data="{ fisik: @entangle('physicalStocks.'.$detail->id) }">
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-bold text-gray-900">{{ $item->nama_barang }}</div>
-                                <div class="text-xs text-gray-500 font-mono">{{ $item->kode_barang }}</div>
+                                <div class="text-sm font-bold text-gray-900">{{ $detail->barang->nama_barang ?? 'Unknown' }}</div>
+                                <div class="text-xs text-gray-500 font-mono">{{ $detail->barang->kode_barang ?? '-' }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <span class="text-sm font-semibold text-gray-700">{{ $item->stok }}</span>
-                                <span class="text-xs text-gray-500">{{ $item->satuan }}</span>
+                                <span class="text-sm font-semibold text-gray-700">{{ $detail->stok_sistem }}</span>
+                                <span class="text-xs text-gray-500">{{ $detail->barang->satuan ?? '' }}</span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <input type="number" wire:model.blur="physicalStocks.{{ $item->id }}" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-center font-bold">
+                                <input type="number" wire:model.blur="physicalStocks.{{ $detail->id }}" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-center font-bold">
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
                                 <span class="font-bold" 
-                                      :class="fisik - {{ $item->stok }} < 0 ? 'text-red-600' : (fisik - {{ $item->stok }} > 0 ? 'text-blue-600' : 'text-gray-300')">
-                                    <span x-text="fisik - {{ $item->stok }} > 0 ? '+' + (fisik - {{ $item->stok }}) : (fisik - {{ $item->stok }})">0</span>
+                                      :class="fisik - {{ $detail->stok_sistem }} < 0 ? 'text-red-600' : (fisik - {{ $detail->stok_sistem }} > 0 ? 'text-blue-600' : 'text-gray-300')">
+                                    <span x-text="fisik - {{ $detail->stok_sistem }} > 0 ? '+' + (fisik - {{ $detail->stok_sistem }}) : (fisik - {{ $detail->stok_sistem }})">0</span>
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <input type="text" wire:model.blur="itemNotes.{{ $item->id }}" class="block w-full text-sm border-gray-200 rounded-lg focus:border-teal-500 focus:ring-teal-500" placeholder="Keterangan...">
+                                <input type="text" wire:model.blur="itemNotes.{{ $detail->id }}" class="block w-full text-sm border-gray-200 rounded-lg focus:border-teal-500 focus:ring-teal-500" placeholder="Keterangan...">
                             </td>
                         </tr>
                     @empty
                          <tr>
                             <td colspan="5" class="px-6 py-12 text-center text-gray-500">
-                                Tidak ada barang ditemukan di lokasi ini.
+                                Tidak ada barang dalam sesi opname ini.
                             </td>
                         </tr>
                     @endforelse
