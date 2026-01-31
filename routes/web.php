@@ -94,6 +94,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/system/poli/{poli}/edit', \App\Livewire\System\Poli\Edit::class)->name('system.poli.edit');
         Route::get('/system/users', \App\Livewire\System\User\Index::class)->name('system.user.index');
         Route::get('/system/settings', \App\Livewire\System\Setting\Index::class)->name('system.setting.index');
+        Route::get('/system/roles', \App\Livewire\System\Role\Index::class)->name('system.role.index');
+        Route::get('/system/integrations', \App\Livewire\System\Integration\Index::class)->name('system.integration.index');
         Route::get('/system/surat-templates', \App\Livewire\Surat\Template\Index::class)->name('system.surat-template.index');
         Route::get('/system/tindakan', \App\Livewire\System\Tindakan\Index::class)->name('system.tindakan.index');
         Route::get('/hrd/dashboard', \App\Livewire\Hrd\Dashboard::class)->name('hrd.dashboard');
