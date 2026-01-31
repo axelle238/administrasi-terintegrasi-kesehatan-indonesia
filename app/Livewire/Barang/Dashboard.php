@@ -17,6 +17,8 @@ class Dashboard extends Component
 {
     #[Url(keep: true)]
     public $activeTab = 'ikhtisar'; // ikhtisar, stok, maintenance, pengadaan
+
+    #[Url(keep: true)]
     public $filterTipe = 'all'; // all, medis, umum
 
     public function setTab($tab)
