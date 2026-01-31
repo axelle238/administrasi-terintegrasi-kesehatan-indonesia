@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\LaporanHarian;
 use App\Models\LaporanHarianDetail;
 use App\Models\JadwalJaga;
+use App\Models\PengajuanCuti;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,6 +20,11 @@ class Form extends Component
     public function mount($tanggal = null)
     {
         $this->tanggal = $tanggal ?? Carbon::today()->format('Y-m-d');
+        
+        if ($this->checkIsCuti()) {
+            return; // Stop execution if redirected inside checkIsCuti
+        }
+
         $this->loadShiftInfo();
         
         // Load Existing Data if any
@@ -49,7 +55,25 @@ class Form extends Component
 
     public function updatedTanggal()
     {
+        if ($this->checkIsCuti()) {
+            return;
+        }
         $this->loadShiftInfo();
+    }
+
+    private function checkIsCuti()
+    {
+        $isCuti = PengajuanCuti::where('user_id', Auth::id())
+            ->where('status', 'Disetujui')
+            ->whereDate('tanggal_mulai', '<=', $this->tanggal)
+            ->whereDate('tanggal_selesai', '>=', $this->tanggal)
+            ->exists();
+
+        if ($isCuti) {
+            session()->flash('error', 'Anda sedang cuti pada tanggal tersebut. Laporan aktivitas dinonaktifkan.');
+            return redirect()->route('kepegawaian.presensi.history');
+        }
+        return false;
     }
 
     public function loadShiftInfo()
