@@ -45,7 +45,9 @@
                 <!-- Step 1: Pilih Jenis Presensi -->
                 <div class="mb-10">
                     <h4 class="text-center text-slate-500 font-bold uppercase tracking-widest text-xs mb-6">Pilih Jenis Kehadiran</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
+                    
+                    <!-- Grid Utama -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto mb-4">
                         <!-- WFO -->
                         <button wire:click="setJenis('WFO')" class="p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 {{ $jenis_presensi == 'WFO' ? 'border-indigo-500 bg-indigo-50 ring-2 ring-indigo-200' : 'border-slate-100 hover:border-slate-300' }}">
                             <div class="w-12 h-12 rounded-full {{ $jenis_presensi == 'WFO' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-400' }} flex items-center justify-center">
@@ -61,20 +63,57 @@
                             </div>
                             <span class="font-bold text-sm {{ $jenis_presensi == 'WFH' ? 'text-purple-700' : 'text-slate-600' }}">WFH (Rumah)</span>
                         </button>
+                    </div>
 
-                        <!-- Dinas Luar -->
-                        <button wire:click="setJenis('Dinas Luar')" class="p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 {{ $jenis_presensi == 'Dinas Luar' ? 'border-amber-500 bg-amber-50 ring-2 ring-amber-200' : 'border-slate-100 hover:border-slate-300' }}">
-                            <div class="w-12 h-12 rounded-full {{ $jenis_presensi == 'Dinas Luar' ? 'bg-amber-600 text-white' : 'bg-slate-100 text-slate-400' }} flex items-center justify-center">
-                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                            </div>
-                            <span class="font-bold text-sm {{ $jenis_presensi == 'Dinas Luar' ? 'text-amber-700' : 'text-slate-600' }}">Dinas Luar</span>
-                        </button>
+                    <!-- Grid Dinas Luar (Advanced) -->
+                    <div class="max-w-4xl mx-auto">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 ml-1">Opsi Dinas Luar (DL)</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- DL Awal -->
+                            <button wire:click="setJenis('DL Awal')" class="p-4 rounded-2xl border-2 transition-all text-left {{ $jenis_presensi == 'DL Awal' ? 'border-amber-500 bg-amber-50 ring-2 ring-amber-200' : 'border-slate-100 hover:border-slate-300' }}">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="w-8 h-8 rounded-lg {{ $jenis_presensi == 'DL Awal' ? 'bg-amber-600 text-white' : 'bg-slate-100 text-slate-400' }} flex items-center justify-center">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                                    </div>
+                                    <span class="font-bold text-sm {{ $jenis_presensi == 'DL Awal' ? 'text-amber-700' : 'text-slate-600' }}">DL Awal</span>
+                                </div>
+                                <p class="text-[10px] {{ $jenis_presensi == 'DL Awal' ? 'text-amber-600' : 'text-slate-400' }} leading-tight">
+                                    Dinas Pagi. Dispensasi presensi masuk 07:30 - 11:59.
+                                </p>
+                            </button>
+
+                            <!-- DL Akhir -->
+                            <button wire:click="setJenis('DL Akhir')" class="p-4 rounded-2xl border-2 transition-all text-left {{ $jenis_presensi == 'DL Akhir' ? 'border-orange-500 bg-orange-50 ring-2 ring-orange-200' : 'border-slate-100 hover:border-slate-300' }}">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="w-8 h-8 rounded-lg {{ $jenis_presensi == 'DL Akhir' ? 'bg-orange-600 text-white' : 'bg-slate-100 text-slate-400' }} flex items-center justify-center">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                                    </div>
+                                    <span class="font-bold text-sm {{ $jenis_presensi == 'DL Akhir' ? 'text-orange-700' : 'text-slate-600' }}">DL Akhir</span>
+                                </div>
+                                <p class="text-[10px] {{ $jenis_presensi == 'DL Akhir' ? 'text-orange-600' : 'text-slate-400' }} leading-tight">
+                                    Dinas Siang. Dispensasi presensi pulang 12:00 - 16:00.
+                                </p>
+                            </button>
+
+                            <!-- DL Penuh -->
+                            <button wire:click="setJenis('DL Penuh')" class="p-4 rounded-2xl border-2 transition-all text-left {{ $jenis_presensi == 'DL Penuh' ? 'border-red-500 bg-red-50 ring-2 ring-red-200' : 'border-slate-100 hover:border-slate-300' }}">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="w-8 h-8 rounded-lg {{ $jenis_presensi == 'DL Penuh' ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-400' }} flex items-center justify-center">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    </div>
+                                    <span class="font-bold text-sm {{ $jenis_presensi == 'DL Penuh' ? 'text-red-700' : 'text-slate-600' }}">DL Penuh</span>
+                                </div>
+                                <p class="text-[10px] {{ $jenis_presensi == 'DL Penuh' ? 'text-red-600' : 'text-slate-400' }} leading-tight">
+                                    Dinas Seharian. Dispensasi penuh 07:30 - 16:00.
+                                </p>
+                            </button>
+                        </div>
                     </div>
 
                     @if($jenis_presensi != 'WFO')
                         <div class="mt-6 max-w-xl mx-auto animate-fade-in">
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Catatan Tambahan (Wajib)</label>
-                            <textarea wire:model="keterangan_tambahan" class="w-full rounded-xl border-slate-200 focus:ring-indigo-500" rows="2" placeholder="Contoh: Meeting di Dinkes..."></textarea>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">Catatan Kegiatan / Lokasi (Wajib)</label>
+                            <textarea wire:model="keterangan_tambahan" class="w-full rounded-xl border-slate-200 focus:ring-indigo-500 font-medium" rows="2" placeholder="Contoh: Kunjungan ke Kecamatan X..."></textarea>
                         </div>
                     @endif
                 </div>
@@ -135,7 +174,9 @@
                             @php
                                 $badge = match($h->jenis_presensi) {
                                     'WFH' => 'bg-purple-100 text-purple-700',
-                                    'Dinas Luar' => 'bg-amber-100 text-amber-700',
+                                    'DL Awal' => 'bg-amber-100 text-amber-700',
+                                    'DL Akhir' => 'bg-orange-100 text-orange-700',
+                                    'DL Penuh' => 'bg-red-100 text-red-700',
                                     default => 'bg-indigo-100 text-indigo-700'
                                 };
                             @endphp

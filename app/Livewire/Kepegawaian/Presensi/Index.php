@@ -62,23 +62,31 @@ class Index extends Component
         $status = 'Hadir';
         $keterlambatan = 0;
 
+        // Logika Waktu & Keterlambatan
         if ($jadwal) {
             $jamMasukJadwal = Carbon::parse($jadwal->shift->jam_masuk);
             $jamSekarang = Carbon::now();
             
-            // Toleransi 15 menit
+            // Hitung Keterlambatan Normal
             if ($jamSekarang->gt($jamMasukJadwal->addMinutes(15))) {
                 $status = 'Terlambat';
                 $keterlambatan = $jamMasukJadwal->diffInMinutes($jamSekarang);
             }
         }
 
-        // Logic Khusus berdasarkan Jenis
+        // --- KOMPENSASI DINAS LUAR (Override Status) ---
+        // Jika DL Awal/Penuh, abaikan keterlambatan masuk karena dianggap dinas sejak pagi
+        if (in_array($this->jenis_presensi, ['DL Awal', 'DL Penuh'])) {
+            $status = 'Hadir (Dinas)';
+            $keterlambatan = 0;
+        }
+
+        // Logic Catatan
         $catatan = $this->keterangan_tambahan;
         if ($this->jenis_presensi == 'WFH') {
             $catatan = '[WFH] ' . $catatan;
-        } elseif ($this->jenis_presensi == 'Dinas Luar') {
-            $catatan = '[DL] ' . $catatan;
+        } elseif (str_contains($this->jenis_presensi, 'DL')) {
+            $catatan = '[' . $this->jenis_presensi . '] ' . $catatan;
         }
 
         Presensi::create([
@@ -99,6 +107,9 @@ class Index extends Component
     public function clockOut($lat, $lng)
     {
         if ($this->todayPresensi) {
+            // Logika Kompensasi Pulang (Optional, biasanya jam pulang DL fleksibel)
+            // Jika DL Akhir/Penuh, anggap pulang sesuai prosedur
+            
             $this->todayPresensi->update([
                 'jam_keluar' => Carbon::now(),
                 'lokasi_keluar' => $lat . ',' . $lng,
