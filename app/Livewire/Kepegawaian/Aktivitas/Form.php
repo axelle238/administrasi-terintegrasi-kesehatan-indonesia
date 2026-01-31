@@ -16,13 +16,35 @@ class Form extends Component
     public $catatanHarian;
     public $shiftInfo;
 
-    public function mount()
+    public function mount($tanggal = null)
     {
-        $this->tanggal = Carbon::today()->format('Y-m-d');
+        $this->tanggal = $tanggal ?? Carbon::today()->format('Y-m-d');
         $this->loadShiftInfo();
         
-        // Inisialisasi 1 baris kosong
-        $this->addKegiatan();
+        // Load Existing Data if any
+        $existingLaporan = LaporanHarian::with('details')
+            ->where('user_id', Auth::id())
+            ->whereDate('tanggal', $this->tanggal)
+            ->first();
+
+        if ($existingLaporan) {
+            $this->catatanHarian = $existingLaporan->catatan_harian;
+            $this->kegiatanList = $existingLaporan->details->map(function($detail) {
+                return [
+                    'jam_mulai' => Carbon::parse($detail->jam_mulai)->format('H:i'),
+                    'jam_selesai' => Carbon::parse($detail->jam_selesai)->format('H:i'),
+                    'kegiatan' => $detail->kegiatan,
+                    'output' => $detail->output,
+                    'progress' => $detail->progress,
+                    'kategori' => $detail->kategori,
+                ];
+            })->toArray();
+        }
+
+        // Inisialisasi 1 baris kosong jika tidak ada data
+        if (empty($this->kegiatanList)) {
+            $this->addKegiatan();
+        }
     }
 
     public function updatedTanggal()
