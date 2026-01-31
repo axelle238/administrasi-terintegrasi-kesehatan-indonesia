@@ -3,6 +3,7 @@
 namespace App\Livewire\Barang;
 
 use App\Models\Barang;
+use App\Models\DetailAsetMedis;
 use App\Models\KategoriBarang;
 use App\Models\RiwayatBarang;
 use App\Models\Ruangan;
@@ -12,6 +13,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
+    // General Info
     public $kategori_barang_id;
     public $kode_barang;
     public $nama_barang;
@@ -20,11 +22,11 @@ class Create extends Component
     public $satuan;
     public $kondisi = 'Baik';
     public $tanggal_pengadaan;
-    public $lokasi_penyimpanan; // Deprecated, kept for legacy or quick text
+    public $lokasi_penyimpanan; 
     public $ruangan_id;
     public $supplier_id;
     
-    // Asset Details
+    // Asset Financial Details
     public $is_asset = false;
     public $spesifikasi;
     public $nomor_seri;
@@ -36,6 +38,15 @@ class Create extends Component
     public $masa_manfaat = 0;
     public $nilai_residu = 0;
     public $keterangan;
+
+    // Detail Medis (Specific)
+    public $is_medis = false; // State trigger
+    public $nomor_izin_edar;
+    public $distributor_resmi;
+    public $frekuensi_kalibrasi_bulan;
+    public $kalibrasi_terakhir;
+    public $suhu_penyimpanan;
+    public $catatan_teknis;
 
     protected $rules = [
         'kategori_barang_id' => 'required|exists:kategori_barangs,id',
@@ -53,18 +64,36 @@ class Create extends Component
         'nomor_seri' => 'nullable|string',
         'harga_perolehan' => 'nullable|numeric|min:0',
         'sumber_dana' => 'nullable|string',
+        
+        // Validation for Medis (Conditional)
+        'nomor_izin_edar' => 'nullable|string',
+        'frekuensi_kalibrasi_bulan' => 'nullable|integer|min:1',
     ];
 
     public function mount()
     {
         $this->tanggal_pengadaan = now()->format('Y-m-d');
-        // Generate Auto Code Suggestion (Optional)
         $this->kode_barang = 'BRG-' . strtoupper(uniqid());
+    }
+
+    public function updatedKategoriBarangId($value)
+    {
+        $kategori = KategoriBarang::find($value);
+        if ($kategori) {
+            $nama = strtolower($kategori->nama_kategori);
+            // Auto detect medical category
+            $this->is_medis = str_contains($nama, 'medis') || 
+                              str_contains($nama, 'kesehatan') || 
+                              str_contains($nama, 'obat') ||
+                              str_contains($nama, 'alkes');
+            
+            // Auto set Asset flag logic (optional)
+            // $this->is_asset = $this->is_medis; 
+        }
     }
 
     public function updatedHargaPerolehan()
     {
-        // Auto set Nilai Buku = Harga Perolehan initially
         $this->nilai_buku = $this->harga_perolehan;
     }
 
@@ -83,7 +112,6 @@ class Create extends Component
                 'satuan' => $this->satuan,
                 'kondisi' => $this->kondisi,
                 'tanggal_pengadaan' => $this->tanggal_pengadaan,
-                // Location logic: prefer ruangan_id, fallback to text if needed (or keep both synced)
                 'ruangan_id' => $this->ruangan_id,
                 'supplier_id' => $this->supplier_id,
                 'is_asset' => $this->is_asset,
@@ -99,6 +127,22 @@ class Create extends Component
                 'keterangan' => $this->keterangan,
             ]);
             
+            // Save Detail Medis if applicable
+            if ($this->is_medis) {
+                DetailAsetMedis::create([
+                    'barang_id' => $barang->id,
+                    'nomor_izin_edar' => $this->nomor_izin_edar,
+                    'distributor_resmi' => $this->distributor_resmi,
+                    'frekuensi_kalibrasi_bulan' => $this->frekuensi_kalibrasi_bulan,
+                    'kalibrasi_terakhir' => $this->kalibrasi_terakhir,
+                    'kalibrasi_selanjutnya' => $this->frekuensi_kalibrasi_bulan && $this->kalibrasi_terakhir 
+                        ? \Carbon\Carbon::parse($this->kalibrasi_terakhir)->addMonths($this->frekuensi_kalibrasi_bulan)
+                        : null,
+                    'suhu_penyimpanan' => $this->suhu_penyimpanan,
+                    'catatan_teknis' => $this->catatan_teknis,
+                ]);
+            }
+
             // Log Initial Stock
             RiwayatBarang::create([
                 'barang_id' => $barang->id,
@@ -107,7 +151,7 @@ class Create extends Component
                 'jumlah' => $this->stok,
                 'stok_terakhir' => $this->stok,
                 'tanggal' => now(),
-                'keterangan' => 'Stok Awal'
+                'keterangan' => 'Registrasi Aset Baru'
             ]);
             
             DB::commit();
@@ -126,6 +170,6 @@ class Create extends Component
             'kategoris' => KategoriBarang::all(),
             'ruangans' => Ruangan::orderBy('nama_ruangan')->get(),
             'suppliers' => Supplier::orderBy('nama_supplier')->get(),
-        ])->layout('layouts.app', ['header' => 'Tambah Barang Baru']);
+        ])->layout('layouts.app', ['header' => 'Registrasi Aset Baru']);
     }
 }

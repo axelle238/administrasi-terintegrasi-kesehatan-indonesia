@@ -74,4 +74,14 @@ class Barang extends Model
     {
         return $this->belongsTo(Supplier::class);
     }
+
+    public function detailMedis()
+    {
+        return $this->hasOne(DetailAsetMedis::class);
+    }
+
+    public function depresiasi()
+    {
+        return $this->hasMany(DepresiasiAset::class);
+    }
 }
