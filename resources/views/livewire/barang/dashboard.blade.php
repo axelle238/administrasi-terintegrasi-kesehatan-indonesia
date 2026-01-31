@@ -1,14 +1,33 @@
 <div class="space-y-8 animate-fade-in" x-data="{ activeTab: @entangle('activeTab') }">
     
+    <!-- Filter Bar -->
+    <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+        <h2 class="text-lg font-black text-slate-800 flex items-center gap-2">
+            <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+            Dashboard Aset
+        </h2>
+        
+        <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Mode View:</span>
+            <div class="flex bg-slate-100 rounded-lg p-1">
+                <button wire:click="setFilterTipe('all')" class="px-3 py-1 text-xs font-bold rounded-md transition-all {{ $filterTipe === 'all' ? 'bg-white shadow text-blue-600' : 'text-slate-500 hover:text-slate-700' }}">Semua</button>
+                <button wire:click="setFilterTipe('medis')" class="px-3 py-1 text-xs font-bold rounded-md transition-all {{ $filterTipe === 'medis' ? 'bg-white shadow text-emerald-600' : 'text-slate-500 hover:text-slate-700' }}">Alat Kesehatan</button>
+                <button wire:click="setFilterTipe('umum')" class="px-3 py-1 text-xs font-bold rounded-md transition-all {{ $filterTipe === 'umum' ? 'bg-white shadow text-amber-600' : 'text-slate-500 hover:text-slate-700' }}">Umum</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Hero Stats -->
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Total Aset -->
         <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-[2rem] p-6 text-white relative overflow-hidden shadow-xl group hover:scale-[1.02] transition-transform duration-300">
             <div class="absolute right-0 top-0 opacity-10 p-4">
                 <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
             </div>
             <div class="relative z-10">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Total Aset Tercatat</p>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
+                    {{ $filterTipe === 'medis' ? 'Total Alkes' : ($filterTipe === 'umum' ? 'Total Aset Umum' : 'Total Aset') }}
+                </p>
                 <h2 class="text-4xl font-black mb-4">{{ number_format($totalAset) }} <span class="text-lg font-medium text-slate-500">Unit</span></h2>
                 <div class="flex gap-2">
                     <span class="px-2 py-1 rounded bg-blue-500/20 text-blue-300 text-[10px] font-bold border border-blue-500/30">{{ $kondisiStats['Baik'] }} Baik</span>
@@ -26,20 +45,34 @@
                 <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg uppercase tracking-wider">Valuasi</span>
             </div>
             <h3 class="text-2xl font-black text-slate-800 mb-1">Rp {{ number_format($nilaiAsetTotal / 1000000, 1) }} M</h3>
-            <p class="text-xs text-slate-400">Estimasi total nilai aset saat ini.</p>
+            <p class="text-xs text-slate-400">Nilai buku aset {{ $filterTipe === 'all' ? 'keseluruhan' : ($filterTipe === 'medis' ? 'medis' : 'umum') }}.</p>
         </div>
 
-        <!-- Alkes -->
+        @if($filterTipe === 'medis' || $filterTipe === 'all')
+        <!-- Kalibrasi (Khusus Medis) -->
         <div class="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-sm group hover:border-blue-200 transition-colors">
             <div class="flex justify-between items-start mb-4">
                 <div class="p-3 bg-blue-50 rounded-2xl text-blue-600">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </div>
-                <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg uppercase tracking-wider">Alat Medis</span>
+                <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg uppercase tracking-wider">Kalibrasi</span>
             </div>
-            <h3 class="text-3xl font-black text-slate-800 mb-1">{{ number_format($totalAlkes) }}</h3>
-            <p class="text-xs text-slate-400">Unit alat kesehatan terdaftar.</p>
+            <h3 class="text-3xl font-black text-slate-800 mb-1">{{ number_format($kalibrasiDue) }}</h3>
+            <p class="text-xs text-slate-400">Alat perlu kalibrasi < 60 hari.</p>
         </div>
+        @else
+        <!-- Placeholder Umum -->
+        <div class="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-sm group hover:border-blue-200 transition-colors">
+            <div class="flex justify-between items-start mb-4">
+                <div class="p-3 bg-blue-50 rounded-2xl text-blue-600">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
+                </div>
+                <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg uppercase tracking-wider">Kategori</span>
+            </div>
+            <h3 class="text-3xl font-black text-slate-800 mb-1">{{ $tabData['distribusiKategori']->count() ?? 0 }}</h3>
+            <p class="text-xs text-slate-400">Jenis kategori aktif.</p>
+        </div>
+        @endif
 
         <!-- Maintenance -->
         <div class="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-sm group hover:border-amber-200 transition-colors">
@@ -50,7 +83,7 @@
                 <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-lg uppercase tracking-wider">Perbaikan</span>
             </div>
             <h3 class="text-3xl font-black text-slate-800 mb-1">{{ $kondisiStats['PerluPerbaikan'] }}</h3>
-            <p class="text-xs text-slate-400">Aset butuh tindakan segera.</p>
+            <p class="text-xs text-slate-400">Aset perlu tindakan.</p>
         </div>
     </div>
 
@@ -128,6 +161,13 @@
                         <p class="text-3xl font-black text-red-500">{{ $tabData['maintenanceRatio']['korektif'] ?? 0 }}</p>
                         <p class="text-xs font-bold text-slate-400 uppercase">Perbaikan (Rusak)</p>
                     </div>
+                    @if($filterTipe === 'medis' || $filterTipe === 'all')
+                    <div class="h-12 w-px bg-slate-200"></div>
+                    <div class="text-center">
+                        <p class="text-3xl font-black text-emerald-600">{{ $tabData['maintenanceRatio']['kalibrasi'] ?? 0 }}</p>
+                        <p class="text-xs font-bold text-slate-400 uppercase">Kalibrasi</p>
+                    </div>
+                    @endif
                 </div>
             </div>
 
