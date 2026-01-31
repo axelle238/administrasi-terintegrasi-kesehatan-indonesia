@@ -94,7 +94,7 @@
             </div>
             <div class="flex items-center gap-1.5">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Monitor Sesi Real-time</span>
+                <span class="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Monitor Sesi Waktu Nyata</span>
             </div>
         </div>
     </div>
@@ -115,7 +115,7 @@
                 @if($activeTab == 'sessions') <div class="absolute bottom-0 left-0 w-full h-1 bg-blue-600 rounded-t-full"></div> @endif
             </button>
             <button wire:click="setTab('logs')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $activeTab == 'logs' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600' }}">
-                Audit Trail Forensik
+                Jejak Audit Forensik
                 @if($activeTab == 'logs') <div class="absolute bottom-0 left-0 w-full h-1 bg-blue-600 rounded-t-full"></div> @endif
             </button>
         </div>
@@ -133,23 +133,23 @@
                 </div>
                 
                 <div class="space-y-8">
-                    <h4 class="text-lg font-black text-slate-800">Status Keamanan Core</h4>
+                    <h4 class="text-lg font-black text-slate-800">Status Keamanan Inti</h4>
                     <div class="space-y-4">
                         <div class="p-5 bg-slate-50 rounded-3xl border border-slate-100 flex items-center justify-between">
-                            <span class="text-sm font-bold text-slate-600">Database Encryption</span>
+                            <span class="text-sm font-bold text-slate-600">Enkripsi Database</span>
                             <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-black uppercase">Aktif</span>
                         </div>
                         <div class="p-5 bg-slate-50 rounded-3xl border border-slate-100 flex items-center justify-between">
                             <span class="text-sm font-bold text-slate-600">SSL / TLS Termination</span>
-                            <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-black uppercase">Verified</span>
+                            <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-black uppercase">Terverifikasi</span>
                         </div>
                         <div class="p-5 bg-slate-50 rounded-3xl border border-slate-100 flex items-center justify-between">
                             <span class="text-sm font-bold text-slate-600">Audit Logging</span>
-                            <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-black uppercase">Verbose</span>
+                            <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-black uppercase">Lengkap</span>
                         </div>
                         <div class="p-5 bg-slate-50 rounded-3xl border border-slate-100 flex items-center justify-between">
                             <span class="text-sm font-bold text-slate-600">Multi-Factor Auth (MFA)</span>
-                            <span class="px-2 py-1 bg-amber-100 text-amber-700 rounded-lg text-[10px] font-black uppercase">Optional</span>
+                            <span class="px-2 py-1 bg-amber-100 text-amber-700 rounded-lg text-[10px] font-black uppercase">Opsional</span>
                         </div>
                     </div>
                 </div>
@@ -198,7 +198,7 @@
                         <thead class="bg-slate-50 text-slate-400 font-black uppercase tracking-wider text-[10px]">
                             <tr>
                                 <th class="px-8 py-5">Pengguna</th>
-                                <th class="px-8 py-5">Role</th>
+                                <th class="px-8 py-5">Peran</th>
                                 <th class="px-8 py-5">Login Terakhir</th>
                                 <th class="px-8 py-5 text-center">Aksi</th>
                             </tr>
