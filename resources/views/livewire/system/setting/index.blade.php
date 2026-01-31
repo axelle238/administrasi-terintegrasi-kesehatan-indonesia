@@ -26,7 +26,7 @@
         <!-- Sidebar Navigation -->
         <div class="lg:col-span-1 space-y-2">
             @foreach($schema as $key => $group)
-                <button wire:click="$set('activeTab', '{{ $key }}')" 
+                <button wire:click="switchTab('{{ $key }}')" wire:key="tab-btn-{{ $key }}"
                     class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left transition-all duration-300 {{ $activeTab === $key ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30' : 'bg-white text-slate-600 hover:bg-slate-50 border border-transparent hover:border-slate-200' }}">
                     
                     <!-- Icon Switcher based on Key -->
@@ -66,7 +66,7 @@
                 <form wire:submit.prevent="save" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         @foreach($schema[$activeTab]['fields'] as $fieldKey => $config)
-                            <div class="col-span-1 {{ in_array($config['type'], ['textarea', 'section_title']) ? 'md:col-span-2' : '' }}">
+                            <div class="col-span-1 {{ in_array($config['type'], ['textarea', 'section_title']) ? 'md:col-span-2' : '' }}" wire:key="field-{{ $fieldKey }}">
                                 <label for="{{ $fieldKey }}" class="block text-sm font-bold text-slate-700 mb-2">
                                     {{ $config['label'] }}
                                 </label>

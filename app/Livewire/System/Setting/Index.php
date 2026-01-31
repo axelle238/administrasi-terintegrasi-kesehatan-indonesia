@@ -130,21 +130,32 @@ class Index extends Component
 
     public function mount()
     {
-        // Validasi activeTab
-        if (!array_key_exists($this->activeTab, $this->schema())) {
+        // Ambil schema sekali saja
+        $schema = $this->schema();
+
+        // Validasi activeTab, jika tidak ada di schema, fallback ke 'umum'
+        if (!array_key_exists($this->activeTab, $schema)) {
             $this->activeTab = 'umum';
         }
 
-        // Ambil semua setting dari DB sekaligus untuk performa
+        // Load settings from DB, merge with defaults
         $dbSettings = Setting::all()->pluck('value', 'key')->toArray();
         
         $this->form = [];
         
-        foreach ($this->schema() as $tab => $group) {
+        // Populate form with all possible keys from all tabs
+        foreach ($schema as $tab => $group) {
             foreach ($group['fields'] as $key => $config) {
-                // Prioritas: DB -> Default Config
+                // Prioritize DB value, then Config Default
                 $this->form[$key] = $dbSettings[$key] ?? $config['default'];
             }
+        }
+    }
+
+    public function switchTab($tab)
+    {
+        if (array_key_exists($tab, $this->schema())) {
+            $this->activeTab = $tab;
         }
     }
 
