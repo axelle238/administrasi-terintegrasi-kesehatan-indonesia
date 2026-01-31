@@ -157,11 +157,10 @@
     </x-slot:icon>
     
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Utama</div>
-    <x-nav.link-child :href="route('kepegawaian.dashboard')" :active="request()->routeIs('kepegawaian.dashboard')">Beranda & Ringkasan</x-nav.link-child>
-
-    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Absensi & Kegiatan</div>
-    <x-nav.link-child :href="route('kepegawaian.presensi.index')" :active="request()->routeIs('kepegawaian.presensi.index')">Presensi Digital (GPS/Selfie)</x-nav.link-child>
-    <x-nav.link-child :href="route('kepegawaian.aktivitas.index')" :active="request()->routeIs('kepegawaian.aktivitas.index')">Laporan Kinerja Harian</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.dashboard')" :active="request()->routeIs('kepegawaian.dashboard')">Dashboard Saya</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.presensi.index')" :active="request()->routeIs('kepegawaian.presensi.index')">Presensi Digital</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.presensi.history')" :active="request()->routeIs('kepegawaian.presensi.history')">Data Kehadiran Saya</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.aktivitas.index')" :active="request()->routeIs('kepegawaian.aktivitas.index')">Laporan Aktivitas (LKH)</x-nav.link-child>
     <x-nav.link-child :href="route('kepegawaian.jadwal.swap')" :active="request()->routeIs('kepegawaian.jadwal.swap')">Jadwal & Tukar Shift</x-nav.link-child>
 
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Pengajuan & Perizinan</div>

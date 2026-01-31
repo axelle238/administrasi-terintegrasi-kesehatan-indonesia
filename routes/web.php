@@ -86,6 +86,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/kepegawaian/aktivitas', \App\Livewire\Kepegawaian\Aktivitas\Index::class)->name('kepegawaian.aktivitas.index');
     Route::get('/kepegawaian/pelatihan', \App\Livewire\Kepegawaian\Pelatihan\Index::class)->name('kepegawaian.pelatihan.index');
     Route::get('/kepegawaian/presensi', \App\Livewire\Kepegawaian\Presensi\Index::class)->name('kepegawaian.presensi.index');
+    Route::get('/kepegawaian/presensi/history', \App\Livewire\Kepegawaian\Presensi\History::class)->name('kepegawaian.presensi.history');
     Route::get('/kepegawaian/lembur', \App\Livewire\Kepegawaian\Lembur\Index::class)->name('kepegawaian.lembur.index');
 
     // ADMIN routes...
