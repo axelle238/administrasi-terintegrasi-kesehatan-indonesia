@@ -71,7 +71,7 @@
                                     </select>
                                     @error('items.'.$index.'.barang_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 @else
-                                    <input type="text" wire:model="items.{{ $index }}.nama_barang" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm" placeholder="Nama barang...">
+                                    <input type="text" wire:model.blur="items.{{ $index }}.nama_barang" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm" placeholder="Nama barang...">
                                     @error('items.'.$index.'.nama_barang') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 @endif
                             </div>
@@ -79,14 +79,14 @@
                             <!-- Qty -->
                             <div class="w-full lg:w-24">
                                 <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Jumlah</label>
-                                <input type="number" wire:model="items.{{ $index }}.jumlah_permintaan" min="1" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm text-center">
+                                <input type="number" wire:model.blur="items.{{ $index }}.jumlah_permintaan" min="1" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm text-center">
                                 @error('items.'.$index.'.jumlah_permintaan') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                             </div>
 
                             <!-- Satuan -->
                             <div class="w-full lg:w-24">
                                 <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Satuan</label>
-                                <input type="text" wire:model="items.{{ $index }}.satuan" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm" {{ $items[$index]['type'] === 'existing' ? 'readonly' : '' }}>
+                                <input type="text" wire:model.blur="items.{{ $index }}.satuan" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm" {{ $items[$index]['type'] === 'existing' ? 'readonly' : '' }}>
                                 @error('items.'.$index.'.satuan') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                             </div>
 
@@ -97,7 +97,7 @@
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <span class="text-gray-500 sm:text-sm">Rp</span>
                                     </div>
-                                    <input type="number" wire:model="items.{{ $index }}.estimasi_harga_satuan" class="block w-full pl-10 rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm text-right">
+                                    <input type="number" wire:model.blur="items.{{ $index }}.estimasi_harga_satuan" class="block w-full pl-10 rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm text-right">
                                 </div>
                             </div>
 

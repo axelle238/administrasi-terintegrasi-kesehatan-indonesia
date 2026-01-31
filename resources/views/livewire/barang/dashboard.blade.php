@@ -107,7 +107,7 @@
         
         <!-- IKHTISAR -->
         @if($activeTab === 'ikhtisar')
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in-up">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in-up" wire:key="tab-content-ikhtisar">
             <!-- Lokasi Aset -->
             <div class="lg:col-span-2 bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
                 <h4 class="font-bold text-slate-800 mb-6 flex items-center gap-2">
@@ -148,7 +148,7 @@
 
         <!-- STOK (Monitoring) -->
         @if($activeTab === 'stok')
-        <div class="grid grid-cols-1 gap-6 animate-fade-in-up">
+        <div class="grid grid-cols-1 gap-6 animate-fade-in-up" wire:key="tab-content-stok">
             <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
                 <h4 class="font-bold text-slate-800 mb-6">Stok Menipis (Consumables)</h4>
                 <div class="overflow-x-auto">
@@ -183,7 +183,7 @@
 
         <!-- MAINTENANCE -->
         @if($activeTab === 'maintenance')
-        <div class="animate-fade-in-up">
+        <div class="animate-fade-in-up" wire:key="tab-content-maintenance">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                 <!-- Stat Biaya -->
                 <div class="bg-amber-50 rounded-[2rem] p-6 border border-amber-100">
@@ -264,7 +264,7 @@
 
         <!-- PENGADAAN -->
         @if($activeTab === 'pengadaan')
-        <div class="grid grid-cols-1 gap-6 animate-fade-in-up">
+        <div class="grid grid-cols-1 gap-6 animate-fade-in-up" wire:key="tab-content-pengadaan">
             <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
                 <div class="flex justify-between items-center mb-6">
                     <h4 class="font-bold text-slate-800">Pengajuan Pending</h4>
