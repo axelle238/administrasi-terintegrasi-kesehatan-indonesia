@@ -1,4 +1,4 @@
-<div class="space-y-8 animate-fade-in" x-data="{ activeTab: @entangle('activeTab') }">
+<div class="space-y-8 animate-fade-in">
     
     <!-- Filter Bar -->
     <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
@@ -78,7 +78,7 @@
         <div class="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-sm group hover:border-amber-200 transition-colors">
             <div class="flex justify-between items-start mb-4">
                 <div class="p-3 bg-amber-50 rounded-2xl text-amber-600">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 </div>
                 <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-lg uppercase tracking-wider">Perbaikan</span>
             </div>
@@ -103,7 +103,8 @@
     <div class="mt-6">
         
         <!-- IKHTISAR -->
-        <div x-show="activeTab === 'ikhtisar'" class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in-up">
+        @if($activeTab === 'ikhtisar')
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in-up">
             <!-- Lokasi Aset -->
             <div class="lg:col-span-2 bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
                 <h4 class="font-bold text-slate-800 mb-6 flex items-center gap-2">
@@ -140,9 +141,11 @@
                 </div>
             </div>
         </div>
+        @endif
 
         <!-- MAINTENANCE -->
-        <div x-show="activeTab === 'maintenance'" style="display: none;" class="animate-fade-in-up">
+        @if($activeTab === 'maintenance')
+        <div class="animate-fade-in-up">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                 <!-- Stat Biaya -->
                 <div class="bg-amber-50 rounded-[2rem] p-6 border border-amber-100">
@@ -219,15 +222,18 @@
                 </div>
             </div>
         </div>
+        @endif
 
         <!-- STOK & PENGADAAN (Simple View) -->
-        <div x-show="activeTab === 'stok' || activeTab === 'pengadaan'" style="display: none;" class="bg-white p-12 rounded-[2rem] text-center border-2 border-dashed border-slate-200">
+        @if($activeTab === 'stok' || $activeTab === 'pengadaan')
+        <div class="bg-white p-12 rounded-[2rem] text-center border-2 border-dashed border-slate-200">
             <p class="text-slate-400">Detail data untuk tab ini dapat dilihat pada menu operasional masing-masing.</p>
             <div class="flex justify-center gap-4 mt-4">
                 <a href="{{ route('barang.index') }}" class="px-4 py-2 bg-slate-100 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-200">Ke Data Barang</a>
                 <a href="{{ route('barang.pengadaan.index') }}" class="px-4 py-2 bg-slate-100 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-200">Ke Pengadaan</a>
             </div>
         </div>
+        @endif
 
     </div>
 </div>
