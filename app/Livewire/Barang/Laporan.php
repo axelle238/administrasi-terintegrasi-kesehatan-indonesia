@@ -12,6 +12,7 @@ class Laporan extends Component
     use WithPagination;
 
     public $jenis_laporan = 'stok'; // stok, mutasi, aset
+    public $jenis_aset = 'all'; // all, medis, umum
     public $tanggal_mulai;
     public $tanggal_selesai;
     public $kategori_filter = '';
@@ -20,6 +21,33 @@ class Laporan extends Component
     {
         $this->tanggal_mulai = now()->startOfMonth()->format('Y-m-d');
         $this->tanggal_selesai = now()->endOfMonth()->format('Y-m-d');
+    }
+
+    protected function applyAssetFilter($query)
+    {
+        if ($this->jenis_aset == 'medis') {
+            $query->where(function($q) {
+                $q->where('jenis_aset', 'Medis')
+                  ->orWhereHas('kategori', function($sq) {
+                      $sq->where('nama_kategori', 'like', '%Medis%')
+                        ->orWhere('nama_kategori', 'like', '%Kesehatan%')
+                        ->orWhere('nama_kategori', 'like', '%Alat%');
+                  });
+            });
+        } elseif ($this->jenis_aset == 'umum') {
+            $query->where(function($q) {
+                $q->where('jenis_aset', '!=', 'Medis')
+                  ->orWhere(function($subQ) {
+                      $subQ->whereNull('jenis_aset')
+                           ->whereHas('kategori', function($sq) {
+                               $sq->where('nama_kategori', 'not like', '%Medis%')
+                                  ->where('nama_kategori', 'not like', '%Kesehatan%')
+                                  ->where('nama_kategori', 'not like', '%Alat%');
+                           });
+                  });
+            });
+        }
+        return $query;
     }
 
     public function exportCsv()
@@ -36,9 +64,11 @@ class Laporan extends Component
             $file = fopen('php://output', 'w');
             
             if ($this->jenis_laporan == 'stok') {
-                fputcsv($file, ['Kode', 'Nama Barang', 'Kategori', 'Lokasi', 'Stok', 'Satuan', 'Kondisi']);
+                fputcsv($file, ['Kode', 'Nama Barang', 'Jenis', 'Kategori', 'Lokasi', 'Stok', 'Satuan', 'Kondisi']);
                 
                 $query = Barang::query();
+                $this->applyAssetFilter($query);
+                
                 if ($this->kategori_filter) {
                     $query->where('kategori_barang_id', $this->kategori_filter);
                 }
@@ -48,6 +78,7 @@ class Laporan extends Component
                         fputcsv($file, [
                             $item->kode_barang,
                             $item->nama_barang,
+                            $item->jenis_aset ?? 'Umum',
                             $item->kategori->nama_kategori ?? '-',
                             $item->ruangan->nama_ruangan ?? ($item->lokasi_penyimpanan ?? '-'),
                             $item->stok,
@@ -63,6 +94,13 @@ class Laporan extends Component
                 $query = RiwayatBarang::with(['barang', 'user'])
                     ->whereBetween('tanggal', [$this->tanggal_mulai, $this->tanggal_selesai]);
                 
+                // Apply asset filter on relationship
+                if ($this->jenis_aset != 'all') {
+                    $query->whereHas('barang', function($q) {
+                        $this->applyAssetFilter($q);
+                    });
+                }
+
                 if ($this->kategori_filter) {
                     $query->whereHas('barang', function($q) {
                         $q->where('kategori_barang_id', $this->kategori_filter);
@@ -84,25 +122,43 @@ class Laporan extends Component
                 });
             }
             elseif ($this->jenis_laporan == 'aset') {
-                fputcsv($file, ['Kode Aset', 'Nama Aset', 'Kategori', 'Tgl Perolehan', 'Harga Perolehan', 'Nilai Buku', 'Kondisi', 'Lokasi']);
+                $columns = ['Kode Aset', 'Nama Aset', 'Jenis', 'Kategori', 'Tgl Perolehan', 'Harga Perolehan', 'Nilai Buku', 'Kondisi', 'Lokasi'];
+                
+                // Add medical columns if needed
+                if ($this->jenis_aset == 'medis' || $this->jenis_aset == 'all') {
+                    $columns[] = 'No Izin Edar';
+                    $columns[] = 'Next Kalibrasi';
+                }
 
-                $query = Barang::where('is_asset', true);
+                fputcsv($file, $columns);
+
+                $query = Barang::with('detailMedis')->where('is_asset', true);
+                $this->applyAssetFilter($query);
+
                 if ($this->kategori_filter) {
                     $query->where('kategori_barang_id', $this->kategori_filter);
                 }
 
                 $query->chunk(100, function($items) use ($file) {
                     foreach ($items as $item) {
-                        fputcsv($file, [
+                        $row = [
                             $item->kode_barang,
                             $item->nama_barang,
+                            $item->jenis_aset ?? 'Umum',
                             $item->kategori->nama_kategori ?? '-',
                             $item->tanggal_pengadaan,
                             $item->harga_perolehan,
                             $item->nilai_buku,
                             $item->kondisi,
                             $item->ruangan->nama_ruangan ?? ($item->lokasi_penyimpanan ?? '-')
-                        ]);
+                        ];
+
+                        if ($this->jenis_aset == 'medis' || $this->jenis_aset == 'all') {
+                            $row[] = $item->detailMedis->nomor_izin_edar ?? '-';
+                            $row[] = $item->detailMedis->kalibrasi_selanjutnya ?? '-';
+                        }
+
+                        fputcsv($file, $row);
                     }
                 });
             }
@@ -119,6 +175,8 @@ class Laporan extends Component
 
         if ($this->jenis_laporan == 'stok') {
             $query = Barang::query();
+            $this->applyAssetFilter($query);
+            
             if ($this->kategori_filter) {
                 $query->where('kategori_barang_id', $this->kategori_filter);
             }
@@ -128,6 +186,12 @@ class Laporan extends Component
             $query = RiwayatBarang::with(['barang', 'user'])
                 ->whereBetween('tanggal', [$this->tanggal_mulai, $this->tanggal_selesai]);
             
+            if ($this->jenis_aset != 'all') {
+                $query->whereHas('barang', function($q) {
+                    $this->applyAssetFilter($q);
+                });
+            }
+
             if ($this->kategori_filter) {
                 $query->whereHas('barang', function($q) {
                     $q->where('kategori_barang_id', $this->kategori_filter);
@@ -136,7 +200,9 @@ class Laporan extends Component
             $data = $query->latest()->paginate(20);
         }
         elseif ($this->jenis_laporan == 'aset') {
-            $query = Barang::where('is_asset', true);
+            $query = Barang::with('detailMedis')->where('is_asset', true);
+            $this->applyAssetFilter($query);
+            
             if ($this->kategori_filter) {
                 $query->where('kategori_barang_id', $this->kategori_filter);
             }

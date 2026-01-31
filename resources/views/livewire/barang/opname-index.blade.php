@@ -30,6 +30,31 @@
                     </select>
                     <p class="text-xs text-slate-400 mt-1">Pilih "Semua Lokasi" untuk audit gudang utama.</p>
                 </div>
+                
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Cakupan Audit (Scope)</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <label class="cursor-pointer">
+                            <input type="radio" wire:model="scope" value="all" class="sr-only peer">
+                            <div class="text-center p-3 rounded-xl border border-slate-200 peer-checked:bg-purple-50 peer-checked:border-purple-500 peer-checked:text-purple-700 transition-all hover:bg-slate-50">
+                                <span class="block text-xs font-bold">Semua</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" wire:model="scope" value="medis" class="sr-only peer">
+                            <div class="text-center p-3 rounded-xl border border-slate-200 peer-checked:bg-emerald-50 peer-checked:border-emerald-500 peer-checked:text-emerald-700 transition-all hover:bg-slate-50">
+                                <span class="block text-xs font-bold">Aset Medis</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" wire:model="scope" value="umum" class="sr-only peer">
+                            <div class="text-center p-3 rounded-xl border border-slate-200 peer-checked:bg-amber-50 peer-checked:border-amber-500 peer-checked:text-amber-700 transition-all hover:bg-slate-50">
+                                <span class="block text-xs font-bold">Aset Umum</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-2">Catatan</label>
                     <textarea wire:model="keterangan" rows="2" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl" placeholder="Contoh: Audit Tahunan 2026..."></textarea>
