@@ -167,7 +167,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/barang', \App\Livewire\Barang\Index::class)->name('barang.index');
         Route::get('/barang/create', \App\Livewire\Barang\Create::class)->name('barang.create');
         Route::get('/barang/opname', \App\Livewire\Barang\OpnameIndex::class)->name('barang.opname.index');
-        Route::get('/barang/opname/create', \App\Livewire\Barang\OpnameCreate::class)->name('barang.opname.create');
+        Route::get('/barang/opname/create', \App\Livewire\Barang\OpnameStart::class)->name('barang.opname.create');
         Route::get('/barang/opname/{opname}/input', \App\Livewire\Barang\OpnameCreate::class)->name('barang.opname.input');
         Route::get('/barang/mutasi', \App\Livewire\Barang\Mutasi\Index::class)->name('barang.mutasi.index');
         Route::get('/barang/mutasi/{mutasi}/print', [\App\Http\Controllers\MutasiController::class, 'print'])->name('barang.mutasi.print');
