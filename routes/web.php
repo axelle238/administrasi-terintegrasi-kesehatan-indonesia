@@ -84,6 +84,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', \App\Livewire\Kepegawaian\DashboardPegawai::class)->name('dashboard');
         Route::get('/cuti', \App\Livewire\Kepegawaian\Cuti\Index::class)->name('cuti.index'); // Self Request
         Route::get('/jadwal/tukar', \App\Livewire\Kepegawaian\Jadwal\Swap::class)->name('jadwal.swap');
+        Route::get('/aktivitas/create', \App\Livewire\Kepegawaian\Aktivitas\Form::class)->name('aktivitas.create');
         Route::get('/aktivitas', \App\Livewire\Kepegawaian\Aktivitas\Index::class)->name('aktivitas.index');
         Route::get('/pelatihan', \App\Livewire\Kepegawaian\Pelatihan\Index::class)->name('pelatihan.index');
         Route::get('/presensi', \App\Livewire\Kepegawaian\Presensi\Index::class)->name('presensi.index'); // Absen
