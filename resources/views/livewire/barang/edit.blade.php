@@ -208,6 +208,17 @@
                             </div>
                             <x-input-error :messages="$errors->get('kondisi')" class="mt-2" />
                         </div>
+                        
+                        <div class="md:col-span-2">
+                            <x-input-label for="status_ketersediaan" value="Status Ketersediaan" class="mb-2" />
+                            <select wire:model="status_ketersediaan" id="status_ketersediaan" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm">
+                                <option value="Tersedia">Tersedia</option>
+                                <option value="Dipinjam">Dipinjam</option>
+                                <option value="Maintenance">Maintenance</option>
+                                <option value="Dihapuskan">Dihapuskan</option>
+                            </select>
+                            <x-input-error :messages="$errors->get('status_ketersediaan')" class="mt-2" />
+                        </div>
                     </div>
                 </div>
 
@@ -268,6 +279,12 @@
                             </div>
                             <p class="text-xs text-yellow-600 mt-2">Perhatian: Mengubah stok di sini akan langsung mengubah data tanpa riwayat transaksi. Gunakan menu Mutasi/Opname untuk perubahan yang tercatat.</p>
                             <x-input-error :messages="$errors->get('stok')" class="mt-2" />
+                        </div>
+
+                        <div>
+                            <x-input-label for="min_stok" value="Stok Minimum (Alert)" class="mb-2" />
+                            <x-text-input wire:model="min_stok" id="min_stok" class="block w-full" type="number" min="0" placeholder="0" />
+                            <x-input-error :messages="$errors->get('min_stok')" class="mt-2" />
                         </div>
 
                         <div>

@@ -18,8 +18,10 @@ class Edit extends Component
     public $nama_barang;
     public $merk;
     public $stok; // Stok is usually not edited directly here, but let's allow correction
+    public $min_stok;
     public $satuan;
     public $kondisi;
+    public $status_ketersediaan;
     public $tanggal_pengadaan;
     public $lokasi_penyimpanan;
     public $ruangan_id;
@@ -56,8 +58,10 @@ class Edit extends Component
         $this->nama_barang = $barang->nama_barang;
         $this->merk = $barang->merk;
         $this->stok = $barang->stok;
+        $this->min_stok = $barang->min_stok;
         $this->satuan = $barang->satuan;
         $this->kondisi = $barang->kondisi;
+        $this->status_ketersediaan = $barang->status_ketersediaan;
         $this->tanggal_pengadaan = $barang->tanggal_pengadaan;
         $this->lokasi_penyimpanan = $barang->lokasi_penyimpanan;
         $this->ruangan_id = $barang->ruangan_id;
@@ -114,8 +118,10 @@ class Edit extends Component
             'nama_barang' => 'required|string|max:255',
             'merk' => 'nullable|string',
             'stok' => 'required|integer|min:0',
+            'min_stok' => 'nullable|integer|min:0',
             'satuan' => 'required|string',
             'kondisi' => 'required|string',
+            'status_ketersediaan' => 'required|string',
             'tanggal_pengadaan' => 'required|date',
             'ruangan_id' => 'nullable|exists:ruangans,id',
             'supplier_id' => 'nullable|exists:suppliers,id',
@@ -131,8 +137,10 @@ class Edit extends Component
             'nama_barang' => $this->nama_barang,
             'merk' => $this->merk,
             'stok' => $this->stok,
+            'min_stok' => $this->min_stok ?? 0,
             'satuan' => $this->satuan,
             'kondisi' => $this->kondisi,
+            'status_ketersediaan' => $this->status_ketersediaan,
             'tanggal_pengadaan' => $this->tanggal_pengadaan,
             'ruangan_id' => $this->ruangan_id,
             'supplier_id' => $this->supplier_id,
