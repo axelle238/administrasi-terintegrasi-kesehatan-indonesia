@@ -1,144 +1,113 @@
-<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6 pb-20" x-data="{ activeTab: 'form' }">
-    
-    <!-- Tab Nav -->
-    <div class="flex space-x-1 bg-slate-100 p-1 rounded-xl">
-        <button @click="activeTab = 'form'" :class="activeTab === 'form' ? 'bg-white shadow text-blue-600' : 'text-slate-500 hover:text-slate-700'" class="flex-1 py-2.5 text-sm font-bold rounded-lg transition-all">
-            Ajukan Pertukaran
-        </button>
-        <button @click="activeTab = 'requests'" :class="activeTab === 'requests' ? 'bg-white shadow text-blue-600' : 'text-slate-500 hover:text-slate-700'" class="flex-1 py-2.5 text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2">
-            Permintaan Masuk
-            @if($incomingRequests->count() > 0)
-                <span class="bg-red-500 text-white text-[10px] px-2 rounded-full">{{ $incomingRequests->count() }}</span>
-            @endif
-        </button>
-        <button @click="activeTab = 'history'" :class="activeTab === 'history' ? 'bg-white shadow text-blue-600' : 'text-slate-500 hover:text-slate-700'" class="flex-1 py-2.5 text-sm font-bold rounded-lg transition-all">
-            Riwayat Saya
-        </button>
+<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6 pb-20">
+    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+        <h2 class="text-2xl font-black text-slate-800 mb-2">Tukar Jadwal Jaga</h2>
+        <p class="text-slate-500 mb-8">Ajukan pertukaran shift dengan rekan kerja jika berhalangan hadir.</p>
+
+        <!-- Wizard Steps -->
+        <div class="flex justify-between items-center mb-10 relative">
+            <div class="absolute top-1/2 left-0 w-full h-1 bg-slate-100 -z-10"></div>
+            <div class="flex flex-col items-center gap-2 bg-white px-2">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold {{ $step >= 1 ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-500' }}">1</div>
+                <span class="text-xs font-bold {{ $step >= 1 ? 'text-indigo-600' : 'text-slate-400' }}">Pilih Jadwalmu</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 bg-white px-2">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold {{ $step >= 2 ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-500' }}">2</div>
+                <span class="text-xs font-bold {{ $step >= 2 ? 'text-indigo-600' : 'text-slate-400' }}">Pilih Rekan</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 bg-white px-2">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold {{ $step >= 3 ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-500' }}">3</div>
+                <span class="text-xs font-bold {{ $step >= 3 ? 'text-indigo-600' : 'text-slate-400' }}">Pilih Target</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 bg-white px-2">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold {{ $step >= 4 ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-500' }}">4</div>
+                <span class="text-xs font-bold {{ $step >= 4 ? 'text-indigo-600' : 'text-slate-400' }}">Konfirmasi</span>
+            </div>
+        </div>
+
+        <!-- Step 1: Select My Schedule -->
+        @if($step == 1)
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-fade-in">
+            @foreach($jadwalSaya as $j)
+            <div wire:click="selectJadwalAsal({{ $j->id }})" class="p-6 border-2 border-dashed border-slate-200 rounded-3xl hover:border-indigo-500 hover:bg-indigo-50 cursor-pointer transition-all group">
+                <p class="text-xs font-bold text-slate-400 uppercase mb-2">{{ \Carbon\Carbon::parse($j->tanggal)->format('l, d F Y') }}</p>
+                <h3 class="text-xl font-black text-slate-800 group-hover:text-indigo-700">{{ $j->shift->nama_shift }}</h3>
+                <p class="text-sm font-medium text-slate-500 mt-1">{{ $j->shift->jam_mulai }} - {{ $j->shift->jam_selesai }}</p>
+            </div>
+            @endforeach
+        </div>
+        @endif
+
+        <!-- Step 2: Select Partner -->
+        @if($step == 2)
+        <div class="space-y-4 animate-fade-in">
+            <input type="text" placeholder="Cari nama rekan..." class="w-full rounded-xl border-slate-200">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                @foreach($users as $u)
+                <div wire:click="selectPengganti({{ $u->id }})" class="flex items-center gap-4 p-4 border border-slate-100 rounded-2xl hover:shadow-md cursor-pointer transition-all">
+                    <div class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center font-bold text-slate-600">{{ substr($u->name, 0, 1) }}</div>
+                    <div>
+                        <h4 class="font-bold text-slate-800">{{ $u->name }}</h4>
+                        <p class="text-xs text-slate-500">{{ $u->pegawai->jabatan ?? 'Staff' }}</p>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
+        <!-- Step 3: Select Target Schedule -->
+        @if($step == 3)
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-fade-in">
+            @forelse($jadwalTarget as $jt)
+            <div wire:click="selectJadwalTujuan({{ $jt->id }})" class="p-6 border-2 border-dashed border-slate-200 rounded-3xl hover:border-emerald-500 hover:bg-emerald-50 cursor-pointer transition-all group">
+                <p class="text-xs font-bold text-slate-400 uppercase mb-2">{{ \Carbon\Carbon::parse($jt->tanggal)->format('l, d F Y') }}</p>
+                <h3 class="text-xl font-black text-slate-800 group-hover:text-emerald-700">{{ $jt->shift->nama_shift }}</h3>
+                <p class="text-sm font-medium text-slate-500 mt-1">{{ $jt->shift->jam_mulai }} - {{ $jt->shift->jam_selesai }}</p>
+            </div>
+            @empty
+            <div class="col-span-3 text-center py-8 text-slate-400">Rekan ini tidak memiliki jadwal mendatang yang tersedia.</div>
+            @endforelse
+        </div>
+        @endif
+
+        <!-- Step 4: Confirm -->
+        @if($step == 4)
+        <div class="max-w-xl mx-auto animate-fade-in">
+            <label class="block text-sm font-bold text-slate-700 mb-2">Alasan Penukaran</label>
+            <textarea wire:model="alasan" class="w-full rounded-2xl border-slate-200 p-4 font-medium" rows="3" placeholder="Mengapa Anda ingin menukar jadwal ini?"></textarea>
+            <button wire:click="submit" class="w-full mt-6 py-4 bg-indigo-600 text-white rounded-2xl font-black text-lg hover:bg-indigo-700 shadow-xl transition-transform hover:-translate-y-1">
+                Kirim Permintaan Tukar
+            </button>
+        </div>
+        @endif
     </div>
 
-    <!-- TAB 1: FORM PENGAJUAN -->
-    <div x-show="activeTab === 'form'" class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 animate-fade-in">
-        <h3 class="text-xl font-black text-slate-800 mb-6 flex items-center gap-2">
-            <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
+    <!-- History -->
+    <div class="space-y-4">
+        <h3 class="text-lg font-bold text-slate-800 px-2">Riwayat Pertukaran</h3>
+        @foreach($requests as $req)
+        <div class="bg-white p-6 rounded-3xl border border-slate-100 flex flex-col md:flex-row items-center gap-6 relative overflow-hidden">
+            <div class="absolute left-0 top-0 w-2 h-full {{ $req->status == 'Disetujui Admin' ? 'bg-emerald-500' : 'bg-amber-500' }}"></div>
+            
+            <div class="flex-1 text-center md:text-left">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Jadwal Asal</p>
+                <p class="font-black text-slate-800">{{ \Carbon\Carbon::parse($req->jadwalAsal->tanggal)->format('d M') }} ({{ $req->jadwalAsal->shift->nama_shift }})</p>
+            </div>
+
+            <div class="flex items-center gap-2 text-slate-300">
                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
             </div>
-            Formulir Tukar Dinas
-        </h3>
 
-        <form wire:submit.prevent="save" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Sisi Saya -->
-                <div class="space-y-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                    <h4 class="text-sm font-bold text-slate-500 uppercase tracking-widest">Jadwal Saya</h4>
-                    <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-2">Pilih Tanggal yang Ingin Ditukar</label>
-                        <select wire:model="myScheduleId" class="w-full rounded-xl border-slate-200 focus:ring-blue-500">
-                            <option value="">-- Pilih Jadwal --</option>
-                            @foreach($mySchedules as $s)
-                                <option value="{{ $s->id }}">{{ \Carbon\Carbon::parse($s->tanggal)->translatedFormat('l, d F Y') }} ({{ $s->shift->nama_shift ?? 'Shift' }})</option>
-                            @endforeach
-                        </select>
-                        @error('myScheduleId') <span class="text-xs text-red-500 font-bold mt-1">{{ $message }}</span> @enderror
-                    </div>
-                </div>
-
-                <!-- Sisi Rekan -->
-                <div class="space-y-4 p-4 bg-blue-50 rounded-2xl border border-blue-100">
-                    <h4 class="text-sm font-bold text-blue-500 uppercase tracking-widest">Target Rekan</h4>
-                    <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-2">Pilih Rekan Kerja</label>
-                        <select wire:model.live="targetUserId" class="w-full rounded-xl border-slate-200 focus:ring-blue-500">
-                            <option value="">-- Cari Rekan --</option>
-                            @foreach($potentialTargets as $t)
-                                <option value="{{ $t->id }}">{{ $t->name }} ({{ $t->pegawai->jabatan ?? '-' }})</option>
-                            @endforeach
-                        </select>
-                        @error('targetUserId') <span class="text-xs text-red-500 font-bold mt-1">{{ $message }}</span> @enderror
-                    </div>
-
-                    @if($targetUserId)
-                    <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-2">Pilih Jadwal Rekan</label>
-                        <select wire:model="targetScheduleId" class="w-full rounded-xl border-slate-200 focus:ring-blue-500">
-                            <option value="">-- Pilih Tanggal Pengganti --</option>
-                            @foreach($targetSchedules as $ts)
-                                <option value="{{ $ts->id }}">{{ \Carbon\Carbon::parse($ts->tanggal)->translatedFormat('l, d F Y') }} ({{ $ts->shift->nama_shift ?? 'Shift' }})</option>
-                            @endforeach
-                        </select>
-                        @error('targetScheduleId') <span class="text-xs text-red-500 font-bold mt-1">{{ $message }}</span> @enderror
-                    </div>
-                    @endif
-                </div>
+            <div class="flex-1 text-center md:text-right">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Ditukar Dengan</p>
+                <p class="font-black text-indigo-600">{{ $req->pengganti->name }}</p>
+                <p class="text-sm font-medium text-slate-600">{{ \Carbon\Carbon::parse($req->jadwalTujuan->tanggal)->format('d M') }} ({{ $req->jadwalTujuan->shift->nama_shift }})</p>
             </div>
 
-            <div>
-                <label class="block text-sm font-bold text-slate-700 mb-2">Alasan Pertukaran</label>
-                <textarea wire:model="alasan" rows="2" class="w-full rounded-xl border-slate-200 focus:ring-blue-500" placeholder="Contoh: Ada acara keluarga mendadak..."></textarea>
-                @error('alasan') <span class="text-xs text-red-500 font-bold mt-1">{{ $message }}</span> @enderror
-            </div>
-
-            <div class="flex justify-end pt-4">
-                <button type="submit" class="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg hover:bg-blue-700 transition flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
-                    Kirim Permintaan
-                </button>
-            </div>
-        </form>
-    </div>
-
-    <!-- TAB 2: INCOMING REQUESTS -->
-    <div x-show="activeTab === 'requests'" style="display: none;" class="space-y-4 animate-fade-in">
-        @forelse($incomingRequests as $req)
-        <div class="bg-white p-6 rounded-3xl shadow-sm border border-l-4 border-l-orange-400 border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div>
-                <div class="flex items-center gap-2 mb-2">
-                    <span class="bg-orange-100 text-orange-700 text-[10px] font-black px-2 py-1 rounded-lg uppercase">Permintaan Masuk</span>
-                    <span class="text-xs text-slate-400 font-bold">{{ $req->created_at->diffForHumans() }}</span>
-                </div>
-                <h4 class="text-lg font-bold text-slate-800">
-                    {{ $req->pemohon->name }} <span class="text-slate-400 font-normal">ingin menukar jadwal.</span>
-                </h4>
-                <div class="flex items-center gap-4 mt-3 text-sm">
-                    <div class="bg-red-50 text-red-600 px-3 py-1 rounded-lg font-bold">
-                        <span class="text-[10px] text-red-400 block uppercase">Jadwal Dia</span>
-                        {{ \Carbon\Carbon::parse($req->jadwalPemohon->tanggal)->format('d M') }}
-                    </div>
-                    <svg class="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                    <div class="bg-green-50 text-green-600 px-3 py-1 rounded-lg font-bold">
-                        <span class="text-[10px] text-green-400 block uppercase">Jadwal Anda</span>
-                        {{ \Carbon\Carbon::parse($req->jadwalPengganti->tanggal)->format('d M') }}
-                    </div>
-                </div>
-                <p class="text-sm text-slate-500 mt-3 italic">"{{ $req->alasan }}"</p>
-            </div>
-            <div class="flex gap-2">
-                <button wire:click="rejectRequest({{ $req->id }})" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-red-100 hover:text-red-600 transition">Tolak</button>
-                <button wire:click="approveRequest({{ $req->id }})" class="px-6 py-2 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 shadow-md transition">Terima & Lanjut ke Admin</button>
-            </div>
-        </div>
-        @empty
-        <div class="text-center py-12 bg-white rounded-[2.5rem] border border-slate-100">
-            <p class="text-slate-400 font-bold">Tidak ada permintaan masuk saat ini.</p>
-        </div>
-        @endforelse
-    </div>
-
-    <!-- TAB 3: RIWAYAT -->
-    <div x-show="activeTab === 'history'" style="display: none;" class="space-y-4 animate-fade-in">
-        @forelse($myRequests as $req)
-        <div class="bg-white p-4 rounded-2xl border border-slate-100 flex justify-between items-center">
-            <div>
-                <p class="text-sm font-bold text-slate-800">Tukar dengan {{ $req->pengganti->name }}</p>
-                <p class="text-xs text-slate-500">Tanggal: {{ \Carbon\Carbon::parse($req->jadwalPemohon->tanggal)->format('d M') }} &harr; {{ \Carbon\Carbon::parse($req->jadwalPengganti->tanggal)->format('d M') }}</p>
-            </div>
-            <span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase {{ $req->status == 'Disetujui' ? 'bg-emerald-100 text-emerald-700' : ($req->status == 'Ditolak' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700') }}">
+            <div class="px-4 py-2 rounded-xl bg-slate-100 font-bold text-xs text-slate-600 uppercase">
                 {{ $req->status }}
-            </span>
+            </div>
         </div>
-        @empty
-        <div class="text-center py-12 bg-white rounded-[2.5rem] border border-slate-100">
-            <p class="text-slate-400 font-bold">Belum ada riwayat pengajuan.</p>
-        </div>
-        @endforelse
+        @endforeach
     </div>
 </div>

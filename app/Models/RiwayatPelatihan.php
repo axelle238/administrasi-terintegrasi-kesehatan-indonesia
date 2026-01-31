@@ -13,18 +13,12 @@ class RiwayatPelatihan extends Model
         'user_id',
         'nama_pelatihan',
         'penyelenggara',
-        'lokasi',
         'tanggal_mulai',
         'tanggal_selesai',
-        'jumlah_jam',
+        'durasi_jam',
         'nomor_sertifikat',
         'file_sertifikat',
-        'status_validasi'
-    ];
-
-    protected $casts = [
-        'tanggal_mulai' => 'date',
-        'tanggal_selesai' => 'date',
+        'status'
     ];
 
     public function user()

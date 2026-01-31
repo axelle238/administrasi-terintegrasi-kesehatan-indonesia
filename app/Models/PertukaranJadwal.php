@@ -10,28 +10,17 @@ class PertukaranJadwal extends Model
     use HasFactory;
 
     protected $fillable = [
-        'pemohon_id', 'jadwal_pemohon_id',
-        'pengganti_id', 'jadwal_pengganti_id',
-        'alasan', 'status', 'catatan_admin'
+        'pemohon_id',
+        'pengganti_id',
+        'jadwal_asal_id',
+        'jadwal_tujuan_id',
+        'alasan',
+        'status',
+        'catatan_approval'
     ];
 
-    public function pemohon()
-    {
-        return $this->belongsTo(User::class, 'pemohon_id');
-    }
-
-    public function pengganti()
-    {
-        return $this->belongsTo(User::class, 'pengganti_id');
-    }
-
-    public function jadwalPemohon()
-    {
-        return $this->belongsTo(JadwalJaga::class, 'jadwal_pemohon_id');
-    }
-
-    public function jadwalPengganti()
-    {
-        return $this->belongsTo(JadwalJaga::class, 'jadwal_pengganti_id');
-    }
+    public function pemohon() { return $this->belongsTo(User::class, 'pemohon_id'); }
+    public function pengganti() { return $this->belongsTo(User::class, 'pengganti_id'); }
+    public function jadwalAsal() { return $this->belongsTo(JadwalJaga::class, 'jadwal_asal_id'); }
+    public function jadwalTujuan() { return $this->belongsTo(JadwalJaga::class, 'jadwal_tujuan_id'); }
 }
