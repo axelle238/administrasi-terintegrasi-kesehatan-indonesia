@@ -29,11 +29,16 @@ class OpnameIndex extends Component
         $this->tanggal = date('Y-m-d');
     }
 
-    public function create()
+    public function openForm()
     {
         $this->reset(['ruangan_id', 'keterangan', 'scope']);
         $this->tanggal = date('Y-m-d');
         $this->isOpen = true;
+    }
+
+    public function closeForm()
+    {
+        $this->isOpen = false;
     }
 
     public function store()
