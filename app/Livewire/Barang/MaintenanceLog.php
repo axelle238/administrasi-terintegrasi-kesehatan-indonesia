@@ -6,10 +6,11 @@ use App\Models\Maintenance as MaintenanceModel;
 use App\Models\Barang;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\WithFileUploads;
 
 class MaintenanceLog extends Component
 {
-    use WithPagination;
+    use WithPagination, WithFileUploads;
 
     public $search = '';
     public $isOpen = false;
@@ -22,12 +23,14 @@ class MaintenanceLog extends Component
     public $teknisi;
     public $biaya = 0;
     public $tanggal_berikutnya;
+    public $file_sertifikat; // Uploaded file
 
     protected $rules = [
         'barang_id' => 'required|exists:barangs,id',
         'tanggal_maintenance' => 'required|date',
         'jenis_kegiatan' => 'required|string',
         'biaya' => 'numeric|min:0',
+        'file_sertifikat' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120', // Max 5MB
     ];
 
     public function create()
@@ -39,12 +42,17 @@ class MaintenanceLog extends Component
 
     public function resetInput()
     {
-        $this->reset(['barang_id', 'jenis_kegiatan', 'keterangan', 'teknisi', 'biaya', 'tanggal_berikutnya']);
+        $this->reset(['barang_id', 'jenis_kegiatan', 'keterangan', 'teknisi', 'biaya', 'tanggal_berikutnya', 'file_sertifikat']);
     }
 
     public function save()
     {
         $this->validate();
+
+        $path = null;
+        if ($this->file_sertifikat) {
+            $path = $this->file_sertifikat->store('sertifikat-maintenance', 'public');
+        }
 
         MaintenanceModel::create([
             'barang_id' => $this->barang_id,
@@ -54,6 +62,7 @@ class MaintenanceLog extends Component
             'teknisi' => $this->teknisi,
             'biaya' => $this->biaya,
             'tanggal_berikutnya' => $this->tanggal_berikutnya,
+            'file_sertifikat' => $path,
         ]);
 
         // Optional: Update asset condition if it was repair

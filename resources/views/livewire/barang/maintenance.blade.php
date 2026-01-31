@@ -74,6 +74,20 @@
                         <label class="block text-sm font-bold text-slate-700 mb-2">Hasil Pengerjaan / Keterangan</label>
                         <textarea wire:model="keterangan" rows="3" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl" placeholder="Deskripsikan hasil perbaikan atau kondisi alat..."></textarea>
                     </div>
+
+                    <!-- Upload Sertifikat -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Upload Sertifikat / Berita Acara (PDF/Img)</label>
+                        <input type="file" wire:model="file_sertifikat" class="block w-full text-sm text-slate-500
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-full file:border-0
+                            file:text-xs file:font-semibold
+                            file:bg-amber-50 file:text-amber-700
+                            hover:file:bg-amber-100
+                        "/>
+                        <div wire:loading wire:target="file_sertifikat" class="text-xs text-amber-500 mt-1 font-bold">Uploading...</div>
+                        @error('file_sertifikat') <span class="text-xs text-red-500 font-bold">{{ $message }}</span> @enderror
+                    </div>
                 </div>
 
                 <div class="flex justify-end gap-3 pt-4">
@@ -117,6 +131,12 @@
                                 {{ $m->jenis_kegiatan }}
                             </span>
                             <div class="text-xs text-slate-500 mt-1 line-clamp-1">{{ $m->keterangan }}</div>
+                            @if($m->file_sertifikat)
+                                <a href="{{ Storage::url($m->file_sertifikat) }}" target="_blank" class="inline-flex items-center gap-1 text-[10px] font-bold text-teal-600 hover:underline mt-1">
+                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                                    Lihat Sertifikat
+                                </a>
+                            @endif
                         </td>
                         <td class="px-6 py-4 text-slate-600">{{ $m->teknisi ?? '-' }}</td>
                         <td class="px-6 py-4 text-right font-mono">Rp {{ number_format($m->biaya, 0, ',', '.') }}</td>
