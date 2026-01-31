@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 use App\Traits\HasDepreciation;
 
 class Barang extends Model
 {
-    use HasFactory, LogsActivity, HasDepreciation;
+    use HasFactory, LogsActivity, HasDepreciation, SoftDeletes;
 
     public function getActivitylogOptions(): LogOptions
     {
