@@ -74,7 +74,10 @@
     </x-slot:icon>
     
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Monitoring</div>
-    <x-nav.link-child :href="route('barang.dashboard')" :active="request()->routeIs('barang.dashboard')">Dashboard Aset</x-nav.link-child>
+    <x-nav.link-child :href="route('barang.dashboard', ['activeTab' => 'ikhtisar'])" :active="request()->routeIs('barang.dashboard') && (request()->query('activeTab') == 'ikhtisar' || !request()->has('activeTab'))">Ikhtisar Aset</x-nav.link-child>
+    <x-nav.link-child :href="route('barang.dashboard', ['activeTab' => 'stok'])" :active="request()->routeIs('barang.dashboard') && request()->query('activeTab') == 'stok'">Monitoring Stok</x-nav.link-child>
+    <x-nav.link-child :href="route('barang.dashboard', ['activeTab' => 'maintenance'])" :active="request()->routeIs('barang.dashboard') && request()->query('activeTab') == 'maintenance'">Jadwal Maintenance</x-nav.link-child>
+    <x-nav.link-child :href="route('barang.dashboard', ['activeTab' => 'pengadaan'])" :active="request()->routeIs('barang.dashboard') && request()->query('activeTab') == 'pengadaan'">Status Pengadaan</x-nav.link-child>
     <x-nav.link-child :href="route('barang.laporan')" :active="request()->routeIs('barang.laporan')">Laporan Inventaris</x-nav.link-child>
     <x-nav.link-child :href="route('barang.penyusutan')" :active="request()->routeIs('barang.penyusutan')">Penyusutan Nilai</x-nav.link-child>
 
