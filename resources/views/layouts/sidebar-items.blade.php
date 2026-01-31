@@ -102,8 +102,9 @@
     <x-nav.link-child :href="route('system.tindakan.index')" :active="request()->routeIs('system.tindakan.*')">Master Tindakan</x-nav.link-child>
 
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Utilitas & Developer</div>
-    <x-nav.link-child href="#" onclick="alert('Fitur System Health Check akan segera hadir!')" :active="false">System Health</x-nav.link-child>
-    <x-nav.link-child href="#" onclick="alert('Dokumentasi API belum tersedia.')" :active="false">API Documentation</x-nav.link-child>
+    <x-nav.link-child :href="route('system.backup')" :active="request()->routeIs('system.backup')">Backup & Database</x-nav.link-child>
+    <x-nav.link-child :href="route('activity-log')" :active="request()->routeIs('activity-log')">Log Aktivitas (Audit)</x-nav.link-child>
+    <x-nav.link-child href="#" onclick="alert('Fitur Monitoring Job Scheduler akan segera hadir.')" :active="false">Scheduler Monitor</x-nav.link-child>
 </x-nav.dropdown>
 @endif
 
