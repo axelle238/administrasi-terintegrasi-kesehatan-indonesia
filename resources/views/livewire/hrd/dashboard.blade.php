@@ -62,7 +62,7 @@
         <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between group hover:border-indigo-200 transition-all">
             <div>
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Total Gaji Bulan Ini</p>
-                <h3 class="text-xl font-black text-indigo-600 mt-1">Rp {{ number_format($tabData['gajiBulanIni'] ?? 0, 0, ',', '.') }}</h3>
+                <h3 class="text-xl font-black text-indigo-600 mt-1">Rp {{ number_format($dataTab['gajiBulanIni'] ?? 0, 0, ',', '.') }}</h3>
             </div>
             <div class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                 <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
@@ -73,26 +73,26 @@
     <!-- Navigation Tabs & Content -->
     <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
         <div class="px-8 pt-6 border-b border-slate-50 flex gap-10 overflow-x-auto">
-            <button wire:click="setTab('ikhtisar')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $activeTab == 'ikhtisar' ? 'text-rose-600' : 'text-slate-400 hover:text-slate-600' }}">
+            <button wire:click="aturTab('ikhtisar')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $tabAktif == 'ikhtisar' ? 'text-rose-600' : 'text-slate-400 hover:text-slate-600' }}">
                 Ringkasan & Dokumen
-                @if($activeTab == 'ikhtisar') <div class="absolute bottom-0 left-0 w-full h-1 bg-rose-600 rounded-t-full"></div> @endif
+                @if($tabAktif == 'ikhtisar') <div class="absolute bottom-0 left-0 w-full h-1 bg-rose-600 rounded-t-full"></div> @endif
             </button>
-            <button wire:click="setTab('presensi')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $activeTab == 'presensi' ? 'text-rose-600' : 'text-slate-400 hover:text-slate-600' }}">
+            <button wire:click="aturTab('presensi')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $tabAktif == 'presensi' ? 'text-rose-600' : 'text-slate-400 hover:text-slate-600' }}">
                 Presensi & Jadwal
-                @if($activeTab == 'presensi') <div class="absolute bottom-0 left-0 w-full h-1 bg-rose-600 rounded-t-full"></div> @endif
+                @if($tabAktif == 'presensi') <div class="absolute bottom-0 left-0 w-full h-1 bg-rose-600 rounded-t-full"></div> @endif
             </button>
-            <button wire:click="setTab('cuti')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $activeTab == 'cuti' ? 'text-rose-600' : 'text-slate-400 hover:text-slate-600' }}">
+            <button wire:click="aturTab('cuti')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $tabAktif == 'cuti' ? 'text-rose-600' : 'text-slate-400 hover:text-slate-600' }}">
                 Manajemen Cuti
-                @if($activeTab == 'cuti') <div class="absolute bottom-0 left-0 w-full h-1 bg-rose-600 rounded-t-full"></div> @endif
+                @if($tabAktif == 'cuti') <div class="absolute bottom-0 left-0 w-full h-1 bg-rose-600 rounded-t-full"></div> @endif
             </button>
-            <button wire:click="setTab('kinerja')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $activeTab == 'kinerja' ? 'text-rose-600' : 'text-slate-400 hover:text-slate-600' }}">
+            <button wire:click="aturTab('kinerja')" class="pb-5 text-sm font-black uppercase tracking-widest transition-all relative whitespace-nowrap {{ $tabAktif == 'kinerja' ? 'text-rose-600' : 'text-slate-400 hover:text-slate-600' }}">
                 Evaluasi Kinerja
-                @if($activeTab == 'kinerja') <div class="absolute bottom-0 left-0 w-full h-1 bg-rose-600 rounded-t-full"></div> @endif
+                @if($tabAktif == 'kinerja') <div class="absolute bottom-0 left-0 w-full h-1 bg-rose-600 rounded-t-full"></div> @endif
             </button>
         </div>
 
         <div class="p-8">
-            @if($activeTab == 'ikhtisar')
+            @if($tabAktif == 'ikhtisar')
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 animate-fade-in-up">
                 <!-- Charts Section -->
                 <div class="space-y-8">
@@ -106,7 +106,7 @@
                     <div class="p-6 rounded-2xl bg-slate-50 border border-slate-100">
                         <h4 class="font-black text-slate-800 uppercase tracking-widest text-xs mb-4">Distribusi Medis per Poli</h4>
                         <div class="space-y-3 max-h-[300px] overflow-y-auto custom-scrollbar">
-                            @foreach($tabData['distribusiPoli'] ?? [] as $poli)
+                            @foreach($dataTab['distribusiPoli'] ?? [] as $poli)
                             <div class="flex justify-between items-center text-xs">
                                 <span class="font-bold text-slate-600">{{ $poli->nama_poli }}</span>
                                 <div class="flex items-center gap-2">
@@ -138,7 +138,7 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-50">
-                                @forelse($tabData['dokumenAlert'] ?? [] as $pegawai)
+                                @forelse($dataTab['dokumenAlert'] ?? [] as $pegawai)
                                 <tr class="hover:bg-slate-50 transition-colors">
                                     <td class="px-6 py-4">
                                         <p class="font-black text-slate-800">{{ $pegawai->user->name ?? 'N/A' }}</p>
@@ -164,22 +164,22 @@
             </div>
             @endif
 
-            @if($activeTab == 'presensi')
+            @if($tabAktif == 'presensi')
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 animate-fade-in-up">
                 <!-- Statistik Kehadiran -->
                 <div class="space-y-6">
                     <h4 class="font-black text-slate-800 uppercase tracking-widest text-xs">Statistik Kehadiran Hari Ini</h4>
                     <div class="p-8 bg-rose-50 rounded-[2rem] border border-rose-100 flex flex-col items-center text-center">
                         <p class="text-xs font-black text-rose-400 uppercase tracking-widest mb-4">Total Dijadwalkan</p>
-                        <h3 class="text-5xl font-black text-rose-600 mb-6">{{ $tabData['statistikKehadiran']['total'] }}</h3>
+                        <h3 class="text-5xl font-black text-rose-600 mb-6">{{ $dataTab['statistikKehadiran']['total'] }}</h3>
                         <div class="w-full flex justify-between gap-4">
                             <div class="flex-1 p-3 bg-white/60 rounded-2xl border border-rose-100">
                                 <p class="text-[10px] font-black text-slate-400 uppercase">Hadir</p>
-                                <p class="text-xl font-black text-emerald-600">{{ $tabData['statistikKehadiran']['hadir'] }}</p>
+                                <p class="text-xl font-black text-emerald-600">{{ $dataTab['statistikKehadiran']['hadir'] }}</p>
                             </div>
                             <div class="flex-1 p-3 bg-white/60 rounded-2xl border border-rose-100">
                                 <p class="text-[10px] font-black text-slate-400 uppercase">Absen</p>
-                                <p class="text-xl font-black text-rose-600">{{ $tabData['statistikKehadiran']['absen'] }}</p>
+                                <p class="text-xl font-black text-rose-600">{{ $dataTab['statistikKehadiran']['absen'] }}</p>
                             </div>
                         </div>
                     </div>
@@ -196,7 +196,7 @@
                     </div>
                    
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                        @foreach($tabData['jadwalHariIni'] ?? [] as $jadwal)
+                        @foreach($dataTab['jadwalHariIni'] ?? [] as $jadwal)
                         @php
                             $isNow = false;
                             if($jadwal->shift) {
@@ -228,13 +228,13 @@
             </div>
             @endif
 
-            @if($activeTab == 'cuti')
+            @if($tabAktif == 'cuti')
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 animate-fade-in-up">
                 <!-- Sedang Cuti -->
                 <div>
                     <h4 class="font-black text-slate-800 uppercase tracking-widest text-xs mb-4">Sedang Cuti Hari Ini</h4>
                     <div class="space-y-4">
-                        @forelse($tabData['sedangCuti'] ?? [] as $cuti)
+                        @forelse($dataTab['sedangCuti'] ?? [] as $cuti)
                         <div class="flex items-center gap-4 p-4 rounded-2xl border border-slate-100 bg-white">
                              <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-black text-xs">
                                 {{ substr($cuti->user->name ?? '?', 0, 1) }}
@@ -259,7 +259,7 @@
                 <div>
                     <h4 class="font-black text-slate-800 uppercase tracking-widest text-xs mb-4">Akan Cuti (7 Hari Kedepan)</h4>
                     <div class="space-y-4">
-                        @forelse($tabData['cutiAkanDatang'] ?? [] as $cuti)
+                        @forelse($dataTab['cutiAkanDatang'] ?? [] as $cuti)
                         <div class="flex items-center gap-4 p-4 rounded-2xl border border-slate-100 bg-slate-50/50">
                              <div class="w-10 h-10 rounded-xl bg-slate-200 text-slate-600 flex items-center justify-center font-black text-xs">
                                 {{ substr($cuti->user->name ?? '?', 0, 1) }}
@@ -284,13 +284,13 @@
                 <div class="lg:col-span-2 mt-4">
                     <h4 class="font-black text-slate-800 uppercase tracking-widest text-xs mb-4 flex justify-between items-center">
                         Permintaan Menunggu Persetujuan
-                        @if(count($tabData['cutiPending'] ?? []) > 0)
-                        <span class="bg-rose-500 text-white text-[10px] px-2 py-0.5 rounded-full">{{ count($tabData['cutiPending']) }}</span>
+                        @if(count($dataTab['cutiPending'] ?? []) > 0)
+                        <span class="bg-rose-500 text-white text-[10px] px-2 py-0.5 rounded-full">{{ count($dataTab['cutiPending']) }}</span>
                         @endif
                     </h4>
-                    @if(count($tabData['cutiPending'] ?? []) > 0)
+                    @if(count($dataTab['cutiPending'] ?? []) > 0)
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        @foreach($tabData['cutiPending'] as $cuti)
+                        @foreach($dataTab['cutiPending'] as $cuti)
                         <div class="p-4 rounded-2xl border border-rose-100 bg-rose-50/30 relative">
                             <div class="flex justify-between items-start mb-3">
                                 <div>
@@ -314,7 +314,7 @@
             </div>
             @endif
 
-            @if($activeTab == 'kinerja')
+            @if($tabAktif == 'kinerja')
             <div class="space-y-10 animate-fade-in-up" x-data="chartKinerja()">
                 <div class="flex justify-between items-center">
                     <div>
@@ -330,7 +330,7 @@
 
                 <!-- Top Performers -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-6 border-t border-slate-50">
-                    @foreach($tabData['topPerformance'] ?? [] as $kp)
+                    @foreach($dataTab['topPerformance'] ?? [] as $kp)
                     <div class="p-6 bg-white border border-slate-100 rounded-[2rem] shadow-sm relative overflow-hidden group">
                         <div class="flex items-center gap-4 mb-6">
                             <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-black text-sm">
@@ -364,7 +364,7 @@
         function chartStatus() {
             return {
                 init() {
-                    const statusData = @json($tabData['distribusiStatus'] ?? []);
+                    const statusData = @json($dataTab['distribusiStatus'] ?? []);
                     const options = {
                         series: statusData.map(r => r.total),
                         labels: statusData.map(r => r.status_kepegawaian),
@@ -382,7 +382,7 @@
         function chartKinerja() {
             return {
                 init() {
-                    const data = @json($tabData['trenKinerja'] ?? ['labels' => [], 'data' => []]);
+                    const data = @json($dataTab['trenKinerja'] ?? ['labels' => [], 'data' => []]);
                     const options = {
                         series: [{
                             name: 'Skor Kinerja',

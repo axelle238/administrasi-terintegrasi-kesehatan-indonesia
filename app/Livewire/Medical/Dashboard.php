@@ -13,21 +13,21 @@ use Carbon\Carbon;
 
 class Dashboard extends Component
 {
-    // State Management
-    public $activeTab = 'ringkasan'; // ringkasan, demografi, klinis, rawat_inap
+    // Manajemen Status
+    public $tabAktif = 'ringkasan'; // ringkasan, demografi, klinis, rawat_inap
 
-    public function setTab($tab)
+    public function aturTab($tab)
     {
-        $this->activeTab = $tab;
+        $this->tabAktif = $tab;
     }
 
     public function render()
     {
-        // === GLOBAL METRICS (Always Loaded) ===
+        // === METRIK GLOBAL (Selalu Dimuat) ===
         $totalKunjunganHariIni = Antrean::whereDate('tanggal_antrean', Carbon::today())->count();
         $totalKunjunganBulanIni = Antrean::whereMonth('tanggal_antrean', Carbon::now()->month)->count();
         
-        // BOR Calculation
+        // Kalkulasi BOR (Bed Occupancy Rate)
         $bedTerisi = Kamar::sum('bed_terisi');
         $totalBed = Kamar::sum('kapasitas_bed');
         $bor = $totalBed > 0 ? ($bedTerisi / $totalBed) * 100 : 0;
@@ -38,44 +38,39 @@ class Dashboard extends Component
             ->get()
             ->avg(function($item) {
                 // Asumsi: updated_at adalah waktu selesai, created_at waktu daftar
-                // Idealnya ada kolom 'waktu_mulai_layanan' dan 'waktu_selesai_layanan'
                 return $item->updated_at->diffInMinutes($item->created_at);
             }) ?? 0;
 
-        // === TAB DATA ===
-        $tabData = [];
+        // === DATA TAB ===
+        $dataTab = [];
 
-        if ($this->activeTab == 'ringkasan') {
-            $tabData['trenKunjungan'] = $this->getTrenKunjungan();
-            $tabData['poliActivity'] = Antrean::with('poli')
+        if ($this->tabAktif == 'ringkasan') {
+            $dataTab['trenKunjungan'] = $this->getTrenKunjungan();
+            $dataTab['poliActivity'] = Antrean::with('poli')
                 ->whereDate('tanggal_antrean', Carbon::today())
                 ->select('poli_id', DB::raw('count(*) as total'))
                 ->groupBy('poli_id')
                 ->get();
-            $tabData['pasienBaru'] = Pasien::whereMonth('created_at', Carbon::now()->month)->count();
-            $tabData['pasienLama'] = max(0, $totalKunjunganBulanIni - $tabData['pasienBaru']);
+            $dataTab['pasienBaru'] = Pasien::whereMonth('created_at', Carbon::now()->month)->count();
+            $dataTab['pasienLama'] = max(0, $totalKunjunganBulanIni - $dataTab['pasienBaru']);
         }
 
-        if ($this->activeTab == 'demografi') {
-            // Gender Stats
-            $tabData['genderStats'] = Pasien::select('jenis_kelamin', DB::raw('count(*) as total'))
+        if ($this->tabAktif == 'demografi') {
+            // Statistik Gender
+            $dataTab['genderStats'] = Pasien::select('jenis_kelamin', DB::raw('count(*) as total'))
                 ->groupBy('jenis_kelamin')
                 ->get();
             
-            // Age Distribution (Simulasi range umur dari tanggal_lahir)
-            // SQLite/MySQL syntax differs for age calc, using PHP processing for compatibility safety in this context
-            // or simple query if performant. Let's use simple grouping by year for rough estimate if needed, 
-            // but for now let's stick to Payment Types which is more relevant for admin.
-            
-            $tabData['distribusiPembayaran'] = Antrean::join('pasiens', 'antreans.pasien_id', '=', 'pasiens.id')
+            // Distribusi Pembayaran
+            $dataTab['distribusiPembayaran'] = Antrean::join('pasiens', 'antreans.pasien_id', '=', 'pasiens.id')
                 ->whereMonth('antreans.tanggal_antrean', Carbon::now()->month)
                 ->select('pasiens.asuransi', DB::raw('count(*) as total'))
                 ->groupBy('pasiens.asuransi')
                 ->get();
         }
 
-        if ($this->activeTab == 'klinis') {
-            $tabData['topDiagnosa'] = RekamMedis::select('diagnosa', DB::raw('count(*) as total'))
+        if ($this->tabAktif == 'klinis') {
+            $dataTab['topDiagnosa'] = RekamMedis::select('diagnosa', DB::raw('count(*) as total'))
                 ->whereMonth('created_at', Carbon::now()->month)
                 ->whereNotNull('diagnosa')
                 ->groupBy('diagnosa')
@@ -84,10 +79,9 @@ class Dashboard extends Component
                 ->get();
         }
 
-        if ($this->activeTab == 'rawat_inap') {
-            // Group by Kelas (assuming Kamar model has 'kelas' column, or we just list rooms)
-            // Let's assume standard Kamar model structure
-            $tabData['kamars'] = Kamar::orderBy('kelas')->get();
+        if ($this->tabAktif == 'rawat_inap') {
+            // Group by Kelas
+            $dataTab['kamars'] = Kamar::orderBy('kelas')->get();
         }
 
         return view('livewire.medical.dashboard', compact(
@@ -97,7 +91,7 @@ class Dashboard extends Component
             'totalBed',
             'bor',
             'avgWaktuLayanan',
-            'tabData'
+            'dataTab'
         ))->layout('layouts.app', ['header' => 'Pusat Analitik Layanan Medis']);
     }
 

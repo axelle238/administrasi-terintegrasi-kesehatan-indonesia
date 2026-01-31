@@ -72,12 +72,12 @@ class Dashboard extends Component
             ->groupBy('kategori')
             ->get();
             
-        $recentComplaints = Pengaduan::latest()
+        $aduanTerbaru = Pengaduan::latest()
             ->take(3)
             ->get();
 
         // --- 5. JADWAL KEGIATAN TERDEKAT ---
-        $upcomingEvents = KegiatanUkm::where('tanggal_kegiatan', '>=', Carbon::today())
+        $agendaMendatang = KegiatanUkm::where('tanggal_kegiatan', '>=', Carbon::today())
             ->orderBy('tanggal_kegiatan')
             ->take(4)
             ->get();
@@ -98,8 +98,8 @@ class Dashboard extends Component
             'kategoriPengaduan' => $kategoriPengaduan,
             
             // Lists
-            'upcomingEvents' => $upcomingEvents,
-            'recentComplaints' => $recentComplaints,
+            'agendaMendatang' => $agendaMendatang,
+            'aduanTerbaru' => $aduanTerbaru,
         ])->layout('layouts.app', ['header' => 'Pusat Analitik Kesehatan Masyarakat']);
     }
 }

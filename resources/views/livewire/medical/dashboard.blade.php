@@ -46,16 +46,16 @@
     <!-- Navigation Tabs -->
     <div class="border-b border-slate-200">
         <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-            <button wire:click="setTab('ringkasan')" class="{{ $activeTab === 'ringkasan' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-bold text-sm transition-colors">
+            <button wire:click="aturTab('ringkasan')" class="{{ $tabAktif === 'ringkasan' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-bold text-sm transition-colors">
                 Ringkasan Operasional
             </button>
-            <button wire:click="setTab('demografi')" class="{{ $activeTab === 'demografi' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-bold text-sm transition-colors">
+            <button wire:click="aturTab('demografi')" class="{{ $tabAktif === 'demografi' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-bold text-sm transition-colors">
                 Demografi Pasien
             </button>
-            <button wire:click="setTab('klinis')" class="{{ $activeTab === 'klinis' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-bold text-sm transition-colors">
+            <button wire:click="aturTab('klinis')" class="{{ $tabAktif === 'klinis' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-bold text-sm transition-colors">
                 Data Klinis
             </button>
-            <button wire:click="setTab('rawat_inap')" class="{{ $activeTab === 'rawat_inap' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-bold text-sm transition-colors">
+            <button wire:click="aturTab('rawat_inap')" class="{{ $tabAktif === 'rawat_inap' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-bold text-sm transition-colors">
                 Monitoring Rawat Inap
             </button>
         </nav>
@@ -65,7 +65,7 @@
     <div class="mt-6">
         
         <!-- 1. RINGKASAN -->
-        @if($activeTab === 'ringkasan')
+        @if($tabAktif === 'ringkasan')
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in-up">
             <!-- Tren Chart -->
             <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-100" x-data="chartTrenMedis()">
@@ -77,7 +77,7 @@
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                 <h4 class="font-bold text-slate-800 mb-4">Aktivitas Poliklinik</h4>
                 <div class="space-y-4 max-h-[300px] overflow-y-auto custom-scrollbar">
-                    @foreach($tabData['poliActivity'] ?? [] as $poli)
+                    @foreach($dataTab['poliActivity'] ?? [] as $poli)
                     <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
                         <span class="text-sm font-medium text-slate-700">{{ $poli->poli->nama_poli ?? 'N/A' }}</span>
                         <span class="text-xs font-black bg-white px-2 py-1 rounded shadow-sm text-slate-800">{{ $poli->total }}</span>
@@ -89,7 +89,7 @@
         @endif
 
         <!-- 2. DEMOGRAFI -->
-        @if($activeTab === 'demografi')
+        @if($tabAktif === 'demografi')
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fade-in-up">
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                 <h4 class="font-bold text-slate-800 mb-6">Distribusi Pembayaran / Asuransi</h4>
@@ -102,7 +102,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
-                            @foreach($tabData['distribusiPembayaran'] ?? [] as $item)
+                            @foreach($dataTab['distribusiPembayaran'] ?? [] as $item)
                             <tr>
                                 <td class="px-4 py-3 font-bold text-slate-700">{{ $item->asuransi ?? 'Umum/Mandiri' }}</td>
                                 <td class="px-4 py-3 text-right">{{ $item->total }}</td>
@@ -121,7 +121,7 @@
         @endif
 
         <!-- 3. KLINIS -->
-        @if($activeTab === 'klinis')
+        @if($tabAktif === 'klinis')
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 animate-fade-in-up">
             <h4 class="font-bold text-slate-800 mb-6">Top 10 Diagnosa Penyakit (Bulan Ini)</h4>
             <div class="overflow-x-auto">
@@ -135,8 +135,8 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
-                        @php $totalKasus = collect($tabData['topDiagnosa'] ?? [])->sum('total'); @endphp
-                        @foreach($tabData['topDiagnosa'] ?? [] as $index => $diag)
+                        @php $totalKasus = collect($dataTab['topDiagnosa'] ?? [])->sum('total'); @endphp
+                        @foreach($dataTab['topDiagnosa'] ?? [] as $index => $diag)
                         <tr class="hover:bg-slate-50 transition-colors">
                             <td class="px-6 py-4 font-bold text-slate-400">#{{ $index + 1 }}</td>
                             <td class="px-6 py-4 font-bold text-slate-700">{{ $diag->diagnosa }}</td>
@@ -153,9 +153,9 @@
         @endif
 
         <!-- 4. RAWAT INAP -->
-        @if($activeTab === 'rawat_inap')
+        @if($tabAktif === 'rawat_inap')
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up">
-            @foreach($tabData['kamars'] ?? [] as $kamar)
+            @foreach($dataTab['kamars'] ?? [] as $kamar)
             <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 relative overflow-hidden">
                 <div class="flex justify-between items-start mb-4">
                     <div>
@@ -196,7 +196,7 @@
         function chartTrenMedis() {
             return {
                 init() {
-                    const data = @json($tabData['trenKunjungan'] ?? ['labels' => [], 'data' => []]);
+                    const data = @json($dataTab['trenKunjungan'] ?? ['labels' => [], 'data' => []]);
                     const options = {
                         series: [{ name: 'Kunjungan', data: data.data }],
                         chart: { type: 'area', height: 300, toolbar: { show: false }, fontFamily: 'Plus Jakarta Sans' },
@@ -214,7 +214,7 @@
         function chartGender() {
             return {
                 init() {
-                    const genderData = @json($tabData['genderStats'] ?? []);
+                    const genderData = @json($dataTab['genderStats'] ?? []);
                     const labels = genderData.map(item => item.jenis_kelamin);
                     const series = genderData.map(item => item.total);
                     

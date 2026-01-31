@@ -15,11 +15,11 @@ use Illuminate\Support\Facades\DB;
 
 class Dashboard extends Component
 {
-    public $activeTab = 'ikhtisar'; // ikhtisar, presensi, cuti, kinerja
+    public $tabAktif = 'ikhtisar'; // ikhtisar, presensi, cuti, kinerja
 
-    public function setTab($tab)
+    public function aturTab($tab)
     {
-        $this->activeTab = $tab;
+        $this->tabAktif = $tab;
     }
 
     public function render()
@@ -27,7 +27,7 @@ class Dashboard extends Component
         $now = Carbon::now();
         $today = Carbon::today();
 
-        // === GLOBAL METRICS ===
+        // === METRIK GLOBAL ===
         $totalPegawai = Pegawai::count();
         $pegawaiAktif = Pegawai::where('status_kepegawaian', '!=', 'Resign')->count();
         
@@ -47,29 +47,29 @@ class Dashboard extends Component
             })
             ->count();
 
-        $tabData = [];
+        $dataTab = [];
 
         // === TAB 1: IKHTISAR ===
-        if ($this->activeTab == 'ikhtisar') {
+        if ($this->tabAktif == 'ikhtisar') {
             // Komposisi Role (User)
-            $tabData['komposisiRole'] = User::select('role', DB::raw('count(*) as total'))
+            $dataTab['komposisiRole'] = User::select('role', DB::raw('count(*) as total'))
                 ->groupBy('role')
                 ->get();
             
             // Komposisi Status Kepegawaian (PNS, PPPK, dll)
-            $tabData['distribusiStatus'] = Pegawai::select('status_kepegawaian', DB::raw('count(*) as total'))
+            $dataTab['distribusiStatus'] = Pegawai::select('status_kepegawaian', DB::raw('count(*) as total'))
                 ->whereNotNull('status_kepegawaian')
                 ->groupBy('status_kepegawaian')
                 ->get();
 
             // Distribusi per Poli (Medical Staff)
-            $tabData['distribusiPoli'] = Poli::withCount('pegawais')
+            $dataTab['distribusiPoli'] = Poli::withCount('pegawais')
                 ->having('pegawais_count', '>', 0)
                 ->orderByDesc('pegawais_count')
                 ->get();
 
             // Daftar Alert Dokumen
-            $tabData['dokumenAlert'] = Pegawai::where(function($q) use ($batasPeringatan) {
+            $dataTab['dokumenAlert'] = Pegawai::where(function($q) use ($batasPeringatan) {
                     $q->where('masa_berlaku_str', '<=', $batasPeringatan)
                       ->orWhere('masa_berlaku_sip', '<=', $batasPeringatan);
                 })
@@ -77,73 +77,70 @@ class Dashboard extends Component
                 ->take(5)
                 ->get();
 
-            $tabData['gajiBulanIni'] = Penggajian::where('bulan', $now->translatedFormat('F'))
+            $dataTab['gajiBulanIni'] = Penggajian::where('bulan', $now->translatedFormat('F'))
                 ->where('tahun', $now->year)
                 ->sum('total_gaji');
         }
 
         // === TAB 2: PRESENSI & JADWAL ===
-        if ($this->activeTab == 'presensi') {
+        if ($this->tabAktif == 'presensi') {
             $jadwalQuery = JadwalJaga::with('pegawai.user', 'shift')
                 ->whereDate('tanggal', $today);
             
             $dijadwalkan = $jadwalQuery->count();
             
             // Hitung kehadiran real-time (yang sudah shift dan hadir)
-            // Asumsi: status_kehadiran 'Hadir' diisi manual/system absen. 
-            // Jika belum ada sistem absen, kita gunakan simulasi seperti sebelumnya atau biarkan 0.
-            // Kita coba hitung yang status_kehadiran = 'Hadir'
             $hadirReal = JadwalJaga::whereDate('tanggal', $today)->where('status_kehadiran', 'Hadir')->count();
             
-            // Jika data dummy belum punya status_kehadiran, kita simulasi sedikit agar UI tidak kosong melompong
+            // Simulasi jika data belum lengkap
             if ($dijadwalkan > 0 && $hadirReal == 0) {
-                 $hadirReal = floor($dijadwalkan * 0.8); // Simulasi
+                 $hadirReal = floor($dijadwalkan * 0.8); 
             }
 
-            $tabData['statistikKehadiran'] = [
+            $dataTab['statistikKehadiran'] = [
                 'total' => $dijadwalkan,
                 'hadir' => $hadirReal,
                 'sedang_bertugas' => $sedangBertugas,
-                'absen' => max(0, $dijadwalkan - $hadirReal) // Belum hadir / Alpha
+                'absen' => max(0, $dijadwalkan - $hadirReal)
             ];
             
-            $tabData['jadwalHariIni'] = $jadwalQuery->orderBy('shift_id')->get();
+            $dataTab['jadwalHariIni'] = $jadwalQuery->orderBy('shift_id')->get();
         }
 
         // === TAB 3: CUTI ===
-        if ($this->activeTab == 'cuti') {
-            $tabData['cutiPending'] = PengajuanCuti::with('user')->where('status', 'Menunggu')->get();
+        if ($this->tabAktif == 'cuti') {
+            $dataTab['cutiPending'] = PengajuanCuti::with('user')->where('status', 'Menunggu')->get();
             
-            $tabData['sedangCuti'] = PengajuanCuti::with('user')
+            $dataTab['sedangCuti'] = PengajuanCuti::with('user')
                 ->where('status', 'Disetujui')
                 ->whereDate('tanggal_mulai', '<=', $today)
                 ->whereDate('tanggal_selesai', '>=', $today)
                 ->get();
             
             // Cuti Akan Datang (7 hari ke depan)
-            $tabData['cutiAkanDatang'] = PengajuanCuti::with('user')
+            $dataTab['cutiAkanDatang'] = PengajuanCuti::with('user')
                 ->where('status', 'Disetujui')
                 ->whereDate('tanggal_mulai', '>', $today)
                 ->whereDate('tanggal_mulai', '<=', $today->copy()->addDays(7))
                 ->orderBy('tanggal_mulai')
                 ->get();
             
-            $tabData['jenisCuti'] = PengajuanCuti::select('jenis_cuti', DB::raw('count(*) as total'))
+            $dataTab['jenisCuti'] = PengajuanCuti::select('jenis_cuti', DB::raw('count(*) as total'))
                 ->whereYear('created_at', $now->year)
                 ->groupBy('jenis_cuti')
                 ->get();
         }
 
         // === TAB 4: KINERJA ===
-        if ($this->activeTab == 'kinerja') {
-            $tabData['topPerformance'] = KinerjaPegawai::with('pegawai.user')
+        if ($this->tabAktif == 'kinerja') {
+            $dataTab['topPerformance'] = KinerjaPegawai::with('pegawai.user')
                 ->whereMonth('created_at', $now->month)
                 ->select('*', DB::raw('(orientasi_pelayanan + integritas + komitmen + disiplin + kerjasama) / 5 as rata_rata'))
                 ->orderByDesc('rata_rata')
                 ->limit(5)
                 ->get();
             
-            $tabData['trenKinerja'] = $this->getTrenKinerja();
+            $dataTab['trenKinerja'] = $this->getTrenKinerja();
         }
 
         return view('livewire.hrd.dashboard', compact(
@@ -151,7 +148,7 @@ class Dashboard extends Component
             'pegawaiAktif',
             'dokumenExpired',
             'sedangBertugas',
-            'tabData'
+            'dataTab'
         ))->layout('layouts.app', ['header' => 'Manajemen Sumber Daya Manusia']);
     }
 

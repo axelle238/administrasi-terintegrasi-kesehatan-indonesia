@@ -138,7 +138,7 @@
             <div class="glass p-8 rounded-[2.5rem]">
                 <h3 class="text-xl font-black text-slate-800 font-display mb-6">Agenda Terdekat</h3>
                 <div class="space-y-6">
-                    @forelse($upcomingEvents as $event)
+                    @forelse($agendaMendatang as $event)
                     <div class="flex items-start gap-4 group">
                         <div class="flex flex-col items-center justify-center w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 shrink-0 group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300">
                             <span class="text-[10px] font-bold uppercase">{{ $event->tanggal_kegiatan ? \Carbon\Carbon::parse($event->tanggal_kegiatan)->format('M') : '-' }}</span>
@@ -169,7 +169,7 @@
              <div class="glass p-8 rounded-[2.5rem]">
                 <h3 class="text-xl font-black text-slate-800 font-display mb-6">Aduan Terbaru</h3>
                 <div class="space-y-4">
-                    @forelse($recentComplaints as $aduan)
+                    @forelse($aduanTerbaru as $aduan)
                     <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
                         <div class="flex justify-between items-start mb-2">
                             <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-500 uppercase">{{ $aduan->kategori }}</span>
