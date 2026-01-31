@@ -30,52 +30,60 @@
     </div>
 
     <!-- KPI GRID -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <!-- Partisipan -->
-        <div class="group glass p-6 rounded-[2rem] hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-300">
-            <div class="flex justify-between items-start mb-4">
-                <div class="p-3 bg-emerald-50 rounded-2xl text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-300">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+        <div class="group glass p-5 rounded-[2rem] hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-300">
+            <div class="flex justify-between items-start mb-3">
+                <div class="p-2.5 bg-emerald-50 rounded-2xl text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-300">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                 </div>
             </div>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Partisipan</p>
-            <h3 class="text-3xl font-black text-slate-900 font-display tracking-tight">{{ number_format($totalPeserta) }}</h3>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Partisipan</p>
+            <h3 class="text-2xl font-black text-slate-900 font-display tracking-tight">{{ number_format($totalPeserta) }}</h3>
+        </div>
+
+        <!-- IKM (Indeks Kepuasan Masyarakat) -->
+        <div class="group glass p-5 rounded-[2rem] hover:shadow-xl hover:shadow-pink-500/5 transition-all duration-300">
+            <div class="flex justify-between items-start mb-3">
+                <div class="p-2.5 bg-pink-50 rounded-2xl text-pink-600 group-hover:bg-pink-600 group-hover:text-white transition-colors duration-300">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </div>
+            </div>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Skor IKM</p>
+            <h3 class="text-2xl font-black text-slate-900 font-display tracking-tight">{{ number_format($skorIKM, 1) }}</h3>
+            <p class="text-[10px] font-bold text-pink-500 mt-1">{{ $totalResponden }} Responden</p>
         </div>
 
         <!-- Kegiatan Upcoming -->
-        <div class="group glass p-6 rounded-[2rem] hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300">
-            <div class="flex justify-between items-start mb-4">
-                <div class="p-3 bg-blue-50 rounded-2xl text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+        <div class="group glass p-5 rounded-[2rem] hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300">
+            <div class="flex justify-between items-start mb-3">
+                <div class="p-2.5 bg-blue-50 rounded-2xl text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                 </div>
             </div>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Kegiatan Mendatang</p>
-            <h3 class="text-3xl font-black text-slate-900 font-display tracking-tight">{{ $kegiatanAkanDatang }}</h3>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Kegiatan</p>
+            <h3 class="text-2xl font-black text-slate-900 font-display tracking-tight">{{ $kegiatanAkanDatang }}</h3>
         </div>
 
         <!-- Pengaduan -->
-        <div class="group glass p-6 rounded-[2rem] hover:shadow-xl hover:shadow-orange-500/5 transition-all duration-300">
-            <div class="flex justify-between items-start mb-4">
-                <div class="p-3 bg-orange-50 rounded-2xl text-orange-600 group-hover:bg-orange-600 group-hover:text-white transition-colors duration-300">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>
+        <div class="group glass p-5 rounded-[2rem] hover:shadow-xl hover:shadow-orange-500/5 transition-all duration-300">
+            <div class="flex justify-between items-start mb-3">
+                <div class="p-2.5 bg-orange-50 rounded-2xl text-orange-600 group-hover:bg-orange-600 group-hover:text-white transition-colors duration-300">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>
                 </div>
             </div>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Aspirasi Masyarakat</p>
-            <h3 class="text-3xl font-black text-slate-900 font-display tracking-tight">{{ $pengaduanBaru }}</h3>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Aspirasi</p>
+            <h3 class="text-2xl font-black text-slate-900 font-display tracking-tight">{{ $pengaduanBaru }}</h3>
         </div>
 
         <!-- Quick Action -->
-        <div class="group bg-indigo-600 p-6 rounded-[2rem] hover:shadow-xl hover:shadow-indigo-500/20 transition-all duration-300 relative overflow-hidden flex flex-col justify-between">
+        <div class="group bg-indigo-600 p-5 rounded-[2rem] hover:shadow-xl hover:shadow-indigo-500/20 transition-all duration-300 relative overflow-hidden flex flex-col justify-between">
             <div class="absolute right-0 bottom-0 opacity-10">
-                <svg class="w-24 h-24 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                <svg class="w-20 h-20 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
             </div>
-            <div>
-                <h3 class="text-lg font-black text-white font-display mb-1 relative z-10">Laporan Baru</h3>
-                <p class="text-indigo-200 text-xs mb-4 relative z-10">Input kegiatan / pengaduan.</p>
-            </div>
-            <a href="{{ route('ukm.create') }}" class="relative z-10 inline-flex items-center justify-center gap-2 px-4 py-2 bg-white text-indigo-600 rounded-xl font-bold text-xs hover:bg-indigo-50 transition-colors w-full">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                Input Data
+            <a href="{{ route('ukm.create') }}" class="relative z-10 flex flex-col h-full justify-center items-center text-center">
+                <span class="text-white font-bold text-sm mb-1">Input Data</span>
+                <span class="text-indigo-200 text-[10px]">Kegiatan / Aduan</span>
             </a>
         </div>
     </div>
@@ -190,6 +198,30 @@
                  <div class="mt-6 pt-4 border-t border-dashed border-slate-200">
                     <a href="{{ route('admin.masyarakat.pengaduan.index') }}" class="block text-center text-xs font-bold text-slate-500 hover:text-slate-800">
                         Kelola Pengaduan
+                    </a>
+                </div>
+            </div>
+
+            <!-- Surveilans Penyakit -->
+            <div class="glass p-8 rounded-[2.5rem]">
+                <h3 class="text-xl font-black text-slate-800 font-display mb-6">Surveilans Penyakit</h3>
+                <p class="text-xs text-slate-500 mb-4">Top 5 Penyakit Terbanyak (Bulan Ini)</p>
+                <div class="space-y-3">
+                    @forelse($penyakitTerbanyak as $index => $penyakit)
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50">
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 h-6 flex items-center justify-center rounded-full bg-red-100 text-red-600 text-xs font-bold">{{ $index + 1 }}</span>
+                            <span class="text-sm font-bold text-slate-700 truncate max-w-[150px]">{{ $penyakit->diagnosa }}</span>
+                        </div>
+                        <span class="text-sm font-black text-slate-800">{{ $penyakit->total }} Kss</span>
+                    </div>
+                    @empty
+                    <div class="text-center py-4 text-slate-400 text-sm">Belum ada data surveilans.</div>
+                    @endforelse
+                </div>
+                 <div class="mt-6 pt-4 border-t border-dashed border-slate-200">
+                    <a href="{{ route('medical.penyakit.index') }}" class="block text-center text-xs font-bold text-emerald-600 hover:text-emerald-700">
+                        Analisis Epidemiologi Lengkap &rarr;
                     </a>
                 </div>
             </div>

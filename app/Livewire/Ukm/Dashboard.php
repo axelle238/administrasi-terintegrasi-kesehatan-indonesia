@@ -81,6 +81,20 @@ class Dashboard extends Component
             ->orderBy('tanggal_kegiatan')
             ->take(4)
             ->get();
+            
+        // --- 6. IKM & SURVEILANS (NEW) ---
+        $rataRataIKM = \App\Models\Survey::whereMonth('created_at', $now->month)->avg('nilai');
+        // Asumsi Nilai 1-4 dikonversi ke Skala 100 (Permenpan RB)
+        $skorIKM = $rataRataIKM ? ($rataRataIKM / 4) * 100 : 0;
+        $totalResponden = \App\Models\Survey::whereMonth('created_at', $now->month)->count();
+
+        $penyakitTerbanyak = \App\Models\RekamMedis::select('diagnosa', DB::raw('count(*) as total'))
+            ->whereMonth('created_at', $now->month)
+            ->whereNotNull('diagnosa')
+            ->groupBy('diagnosa')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get();
 
         return view('livewire.ukm.dashboard', [
             // KPI
@@ -90,6 +104,11 @@ class Dashboard extends Component
             'kegiatanAkanDatang' => $kegiatanAkanDatang,
             'pengaduanBaru' => $pengaduanBaru,
             
+            // IKM & Surveilans
+            'skorIKM' => $skorIKM,
+            'totalResponden' => $totalResponden,
+            'penyakitTerbanyak' => $penyakitTerbanyak,
+
             // Charts & Tables
             'performansiProgram' => $performansiProgram,
             'chartLabels' => $bulanLabels,
