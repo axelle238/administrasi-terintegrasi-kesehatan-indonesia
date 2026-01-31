@@ -48,7 +48,8 @@ class DashboardPegawai extends Component
                 }),
             'poin_kinerja' => KinerjaPegawai::where('pegawai_id', $pegawai->id ?? 0)
                 ->whereMonth('created_at', Carbon::now()->month)
-                ->avg('nilai_total') ?? 0,
+                ->get()
+                ->avg('nilai_rata_rata') ?? 0,
         ];
 
         // 4. Aktivitas Terakhir (Timeline)
