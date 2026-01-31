@@ -14,6 +14,7 @@ use App\Models\JadwalJaga;
 use Carbon\Carbon;
 
 Route::get('/', function () {
+    // ... (Logika Landing Page tetap sama) ...
     // 1. Ambil Semua Pengaturan dari DB
     $dbSettings = Setting::all()->pluck('value', 'key')->toArray();
 
@@ -77,20 +78,46 @@ Route::get('/survey', \App\Livewire\Survey\Create::class)->name('survey.create')
 Route::get('/pengaduan', \App\Livewire\Masyarakat\PengaduanPublic::class)->name('pengaduan.public');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard/pegawai', \App\Livewire\Kepegawaian\DashboardPegawai::class)->name('kepegawaian.dashboard');
+    // === PORTAL PEGAWAI (USER) ===
+    // Route khusus user (Self-Service)
+    Route::prefix('kepegawaian')->name('kepegawaian.')->group(function () {
+        Route::get('/dashboard', \App\Livewire\Kepegawaian\DashboardPegawai::class)->name('dashboard');
+        Route::get('/cuti', \App\Livewire\Kepegawaian\Cuti\Index::class)->name('cuti.index'); // Self Request
+        Route::get('/jadwal/tukar', \App\Livewire\Kepegawaian\Jadwal\Swap::class)->name('jadwal.swap');
+        Route::get('/aktivitas', \App\Livewire\Kepegawaian\Aktivitas\Index::class)->name('aktivitas.index');
+        Route::get('/pelatihan', \App\Livewire\Kepegawaian\Pelatihan\Index::class)->name('pelatihan.index');
+        Route::get('/presensi', \App\Livewire\Kepegawaian\Presensi\Index::class)->name('presensi.index'); // Absen
+        Route::get('/presensi/history', \App\Livewire\Kepegawaian\Presensi\History::class)->name('presensi.history');
+        Route::get('/lembur', \App\Livewire\Kepegawaian\Lembur\Index::class)->name('lembur.index'); // Self Request
+        Route::get('/gaji', \App\Livewire\Kepegawaian\Gaji\Index::class)->name('gaji.index'); // Self Slip
+        Route::get('/gaji/{id}/print', function($id) {
+            // Logic Print Slip User
+             $gaji = \App\Models\Penggajian::where('user_id', auth()->id())->findOrFail($id);
+             return view('print.slip-gaji', compact('gaji'));
+        })->name('gaji.print');
+    });
+
     Route::get('/notifications', \App\Livewire\System\Notification\Index::class)->name('system.notification.index');
     Route::get('/profile', \App\Livewire\Profile\Edit::class)->name('profile.edit');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/kepegawaian/cuti', \App\Livewire\Kepegawaian\Cuti\Index::class)->name('kepegawaian.cuti.index');
-    Route::get('/kepegawaian/jadwal/tukar', \App\Livewire\Kepegawaian\Jadwal\Swap::class)->name('kepegawaian.jadwal.swap');
-    Route::get('/kepegawaian/aktivitas', \App\Livewire\Kepegawaian\Aktivitas\Index::class)->name('kepegawaian.aktivitas.index');
-    Route::get('/kepegawaian/pelatihan', \App\Livewire\Kepegawaian\Pelatihan\Index::class)->name('kepegawaian.pelatihan.index');
-    Route::get('/kepegawaian/presensi', \App\Livewire\Kepegawaian\Presensi\Index::class)->name('kepegawaian.presensi.index');
-    Route::get('/kepegawaian/presensi/history', \App\Livewire\Kepegawaian\Presensi\History::class)->name('kepegawaian.presensi.history');
-    Route::get('/kepegawaian/lembur', \App\Livewire\Kepegawaian\Lembur\Index::class)->name('kepegawaian.lembur.index');
 
-    // ADMIN routes...
+    // === MANAJEMEN KEPEGAWAIAN (ADMIN) ===
+    Route::middleware('can:admin')->prefix('hrd')->name('hrd.')->group(function () {
+        Route::get('/dashboard', \App\Livewire\Hrd\Dashboard::class)->name('dashboard');
+        
+        // Komponen Baru (Admin Specific)
+        Route::get('/cuti', \App\Livewire\Hrd\Cuti\Index::class)->name('cuti.index'); // Admin Approval
+        Route::get('/lembur', \App\Livewire\Hrd\Lembur\Index::class)->name('lembur.index'); // Admin Approval
+        Route::get('/presensi', \App\Livewire\Hrd\Presensi\Index::class)->name('presensi.index'); // Monitoring
+        
+        // Legacy/Shared Components (Jika masih dipakai Admin tapi route beda)
+        // Sebaiknya dipindah jika memungkinkan, tapi untuk sekarang kita routing ulang
+        // Route::get('/pegawai', ...) -> Tetap di root/admin group bawah
+    });
+
+    // ADMIN routes (General) ...
     Route::middleware('can:admin')->group(function () {
+        // ... (Route admin lainnya tetap sama)
         Route::get('/security/dashboard', \App\Livewire\Security\Dashboard::class)->name('security.dashboard');
         Route::get('/activity-log', \App\Livewire\Admin\ActivityLog::class)->name('activity-log');
         Route::get('/activity-log/{id}', \App\Livewire\Admin\ActivityLogShow::class)->name('activity-log.show');
@@ -104,14 +131,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/system/integrations', \App\Livewire\System\Integration\Index::class)->name('system.integration.index');
         Route::get('/system/surat-templates', \App\Livewire\Surat\Template\Index::class)->name('system.surat-template.index');
         Route::get('/system/tindakan', \App\Livewire\System\Tindakan\Index::class)->name('system.tindakan.index');
-        Route::get('/hrd/dashboard', \App\Livewire\Hrd\Dashboard::class)->name('hrd.dashboard');
-        Route::get('/kepegawaian/gaji', \App\Livewire\Kepegawaian\Gaji\Index::class)->name('kepegawaian.gaji.index');
-        Route::get('/kepegawaian/gaji/create', \App\Livewire\Kepegawaian\Gaji\Create::class)->name('kepegawaian.gaji.create');
-        Route::get('/kepegawaian/gaji/{id}/print', function($id) {
-            $gaji = \App\Models\Penggajian::with('user.pegawai')->findOrFail($id);
-            if(auth()->user()->role !== 'admin' && $gaji->user_id !== auth()->id()) abort(403);
-            return view('print.slip-gaji', compact('gaji'));
-        })->name('kepegawaian.gaji.print');
+        // Route::get('/hrd/dashboard', ...) -> Sudah dipindah ke group HRD
+        
+        // Manajemen Gaji Admin (Proses Gaji)
+        Route::get('/kepegawaian/gaji-admin', \App\Livewire\Kepegawaian\Gaji\Index::class)->name('kepegawaian.gaji.admin.index'); // Perlu dicek, ini conflict dengan user?
+        // Admin Gaji biasanya "Create Gaji" atau "List Semua Gaji"
+        // Kita gunakan route lama tapi rename name-nya biar jelas
+        Route::get('/admin/gaji', \App\Livewire\Kepegawaian\Gaji\Index::class)->name('admin.gaji.index'); 
+        Route::get('/admin/gaji/create', \App\Livewire\Kepegawaian\Gaji\Create::class)->name('admin.gaji.create');
+        
         Route::get('/pegawai', \App\Livewire\Pegawai\Index::class)->name('pegawai.index');
         Route::get('/pegawai/create', \App\Livewire\Pegawai\Create::class)->name('pegawai.create');
         Route::get('/pegawai/{pegawai}/edit', \App\Livewire\Pegawai\Edit::class)->name('pegawai.edit');
