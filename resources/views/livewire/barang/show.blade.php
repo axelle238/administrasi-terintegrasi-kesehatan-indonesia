@@ -80,6 +80,9 @@
                         Keuangan & Penyusutan
                     </button>
                     @endif
+                    <button wire:click="aturTab('galeri')" class="w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all {{ $tabAktif == 'galeri' ? 'bg-indigo-50 text-indigo-700' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700' }}">
+                        Galeri & Dokumentasi
+                    </button>
                     <button wire:click="aturTab('riwayat')" class="w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all {{ $tabAktif == 'riwayat' ? 'bg-purple-50 text-purple-700' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700' }}">
                         Riwayat Aktivitas
                     </button>
@@ -241,6 +244,35 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+            @endif
+
+            <!-- TAB: GALERI -->
+            @if($tabAktif == 'galeri')
+            <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 animate-fade-in-up">
+                <h3 class="text-xl font-black text-slate-800 mb-6">Galeri Foto & Dokumentasi</h3>
+                
+                @if($barang->images->count() > 0)
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+                        @foreach($barang->images as $img)
+                        <div class="group relative aspect-square rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm">
+                            <img src="{{ Storage::url($img->image_path) }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                            
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                                <span class="text-white text-xs font-bold">{{ $img->kategori ?? 'Foto Fisik' }}</span>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-12 border-2 border-dashed border-slate-200 rounded-3xl">
+                        <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+                            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        </div>
+                        <p class="text-slate-500 font-bold text-sm">Belum ada foto dokumentasi.</p>
+                        <p class="text-slate-400 text-xs mt-1">Foto dapat ditambahkan saat mengedit data aset.</p>
+                    </div>
+                @endif
             </div>
             @endif
 

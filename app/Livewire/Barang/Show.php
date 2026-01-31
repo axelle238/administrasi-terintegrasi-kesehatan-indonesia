@@ -17,7 +17,7 @@ class Show extends Component
     public Barang $barang;
     
     #[Url(keep: true)]
-    public $tabAktif = 'ringkasan'; // ringkasan, spesifikasi, keuangan, riwayat
+    public $tabAktif = 'ringkasan'; // ringkasan, spesifikasi, keuangan, riwayat, galeri
 
     // Form Transaksi Stok Cepat
     public $jenis_transaksi = 'Masuk';
@@ -27,7 +27,7 @@ class Show extends Component
 
     public function mount(Barang $barang)
     {
-        $this->barang = $barang->load(['kategori', 'ruangan', 'supplier']);
+        $this->barang = $barang->load(['kategori', 'ruangan', 'supplier', 'images']);
         $this->tanggal_transaksi = now()->format('Y-m-d');
         
         // Hitung Nilai Buku Real-time

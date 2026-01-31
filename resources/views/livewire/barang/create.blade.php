@@ -22,6 +22,49 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Upload Foto (New Feature) -->
+                    <div class="col-span-2">
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Galeri Foto Aset (Upload Multiple)</label>
+                        <div class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:bg-slate-50 transition relative"
+                             x-data="{ isUploading: false, progress: 0 }"
+                             x-on:livewire-upload-start="isUploading = true"
+                             x-on:livewire-upload-finish="isUploading = false"
+                             x-on:livewire-upload-error="isUploading = false"
+                             x-on:livewire-upload-progress="progress = $event.detail.progress">
+                            
+                            <input type="file" wire:model="photos" multiple class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                            
+                            <div class="space-y-2" x-show="!isUploading">
+                                <svg class="w-10 h-10 text-slate-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                <p class="text-sm font-bold text-slate-600">Klik atau Drag foto ke sini</p>
+                                <p class="text-xs text-slate-400">Bisa upload banyak foto sekaligus (Max 2MB/foto)</p>
+                            </div>
+
+                            <!-- Progress Bar -->
+                            <div x-show="isUploading">
+                                <div class="w-full bg-slate-200 rounded-full h-2.5 mb-2">
+                                    <div class="bg-blue-600 h-2.5 rounded-full" :style="'width: ' + progress + '%'"></div>
+                                </div>
+                                <p class="text-xs text-blue-600 font-bold">Mengupload...</p>
+                            </div>
+                        </div>
+
+                        <!-- Preview Grid -->
+                        @if($photos)
+                        <div class="grid grid-cols-4 md:grid-cols-6 gap-4 mt-4">
+                            @foreach($photos as $photo)
+                            <div class="relative group aspect-square rounded-lg overflow-hidden border border-slate-200">
+                                <img src="{{ $photo->temporaryUrl() }}" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                                    <span class="text-white text-xs font-bold">New</span>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                        @endif
+                        @error('photos.*') <span class="text-xs text-red-500 font-bold block mt-1">{{ $message }}</span> @enderror
+                    </div>
+
                     <!-- Kategori (Trigger) -->
                     <div class="col-span-2">
                         <label class="block text-sm font-bold text-slate-700 mb-2">Kategori Aset <span class="text-red-500">*</span></label>

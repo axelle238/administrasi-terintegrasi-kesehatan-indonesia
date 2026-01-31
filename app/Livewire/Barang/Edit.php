@@ -3,21 +3,28 @@
 namespace App\Livewire\Barang;
 
 use App\Models\Barang;
+use App\Models\BarangImage;
 use App\Models\KategoriBarang;
 use App\Models\Ruangan;
 use App\Models\Supplier;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class Edit extends Component
 {
+    use WithFileUploads;
+
     public Barang $barang;
     
+    // Core Data
     public $kategori_barang_id;
     public $kode_barang;
     public $nama_barang;
     public $merk;
-    public $stok; // Stok is usually not edited directly here, but let's allow correction
+    public $stok;
     public $min_stok;
     public $satuan;
     public $kondisi;
@@ -27,7 +34,7 @@ class Edit extends Component
     public $ruangan_id;
     public $supplier_id;
     
-    // Asset Details
+    // Asset Financials
     public $is_asset = false;
     public $spesifikasi;
     public $nomor_seri;
@@ -40,7 +47,7 @@ class Edit extends Component
     public $nilai_residu = 0;
     public $keterangan;
 
-    // Detail Medis (Specific)
+    // Medical Specifics
     public $is_medis = false;
     public $nomor_izin_edar;
     public $distributor_resmi;
@@ -49,37 +56,24 @@ class Edit extends Component
     public $suhu_penyimpanan;
     public $catatan_teknis;
 
+    // Gallery
+    public $existingPhotos = [];
+    public $newPhotos = [];
+
     public function mount(Barang $barang)
     {
-        $this->barang = $barang->load('detailMedis', 'kategori');
+        $this->barang = $barang->load('detailMedis', 'kategori', 'images');
         
-        $this->kategori_barang_id = $barang->kategori_barang_id;
-        $this->kode_barang = $barang->kode_barang;
-        $this->nama_barang = $barang->nama_barang;
-        $this->merk = $barang->merk;
-        $this->stok = $barang->stok;
-        $this->min_stok = $barang->min_stok;
-        $this->satuan = $barang->satuan;
-        $this->kondisi = $barang->kondisi;
-        $this->status_ketersediaan = $barang->status_ketersediaan;
-        $this->tanggal_pengadaan = $barang->tanggal_pengadaan;
-        $this->lokasi_penyimpanan = $barang->lokasi_penyimpanan;
-        $this->ruangan_id = $barang->ruangan_id;
-        $this->supplier_id = $barang->supplier_id;
-        
-        $this->is_asset = $barang->is_asset;
-        $this->spesifikasi = $barang->spesifikasi;
-        $this->nomor_seri = $barang->nomor_seri;
-        $this->nomor_pabrik = $barang->nomor_pabrik;
-        $this->nomor_registrasi = $barang->nomor_registrasi;
-        $this->sumber_dana = $barang->sumber_dana;
-        $this->harga_perolehan = $barang->harga_perolehan;
-        $this->nilai_buku = $barang->nilai_buku;
-        $this->masa_manfaat = $barang->masa_manfaat;
-        $this->nilai_residu = $barang->nilai_residu;
-        $this->keterangan = $barang->keterangan;
+        // Hydrate Core
+        $this->fill($barang->only([
+            'kategori_barang_id', 'kode_barang', 'nama_barang', 'merk', 'stok', 'min_stok',
+            'satuan', 'kondisi', 'status_ketersediaan', 'tanggal_pengadaan', 'lokasi_penyimpanan',
+            'ruangan_id', 'supplier_id', 'is_asset', 'spesifikasi', 'nomor_seri', 'nomor_pabrik',
+            'nomor_registrasi', 'sumber_dana', 'harga_perolehan', 'nilai_buku', 'masa_manfaat',
+            'nilai_residu', 'keterangan'
+        ]));
 
-        // Load Medical Details
+        // Hydrate Medical
         $this->detectMedisState();
         if ($barang->detailMedis) {
             $this->nomor_izin_edar = $barang->detailMedis->nomor_izin_edar;
@@ -89,6 +83,9 @@ class Edit extends Component
             $this->suhu_penyimpanan = $barang->detailMedis->suhu_penyimpanan;
             $this->catatan_teknis = $barang->detailMedis->catatan_teknis;
         }
+
+        // Hydrate Images
+        $this->existingPhotos = $barang->images;
     }
 
     public function updatedKategoriBarangId($value)
@@ -110,6 +107,47 @@ class Edit extends Component
         }
     }
 
+    public function updatedHargaPerolehan()
+    {
+        // Auto update nilai buku if harga changed (assuming no depreciation yet, or reset)
+        // In reality, updating historical cost of depreciated asset is complex.
+        // We keep it simple: if asset, update book value to match cost initially.
+        if ($this->is_asset) {
+            // Check if depreciation already runs (logs exist)
+            // If exists, maybe don't auto update? Or Recalculate?
+            // Let's leave manual update or recalculate via button in show.
+        }
+    }
+
+    public function deleteImage($imageId)
+    {
+        $image = BarangImage::find($imageId);
+        if ($image && $image->barang_id == $this->barang->id) {
+            Storage::disk('public')->delete($image->image_path);
+            $image->delete();
+            $this->existingPhotos = $this->barang->refresh()->images;
+            $this->dispatch('notify', 'success', 'Foto berhasil dihapus.');
+        }
+    }
+
+    public function setPrimaryImage($imageId)
+    {
+        $image = BarangImage::find($imageId);
+        if ($image && $image->barang_id == $this->barang->id) {
+            // Reset others
+            BarangImage::where('barang_id', $this->barang->id)->update(['is_primary' => false]);
+            
+            // Set new primary
+            $image->update(['is_primary' => true]);
+            
+            // Update main barang table thumbnail for performance
+            $this->barang->update(['gambar' => $image->image_path]);
+            
+            $this->existingPhotos = $this->barang->refresh()->images;
+            $this->dispatch('notify', 'success', 'Foto utama diperbarui.');
+        }
+    }
+
     public function update()
     {
         $this->validate([
@@ -127,59 +165,89 @@ class Edit extends Component
             'supplier_id' => 'nullable|exists:suppliers,id',
             'is_asset' => 'boolean',
             'spesifikasi' => 'nullable|string',
+            'nomor_seri' => 'nullable|string',
+            'harga_perolehan' => 'nullable|numeric|min:0',
+            'sumber_dana' => 'nullable|string',
             'nomor_izin_edar' => 'nullable|string',
             'frekuensi_kalibrasi_bulan' => 'nullable|integer|min:1',
+            'newPhotos.*' => 'image|max:2048', // 2MB Max
         ]);
 
-        $this->barang->update([
-            'kategori_barang_id' => $this->kategori_barang_id,
-            'kode_barang' => $this->kode_barang,
-            'nama_barang' => $this->nama_barang,
-            'merk' => $this->merk,
-            'stok' => $this->stok,
-            'min_stok' => $this->min_stok ?? 0,
-            'satuan' => $this->satuan,
-            'kondisi' => $this->kondisi,
-            'status_ketersediaan' => $this->status_ketersediaan,
-            'tanggal_pengadaan' => $this->tanggal_pengadaan,
-            'ruangan_id' => $this->ruangan_id,
-            'supplier_id' => $this->supplier_id,
-            'is_asset' => $this->is_asset,
-            'spesifikasi' => $this->spesifikasi,
-            'nomor_seri' => $this->nomor_seri,
-            'nomor_pabrik' => $this->nomor_pabrik,
-            'nomor_registrasi' => $this->nomor_registrasi,
-            'sumber_dana' => $this->sumber_dana,
-            'harga_perolehan' => $this->harga_perolehan ?: 0,
-            'nilai_buku' => $this->nilai_buku ?: 0,
-            'masa_manfaat' => $this->masa_manfaat ?: 0,
-            'nilai_residu' => $this->nilai_residu ?: 0,
-            'keterangan' => $this->keterangan,
-        ]);
+        DB::beginTransaction();
+        try {
+            $this->barang->update([
+                'kategori_barang_id' => $this->kategori_barang_id,
+                'kode_barang' => $this->kode_barang,
+                'nama_barang' => $this->nama_barang,
+                'merk' => $this->merk,
+                'stok' => $this->stok,
+                'min_stok' => $this->min_stok ?? 0,
+                'satuan' => $this->satuan,
+                'kondisi' => $this->kondisi,
+                'status_ketersediaan' => $this->status_ketersediaan,
+                'tanggal_pengadaan' => $this->tanggal_pengadaan,
+                'ruangan_id' => $this->ruangan_id,
+                'supplier_id' => $this->supplier_id,
+                'is_asset' => $this->is_asset,
+                'spesifikasi' => $this->spesifikasi,
+                'nomor_seri' => $this->nomor_seri,
+                'nomor_pabrik' => $this->nomor_pabrik,
+                'nomor_registrasi' => $this->nomor_registrasi,
+                'sumber_dana' => $this->sumber_dana,
+                'harga_perolehan' => $this->harga_perolehan ?: 0,
+                'nilai_buku' => $this->nilai_buku ?: 0,
+                'masa_manfaat' => $this->masa_manfaat ?: 0,
+                'nilai_residu' => $this->nilai_residu ?: 0,
+                'keterangan' => $this->keterangan,
+            ]);
 
-        // Update or Create Detail Medis
-        if ($this->is_medis) {
-            $this->barang->detailMedis()->updateOrCreate(
-                ['barang_id' => $this->barang->id],
-                [
-                    'nomor_izin_edar' => $this->nomor_izin_edar,
-                    'distributor_resmi' => $this->distributor_resmi,
-                    'frekuensi_kalibrasi_bulan' => $this->frekuensi_kalibrasi_bulan,
-                    'kalibrasi_terakhir' => $this->kalibrasi_terakhir,
-                    'kalibrasi_selanjutnya' => $this->frekuensi_kalibrasi_bulan && $this->kalibrasi_terakhir 
-                        ? \Carbon\Carbon::parse($this->kalibrasi_terakhir)->addMonths($this->frekuensi_kalibrasi_bulan)
-                        : null,
-                    'suhu_penyimpanan' => $this->suhu_penyimpanan,
-                    'catatan_teknis' => $this->catatan_teknis,
-                ]
-            );
-        } else {
-            // Optional: Delete detail medis if category changed to non-medis
-            $this->barang->detailMedis()->delete();
+            // Update Medical Details
+            if ($this->is_medis) {
+                $this->barang->detailMedis()->updateOrCreate(
+                    ['barang_id' => $this->barang->id],
+                    [
+                        'nomor_izin_edar' => $this->nomor_izin_edar,
+                        'distributor_resmi' => $this->distributor_resmi,
+                        'frekuensi_kalibrasi_bulan' => $this->frekuensi_kalibrasi_bulan,
+                        'kalibrasi_terakhir' => $this->kalibrasi_terakhir,
+                        'kalibrasi_selanjutnya' => ($this->frekuensi_kalibrasi_bulan && $this->kalibrasi_terakhir)
+                            ? \Carbon\Carbon::parse($this->kalibrasi_terakhir)->addMonths($this->frekuensi_kalibrasi_bulan)
+                            : null,
+                        'suhu_penyimpanan' => $this->suhu_penyimpanan,
+                        'catatan_teknis' => $this->catatan_teknis,
+                    ]
+                );
+            } else {
+                $this->barang->detailMedis()->delete();
+            }
+
+            // Handle New Photos
+            foreach ($this->newPhotos as $photo) {
+                $path = $photo->store('barang-images', 'public');
+                
+                // If no existing photos, make this primary
+                $isPrimary = $this->barang->images()->count() == 0;
+
+                BarangImage::create([
+                    'barang_id' => $this->barang->id,
+                    'image_path' => $path,
+                    'is_primary' => $isPrimary,
+                    'kategori' => 'Galeri Update'
+                ]);
+
+                if ($isPrimary) {
+                    $this->barang->update(['gambar' => $path]);
+                }
+            }
+
+            DB::commit();
+            $this->dispatch('notify', 'success', 'Data aset berhasil diperbarui.');
+            return $this->redirect(route('barang.show', $this->barang->id), navigate: true);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->dispatch('notify', 'error', 'Gagal update: ' . $e->getMessage());
         }
-
-        $this->dispatch('notify', 'success', 'Data barang berhasil diperbarui.');
-        return $this->redirect(route('barang.index'), navigate: true);
     }
 
     public function render()
@@ -188,6 +256,6 @@ class Edit extends Component
             'kategoris' => KategoriBarang::all(),
             'ruangans' => Ruangan::orderBy('nama_ruangan')->get(),
             'suppliers' => Supplier::orderBy('nama_supplier')->get(),
-        ])->layout('layouts.app', ['header' => 'Edit Data Barang']);
+        ])->layout('layouts.app', ['header' => 'Edit Aset: ' . $this->barang->nama_barang]);
     }
 }

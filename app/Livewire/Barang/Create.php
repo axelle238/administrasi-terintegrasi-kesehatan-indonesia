@@ -10,9 +10,12 @@ use App\Models\Ruangan;
 use App\Models\Supplier;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Create extends Component
 {
+    use WithFileUploads;
+
     // General Info
     public $kategori_barang_id;
     public $kode_barang;
@@ -38,6 +41,9 @@ class Create extends Component
     public $masa_manfaat = 0;
     public $nilai_residu = 0;
     public $keterangan;
+
+    // Upload Foto
+    public $photos = [];
 
     // Detail Medis (Specific)
     public $is_medis = false; // State trigger
@@ -68,6 +74,7 @@ class Create extends Component
         // Validation for Medis (Conditional)
         'nomor_izin_edar' => 'nullable|string',
         'frekuensi_kalibrasi_bulan' => 'nullable|integer|min:1',
+        'photos.*' => 'image|max:2048', // 2MB Max
     ];
 
     public function mount()
@@ -153,6 +160,23 @@ class Create extends Component
                 'tanggal' => now(),
                 'keterangan' => 'Registrasi Aset Baru'
             ]);
+
+            // Save Photos
+            foreach ($this->photos as $index => $photo) {
+                $path = $photo->store('barang-images', 'public');
+                
+                // Set first image as primary thumbnail in barangs table too for ease of access
+                if ($index === 0) {
+                    $barang->update(['gambar' => $path]);
+                }
+
+                \App\Models\BarangImage::create([
+                    'barang_id' => $barang->id,
+                    'image_path' => $path,
+                    'is_primary' => $index === 0,
+                    'kategori' => 'Fisik' // Default category
+                ]);
+            }
             
             DB::commit();
             $this->dispatch('notify', 'success', 'Data barang berhasil ditambahkan.');

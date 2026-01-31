@@ -2,7 +2,7 @@
 
 namespace App\Traits;
 
-use App\Models\DepresiasiAset;
+use App\Models\DepresiasiAset; // Pastikan model ini mengarah ke tabel 'depresiasi_logs'
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,16 +13,21 @@ trait HasDepreciation
      */
     public function calculateMonthlyDepreciation()
     {
+        // Validasi data dasar
         if (!$this->is_asset || $this->harga_perolehan <= 0 || $this->masa_manfaat <= 0) {
             return 0;
         }
 
+        // Rumus: (Harga Perolehan - Nilai Residu) / (Tahun * 12 Bulan)
         $depreciableAmount = $this->harga_perolehan - $this->nilai_residu;
-        return $depreciableAmount / ($this->masa_manfaat * 12); // Masa manfaat dalam tahun * 12 bulan
+        $totalMonths = $this->masa_manfaat * 12;
+        
+        return $depreciableAmount / $totalMonths;
     }
 
     /**
-     * Generate tabel penyusutan BULANAN untuk aset ini.
+     * Generate tabel simulasi penyusutan BULANAN untuk aset ini.
+     * Ini akan mengisi tabel 'depresiasi_logs' dengan data forecast.
      */
     public function generateDepreciationSchedule()
     {
@@ -31,29 +36,29 @@ trait HasDepreciation
         $monthlyDepreciation = $this->calculateMonthlyDepreciation();
         $currentValue = $this->harga_perolehan;
         
-        // Start date = tanggal pengadaan
+        // Start date = tanggal pengadaan (dianggap awal bulan berikutnya jika beli di tengah bulan, 
+        // atau bulan yang sama. Standard akuntansi: penyusutan dimulai bulan penggunaan).
+        // Kita gunakan start of month dari tanggal pengadaan.
         $startDate = Carbon::parse($this->tanggal_pengadaan)->startOfMonth();
         $totalMonths = $this->masa_manfaat * 12;
 
-        // Hapus log lama untuk regenerasi
+        // Bersihkan log lama untuk regenerasi bersih
+        // Asumsi relasi 'depresiasi' ada di model Barang
         $this->depresiasi()->delete();
 
-        for ($i = 1; $i <= $totalMonths; $i++) {
-            // Pindah ke bulan berikutnya
-            $currentMonth = $startDate->copy()->addMonths($i - 1);
-            
-            // Skip jika belum sampai bulan ini (untuk log future) 
-            // Atau generate semua (Forecast)? "Very Complete" biasanya forecast.
-            // Kita generate semua untuk forecast.
+        $logs = [];
+        $now = now();
 
+        for ($i = 1; $i <= $totalMonths; $i++) {
+            $currentMonth = $startDate->copy()->addMonths($i - 1);
             $penyusutanBulanIni = $monthlyDepreciation;
             
-            // Adjust bulan terakhir
+            // Penyesuaian di bulan terakhir untuk pembulatan
             if ($i == $totalMonths) {
                 $penyusutanBulanIni = $currentValue - $this->nilai_residu;
             }
 
-            // Cegah nilai buku negatif
+            // Safety check: jangan sampai nilai buku < nilai residu
             if ($currentValue < $this->nilai_residu) {
                 $penyusutanBulanIni = 0;
             }
@@ -61,20 +66,26 @@ trait HasDepreciation
             $nilaiAwal = $currentValue;
             $currentValue -= $penyusutanBulanIni;
 
-            DepresiasiAset::create([
+            $logs[] = [
                 'barang_id' => $this->id,
                 'periode_bulan' => $currentMonth->format('Y-m-d'),
                 'nilai_buku_awal' => $nilaiAwal,
                 'nilai_penyusutan' => $penyusutanBulanIni,
                 'nilai_buku_akhir' => max($currentValue, 0),
                 'metode' => 'Garis Lurus',
-                'created_by' => Auth::id() ?? 1 // Fallback system admin
-            ]);
+                'created_by' => Auth::id() ?? 1,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        }
+
+        // Bulk Insert untuk performa
+        if (!empty($logs)) {
+            DepresiasiAset::insert($logs);
         }
         
-        // Update nilai buku MASTER ke posisi saat ini (Hari Ini)
-        // Cari log bulan ini atau bulan terakhir yang lewat
-        $currentLog = $this->depresiasi()
+        // Update nilai buku MASTER ke posisi real-time (Hari Ini)
+        $currentLog = DepresiasiAset::where('barang_id', $this->id)
             ->where('periode_bulan', '<=', now()->endOfMonth())
             ->orderByDesc('periode_bulan')
             ->first();
