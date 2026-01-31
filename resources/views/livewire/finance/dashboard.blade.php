@@ -32,12 +32,12 @@
             <div class="flex justify-between items-start mb-2">
                 <p class="text-xs font-bold text-emerald-100 uppercase tracking-widest relative z-10">Pendapatan Bulan Ini</p>
                 <div class="px-2 py-0.5 rounded bg-white/20 text-[10px] font-black backdrop-blur-sm flex items-center gap-1">
-                    @if($growthMoM >= 0)
+                    @if($pertumbuhanBulanan >= 0)
                         <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
-                        +{{ number_format($growthMoM, 1) }}%
+                        +{{ number_format($pertumbuhanBulanan, 1) }}%
                     @else
                         <svg class="w-3 h-3 text-rose-200" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6 6" /></svg>
-                        {{ number_format($growthMoM, 1) }}%
+                        {{ number_format($pertumbuhanBulanan, 1) }}%
                     @endif
                 </div>
             </div>
@@ -206,11 +206,11 @@
         function chartFinance() {
             return {
                 init() {
-                    const data = @json($grafikData);
+                    const data = @json($dataGrafik);
                     const options = {
                         series: [
-                            { name: 'Pendapatan', data: data.income },
-                            { name: 'Pengeluaran', data: data.expense }
+                            { name: 'Pendapatan', data: data.pendapatan },
+                            { name: 'Pengeluaran', data: data.pengeluaran }
                         ],
                         chart: {
                             type: 'bar',

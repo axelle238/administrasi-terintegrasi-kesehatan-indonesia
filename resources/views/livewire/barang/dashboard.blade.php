@@ -10,9 +10,9 @@
         <div class="flex items-center gap-2">
             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Mode View:</span>
             <div class="flex bg-slate-100 rounded-lg p-1">
-                <button wire:click="setFilterTipe('all')" class="px-3 py-1 text-xs font-bold rounded-md transition-all {{ $filterTipe === 'all' ? 'bg-white shadow text-blue-600' : 'text-slate-500 hover:text-slate-700' }}">Semua</button>
-                <button wire:click="setFilterTipe('medis')" class="px-3 py-1 text-xs font-bold rounded-md transition-all {{ $filterTipe === 'medis' ? 'bg-white shadow text-emerald-600' : 'text-slate-500 hover:text-slate-700' }}">Alat Kesehatan</button>
-                <button wire:click="setFilterTipe('umum')" class="px-3 py-1 text-xs font-bold rounded-md transition-all {{ $filterTipe === 'umum' ? 'bg-white shadow text-amber-600' : 'text-slate-500 hover:text-slate-700' }}">Umum</button>
+                <button wire:click="aturTipeFilter('all')" class="px-3 py-1 text-xs font-bold rounded-md transition-all {{ $tipeFilter === 'all' ? 'bg-white shadow text-blue-600' : 'text-slate-500 hover:text-slate-700' }}">Semua</button>
+                <button wire:click="aturTipeFilter('medis')" class="px-3 py-1 text-xs font-bold rounded-md transition-all {{ $tipeFilter === 'medis' ? 'bg-white shadow text-emerald-600' : 'text-slate-500 hover:text-slate-700' }}">Alat Kesehatan</button>
+                <button wire:click="aturTipeFilter('umum')" class="px-3 py-1 text-xs font-bold rounded-md transition-all {{ $tipeFilter === 'umum' ? 'bg-white shadow text-amber-600' : 'text-slate-500 hover:text-slate-700' }}">Umum</button>
             </div>
         </div>
     </div>
@@ -26,12 +26,12 @@
             </div>
             <div class="relative z-10">
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
-                    {{ $filterTipe === 'medis' ? 'Total Alkes' : ($filterTipe === 'umum' ? 'Total Aset Umum' : 'Total Aset') }}
+                    {{ $tipeFilter === 'medis' ? 'Total Alkes' : ($tipeFilter === 'umum' ? 'Total Aset Umum' : 'Total Aset') }}
                 </p>
                 <h2 class="text-4xl font-black mb-4">{{ number_format($totalAset) }} <span class="text-lg font-medium text-slate-500">Unit</span></h2>
                 <div class="flex gap-2">
-                    <span class="px-2 py-1 rounded bg-blue-500/20 text-blue-300 text-[10px] font-bold border border-blue-500/30">{{ $kondisiStats['Baik'] }} Baik</span>
-                    <span class="px-2 py-1 rounded bg-red-500/20 text-red-300 text-[10px] font-bold border border-red-500/30">{{ $kondisiStats['Rusak'] }} Rusak</span>
+                    <span class="px-2 py-1 rounded bg-blue-500/20 text-blue-300 text-[10px] font-bold border border-blue-500/30">{{ $statistikKondisi['Baik'] }} Baik</span>
+                    <span class="px-2 py-1 rounded bg-red-500/20 text-red-300 text-[10px] font-bold border border-red-500/30">{{ $statistikKondisi['Rusak'] }} Rusak</span>
                 </div>
             </div>
         </div>
@@ -45,10 +45,10 @@
                 <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg uppercase tracking-wider">Valuasi</span>
             </div>
             <h3 class="text-2xl font-black text-slate-800 mb-1">Rp {{ number_format($nilaiAsetTotal / 1000000, 1) }} M</h3>
-            <p class="text-xs text-slate-400">Nilai buku aset {{ $filterTipe === 'all' ? 'keseluruhan' : ($filterTipe === 'medis' ? 'medis' : 'umum') }}.</p>
+            <p class="text-xs text-slate-400">Nilai buku aset {{ $tipeFilter === 'all' ? 'keseluruhan' : ($tipeFilter === 'medis' ? 'medis' : 'umum') }}.</p>
         </div>
 
-        @if($filterTipe === 'medis' || $filterTipe === 'all')
+        @if($tipeFilter === 'medis' || $tipeFilter === 'all')
         <!-- Kalibrasi (Khusus Medis) -->
         <div class="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-sm group hover:border-blue-200 transition-colors">
             <div class="flex justify-between items-start mb-4">
@@ -57,7 +57,7 @@
                 </div>
                 <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg uppercase tracking-wider">Kalibrasi</span>
             </div>
-            <h3 class="text-3xl font-black text-slate-800 mb-1">{{ number_format($kalibrasiDue) }}</h3>
+            <h3 class="text-3xl font-black text-slate-800 mb-1">{{ number_format($kalibrasiJatuhTempo) }}</h3>
             <p class="text-xs text-slate-400">Alat perlu kalibrasi < 60 hari.</p>
         </div>
         @else
@@ -69,7 +69,7 @@
                 </div>
                 <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg uppercase tracking-wider">Kategori</span>
             </div>
-            <h3 class="text-3xl font-black text-slate-800 mb-1">{{ $tabData['distribusiKategori']->count() ?? 0 }}</h3>
+            <h3 class="text-3xl font-black text-slate-800 mb-1">{{ $dataTab['distribusiKategori']->count() ?? 0 }}</h3>
             <p class="text-xs text-slate-400">Jenis kategori aktif.</p>
         </div>
         @endif
@@ -78,11 +78,11 @@
         <div class="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-sm group hover:border-amber-200 transition-colors">
             <div class="flex justify-between items-start mb-4">
                 <div class="p-3 bg-amber-50 rounded-2xl text-amber-600">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 </div>
                 <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-lg uppercase tracking-wider">Perbaikan</span>
             </div>
-            <h3 class="text-3xl font-black text-slate-800 mb-1">{{ $kondisiStats['PerluPerbaikan'] }}</h3>
+            <h3 class="text-3xl font-black text-slate-800 mb-1">{{ $statistikKondisi['PerluPerbaikan'] }}</h3>
             <p class="text-xs text-slate-400">Aset perlu tindakan.</p>
         </div>
     </div>
@@ -91,10 +91,10 @@
     <div class="border-b border-slate-200">
         <nav class="-mb-px flex space-x-8" aria-label="Tabs">
             @foreach(['ikhtisar' => 'Ikhtisar & Lokasi', 'stok' => 'Monitoring Stok', 'maintenance' => 'Jadwal Maintenance', 'pengadaan' => 'Pengadaan Baru'] as $key => $label)
-                <a href="{{ route('barang.dashboard', ['activeTab' => $key, 'filterTipe' => $filterTipe]) }}" wire:navigate
-                    class="{{ $activeTab === $key ? 'border-blue-500 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-bold text-sm transition-colors uppercase tracking-wider relative block">
+                <button wire:click="aturTab('{{ $key }}')"
+                    class="{{ $tabAktif === $key ? 'border-blue-500 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-bold text-sm transition-colors uppercase tracking-wider relative block">
                     {{ $label }}
-                </a>
+                </button>
             @endforeach
         </nav>
     </div>
@@ -103,7 +103,7 @@
     <div class="mt-6">
         
         <!-- IKHTISAR -->
-        @if($activeTab === 'ikhtisar')
+        @if($tabAktif === 'ikhtisar')
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in-up" wire:key="tab-content-ikhtisar">
             <!-- Lokasi Aset -->
             <div class="lg:col-span-2 bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
@@ -112,7 +112,7 @@
                     Distribusi Aset per Ruangan
                 </h4>
                 <div class="space-y-4">
-                    @foreach($tabData['lokasiAset'] ?? [] as $lokasi)
+                    @foreach($dataTab['lokasiAset'] ?? [] as $lokasi)
                     <div class="group">
                         <div class="flex justify-between text-sm mb-1">
                             <span class="font-bold text-slate-700">{{ $lokasi->nama_ruangan }}</span>
@@ -130,7 +130,7 @@
             <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
                 <h4 class="font-bold text-slate-800 mb-6">Aktivitas Terkini</h4>
                 <div class="space-y-6 relative border-l-2 border-slate-100 ml-3">
-                    @foreach($tabData['recentActivities'] ?? [] as $log)
+                    @foreach($dataTab['aktivitasTerbaru'] ?? [] as $log)
                     <div class="relative pl-6">
                         <div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 border-white {{ $log->jenis_transaksi == 'Masuk' ? 'bg-emerald-500' : 'bg-amber-500' }}"></div>
                         <p class="text-xs text-slate-400 font-bold mb-0.5">{{ $log->created_at->diffForHumans() }}</p>
@@ -144,7 +144,7 @@
         @endif
 
         <!-- STOK (Monitoring) -->
-        @if($activeTab === 'stok')
+        @if($tabAktif === 'stok')
         <div class="grid grid-cols-1 gap-6 animate-fade-in-up" wire:key="tab-content-stok">
             <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
                 <h4 class="font-bold text-slate-800 mb-6">Stok Menipis (Consumables)</h4>
@@ -158,7 +158,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
-                            @forelse($tabData['lowStockItems'] ?? [] as $item)
+                            @forelse($dataTab['stokMenipis'] ?? [] as $item)
                             <tr>
                                 <td class="px-4 py-3 font-bold text-slate-700">{{ $item->nama_barang }}</td>
                                 <td class="px-4 py-3 text-center font-black text-red-600">{{ $item->stok }}</td>
@@ -179,30 +179,30 @@
         @endif
 
         <!-- MAINTENANCE -->
-        @if($activeTab === 'maintenance')
+        @if($tabAktif === 'maintenance')
         <div class="animate-fade-in-up" wire:key="tab-content-maintenance">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                 <!-- Stat Biaya -->
                 <div class="bg-amber-50 rounded-[2rem] p-6 border border-amber-100">
                     <p class="text-xs font-bold text-amber-600 uppercase tracking-wider mb-2">Biaya Servis Bulan Ini</p>
-                    <h3 class="text-3xl font-black text-amber-900">Rp {{ number_format($tabData['biayaMaintenanceBulanIni'] ?? 0) }}</h3>
+                    <h3 class="text-3xl font-black text-amber-900">Rp {{ number_format($dataTab['biayaMaintenanceBulanIni'] ?? 0) }}</h3>
                 </div>
                 
                 <!-- Rasio -->
                 <div class="bg-white rounded-[2rem] p-6 border border-slate-100 col-span-2 flex items-center justify-around">
                     <div class="text-center">
-                        <p class="text-3xl font-black text-blue-600">{{ $tabData['maintenanceRatio']['preventif'] ?? 0 }}</p>
+                        <p class="text-3xl font-black text-blue-600">{{ $dataTab['rasioMaintenance']['preventif'] ?? 0 }}</p>
                         <p class="text-xs font-bold text-slate-400 uppercase">Preventif</p>
                     </div>
                     <div class="h-12 w-px bg-slate-200"></div>
                     <div class="text-center">
-                        <p class="text-3xl font-black text-red-500">{{ $tabData['maintenanceRatio']['korektif'] ?? 0 }}</p>
+                        <p class="text-3xl font-black text-red-500">{{ $dataTab['rasioMaintenance']['korektif'] ?? 0 }}</p>
                         <p class="text-xs font-bold text-slate-400 uppercase">Perbaikan (Rusak)</p>
                     </div>
-                    @if($filterTipe === 'medis' || $filterTipe === 'all')
+                    @if($tipeFilter === 'medis' || $tipeFilter === 'all')
                     <div class="h-12 w-px bg-slate-200"></div>
                     <div class="text-center">
-                        <p class="text-3xl font-black text-emerald-600">{{ $tabData['maintenanceRatio']['kalibrasi'] ?? 0 }}</p>
+                        <p class="text-3xl font-black text-emerald-600">{{ $dataTab['rasioMaintenance']['kalibrasi'] ?? 0 }}</p>
                         <p class="text-xs font-bold text-slate-400 uppercase">Kalibrasi</p>
                     </div>
                     @endif
@@ -225,7 +225,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
-                            @forelse($tabData['maintenanceDue'] ?? [] as $m)
+                            @forelse($dataTab['jadwalMaintenance'] ?? [] as $m)
                             <tr class="hover:bg-slate-50 transition-colors">
                                 <td class="px-6 py-4 font-bold text-slate-700">
                                     {{ \Carbon\Carbon::parse($m->tanggal_berikutnya)->format('d M Y') }}
@@ -260,7 +260,7 @@
         @endif
 
         <!-- PENGADAAN -->
-        @if($activeTab === 'pengadaan')
+        @if($tabAktif === 'pengadaan')
         <div class="grid grid-cols-1 gap-6 animate-fade-in-up" wire:key="tab-content-pengadaan">
             <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
                 <div class="flex justify-between items-center mb-6">
@@ -277,7 +277,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
-                            @forelse($tabData['pengadaanPending'] ?? [] as $p)
+                            @forelse($dataTab['pengadaanPending'] ?? [] as $p)
                             <tr>
                                 <td class="px-4 py-3 font-bold text-slate-700">{{ $p->nomor_pengajuan }}</td>
                                 <td class="px-4 py-3">{{ \Carbon\Carbon::parse($p->tanggal_pengajuan)->format('d M Y') }}</td>

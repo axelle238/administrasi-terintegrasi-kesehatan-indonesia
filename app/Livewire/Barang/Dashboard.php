@@ -16,82 +16,79 @@ use Carbon\Carbon;
 class Dashboard extends Component
 {
     #[Url(keep: true)]
-    public $activeTab = 'ikhtisar'; // ikhtisar, stok, maintenance, pengadaan
+    public $tabAktif = 'ikhtisar'; // ikhtisar, stok, maintenance, pengadaan
 
     #[Url(keep: true)]
-    public $filterTipe = 'all'; // all, medis, umum
+    public $tipeFilter = 'all'; // all, medis, umum
 
-    public function setTab($tab)
+    public function aturTab($tab)
     {
-        $this->activeTab = $tab;
+        $this->tabAktif = $tab;
     }
 
-    public function setFilterTipe($tipe)
+    public function aturTipeFilter($tipe)
     {
-        $this->filterTipe = $tipe;
+        $this->tipeFilter = $tipe;
     }
 
     public function render()
     {
         // Base Query untuk Barang
-        $barangQuery = Barang::query();
+        $queryBarang = Barang::query();
 
-        if ($this->filterTipe == 'medis') {
-            $barangQuery->whereHas('kategori', function($q) {
+        if ($this->tipeFilter == 'medis') {
+            $queryBarang->whereHas('kategori', function($q) {
                 $q->where('nama_kategori', 'like', '%Medis%')
                   ->orWhere('nama_kategori', 'like', '%Kesehatan%')
                   ->orWhere('nama_kategori', 'like', '%Alat%');
             });
-        } elseif ($this->filterTipe == 'umum') {
-            $barangQuery->whereHas('kategori', function($q) {
+        } elseif ($this->tipeFilter == 'umum') {
+            $queryBarang->whereHas('kategori', function($q) {
                 $q->where('nama_kategori', 'not like', '%Medis%')
                   ->where('nama_kategori', 'not like', '%Kesehatan%')
                   ->where('nama_kategori', 'not like', '%Alat%');
             });
         }
 
-        // === GLOBAL METRICS ===
-        $totalAset = (clone $barangQuery)->count();
+        // === METRIK GLOBAL ===
+        $totalAset = (clone $queryBarang)->count();
         // Nilai Aset (Estimasi Valuasi)
-        $nilaiAsetTotal = (clone $barangQuery)->where('is_asset', true)->sum(DB::raw('harga_perolehan * stok'));
+        $nilaiAsetTotal = (clone $queryBarang)->where('is_asset', true)->sum(DB::raw('harga_perolehan * stok'));
         
-        // Kondisi Aset Stats (Filtered)
-        $kondisiStats = [
-            'Baik' => (clone $barangQuery)->where('kondisi', 'Baik')->count(),
-            'PerluPerbaikan' => (clone $barangQuery)->where('kondisi', 'Rusak Ringan')->count(),
-            'Rusak' => (clone $barangQuery)->where('kondisi', 'Rusak Berat')->count(),
+        // Statistik Kondisi Aset
+        $statistikKondisi = [
+            'Baik' => (clone $queryBarang)->where('kondisi', 'Baik')->count(),
+            'PerluPerbaikan' => (clone $queryBarang)->where('kondisi', 'Rusak Ringan')->count(),
+            'Rusak' => (clone $queryBarang)->where('kondisi', 'Rusak Berat')->count(),
         ];
 
-        // Specific Metric for Medical: Kalibrasi Due
-        $kalibrasiDue = 0;
-        if ($this->filterTipe == 'medis' || $this->filterTipe == 'all') {
-            $kalibrasiDue = Maintenance::whereHas('barang.kategori', function($q) {
+        // Metrik Spesifik Medis: Kalibrasi Jatuh Tempo
+        $kalibrasiJatuhTempo = 0;
+        if ($this->tipeFilter == 'medis' || $this->tipeFilter == 'all') {
+            $kalibrasiJatuhTempo = Maintenance::whereHas('barang.kategori', function($q) {
                     $q->where('nama_kategori', 'like', '%Medis%');
                 })
                 ->where('jenis_kegiatan', 'Kalibrasi')
-                ->whereDate('tanggal_berikutnya', '<=', now()->addDays(60)) // Warning 2 bulan sebelum
+                ->whereDate('tanggal_berikutnya', '<=', now()->addDays(60)) // Peringatan 2 bulan sebelum
                 ->count();
         }
 
-        $tabData = [];
+        $dataTab = [];
 
         // === TAB 1: IKHTISAR ===
-        if ($this->activeTab == 'ikhtisar') {
-            $tabData['distribusiKategori'] = KategoriBarang::withCount(['barangs' => function($q) use ($barangQuery) {
+        if ($this->tabAktif == 'ikhtisar') {
+            $dataTab['distribusiKategori'] = KategoriBarang::withCount(['barangs' => function($q) use ($queryBarang) {
                     // Filter count based on main filter logic
-                    // Note: This needs refined logic if category structure is complex, 
-                    // but for simple grouping, we rely on category name.
                 }])
                 ->orderByDesc('barangs_count')
                 ->take(6)
                 ->get();
             
-            $tabData['recentActivities'] = RiwayatBarang::with(['barang', 'user'])
-                ->whereHas('barang', function($q) use ($barangQuery) {
-                    // Apply filter logic to relationship
-                    if ($this->filterTipe == 'medis') {
+            $dataTab['aktivitasTerbaru'] = RiwayatBarang::with(['barang', 'user'])
+                ->whereHas('barang', function($q) use ($queryBarang) {
+                    if ($this->tipeFilter == 'medis') {
                         $q->whereHas('kategori', fn($k) => $k->where('nama_kategori', 'like', '%Medis%'));
-                    } elseif ($this->filterTipe == 'umum') {
+                    } elseif ($this->tipeFilter == 'umum') {
                         $q->whereHas('kategori', fn($k) => $k->where('nama_kategori', 'not like', '%Medis%'));
                     }
                 })
@@ -99,34 +96,33 @@ class Dashboard extends Component
                 ->take(6)
                 ->get();
 
-            $tabData['lokasiAset'] = Ruangan::withCount('barangs') // Simplifikasi: Hitung semua barang di ruangan
+            $dataTab['lokasiAset'] = Ruangan::withCount('barangs')
                 ->orderByDesc('barangs_count')
                 ->take(5)
                 ->get();
         }
 
         // === TAB 2: MONITORING STOK ===
-        if ($this->activeTab == 'stok') {
-            $tabData['lowStockItems'] = (clone $barangQuery)->where('is_asset', false) // Consumables / BHP
-                ->where('stok', '<=', 10) // Alert Threshold
+        if ($this->tabAktif == 'stok') {
+            $dataTab['stokMenipis'] = (clone $queryBarang)->where('is_asset', false) // Bahan Habis Pakai
+                ->where('stok', '<=', 10) // Ambang Batas
                 ->orderBy('stok')
                 ->take(10)
                 ->get();
             
-            // Grafik Arus Stok 7 Hari (Global Flow)
-            $tabData['flowStok'] = $this->getStockFlow();
+            // Grafik Arus Stok 7 Hari
+            $dataTab['arusStok'] = $this->dapatkanArusStok();
         }
 
         // === TAB 3: MAINTENANCE & KALIBRASI ===
-        if ($this->activeTab == 'maintenance') {
-            $maintenanceQuery = Maintenance::with(['barang.kategori'])
+        if ($this->tabAktif == 'maintenance') {
+            $queryMaintenance = Maintenance::with(['barang.kategori'])
                 ->where('status', 'Terjadwal')
                 ->whereDate('tanggal_berikutnya', '<=', now()->addDays(30));
 
-            // Filter Maintenance based on Type
-            if ($this->filterTipe != 'all') {
-                $maintenanceQuery->whereHas('barang.kategori', function($q) {
-                    if ($this->filterTipe == 'medis') {
+            if ($this->tipeFilter != 'all') {
+                $queryMaintenance->whereHas('barang.kategori', function($q) {
+                    if ($this->tipeFilter == 'medis') {
                         $q->where('nama_kategori', 'like', '%Medis%');
                     } else {
                         $q->where('nama_kategori', 'not like', '%Medis%');
@@ -134,10 +130,10 @@ class Dashboard extends Component
                 });
             }
 
-            $tabData['maintenanceDue'] = $maintenanceQuery->orderBy('tanggal_berikutnya')->get();
+            $dataTab['jadwalMaintenance'] = $queryMaintenance->orderBy('tanggal_berikutnya')->get();
             
             // Analisis Biaya
-            $tabData['biayaTrend'] = Maintenance::select(
+            $dataTab['trenBiaya'] = Maintenance::select(
                     DB::raw("DATE_FORMAT(tanggal_maintenance, '%Y-%m') as bulan"),
                     DB::raw("SUM(biaya) as total_biaya")
                 )
@@ -146,21 +142,21 @@ class Dashboard extends Component
                 ->orderBy('bulan')
                 ->get();
 
-            $tabData['maintenanceRatio'] = [
+            $dataTab['rasioMaintenance'] = [
                 'preventif' => Maintenance::where('jenis_kegiatan', 'Preventif')->count(),
                 'korektif' => Maintenance::where('jenis_kegiatan', 'Perbaikan')->count(),
                 'kalibrasi' => Maintenance::where('jenis_kegiatan', 'Kalibrasi')->count(),
             ];
             
-            $tabData['biayaMaintenanceBulanIni'] = Maintenance::whereMonth('tanggal_maintenance', Carbon::now()->month)
+            $dataTab['biayaMaintenanceBulanIni'] = Maintenance::whereMonth('tanggal_maintenance', Carbon::now()->month)
                 ->whereYear('tanggal_maintenance', Carbon::now()->year)
                 ->sum('biaya');
         }
 
         // === TAB 4: PENGADAAN ===
-        if ($this->activeTab == 'pengadaan') {
-            $tabData['pengadaanPending'] = PengadaanBarang::where('status', 'Pending')->latest()->get();
-            $tabData['totalPengadaanTahunIni'] = PengadaanBarang::join('pengadaan_barang_details', 'pengadaan_barangs.id', '=', 'pengadaan_barang_details.pengadaan_barang_id')
+        if ($this->tabAktif == 'pengadaan') {
+            $dataTab['pengadaanPending'] = PengadaanBarang::where('status', 'Pending')->latest()->get();
+            $dataTab['totalPengadaanTahunIni'] = PengadaanBarang::join('pengadaan_barang_details', 'pengadaan_barangs.id', '=', 'pengadaan_barang_details.pengadaan_barang_id')
                 ->whereYear('pengadaan_barangs.tanggal_pengajuan', Carbon::now()->year)
                 ->where('pengadaan_barangs.status', 'Selesai')
                 ->sum(DB::raw('pengadaan_barang_details.jumlah_permintaan * pengadaan_barang_details.estimasi_harga_satuan'));
@@ -169,31 +165,31 @@ class Dashboard extends Component
         return view('livewire.barang.dashboard', compact(
             'totalAset',
             'nilaiAsetTotal',
-            'kalibrasiDue',
-            'kondisiStats',
-            'tabData'
+            'kalibrasiJatuhTempo',
+            'statistikKondisi',
+            'dataTab'
         ))->layout('layouts.app', ['header' => 'Manajemen Aset & Inventaris']);
     }
 
-    private function getStockFlow()
+    private function dapatkanArusStok()
     {
         $dates = [];
-        $in = [];
-        $out = [];
+        $masuk = [];
+        $keluar = [];
 
         for ($i = 6; $i >= 0; $i--) {
             $date = Carbon::now()->subDays($i);
             $dates[] = $date->format('d/m');
             
-            $in[] = RiwayatBarang::whereDate('tanggal', $date)
+            $masuk[] = RiwayatBarang::whereDate('tanggal', $date)
                 ->whereIn('jenis_transaksi', ['Masuk', 'Pengadaan', 'Pembelian'])
                 ->sum('jumlah');
                 
-            $out[] = RiwayatBarang::whereDate('tanggal', $date)
+            $keluar[] = RiwayatBarang::whereDate('tanggal', $date)
                 ->whereIn('jenis_transaksi', ['Keluar', 'Mutasi Keluar', 'Pemakaian'])
                 ->sum('jumlah');
         }
 
-        return ['labels' => $dates, 'in' => $in, 'out' => $out];
+        return ['labels' => $dates, 'masuk' => $masuk, 'keluar' => $keluar];
     }
 }
