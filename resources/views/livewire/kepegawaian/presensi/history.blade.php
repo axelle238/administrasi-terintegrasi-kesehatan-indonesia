@@ -191,44 +191,74 @@
                     <h3 class="text-lg font-black text-purple-900">Mode Cuti Aktif</h3>
                     <p class="text-sm text-slate-500 mt-1 max-w-sm mx-auto">Laporan aktivitas dinonaktifkan untuk tanggal ini.</p>
                 </div>
-            @elseif($selectedItem && $selectedItem['status'] == 'Libur')
-                <div class="text-center py-8">
-                    <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500">
-                        <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                    </div>
-                    <h3 class="text-lg font-black text-red-900">{{ $selectedItem['libur']->keterangan ?? 'Hari Libur' }}</h3>
+            @elseif($selectedItem && $selectedItem['status'] == 'Future')
+                <div class="text-center py-8 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
+                    <p class="text-slate-400 font-bold">Hari Masa Depan</p>
+                    <p class="text-xs text-slate-400 mt-1">Anda belum dapat mengisi laporan untuk tanggal ini.</p>
                 </div>
-            @elseif($detailPresensi)
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            @else
+                <!-- Tampilan Normal (Hadir / Alpha / Libur / Weekend) -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
                     <!-- Kolom Kiri: Presensi -->
                     <div class="lg:col-span-5 space-y-6">
-                        <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                            <div class="flex-1 text-center border-r border-slate-200">
-                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Masuk</p>
-                                <p class="text-2xl font-black text-slate-800">{{ $detailPresensi->jam_masuk->format('H:i') }}</p>
+                        <h4 class="text-sm font-black text-slate-800 uppercase tracking-widest border-b border-slate-100 pb-2">Data Kehadiran</h4>
+                        
+                        @if($detailPresensi)
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                    <p class="text-xs text-slate-400 font-bold uppercase mb-1">Masuk</p>
+                                    <p class="text-2xl font-black text-slate-800">{{ $detailPresensi->jam_masuk->format('H:i') }}</p>
+                                    @if($detailPresensi->foto_masuk)
+                                        <a href="#" class="text-[10px] text-blue-500 font-bold underline mt-1 block">Lihat Foto</a>
+                                    @endif
+                                </div>
+                                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                    <p class="text-xs text-slate-400 font-bold uppercase mb-1">Pulang</p>
+                                    <p class="text-2xl font-black text-slate-800">{{ $detailPresensi->jam_keluar ? $detailPresensi->jam_keluar->format('H:i') : '--:--' }}</p>
+                                </div>
                             </div>
-                            <div class="flex-1 text-center">
-                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Pulang</p>
-                                <p class="text-2xl font-black text-slate-800">{{ $detailPresensi->jam_keluar ? $detailPresensi->jam_keluar->format('H:i') : '--:--' }}</p>
-                            </div>
-                        </div>
 
-                        <!-- Map/Location Placeholder -->
-                        <div class="rounded-2xl overflow-hidden bg-slate-100 h-32 relative flex items-center justify-center border border-slate-200 group">
-                            <div class="absolute inset-0 bg-slate-200 opacity-50 pattern-grid"></div>
-                            <div class="text-center relative z-10">
-                                <svg class="w-8 h-8 text-slate-400 mx-auto mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                                <p class="text-xs font-bold text-slate-500">{{ Str::limit($detailPresensi->alamat_masuk ?? 'Lokasi GPS', 30) }}</p>
+                            <!-- Shift Info -->
+                            <div class="p-4 bg-white rounded-2xl border border-dashed border-slate-200">
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="font-bold text-slate-500 uppercase">Jadwal Shift</span>
+                                    <span class="font-mono font-black text-slate-700">{{ \Carbon\Carbon::parse($detailPresensi->shift_jam_masuk)->format('H:i') }} - {{ \Carbon\Carbon::parse($detailPresensi->shift_jam_keluar)->format('H:i') }}</span>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Shift Info -->
-                        <div class="p-4 bg-white rounded-2xl border border-dashed border-slate-200">
-                            <div class="flex justify-between items-center text-xs">
-                                <span class="font-bold text-slate-500 uppercase">Jadwal Shift</span>
-                                <span class="font-mono font-black text-slate-700">{{ \Carbon\Carbon::parse($detailPresensi->shift_jam_masuk)->format('H:i') }} - {{ \Carbon\Carbon::parse($detailPresensi->shift_jam_keluar)->format('H:i') }}</span>
+                            <div class="bg-blue-50 p-4 rounded-2xl border border-blue-100 flex items-center gap-3">
+                                <div class="p-2 bg-blue-500 rounded-lg text-white">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-blue-600 uppercase">Lokasi Check-in</p>
+                                    <p class="text-sm font-bold text-slate-700 truncate w-64">{{ $detailPresensi->alamat_masuk ?? 'Koordinat GPS' }}</p>
+                                </div>
                             </div>
-                        </div>
+                        @else
+                            <!-- No Presensi State -->
+                            <div class="p-6 bg-slate-50 border border-slate-100 rounded-2xl text-center flex flex-col items-center justify-center h-full">
+                                @if($selectedItem['status'] == 'Libur')
+                                    <div class="w-12 h-12 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-3">
+                                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                    </div>
+                                    <p class="text-red-500 font-bold">Hari Libur Nasional</p>
+                                    <p class="text-xs text-slate-400 mt-1">{{ $selectedItem['libur']->keterangan ?? '' }}</p>
+                                @elseif($selectedItem['status'] == 'Akhir Pekan')
+                                    <div class="w-12 h-12 bg-slate-200 text-slate-500 rounded-full flex items-center justify-center mb-3">
+                                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    </div>
+                                    <p class="text-slate-500 font-bold">Akhir Pekan</p>
+                                    <p class="text-xs text-slate-400 mt-1">Tidak ada jadwal kerja reguler.</p>
+                                @else
+                                    <div class="w-12 h-12 bg-slate-200 text-slate-500 rounded-full flex items-center justify-center mb-3">
+                                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    </div>
+                                    <p class="text-slate-500 font-bold">Tidak Hadir (Alpha)</p>
+                                    <p class="text-xs text-slate-400 mt-1">Tidak ada data presensi tercatat.</p>
+                                @endif
+                            </div>
+                        @endif
                     </div>
 
                     <!-- Kolom Kanan: Timeline Laporan -->
@@ -267,10 +297,6 @@
                             @endif
                         </div>
                     </div>
-                </div>
-            @else
-                <div class="text-center py-12">
-                    <p class="text-slate-400 font-bold">Tidak ada data kehadiran (Alpha).</p>
                 </div>
             @endif
         </div>
