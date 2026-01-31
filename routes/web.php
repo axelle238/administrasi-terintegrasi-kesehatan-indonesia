@@ -178,8 +178,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/barang/peminjaman', \App\Livewire\Barang\Peminjaman\Index::class)->name('barang.peminjaman.index');
         Route::get('/barang/peminjaman/{peminjaman}/print', [\App\Http\Controllers\PeminjamanController::class, 'print'])->name('barang.peminjaman.print');
         Route::get('/barang/print-labels', \App\Livewire\Barang\PrintLabelsBulk::class)->name('barang.print-labels-bulk');
+        Route::get('/barang/maintenance/create', \App\Livewire\Barang\Maintenance\Create::class)->name('barang.maintenance.create');
         Route::get('/barang/maintenance/logs', \App\Livewire\Barang\MaintenanceLog::class)->name('barang.maintenance');
-        Route::get('/barang/{barang}/maintenance/create', \App\Livewire\Barang\Maintenance\Create::class)->name('barang.maintenance.create');
+        Route::get('/barang/{barang}/maintenance/create', \App\Livewire\Barang\Maintenance\Create::class)->name('barang.maintenance.create.specific');
         Route::get('/barang/pengadaan', \App\Livewire\Barang\Pengadaan\Index::class)->name('barang.pengadaan.index');
         Route::get('/barang/pengadaan/create', \App\Livewire\Barang\Pengadaan\Create::class)->name('barang.pengadaan.create');
         Route::get('/barang/{barang}/print', \App\Livewire\Barang\PrintLabel::class)->name('barang.print-label');
