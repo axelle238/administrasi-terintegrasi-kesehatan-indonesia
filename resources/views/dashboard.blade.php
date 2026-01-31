@@ -62,7 +62,7 @@
         </div>
     </div>
 
-    <!-- Cluster Navigation Grid (New Feature) -->
+    <!-- Cluster Navigation Grid -->
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
         <!-- Manajemen -->
         <a href="{{ route('hrd.dashboard') }}" class="group bg-white p-4 rounded-2xl shadow-sm border border-slate-100 hover:border-slate-300 hover:shadow-md transition-all flex flex-col items-center text-center gap-3">
@@ -223,9 +223,7 @@
                      <span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-black uppercase">Rawat Jalan</span>
                 </div>
             </div>
-            <div class="w-full h-[300px]">
-                <canvas id="kunjunganChart"></canvas>
-            </div>
+            <div id="chart-kunjungan" class="w-full h-[300px]"></div>
         </div>
 
         <!-- Feed Aktivitas -->
@@ -255,68 +253,25 @@
 
     <!-- Chart Script -->
     @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        document.addEventListener('livewire:initialized', () => {
-            const ctx = document.getElementById('kunjunganChart');
-            if(ctx) {
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: @json($dataGrafik['labels']),
-                        datasets: [{
-                            label: 'Total Pasien',
-                            data: @json($dataGrafik['data']),
-                            borderColor: '#3b82f6',
-                            backgroundColor: (context) => {
-                                const ctx = context.chart.ctx;
-                                const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-                                gradient.addColorStop(0, 'rgba(59, 130, 246, 0.2)');
-                                gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
-                                return gradient;
-                            },
-                            borderWidth: 3,
-                            tension: 0.4,
-                            fill: true,
-                            pointBackgroundColor: '#ffffff',
-                            pointBorderColor: '#3b82f6',
-                            pointBorderWidth: 2,
-                            pointRadius: 4,
-                            pointHoverRadius: 6
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                backgroundColor: '#1e293b',
-                                padding: 12,
-                                titleFont: { family: 'Plus Jakarta Sans', size: 13 },
-                                bodyFont: { family: 'Plus Jakarta Sans', size: 12 },
-                                cornerRadius: 8,
-                                displayColors: false
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: { borderDash: [4, 4], color: '#f1f5f9' },
-                                ticks: { font: { family: 'Plus Jakarta Sans', size: 10, weight: '600' }, color: '#94a3b8' }
-                            },
-                            x: {
-                                grid: { display: false },
-                                ticks: { font: { family: 'Plus Jakarta Sans', size: 10, weight: '600' }, color: '#94a3b8' }
-                            }
-                        },
-                        interaction: {
-                            intersect: false,
-                            mode: 'index',
-                        },
-                    }
-                });
-            }
+        document.addEventListener('DOMContentLoaded', function () {
+            // Chart Kunjungan
+            var optionsKunjungan = {
+                series: [{
+                    name: 'Pasien',
+                    data: @json($dataGrafik['data'])
+                }],
+                chart: { height: 300, type: 'area', toolbar: { show: false }, fontFamily: 'Plus Jakarta Sans' },
+                colors: ['#3b82f6'],
+                fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 90, 100] } },
+                dataLabels: { enabled: false },
+                stroke: { curve: 'smooth', width: 3 },
+                xaxis: { categories: @json($dataGrafik['labels']) },
+                grid: { borderColor: '#f1f5f9' },
+                tooltip: { theme: 'light' }
+            };
+            var chartKunjungan = new ApexCharts(document.querySelector("#chart-kunjungan"), optionsKunjungan);
+            chartKunjungan.render();
         });
     </script>
     @endpush
