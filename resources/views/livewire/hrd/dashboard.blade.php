@@ -301,8 +301,8 @@
                             </div>
                             <p class="text-xs text-slate-600 italic mb-4">"{{ Str::limit($cuti->alasan, 50) }}"</p>
                             <div class="flex gap-2">
-                                <button class="flex-1 py-1.5 bg-rose-600 text-white rounded-lg text-xs font-bold hover:bg-rose-700">Approve</button>
-                                <button class="flex-1 py-1.5 bg-white border border-slate-200 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-50">Detail</button>
+                                <a href="{{ route('kepegawaian.cuti.index') }}" class="flex-1 py-1.5 bg-rose-600 text-white rounded-lg text-xs font-bold hover:bg-rose-700 text-center">Proses</a>
+                                <a href="{{ route('kepegawaian.cuti.index') }}" class="flex-1 py-1.5 bg-white border border-slate-200 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-50 text-center">Detail</a>
                             </div>
                         </div>
                         @endforeach
