@@ -8,11 +8,11 @@
         <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
             <select wire:model.live="bulanFilter" class="rounded-xl border-slate-200 text-sm font-bold text-slate-600 focus:ring-blue-500 focus:border-blue-500">
                 @foreach(range(1, 12) as $m)
-                    <option value="{{ $m }}">{{ Carbon\Carbon::create()->month($m)->translatedFormat('F') }}</option>
+                    <option value="{{ $m }}">{{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}</option>
                 @endforeach
             </select>
             <select wire:model.live="tahunFilter" class="rounded-xl border-slate-200 text-sm font-bold text-slate-600 focus:ring-blue-500 focus:border-blue-500">
-                @foreach(range(Carbon::now()->year, Carbon::now()->year - 2) as $y)
+                @foreach(range(\Carbon\Carbon::now()->year, \Carbon\Carbon::now()->year - 2) as $y)
                     <option value="{{ $y }}">{{ $y }}</option>
                 @endforeach
             </select>

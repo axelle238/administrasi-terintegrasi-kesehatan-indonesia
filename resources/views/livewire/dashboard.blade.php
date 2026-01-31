@@ -10,7 +10,7 @@
             <div class="relative z-10 flex flex-col h-full justify-between">
                 <div>
                     <span class="inline-block px-3 py-1 rounded-full bg-white/10 border border-white/10 text-[10px] font-bold uppercase tracking-wider mb-4">
-                        {{ Carbon\Carbon::now()->translatedFormat('l, d F Y') }}
+                        {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}
                     </span>
                     <h2 class="text-2xl font-black leading-tight mb-2">Halo, {{ Auth::user()->name }}!</h2>
                     <p class="text-slate-400 text-sm">Selamat datang kembali di Pusat Komando Administrasi Kesehatan Terintegrasi.</p>
