@@ -197,7 +197,7 @@
                     </div>
                 </div>
 
-                <div class="space-y-2 text-sm text-slate-600 bg-slate-50 p-6 rounded-3xl">
+                <div class="space-y-2 text-sm text-slate-600 bg-slate-50 p-6 rounded-3xl mb-8">
                     <div class="flex justify-between">
                         <span>Sumber Dana</span>
                         <span class="font-bold">{{ $barang->sumber_dana ?? '-' }}</span>
@@ -210,6 +210,36 @@
                         <span>Metode Penyusutan</span>
                         <span class="font-bold">{{ $barang->metode_penyusutan ?? 'Garis Lurus' }}</span>
                     </div>
+                </div>
+
+                <div class="overflow-hidden rounded-2xl border border-slate-100">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-slate-50 text-slate-500 font-bold text-xs uppercase">
+                            <tr>
+                                <th class="px-6 py-3">Periode</th>
+                                <th class="px-6 py-3 text-right">Nilai Awal</th>
+                                <th class="px-6 py-3 text-right">Penyusutan</th>
+                                <th class="px-6 py-3 text-right">Nilai Akhir</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50">
+                            @foreach($barang->depresiasi()->orderBy('periode_bulan')->take(12)->get() as $log)
+                            <tr class="hover:bg-slate-50">
+                                <td class="px-6 py-3 font-mono text-xs">{{ $log->periode_bulan->format('M Y') }}</td>
+                                <td class="px-6 py-3 text-right">Rp {{ number_format($log->nilai_buku_awal) }}</td>
+                                <td class="px-6 py-3 text-right text-red-600">- Rp {{ number_format($log->nilai_penyusutan) }}</td>
+                                <td class="px-6 py-3 text-right font-bold">Rp {{ number_format($log->nilai_buku_akhir) }}</td>
+                            </tr>
+                            @endforeach
+                            @if($barang->depresiasi()->count() > 12)
+                            <tr>
+                                <td colspan="4" class="px-6 py-3 text-center text-xs text-slate-400 bg-slate-50 italic">
+                                    Menampilkan 12 bulan pertama. Download laporan lengkap untuk detail.
+                                </td>
+                            </tr>
+                            @endif
+                        </tbody>
+                    </table>
                 </div>
             </div>
             @endif

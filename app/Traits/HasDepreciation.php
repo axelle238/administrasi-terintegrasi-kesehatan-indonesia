@@ -4,58 +4,83 @@ namespace App\Traits;
 
 use App\Models\DepresiasiAset;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 trait HasDepreciation
 {
     /**
-     * Hitung penyusutan tahunan (Metode Garis Lurus).
+     * Hitung penyusutan bulanan (Metode Garis Lurus).
      */
-    public function calculateDepreciation()
+    public function calculateMonthlyDepreciation()
     {
         if (!$this->is_asset || $this->harga_perolehan <= 0 || $this->masa_manfaat <= 0) {
             return 0;
         }
 
         $depreciableAmount = $this->harga_perolehan - $this->nilai_residu;
-        return $depreciableAmount / $this->masa_manfaat;
+        return $depreciableAmount / ($this->masa_manfaat * 12); // Masa manfaat dalam tahun * 12 bulan
     }
 
     /**
-     * Generate tabel penyusutan untuk aset ini.
+     * Generate tabel penyusutan BULANAN untuk aset ini.
      */
     public function generateDepreciationSchedule()
     {
         if (!$this->is_asset) return;
 
-        $annualDepreciation = $this->calculateDepreciation();
+        $monthlyDepreciation = $this->calculateMonthlyDepreciation();
         $currentValue = $this->harga_perolehan;
-        $year = Carbon::parse($this->tanggal_pengadaan)->year;
+        
+        // Start date = tanggal pengadaan
+        $startDate = Carbon::parse($this->tanggal_pengadaan)->startOfMonth();
+        $totalMonths = $this->masa_manfaat * 12;
 
-        // Hapus history lama jika ada (Reset)
+        // Hapus log lama untuk regenerasi
         $this->depresiasi()->delete();
 
-        for ($i = 1; $i <= $this->masa_manfaat; $i++) {
-            $year++;
-            $penyusutanTahunIni = $annualDepreciation;
+        for ($i = 1; $i <= $totalMonths; $i++) {
+            // Pindah ke bulan berikutnya
+            $currentMonth = $startDate->copy()->addMonths($i - 1);
             
-            // Adjust last year to match residual value exactly due to rounding
-            if ($i == $this->masa_manfaat) {
-                $penyusutanTahunIni = $currentValue - $this->nilai_residu;
+            // Skip jika belum sampai bulan ini (untuk log future) 
+            // Atau generate semua (Forecast)? "Very Complete" biasanya forecast.
+            // Kita generate semua untuk forecast.
+
+            $penyusutanBulanIni = $monthlyDepreciation;
+            
+            // Adjust bulan terakhir
+            if ($i == $totalMonths) {
+                $penyusutanBulanIni = $currentValue - $this->nilai_residu;
             }
 
-            $currentValue -= $penyusutanTahunIni;
+            // Cegah nilai buku negatif
+            if ($currentValue < $this->nilai_residu) {
+                $penyusutanBulanIni = 0;
+            }
+
+            $nilaiAwal = $currentValue;
+            $currentValue -= $penyusutanBulanIni;
 
             DepresiasiAset::create([
                 'barang_id' => $this->id,
-                'tahun_ke' => $i,
-                'nilai_buku_awal' => $currentValue + $penyusutanTahunIni,
-                'nilai_penyusutan' => $penyusutanTahunIni,
-                'nilai_buku_akhir' => max($currentValue, 0), // Prevent negative
-                'created_at' => now(), // Or specific date
+                'periode_bulan' => $currentMonth->format('Y-m-d'),
+                'nilai_buku_awal' => $nilaiAwal,
+                'nilai_penyusutan' => $penyusutanBulanIni,
+                'nilai_buku_akhir' => max($currentValue, 0),
+                'metode' => 'Garis Lurus',
+                'created_by' => Auth::id() ?? 1 // Fallback system admin
             ]);
         }
         
-        // Update nilai buku di tabel master
-        $this->update(['nilai_buku' => max($currentValue, 0)]);
+        // Update nilai buku MASTER ke posisi saat ini (Hari Ini)
+        // Cari log bulan ini atau bulan terakhir yang lewat
+        $currentLog = $this->depresiasi()
+            ->where('periode_bulan', '<=', now()->endOfMonth())
+            ->orderByDesc('periode_bulan')
+            ->first();
+
+        if ($currentLog) {
+            $this->update(['nilai_buku' => $currentLog->nilai_buku_akhir]);
+        }
     }
 }
