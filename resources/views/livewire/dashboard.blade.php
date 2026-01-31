@@ -1,224 +1,371 @@
-<div class="space-y-8 animate-fade-in">
-    <!-- EXECUTIVE SUMMARY BANNER -->
-    <div class="relative overflow-hidden rounded-[2.5rem] bg-slate-900 p-10 shadow-2xl">
-        <div class="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-indigo-500/20 to-transparent opacity-50"></div>
-        <div class="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-indigo-500/10 blur-3xl"></div>
-        
-        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-            <div>
-                <div class="flex items-center gap-3 mb-4">
-                    <span class="px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 text-[10px] font-black uppercase tracking-[0.2em]">Sistem Terintegrasi v2.0</span>
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span class="text-emerald-400 text-[10px] font-bold uppercase tracking-widest">Sistem Online</span>
-                </div>
-                <h2 class="text-4xl md:text-5xl font-black text-white tracking-tight font-display mb-2">Pusat Komando Eksekutif</h2>
-                <p class="text-slate-400 max-w-xl font-medium">Selamat datang kembali, <span class="text-white">{{ Auth::user()->name }}</span>. Pantauan waktu nyata seluruh klaster layanan kesehatan hari ini.</p>
-            </div>
+<div class="space-y-8">
+    
+    <!-- Selamat Datang & Ringkasan Cepat -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <!-- Kartu Profil Selamat Datang -->
+        <div class="lg:col-span-1 bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-6 text-white relative overflow-hidden shadow-xl">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
+            <div class="absolute bottom-0 left-0 w-24 h-24 bg-blue-500/20 rounded-full blur-2xl -ml-10 -mb-10"></div>
             
-            <div class="flex items-center gap-4">
-                <div class="text-right">
-                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Waktu Sistem</p>
-                    <p class="text-xl font-bold text-white font-mono">{{ now()->translatedFormat('H:i') }} <span class="text-slate-500 text-xs">WIB</span></p>
-                </div>
-                <div class="h-12 w-px bg-slate-800"></div>
-                <div class="p-4 bg-white/5 rounded-2xl border border-white/5 backdrop-blur-sm">
-                    <svg class="w-6 h-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- KLASTER ILP OVERVIEW -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- Antrean Hari Ini -->
-        <div class="group glass p-8 rounded-[2rem] hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500">
-            <div class="flex justify-between items-start mb-6">
-                <div class="p-3 bg-indigo-50 rounded-2xl text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-500">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                </div>
-                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-indigo-600 transition-colors">Pembaruan Langsung</span>
-            </div>
-            <p class="text-sm font-bold text-slate-500 mb-1">Total Kunjungan Hari Ini</p>
-            <h3 class="text-4xl font-black text-slate-900 font-display tracking-tight">{{ $antreanHariIni ?? 0 }} <span class="text-xs font-bold text-slate-400">Pasien</span></h3>
-            <div class="mt-4 flex items-center gap-2 text-xs font-bold text-emerald-600 bg-emerald-50 w-max px-2 py-1 rounded-lg">
-                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>
-                Aktif Melayani
-            </div>
-        </div>
-
-        <!-- Rekam Medis -->
-        <div class="group glass p-8 rounded-[2rem] hover:shadow-2xl hover:shadow-cyan-500/10 transition-all duration-500">
-            <div class="flex justify-between items-start mb-6">
-                <div class="p-3 bg-cyan-50 rounded-2xl text-cyan-600 group-hover:bg-cyan-600 group-hover:text-white transition-colors duration-500">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                </div>
-                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Diagnosa</span>
-            </div>
-            <p class="text-sm font-bold text-slate-500 mb-1">RME Bulan Ini</p>
-            <h3 class="text-4xl font-black text-slate-900 font-display tracking-tight">{{ $totalRekamMedisBulanIni ?? 0 }} <span class="text-xs font-bold text-slate-400">Berkas</span></h3>
-            <div class="mt-4 flex items-center gap-2 text-xs font-bold text-blue-600 bg-blue-50 w-max px-2 py-1 rounded-lg">
-                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 12l2 2 4-4" /></svg>
-                Sinkron SatuSehat
-            </div>
-        </div>
-
-        <!-- Farmasi -->
-        <div class="group glass p-8 rounded-[2rem] hover:shadow-2xl hover:shadow-emerald-500/10 transition-all duration-500">
-            <div class="flex justify-between items-start mb-6">
-                <div class="p-3 bg-emerald-50 rounded-2xl text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-500">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
-                </div>
-                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Inventaris</span>
-            </div>
-            <p class="text-sm font-bold text-slate-500 mb-1">Stok Obat Menipis</p>
-            <h3 class="text-4xl font-black text-slate-900 font-display tracking-tight">{{ $obatMenipis ?? 0 }} <span class="text-xs font-bold text-slate-400">Item</span></h3>
-            <div class="mt-4 flex items-center gap-2 text-xs font-bold text-rose-600 bg-rose-50 w-max px-2 py-1 rounded-lg">
-                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                Perlu Reorder
-            </div>
-        </div>
-
-        <!-- Keuangan -->
-        <div class="group glass p-8 rounded-[2rem] hover:shadow-2xl hover:shadow-amber-500/10 transition-all duration-500">
-            <div class="flex justify-between items-start mb-6">
-                <div class="p-3 bg-amber-50 rounded-2xl text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-colors duration-500">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                </div>
-                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pendapatan</span>
-            </div>
-            <p class="text-sm font-bold text-slate-500 mb-1">Pendapatan Hari Ini</p>
-            <h3 class="text-3xl font-black text-slate-900 font-display tracking-tight">Rp{{ number_format(($pendapatanHariIni ?? 0)/1000, 0) }}k</h3>
-            <div class="mt-4 flex items-center gap-2 text-xs font-bold text-amber-600 bg-amber-50 w-max px-2 py-1 rounded-lg">
-                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" /></svg>
-                Arus Kas Stabil
-            </div>
-        </div>
-    </div>
-
-    <!-- MAIN ANALYTICS GRID -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        <!-- Tren Kunjungan Pasien (ILP Perspective) -->
-        <div class="lg:col-span-2 glass p-8 rounded-[2.5rem]">
-            <div class="flex items-center justify-between mb-8">
+            <div class="relative z-10 flex flex-col h-full justify-between">
                 <div>
-                    <h3 class="text-xl font-black text-slate-800 font-display">Analisis Kunjungan Klaster</h3>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Tren Layanan Integrasi Primer</p>
+                    <span class="inline-block px-3 py-1 rounded-full bg-white/10 border border-white/10 text-[10px] font-bold uppercase tracking-wider mb-4">
+                        {{ Carbon\Carbon::now()->translatedFormat('l, d F Y') }}
+                    </span>
+                    <h2 class="text-2xl font-black leading-tight mb-2">Halo, {{ Auth::user()->name }}!</h2>
+                    <p class="text-slate-400 text-sm">Selamat datang kembali di Pusat Komando Administrasi Kesehatan Terintegrasi.</p>
                 </div>
-                <select class="text-xs font-bold border-none bg-slate-100 rounded-xl px-4 py-2 focus:ring-0">
-                    <option>6 Bulan Terakhir</option>
-                </select>
+                
+                <div class="mt-6 pt-6 border-t border-white/10">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-medium text-slate-400">Status Sistem</span>
+                        <span class="flex items-center gap-1.5 text-xs font-bold text-emerald-400">
+                            <span class="relative flex h-2 w-2">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            </span>
+                            ONLINE
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-medium text-slate-400">Pengguna Aktif</span>
+                        <span class="text-sm font-bold">{{ $userOnlineTotal }} User</span>
+                    </div>
+                </div>
             </div>
-            
-            <div id="chart-kunjungan" class="h-80"></div>
         </div>
 
-        <!-- Sebaran Klaster ILP (Pie Chart) -->
-        <div class="glass p-8 rounded-[2.5rem]">
-            <h3 class="text-xl font-black text-slate-800 font-display mb-8">Proporsi Klaster</h3>
-            <div id="chart-klaster" class="h-64 flex items-center justify-center"></div>
+        <!-- Metric Cards Grid -->
+        <div class="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- 1. Pasien Baru -->
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 group hover:border-blue-200 transition-all duration-300">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
+                    </div>
+                    <span class="flex items-center text-xs font-bold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-lg">
+                        <svg class="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                        +{{ $pasienBaruBulanIni }}
+                    </span>
+                </div>
+                <h3 class="text-3xl font-black text-slate-800 mb-1">{{ number_format($totalPasien) }}</h3>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Pasien Terdaftar</p>
+            </div>
+
+            <!-- 2. Antrean Hari Ini -->
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 group hover:border-purple-200 transition-all duration-300">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    @php $persenSelesai = $antreanHariIni > 0 ? round(($antreanSelesai / $antreanHariIni) * 100) : 0; @endphp
+                    <span class="flex items-center text-xs font-bold {{ $persenSelesai >= 50 ? 'text-blue-500 bg-blue-50' : 'text-orange-500 bg-orange-50' }} px-2 py-1 rounded-lg">
+                        {{ $persenSelesai }}% Selesai
+                    </span>
+                </div>
+                <h3 class="text-3xl font-black text-slate-800 mb-1">{{ number_format($antreanHariIni) }}</h3>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Antrean Hari Ini</p>
+            </div>
+
+            <!-- 3. Pendapatan Hari Ini -->
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 group hover:border-emerald-200 transition-all duration-300">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <a href="{{ route('finance.dashboard') }}" class="text-xs font-bold text-emerald-600 hover:underline">Lihat Detail &rarr;</a>
+                </div>
+                <h3 class="text-3xl font-black text-slate-800 mb-1">Rp {{ number_format($pendapatanHariIni, 0, ',', '.') }}</h3>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pendapatan Hari Ini</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grafik Utama & Statistik Poli -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Grafik Kunjungan -->
+        <div class="lg:col-span-2 bg-white p-6 rounded-3xl shadow-sm border border-slate-100" x-data="chartKunjungan()">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h3 class="font-bold text-lg text-slate-800">Tren Pasien & Kunjungan</h3>
+                    <p class="text-xs text-slate-400 mt-1">Statistik rekam medis 6 bulan terakhir</p>
+                </div>
+                <div class="flex gap-2">
+                    <span class="flex items-center gap-1 text-xs font-bold text-slate-600">
+                        <span class="w-3 h-3 rounded-full bg-blue-500"></span> Pasien
+                    </span>
+                </div>
+            </div>
+            <div id="chart-kunjungan" class="w-full h-[320px]"></div>
+        </div>
+
+        <!-- Statistik Poliklinik -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col">
+            <h3 class="font-bold text-lg text-slate-800 mb-1">Aktivitas Poliklinik</h3>
+            <p class="text-xs text-slate-400 mb-6">Kunjungan pasien hari ini berdasarkan poli</p>
             
-            <div class="mt-8 space-y-4">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-3 h-3 rounded-full bg-indigo-500"></div>
-                        <span class="text-sm font-bold text-slate-600">Ibu & Anak</span>
+            <div class="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-4">
+                @forelse($kunjunganPoli as $poli)
+                    <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 hover:bg-white hover:shadow-md hover:shadow-blue-500/5 transition-all duration-300 border border-transparent hover:border-slate-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-500 shadow-sm font-bold text-sm">
+                                {{ substr($poli->poli->nama_poli ?? '?', 0, 1) }}
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">{{ $poli->poli->nama_poli ?? 'Tidak Diketahui' }}</h4>
+                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{{ $poli->total }} Pasien</p>
+                            </div>
+                        </div>
+                        <div class="h-8 w-8 rounded-full flex items-center justify-center bg-blue-100 text-blue-600 font-bold text-xs">
+                            {{ round(($poli->total / ($antreanHariIni > 0 ? $antreanHariIni : 1)) * 100) }}%
+                        </div>
                     </div>
-                    <span class="text-sm font-black text-slate-800">45%</span>
-                </div>
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-3 h-3 rounded-full bg-cyan-500"></div>
-                        <span class="text-sm font-bold text-slate-600">Usia Dewasa</span>
+                @empty
+                    <div class="text-center py-10">
+                        <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3 text-slate-300">
+                            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                        </div>
+                        <p class="text-sm text-slate-400">Belum ada kunjungan poli hari ini.</p>
                     </div>
-                    <span class="text-sm font-black text-slate-800">35%</span>
-                </div>
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-3 h-3 rounded-full bg-orange-500"></div>
-                        <span class="text-sm font-bold text-slate-600">P2P / Infeksi</span>
-                    </div>
-                    <span class="text-sm font-black text-slate-800">20%</span>
+                @endforelse
+            </div>
+            
+            <div class="mt-6 pt-6 border-t border-slate-100">
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-slate-500 font-medium">Rata-rata Waktu Layanan</span>
+                    <span class="font-bold text-slate-800 bg-slate-100 px-3 py-1 rounded-lg">{{ $avgWaktuLayanan }} Menit</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- REAL-TIME LOG & SECURITY STATUS -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div class="glass p-8 rounded-[2.5rem] overflow-hidden">
-            <h3 class="text-xl font-black text-slate-800 font-display mb-6 flex items-center gap-3">
-                <svg class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                Log Aktivitas Sistem
-            </h3>
-            <div class="space-y-6">
-                @foreach($riwayatLog as $log)
-                <div class="flex items-start gap-4 relative">
-                    <div class="mt-1.5 w-2 h-2 rounded-full bg-indigo-500 shrink-0"></div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-bold text-slate-800 truncate">{{ $log->description }}</p>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{{ $log->causer->name ?? 'Sistem' }} • {{ $log->created_at->diffForHumans() }}</p>
-                    </div>
+    <!-- Monitoring Vital (EWS & Status) -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <!-- 1. Farmasi & Logistik -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+            <h4 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+                Logistik Farmasi
+            </h4>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-slate-500">Stok Menipis</span>
+                    <span class="text-sm font-bold {{ $obatMenipis > 0 ? 'text-red-500' : 'text-slate-800' }}">{{ $obatMenipis }} Item</span>
                 </div>
-                @endforeach
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-slate-500">Kedaluwarsa < 3 Bln</span>
+                    <span class="text-sm font-bold {{ $obatExpired > 0 ? 'text-red-500' : 'text-slate-800' }}">{{ $obatExpired }} Batch</span>
+                </div>
+                <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                    <div class="bg-indigo-500 h-1.5 rounded-full" style="width: 75%"></div>
+                </div>
+                <a href="{{ route('pharmacy.dashboard') }}" class="block text-center text-xs font-bold text-indigo-500 hover:text-indigo-600 mt-2">Kelola Farmasi &rarr;</a>
             </div>
         </div>
 
-        <div class="bg-slate-900 p-8 rounded-[2.5rem] text-white relative overflow-hidden">
-            <div class="absolute right-0 bottom-0 opacity-10">
-                <svg class="w-48 h-48" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+        <!-- 2. SDM & Kepegawaian -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+            <h4 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                SDM & Legalitas
+            </h4>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-slate-500">STR Expired</span>
+                    <span class="text-sm font-bold {{ $strExpired > 0 ? 'text-red-500' : 'text-slate-800' }}">{{ $strExpired }} Pegawai</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-slate-500">SIP Expired</span>
+                    <span class="text-sm font-bold {{ $sipExpired > 0 ? 'text-red-500' : 'text-slate-800' }}">{{ $sipExpired }} Pegawai</span>
+                </div>
+                <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                    <div class="bg-pink-500 h-1.5 rounded-full" style="width: 60%"></div>
+                </div>
+                <a href="{{ route('hrd.dashboard') }}" class="block text-center text-xs font-bold text-pink-500 hover:text-pink-600 mt-2">Monitor SDM &rarr;</a>
             </div>
-            <h3 class="text-xl font-black text-white font-display mb-6">Status Keamanan (SOC)</h3>
+        </div>
+
+        <!-- 3. Aset & Fasilitas -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+            <h4 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                Aset & Fasilitas
+            </h4>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-slate-500">Fasilitas Aktif</span>
+                    <span class="text-sm font-bold text-slate-800">{{ $fasilitasAktif }} Unit</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-slate-500">Jadwal Maintenance</span>
+                    <span class="text-sm font-bold {{ $asetMaintenance > 0 ? 'text-amber-600' : 'text-slate-800' }}">{{ $asetMaintenance }} Pending</span>
+                </div>
+                 <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                    <div class="bg-amber-500 h-1.5 rounded-full" style="width: 85%"></div>
+                </div>
+                <a href="{{ route('barang.dashboard') }}" class="block text-center text-xs font-bold text-amber-500 hover:text-amber-600 mt-2">Manajemen Aset &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 4. Rawat Inap & Bed -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+            <h4 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5 text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg>
+                Okupansi Rawat Inap
+            </h4>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-slate-500">Pasien Dirawat</span>
+                    <span class="text-sm font-bold text-slate-800">{{ $pasienRawatInap }} Orang</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-slate-500">Bed Tersedia</span>
+                    <span class="text-sm font-bold text-slate-800">{{ $kamarTersedia }} Bed</span>
+                </div>
+                @php 
+                    $totalBed = $pasienRawatInap + $kamarTersedia;
+                    $bor = $totalBed > 0 ? ($pasienRawatInap / $totalBed) * 100 : 0;
+                @endphp
+                <div class="relative w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                    <div class="absolute left-0 top-0 h-full bg-cyan-500 rounded-full" style="width: {{ $bor }}%"></div>
+                </div>
+                <div class="flex justify-between text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    <span>BOR: {{ number_format($bor, 1) }}%</span>
+                    <a href="{{ route('rawat-inap.index') }}" class="text-cyan-500 hover:underline">Detail</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aktivitas Terakhir & Keamanan -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Aktivitas Sistem -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="font-bold text-lg text-slate-800">Aktivitas Sistem Terkini</h3>
+                <a href="{{ route('activity-log') }}" class="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">Lihat Semua Log</a>
+            </div>
+            
+            <div class="relative border-l-2 border-slate-100 ml-3 space-y-6">
+                @forelse($riwayatLog as $log)
+                <div class="relative pl-6">
+                    <div class="absolute -left-[9px] top-1 h-4 w-4 rounded-full border-2 border-white bg-blue-500 shadow-sm"></div>
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
+                        <div>
+                            <p class="text-sm font-bold text-slate-800">{{ $log->description }}</p>
+                            <p class="text-xs text-slate-500">Oleh: {{ $log->causer->name ?? 'Sistem' }}</p>
+                        </div>
+                        <span class="text-[10px] font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded border border-slate-100 whitespace-nowrap">
+                            {{ $log->created_at->diffForHumans() }}
+                        </span>
+                    </div>
+                </div>
+                @empty
+                <div class="pl-6 text-sm text-slate-400">Belum ada aktivitas tercatat.</div>
+                @endforelse
+            </div>
+        </div>
+
+        <!-- Keamanan & Status -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="font-bold text-lg text-slate-800">Status Keamanan</h3>
+                <span class="flex items-center gap-1.5 text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded border border-slate-200">
+                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                    SECURE
+                </span>
+            </div>
+            
             <div class="grid grid-cols-2 gap-4">
-                <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
-                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Ancaman Diblokir</p>
-                    <p class="text-2xl font-black text-emerald-400">0</p>
+                <div class="p-4 rounded-2xl bg-red-50 border border-red-100 flex flex-col justify-center items-center text-center">
+                    <p class="text-3xl font-black text-red-500 mb-1">{{ $loginGagal }}</p>
+                    <p class="text-xs font-bold text-red-400 uppercase tracking-wide">Login Gagal Hari Ini</p>
                 </div>
-                <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
-                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Pengguna Aktif</p>
-                    <p class="text-2xl font-black text-indigo-400">{{ $userOnlineTotal ?? 0 }}</p>
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col justify-center items-center text-center">
+                    <p class="text-3xl font-black text-slate-700 mb-1">0</p>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Anomali Terdeteksi</p>
+                </div>
+                <div class="col-span-2 p-4 rounded-2xl bg-blue-50 border border-blue-100">
+                    <div class="flex items-center gap-3">
+                         <div class="p-2 bg-white rounded-lg text-blue-500 shadow-sm">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                         </div>
+                         <div>
+                             <p class="text-sm font-bold text-blue-800">Backup Sistem Terakhir</p>
+                             <p class="text-xs text-blue-600">Otomatis • 02:00 WIB Tadi Pagi</p>
+                         </div>
+                    </div>
                 </div>
             </div>
-            <div class="mt-6 p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/20">
-                <p class="text-xs font-bold text-indigo-300 leading-relaxed">Seluruh sistem terproteksi dengan enkripsi AES-256 dan pemantauan jejak audit waktu nyata.</p>
-            </div>
+            
+            <a href="{{ route('security.dashboard') }}" class="block w-full text-center py-3 mt-4 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors">
+                Buka Pusat Keamanan
+            </a>
         </div>
     </div>
 
-    <!-- CHARTS INITIALIZATION -->
+    <!-- Chart Scripts -->
+    @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Chart Kunjungan
-            var optionsKunjungan = {
-                series: [{
-                    name: 'Pasien',
-                    data: @json($dataGrafik['data'])
-                }],
-                chart: { height: 320, type: 'area', toolbar: { show: false }, fontFamily: 'Plus Jakarta Sans' },
-                colors: ['#6366f1'],
-                fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 90, 100] } },
-                dataLabels: { enabled: false },
-                stroke: { curve: 'smooth', width: 3 },
-                xaxis: { categories: @json($dataGrafik['labels']) },
-                grid: { borderColor: '#f1f5f9' },
-                tooltip: { theme: 'light' }
-            };
-            var chartKunjungan = new ApexCharts(document.querySelector("#chart-kunjungan"), optionsKunjungan);
-            chartKunjungan.render();
+        function chartKunjungan() {
+            return {
+                init() {
+                    const dataGrafik = @json($dataGrafik);
+                    
+                    const options = {
+                        series: [{
+                            name: 'Total Kunjungan',
+                            data: dataGrafik.data
+                        }],
+                        chart: {
+                            type: 'area',
+                            height: 320,
+                            toolbar: { show: false },
+                            fontFamily: 'Plus Jakarta Sans, sans-serif'
+                        },
+                        colors: ['#3b82f6'],
+                        fill: {
+                            type: 'gradient',
+                            gradient: {
+                                shadeIntensity: 1,
+                                opacityFrom: 0.7,
+                                opacityTo: 0.05,
+                                stops: [0, 90, 100]
+                            }
+                        },
+                        dataLabels: { enabled: false },
+                        stroke: { curve: 'smooth', width: 3 },
+                        xaxis: {
+                            categories: dataGrafik.labels,
+                            axisBorder: { show: false },
+                            axisTicks: { show: false },
+                            labels: {
+                                style: { colors: '#94a3b8', fontSize: '12px' }
+                            }
+                        },
+                        yaxis: {
+                            labels: {
+                                style: { colors: '#94a3b8', fontSize: '12px' }
+                            }
+                        },
+                        grid: {
+                            borderColor: '#f1f5f9',
+                            strokeDashArray: 4,
+                            yaxis: { lines: { show: true } }
+                        },
+                        tooltip: {
+                            theme: 'light',
+                            y: {
+                                formatter: function (val) { return val + " Pasien" }
+                            }
+                        }
+                    };
 
-            // Chart Klaster
-            var optionsKlaster = {
-                series: [45, 35, 20],
-                chart: { type: 'donut', height: 280, fontFamily: 'Plus Jakarta Sans' },
-                labels: ['Ibu & Anak', 'Usia Dewasa', 'P2P'],
-                colors: ['#6366f1', '#06b6d4', '#f59e0b'],
-                legend: { show: false },
-                plotOptions: { pie: { donut: { size: '75%', labels: { show: true, total: { show: true, label: 'Klaster', fontSize: '12px', fontWeight: 'bold' } } } } },
-                stroke: { show: false },
-                tooltip: { theme: 'light' }
-            };
-            var chartKlaster = new ApexCharts(document.querySelector("#chart-klaster"), optionsKlaster);
-            chartKlaster.render();
-        });
+                    const chart = new ApexCharts(document.querySelector("#chart-kunjungan"), options);
+                    chart.render();
+                }
+            }
+        }
     </script>
+    @endpush
 </div>
