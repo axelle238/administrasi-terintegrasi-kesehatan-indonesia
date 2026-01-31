@@ -111,6 +111,52 @@
                     </div>
                 </div>
 
+                <!-- Section 2: Detail Aset Medis (Conditional) -->
+                @if($is_medis)
+                <div class="bg-white rounded-2xl shadow-sm border border-emerald-100 overflow-hidden animate-fade-in">
+                    <div class="px-6 py-4 border-b border-emerald-100 bg-emerald-50/50 flex items-center gap-3">
+                        <div class="p-2 bg-emerald-100 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-emerald-900">Spesifikasi Medis & Regulasi</h3>
+                    </div>
+
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Izin Edar -->
+                        <div>
+                            <x-input-label for="nomor_izin_edar" value="Nomor Izin Edar (AKL/AKD)" class="mb-2" />
+                            <x-text-input wire:model="nomor_izin_edar" id="nomor_izin_edar" class="block w-full" type="text" placeholder="KEMENKES RI AKL..." />
+                        </div>
+
+                        <!-- Distributor -->
+                        <div>
+                            <x-input-label for="distributor_resmi" value="Distributor Resmi" class="mb-2" />
+                            <x-text-input wire:model="distributor_resmi" id="distributor_resmi" class="block w-full" type="text" />
+                        </div>
+
+                        <!-- Kalibrasi -->
+                        <div>
+                            <x-input-label for="frekuensi_kalibrasi_bulan" value="Frekuensi Kalibrasi (Bulan)" class="mb-2" />
+                            <x-text-input wire:model="frekuensi_kalibrasi_bulan" id="frekuensi_kalibrasi_bulan" class="block w-full" type="number" placeholder="Contoh: 12" />
+                            <p class="text-[10px] text-emerald-600 mt-1">Isi 0 jika tidak perlu kalibrasi.</p>
+                        </div>
+
+                        <div>
+                            <x-input-label for="kalibrasi_terakhir" value="Kalibrasi Terakhir" class="mb-2" />
+                            <x-text-input wire:model="kalibrasi_terakhir" id="kalibrasi_terakhir" class="block w-full" type="date" />
+                        </div>
+
+                        <!-- Suhu -->
+                        <div>
+                            <x-input-label for="suhu_penyimpanan" value="Suhu Penyimpanan" class="mb-2" />
+                            <x-text-input wire:model="suhu_penyimpanan" id="suhu_penyimpanan" class="block w-full" type="text" placeholder="Contoh: 2-8 °C" />
+                        </div>
+                    </div>
+                </div>
+                @endif
+
                 <!-- Lokasi & Fisik -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex items-center gap-3">

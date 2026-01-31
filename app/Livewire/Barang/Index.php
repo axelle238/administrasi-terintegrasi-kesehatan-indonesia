@@ -70,16 +70,25 @@ class Index extends Component
 
         // Filter Tipe (Medis vs Umum)
         if ($this->filterTipe == 'medis') {
-            $query->whereHas('kategori', function($q) {
-                $q->where('nama_kategori', 'like', '%Medis%')
-                  ->orWhere('nama_kategori', 'like', '%Kesehatan%')
-                  ->orWhere('nama_kategori', 'like', '%Alat%');
+            $query->where(function($q) {
+                $q->where('jenis_aset', 'Medis')
+                  ->orWhereHas('kategori', function($sq) {
+                      $sq->where('nama_kategori', 'like', '%Medis%')
+                        ->orWhere('nama_kategori', 'like', '%Kesehatan%')
+                        ->orWhere('nama_kategori', 'like', '%Alat%');
+                  });
             });
         } elseif ($this->filterTipe == 'umum') {
-            $query->whereHas('kategori', function($q) {
-                $q->where('nama_kategori', 'not like', '%Medis%')
-                  ->where('nama_kategori', 'not like', '%Kesehatan%')
-                  ->where('nama_kategori', 'not like', '%Alat%');
+            $query->where(function($q) {
+                $q->where('jenis_aset', '!=', 'Medis')
+                  ->orWhere(function($subQ) {
+                      $subQ->whereNull('jenis_aset')
+                           ->whereHas('kategori', function($sq) {
+                               $sq->where('nama_kategori', 'not like', '%Medis%')
+                                  ->where('nama_kategori', 'not like', '%Kesehatan%')
+                                  ->where('nama_kategori', 'not like', '%Alat%');
+                           });
+                  });
             });
         }
 

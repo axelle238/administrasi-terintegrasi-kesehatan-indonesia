@@ -38,9 +38,19 @@ class Edit extends Component
     public $nilai_residu = 0;
     public $keterangan;
 
+    // Detail Medis (Specific)
+    public $is_medis = false;
+    public $nomor_izin_edar;
+    public $distributor_resmi;
+    public $frekuensi_kalibrasi_bulan;
+    public $kalibrasi_terakhir;
+    public $suhu_penyimpanan;
+    public $catatan_teknis;
+
     public function mount(Barang $barang)
     {
-        $this->barang = $barang;
+        $this->barang = $barang->load('detailMedis', 'kategori');
+        
         $this->kategori_barang_id = $barang->kategori_barang_id;
         $this->kode_barang = $barang->kode_barang;
         $this->nama_barang = $barang->nama_barang;
@@ -64,6 +74,36 @@ class Edit extends Component
         $this->masa_manfaat = $barang->masa_manfaat;
         $this->nilai_residu = $barang->nilai_residu;
         $this->keterangan = $barang->keterangan;
+
+        // Load Medical Details
+        $this->detectMedisState();
+        if ($barang->detailMedis) {
+            $this->nomor_izin_edar = $barang->detailMedis->nomor_izin_edar;
+            $this->distributor_resmi = $barang->detailMedis->distributor_resmi;
+            $this->frekuensi_kalibrasi_bulan = $barang->detailMedis->frekuensi_kalibrasi_bulan;
+            $this->kalibrasi_terakhir = $barang->detailMedis->kalibrasi_terakhir;
+            $this->suhu_penyimpanan = $barang->detailMedis->suhu_penyimpanan;
+            $this->catatan_teknis = $barang->detailMedis->catatan_teknis;
+        }
+    }
+
+    public function updatedKategoriBarangId($value)
+    {
+        $this->detectMedisState();
+    }
+
+    protected function detectMedisState()
+    {
+        if ($this->kategori_barang_id) {
+            $kategori = KategoriBarang::find($this->kategori_barang_id);
+            if ($kategori) {
+                $nama = strtolower($kategori->nama_kategori);
+                $this->is_medis = str_contains($nama, 'medis') || 
+                                  str_contains($nama, 'kesehatan') || 
+                                  str_contains($nama, 'obat') ||
+                                  str_contains($nama, 'alkes');
+            }
+        }
     }
 
     public function update()
@@ -81,6 +121,8 @@ class Edit extends Component
             'supplier_id' => 'nullable|exists:suppliers,id',
             'is_asset' => 'boolean',
             'spesifikasi' => 'nullable|string',
+            'nomor_izin_edar' => 'nullable|string',
+            'frekuensi_kalibrasi_bulan' => 'nullable|integer|min:1',
         ]);
 
         $this->barang->update([
@@ -92,7 +134,6 @@ class Edit extends Component
             'satuan' => $this->satuan,
             'kondisi' => $this->kondisi,
             'tanggal_pengadaan' => $this->tanggal_pengadaan,
-            // 'lokasi_penyimpanan' => $this->lokasi_penyimpanan, // Prefer sync with room name if needed, or just rely on ID
             'ruangan_id' => $this->ruangan_id,
             'supplier_id' => $this->supplier_id,
             'is_asset' => $this->is_asset,
@@ -107,6 +148,27 @@ class Edit extends Component
             'nilai_residu' => $this->nilai_residu ?: 0,
             'keterangan' => $this->keterangan,
         ]);
+
+        // Update or Create Detail Medis
+        if ($this->is_medis) {
+            $this->barang->detailMedis()->updateOrCreate(
+                ['barang_id' => $this->barang->id],
+                [
+                    'nomor_izin_edar' => $this->nomor_izin_edar,
+                    'distributor_resmi' => $this->distributor_resmi,
+                    'frekuensi_kalibrasi_bulan' => $this->frekuensi_kalibrasi_bulan,
+                    'kalibrasi_terakhir' => $this->kalibrasi_terakhir,
+                    'kalibrasi_selanjutnya' => $this->frekuensi_kalibrasi_bulan && $this->kalibrasi_terakhir 
+                        ? \Carbon\Carbon::parse($this->kalibrasi_terakhir)->addMonths($this->frekuensi_kalibrasi_bulan)
+                        : null,
+                    'suhu_penyimpanan' => $this->suhu_penyimpanan,
+                    'catatan_teknis' => $this->catatan_teknis,
+                ]
+            );
+        } else {
+            // Optional: Delete detail medis if category changed to non-medis
+            $this->barang->detailMedis()->delete();
+        }
 
         $this->dispatch('notify', 'success', 'Data barang berhasil diperbarui.');
         return $this->redirect(route('barang.index'), navigate: true);
