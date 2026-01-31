@@ -156,17 +156,20 @@
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
     </x-slot:icon>
     
-    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Area Kerja Saya</div>
-    <x-nav.link-child :href="route('kepegawaian.dashboard')" :active="request()->routeIs('kepegawaian.dashboard')">Ringkasan Profil Saya</x-nav.link-child>
-    <x-nav.link-child :href="route('kepegawaian.presensi.index')" :active="request()->routeIs('kepegawaian.presensi.index')">Kehadiran & Absensi Saya</x-nav.link-child>
-    <x-nav.link-child :href="route('kepegawaian.aktivitas.index')" :active="request()->routeIs('kepegawaian.aktivitas.index')">Log Harian & Aktivitas</x-nav.link-child>
+    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Utama</div>
+    <x-nav.link-child :href="route('kepegawaian.dashboard')" :active="request()->routeIs('kepegawaian.dashboard')">Beranda & Ringkasan</x-nav.link-child>
 
-    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Layanan Mandiri</div>
-    <x-nav.link-child :href="route('kepegawaian.cuti.index')" :active="request()->routeIs('kepegawaian.cuti.index') && !Auth::user()->can('admin')">Ajukan Cuti & Izin</x-nav.link-child>
-    <x-nav.link-child :href="route('kepegawaian.lembur.index')" :active="request()->routeIs('kepegawaian.lembur.index')">Permohonan Lembur</x-nav.link-child>
-    <x-nav.link-child :href="route('kepegawaian.jadwal.swap')" :active="request()->routeIs('kepegawaian.jadwal.swap')">Request Tukar Shift</x-nav.link-child>
+    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Absensi & Kegiatan</div>
+    <x-nav.link-child :href="route('kepegawaian.presensi.index')" :active="request()->routeIs('kepegawaian.presensi.index')">Presensi Digital (GPS/Selfie)</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.aktivitas.index')" :active="request()->routeIs('kepegawaian.aktivitas.index')">Laporan Kinerja Harian</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.jadwal.swap')" :active="request()->routeIs('kepegawaian.jadwal.swap')">Jadwal & Tukar Shift</x-nav.link-child>
+
+    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Pengajuan & Perizinan</div>
+    <x-nav.link-child :href="route('kepegawaian.cuti.index')" :active="request()->routeIs('kepegawaian.cuti.index') && !Auth::user()->can('admin')">Permohonan Cuti</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.lembur.index')" :active="request()->routeIs('kepegawaian.lembur.index')">Pengajuan Lembur</x-nav.link-child>
     
-    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Pengembangan Diri</div>
-    <x-nav.link-child :href="route('kepegawaian.pelatihan.index')" :active="request()->routeIs('kepegawaian.pelatihan.index')">Arsip Sertifikat Saya</x-nav.link-child>
-    <x-nav.link-child :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">Pengaturan Akun & Keamanan</x-nav.link-child>
+    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Data & Karir</div>
+    <x-nav.link-child :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">Profil & Dokumen Saya</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.pelatihan.index')" :active="request()->routeIs('kepegawaian.pelatihan.index')">Riwayat Pelatihan</x-nav.link-child>
+    <x-nav.link-child href="#" onclick="alert('Fitur Slip Gaji akan segera hadir.')" :active="false">Slip Gaji Digital</x-nav.link-child>
 </x-nav.dropdown>

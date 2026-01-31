@@ -3,12 +3,13 @@
 namespace App\Livewire\Kepegawaian;
 
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Presensi;
+use App\Models\KinerjaPegawai;
 use App\Models\Pegawai;
 use App\Models\PengajuanCuti;
 use App\Models\JadwalJaga;
-use App\Models\Penggajian;
-use App\Models\KinerjaPegawai;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Shift;
 use Carbon\Carbon;
 
 class DashboardPegawai extends Component
@@ -16,67 +17,78 @@ class DashboardPegawai extends Component
     public function render()
     {
         $user = Auth::user();
-        $pegawai = Pegawai::where('user_id', $user->id)->first();
+        $pegawai = $user->pegawai;
+        $today = Carbon::today();
 
-        if (!$pegawai) {
-            return view('livewire.kepegawaian.dashboard-pegawai-not-found')
-                ->layout('layouts.app', ['header' => 'Dashboard Pegawai']);
-        }
+        // 1. Data Presensi Hari Ini
+        $presensiHariIni = Presensi::where('user_id', $user->id)
+            ->whereDate('created_at', $today)
+            ->first();
 
-        // 1. Statistik Personal
-        $cutiDiambil = PengajuanCuti::where('user_id', $user->id)
-            ->where('status', 'Disetujui')
-            ->whereYear('tanggal_mulai', date('Y'))
-            ->get()
-            ->sum(function ($cuti) {
-                return Carbon::parse($cuti->tanggal_mulai)
-                    ->diffInDays(Carbon::parse($cuti->tanggal_selesai)) + 1;
-            });
-
-        $sisaCuti = 12 - $cutiDiambil;
-
+        // 2. Jadwal Hari Ini
         $jadwalHariIni = JadwalJaga::with('shift')
-            ->where('pegawai_id', $pegawai->id)
-            ->whereDate('tanggal', Carbon::today())
+            ->where('pegawai_id', $pegawai->id ?? 0)
+            ->whereDate('tanggal', $today)
             ->first();
 
-        $gajiTerakhir = Penggajian::where('user_id', $user->id)
-            ->latest()
-            ->first();
-
-        // 2. Kinerja Terakhir
-        $kinerja = KinerjaPegawai::where('pegawai_id', $pegawai->id)
-            ->latest()
-            ->first();
-
-        // 3. Riwayat Cuti Terbaru
-        $riwayatCuti = PengajuanCuti::where('user_id', $user->id)
-            ->latest()
-            ->take(5)
-            ->get();
-
-        return view('livewire.kepegawaian.dashboard-pegawai', [
-            'pegawai' => $pegawai,
-            'sisaCuti' => max(0, $sisaCuti),
-            'jadwalHariIni' => $jadwalHariIni,
-            'gajiTerakhir' => $gajiTerakhir,
-            'kinerja' => $kinerja,
-            'riwayatCuti' => $riwayatCuti,
-            'dataPresensi' => $this->getPresensiStats($pegawai->id)
-        ])->layout('layouts.app', ['header' => 'Portal Mandiri Pegawai']);
-    }
-
-    private function getPresensiStats($pegawaiId)
-    {
-        // Simulasi data presensi bulanan (Hadir, Izin, Alpa)
-        // Karena sistem belum memiliki modul presensi rincian per jam, kita hitung dari jadwal
-        $bulanIni = Carbon::now()->month;
-        $tahunIni = Carbon::now()->year;
-
-        return [
-            'hadir' => 20, // Mock data untuk visualisasi
-            'izin' => 2,
-            'alpa' => 0
+        // 3. Statistik Ringkas
+        $stats = [
+            'sisa_cuti' => $pegawai->sisa_cuti ?? 0,
+            'hadir_bulan_ini' => Presensi::where('user_id', $user->id)
+                ->whereMonth('created_at', Carbon::now()->month)
+                ->where('status_kehadiran', 'Hadir')
+                ->count(),
+            'lembur_bulan_ini' => \App\Models\Lembur::where('user_id', $user->id)
+                ->whereMonth('tanggal', Carbon::now()->month)
+                ->where('status', 'Disetujui')
+                ->sum('durasi_jam'),
+            'poin_kinerja' => KinerjaPegawai::where('pegawai_id', $pegawai->id ?? 0)
+                ->whereMonth('created_at', Carbon::now()->month)
+                ->avg('nilai_total') ?? 0,
         ];
+
+        // 4. Aktivitas Terakhir (Timeline)
+        $activities = collect();
+        
+        // Add Presensi Logs
+        $logPresensi = Presensi::where('user_id', $user->id)->latest()->take(3)->get()->map(function($item) {
+            return [
+                'type' => 'presensi',
+                'title' => 'Presensi ' . ($item->jam_keluar ? 'Pulang' : 'Masuk'),
+                'time' => $item->updated_at,
+                'desc' => $item->jam_masuk . ($item->jam_keluar ? ' - ' . $item->jam_keluar : ''),
+                'status' => $item->status_kehadiran
+            ];
+        });
+
+        // Add Cuti Logs
+        $logCuti = PengajuanCuti::where('user_id', $user->id)->latest()->take(3)->get()->map(function($item) {
+            return [
+                'type' => 'cuti',
+                'title' => 'Pengajuan Cuti',
+                'time' => $item->created_at,
+                'desc' => $item->jenis_cuti . ' (' . $item->durasi_hari . ' hari)',
+                'status' => $item->status
+            ];
+        });
+
+        $timeline = $logPresensi->merge($logCuti)->sortByDesc('time')->take(5);
+
+        // 5. Shift Berikutnya
+        $nextShift = JadwalJaga::with('shift')
+            ->where('pegawai_id', $pegawai->id ?? 0)
+            ->whereDate('tanggal', '>', $today)
+            ->orderBy('tanggal')
+            ->first();
+
+        return view('livewire.kepegawaian.dashboard-pegawai', compact(
+            'user', 
+            'pegawai', 
+            'presensiHariIni', 
+            'jadwalHariIni', 
+            'stats', 
+            'timeline',
+            'nextShift'
+        ))->layout('layouts.app', ['header' => 'Portal Pegawai']);
     }
 }
