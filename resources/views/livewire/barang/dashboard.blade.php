@@ -9,7 +9,7 @@
                 Pusat Kendali Aset & Inventaris
             </h2>
             <p class="text-slate-500 font-medium mt-2 ml-16 leading-relaxed">
-                Monitoring status kondisi, nilai perolehan, jadwal pemeliharaan, dan siklus hidup seluruh aset fasilitas kesehatan.
+                Pemantauan status kondisi, nilai perolehan, jadwal pemeliharaan, dan siklus hidup seluruh aset fasilitas kesehatan.
             </p>
         </div>
         <div class="flex items-center gap-3 ml-16 lg:ml-0">
@@ -39,7 +39,7 @@
             <p class="text-xs font-bold text-indigo-100 uppercase tracking-widest mb-1 relative z-10">Alat Kesehatan (Alkes)</p>
             <h3 class="text-3xl font-black relative z-10">{{ number_format($totalAlkes) }} <span class="text-sm font-medium text-indigo-200">Unit</span></h3>
             <p class="mt-4 text-[10px] font-bold text-indigo-200 uppercase relative z-10 flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Critical Assets
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Aset Kritis
             </p>
         </div>
 
@@ -100,7 +100,7 @@
                             <p class="text-lg font-black text-emerald-700">{{ $kondisiStats['Baik'] }}</p>
                         </div>
                         <div class="p-3 bg-amber-50 rounded-2xl text-center">
-                            <p class="text-[10px] font-black text-amber-600 uppercase">Minor</p>
+                            <p class="text-[10px] font-black text-amber-600 uppercase">Perlu Perbaikan</p>
                             <p class="text-lg font-black text-amber-700">{{ $kondisiStats['PerluPerbaikan'] }}</p>
                         </div>
                         <div class="p-3 bg-rose-50 rounded-2xl text-center">
@@ -138,7 +138,7 @@
                             <div class="flex-1">
                                 <p class="text-xs font-black text-slate-800">{{ $log->barang->nama_barang ?? 'Aset' }}</p>
                                 <p class="text-[10px] text-slate-500 font-bold uppercase mt-0.5">{{ $log->jenis_transaksi }} • {{ $log->created_at->diffForHumans() }}</p>
-                                <p class="text-[10px] text-indigo-600 font-black mt-1 italic">Oleh: {{ $log->user->name ?? 'System' }}</p>
+                                <p class="text-[10px] text-indigo-600 font-black mt-1 italic">Oleh: {{ $log->user->name ?? 'Sistem' }}</p>
                             </div>
                         </div>
                         @endforeach
@@ -170,7 +170,7 @@
                                 <p class="text-sm font-black text-slate-800">{{ $item->nama_barang }}</p>
                                 <p class="text-[10px] text-rose-500 font-bold">Stok: {{ $item->stok }} {{ $item->satuan }}</p>
                             </div>
-                            <a href="{{ route('barang.pengadaan.create') }}" class="px-3 py-1.5 bg-white text-rose-600 text-[10px] font-black rounded-lg hover:bg-rose-600 hover:text-white transition-colors shadow-sm">Reorder</a>
+                            <a href="{{ route('barang.pengadaan.create') }}" class="px-3 py-1.5 bg-white text-rose-600 text-[10px] font-black rounded-lg hover:bg-rose-600 hover:text-white transition-colors shadow-sm">Pesan Ulang</a>
                         </div>
                         @empty
                         <div class="col-span-3 p-6 text-center text-slate-400 text-sm font-medium border-2 border-dashed border-slate-100 rounded-2xl">
@@ -240,7 +240,7 @@
             <div class="space-y-8 animate-fade-in-up">
                 <div class="flex justify-between items-center">
                     <h4 class="text-lg font-black text-slate-800">Daftar Pengajuan Pengadaan</h4>
-                    <span class="text-xs font-bold text-slate-500">Total Approved Tahun Ini: Rp {{ number_format($tabData['totalPengadaanTahunIni'] ?? 0, 0, ',', '.') }}</span>
+                    <span class="text-xs font-bold text-slate-500">Total Disetujui Tahun Ini: Rp {{ number_format($tabData['totalPengadaanTahunIni'] ?? 0, 0, ',', '.') }}</span>
                 </div>
                 
                 <div class="overflow-x-auto border border-slate-100 rounded-3xl">
@@ -266,11 +266,11 @@
                                     <span class="px-2 py-1 bg-amber-100 text-amber-700 rounded text-[10px] font-black uppercase">Pending</span>
                                 </td>
                                 <td class="px-6 py-4 text-right">
-                                    <a href="#" class="text-indigo-600 hover:text-indigo-800 font-bold hover:underline">Review</a>
+                                    <a href="#" class="text-indigo-600 hover:text-indigo-800 font-bold hover:underline">Tinjau</a>
                                 </td>
                             </tr>
                             @empty
-                            <tr><td colspan="6" class="px-6 py-10 text-center text-slate-400 font-medium">Tidak ada pengajuan pending.</td></tr>
+                            <tr><td colspan="6" class="px-6 py-10 text-center text-slate-400 font-medium">Tidak ada pengajuan tertunda.</td></tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -288,7 +288,7 @@
                     const stats = @json($kondisiStats);
                     const options = {
                         series: [stats.Baik, stats.PerluPerbaikan, stats.Rusak],
-                        labels: ['Baik', 'Minor Repair', 'Rusak Berat'],
+                        labels: ['Baik', 'Perlu Perbaikan', 'Rusak Berat'],
                         chart: { type: 'donut', height: 280, fontFamily: 'Plus Jakarta Sans' },
                         colors: ['#10b981', '#f59e0b', '#f43f5e'],
                         legend: { position: 'bottom', markers: { radius: 12 } },
