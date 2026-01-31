@@ -1,5 +1,15 @@
 <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 space-y-6" 
-     x-data="{ activeTab: @entangle('activeTab') }">
+     x-data="{ 
+        activeTab: '{{ $activeTab }}',
+        switchTab(tab) {
+            this.activeTab = tab;
+            // Opsional: Update URL tanpa reload agar bisa dibookmark
+            const url = new URL(window.location);
+            url.searchParams.set('tab', tab);
+            window.history.pushState({}, '', url);
+        }
+     }"
+     x-init="$watch('activeTab', value => console.log('Tab changed to:', value))">
     
     <!-- Quick Actions Header -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
@@ -27,7 +37,7 @@
         <!-- Sidebar Navigation -->
         <div class="lg:col-span-1 space-y-2">
             @foreach($schema as $key => $group)
-                <button type="button" @click="activeTab = '{{ $key }}'"
+                <button type="button" @click.prevent="switchTab('{{ $key }}')"
                     :class="activeTab === '{{ $key }}' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30' : 'bg-white text-slate-600 hover:bg-slate-50 border border-transparent hover:border-slate-200'"
                     class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left transition-all duration-300">
                     
@@ -62,7 +72,7 @@
             <form wire:submit.prevent="save" class="space-y-6">
                 
                 @foreach($schema as $tabKey => $group)
-                    <div x-show="activeTab === '{{ $tabKey }}'" x-cloak x-transition:enter.duration.300ms>
+                    <div x-show="activeTab === '{{ $tabKey }}'" style="display: none;">
                         
                         <div class="mb-8 border-b border-slate-100 pb-4">
                             <h3 class="text-xl font-black text-slate-800">{{ $group['label'] }}</h3>
