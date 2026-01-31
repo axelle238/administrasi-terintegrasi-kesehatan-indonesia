@@ -4,7 +4,6 @@ namespace App\Livewire\Barang;
 
 use App\Models\Barang;
 use App\Models\KategoriBarang;
-use App\Models\RiwayatBarang;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -12,54 +11,39 @@ class Index extends Component
 {
     use WithPagination;
 
-    public $search = '';
+    public $cari = '';
     public $filterKategori = '';
-    public $filterTipe = 'all'; // all, medis, umum
-    public $perPage = 10;
+    public $tipeAset = 'semua'; // semua, medis, umum
+    public $jenisBarang = 'semua'; // semua, aset_tetap, habis_pakai
+    public $perHalaman = 10;
 
-    // Properties untuk Modal Detail (Kartu Stok)
-    public $selectedBarangId;
-    public $selectedBarang;
-    public $riwayatTransaksi = [];
-    public $isDetailOpen = false;
-
-    public function updatingSearch()
+    public function updatingCari()
     {
         $this->resetPage();
     }
 
-    public function showDetail($id)
+    public function aturTipeAset($tipe)
     {
-        $this->selectedBarangId = $id;
-        $this->selectedBarang = Barang::with(['kategori', 'ruangan', 'supplier'])->find($id);
-        
-        if ($this->selectedBarang) {
-            $this->riwayatTransaksi = RiwayatBarang::where('barang_id', $id)
-                ->with('user')
-                ->latest()
-                ->take(20) // Limit 20 transaksi terakhir untuk performa view
-                ->get();
-            
-            $this->isDetailOpen = true;
-        }
+        $this->tipeAset = $tipe;
+        $this->resetPage();
     }
 
-    public function closeDetail()
+    public function aturJenisBarang($jenis)
     {
-        $this->isDetailOpen = false;
-        $this->reset(['selectedBarang', 'riwayatTransaksi']);
+        $this->jenisBarang = $jenis;
+        $this->resetPage();
     }
 
     public function render()
     {
         $query = Barang::with(['kategori', 'ruangan']);
 
-        // Search Logic
-        if ($this->search) {
+        // Pencarian
+        if ($this->cari) {
             $query->where(function($q) {
-                $q->where('nama_barang', 'like', '%' . $this->search . '%')
-                  ->orWhere('kode_barang', 'like', '%' . $this->search . '%')
-                  ->orWhere('merk', 'like', '%' . $this->search . '%');
+                $q->where('nama_barang', 'like', '%' . $this->cari . '%')
+                  ->orWhere('kode_barang', 'like', '%' . $this->cari . '%')
+                  ->orWhere('merk', 'like', '%' . $this->cari . '%');
             });
         }
 
@@ -68,31 +52,21 @@ class Index extends Component
             $query->where('kategori_barang_id', $this->filterKategori);
         }
 
-        // Filter Tipe (Medis vs Umum)
-        if ($this->filterTipe == 'medis') {
-            $query->where(function($q) {
-                $q->where('jenis_aset', 'Medis')
-                  ->orWhereHas('kategori', function($sq) {
-                      $sq->where('nama_kategori', 'like', '%Medis%')
-                        ->orWhere('nama_kategori', 'like', '%Kesehatan%')
-                        ->orWhere('nama_kategori', 'like', '%Alat%');
-                  });
-            });
-        } elseif ($this->filterTipe == 'umum') {
-            $query->where(function($q) {
-                $q->where('jenis_aset', '!=', 'Medis')
-                  ->orWhere(function($subQ) {
-                      $subQ->whereNull('jenis_aset')
-                           ->whereHas('kategori', function($sq) {
-                               $sq->where('nama_kategori', 'not like', '%Medis%')
-                                  ->where('nama_kategori', 'not like', '%Kesehatan%')
-                                  ->where('nama_kategori', 'not like', '%Alat%');
-                           });
-                  });
-            });
+        // Filter Tipe (Medis/Umum) - Menggunakan kolom jenis_aset baru
+        if ($this->tipeAset == 'medis') {
+            $query->where('jenis_aset', 'Medis');
+        } elseif ($this->tipeAset == 'umum') {
+            $query->where('jenis_aset', 'Non-Medis');
         }
 
-        $barangs = $query->latest()->paginate($this->perPage);
+        // Filter Jenis (Aset Tetap vs Habis Pakai)
+        if ($this->jenisBarang == 'aset_tetap') {
+            $query->where('is_asset', true);
+        } elseif ($this->jenisBarang == 'habis_pakai') {
+            $query->where('is_asset', false);
+        }
+
+        $barangs = $query->latest()->paginate($this->perHalaman);
         $kategoris = KategoriBarang::orderBy('nama_kategori')->get();
 
         return view('livewire.barang.index', [

@@ -42,6 +42,14 @@ class Barang extends Model
         'nilai_residu',
         'keterangan',
         'is_asset',
+        'jenis_aset',
+        'nomor_inventaris',
+        'nomor_izin_edar',
+        'tanggal_kalibrasi_terakhir',
+        'tanggal_kalibrasi_berikutnya',
+        'distributor',
+        'metode_penyusutan',
+        'spesifikasi_teknis',
         'ruangan_id',
         'supplier_id',
     ];
@@ -52,6 +60,8 @@ class Barang extends Model
         'nilai_buku' => 'decimal:2',
         'nilai_residu' => 'decimal:2',
         'tanggal_pengadaan' => 'date',
+        'tanggal_kalibrasi_terakhir' => 'date',
+        'tanggal_kalibrasi_berikutnya' => 'date',
     ];
 
     public function scopeAsset($query)
