@@ -14,28 +14,34 @@ use App\Models\JadwalJaga;
 use Carbon\Carbon;
 
 Route::get('/', function () {
-    // 1. Ambil Pengaturan
-    $pengaturan = [
-        'nama_aplikasi' => Setting::ambil('app_name', 'SATRIA'),
-        'tagline' => Setting::ambil('app_tagline', 'Sistem Kesehatan'),
-        'deskripsi' => Setting::ambil('app_description', ''),
-        'judul_hero' => Setting::ambil('hero_title', 'Layanan Kesehatan'),
-        'subjudul_hero' => Setting::ambil('hero_subtitle', ''),
-        'telepon' => Setting::ambil('app_phone', '-'),
-        'email' => Setting::ambil('app_email', '-'),
-        'alamat' => Setting::ambil('app_address', '-'),
-        'announcement_active' => Setting::ambil('announcement_active', '0'),
-        'announcement_text' => Setting::ambil('announcement_text', ''),
-        'primary_color' => Setting::ambil('primary_color', '#2563eb'),
-        'show_jadwal_dokter' => Setting::ambil('show_jadwal_dokter', '1'),
-        'show_layanan_poli' => Setting::ambil('show_layanan_poli', '1'),
-        'show_fasilitas' => Setting::ambil('show_fasilitas', '1'),
-        'show_pengaduan_cta' => Setting::ambil('show_pengaduan_cta', '1'),
-        'footer_text' => Setting::ambil('footer_text', 'SATRIA - Sistem Kesehatan Terintegrasi'),
-        'front_theme' => Setting::ambil('front_theme', 'high-tech'), // Default theme
+    // 1. Ambil Semua Pengaturan dari DB
+    $dbSettings = Setting::all()->pluck('value', 'key')->toArray();
+
+    // 2. Default Values (Fallback)
+    $defaults = [
+        'app_name' => 'SATRIA',
+        'app_tagline' => 'Sistem Kesehatan',
+        'app_description' => 'Sistem Administrasi Kesehatan Terintegrasi Indonesia',
+        'app_address' => '-',
+        'app_phone' => '-',
+        'app_email' => '-',
+        'hero_title' => 'Layanan Kesehatan',
+        'hero_subtitle' => '',
+        'announcement_active' => '0',
+        'announcement_text' => '',
+        'primary_color' => '#2563eb',
+        'show_jadwal_dokter' => '1',
+        'show_layanan_poli' => '1',
+        'show_fasilitas' => '1',
+        'show_pengaduan_cta' => '1',
+        'footer_text' => 'SATRIA - Sistem Kesehatan Terintegrasi',
+        'front_theme' => 'high-tech',
     ];
 
-    // 2. Data Dinamis
+    // 3. Gabungkan DB settings dengan Defaults
+    $pengaturan = array_merge($defaults, $dbSettings);
+
+    // 4. Data Dinamis
     $layanan = Poli::all();
     $jadwalHariIni = JadwalJaga::with(['pegawai.user', 'shift'])
         ->whereDate('tanggal', Carbon::today())
@@ -55,7 +61,7 @@ Route::get('/', function () {
         'layanan_total' => \App\Models\RekamMedis::count(),
     ];
 
-    // 3. Tentukan View Berdasarkan Tema
+    // 5. Tentukan View Berdasarkan Tema
     $view = 'themes.' . $pengaturan['front_theme'];
     if (!view()->exists($view)) {
         $view = 'themes.high-tech'; // Fallback
