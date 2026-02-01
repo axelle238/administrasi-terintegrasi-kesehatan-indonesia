@@ -2,488 +2,400 @@
 <html lang="id" class="scroll-smooth">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"> <!-- Prevent zoom for app-feel -->
     <meta name="description" content="{{ $pengaturan['app_description'] ?? 'Sistem Administrasi Kesehatan Terintegrasi' }}">
-    <meta name="theme-color" content="{{ $pengaturan['primary_color'] ?? '#0f172a' }}">
+    <meta name="theme-color" content="#0ea5e9"> <!-- Cyan-500 -->
     <title>{{ $pengaturan['app_name'] ?? 'SATRIA' }} - {{ $pengaturan['app_tagline'] ?? 'Health System' }}</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Scripts & Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
         :root {
-            --font-display: 'Outfit', sans-serif;
-            --font-body: 'Space Grotesk', sans-serif;
-            --color-primary: {{ $pengaturan['primary_color'] ?? '#3b82f6' }};
+            --font-heading: 'Outfit', sans-serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+            --color-primary: {{ $pengaturan['primary_color'] ?? '#0ea5e9' }};
         }
         
         body { 
             font-family: var(--font-body); 
-            background-color: #020617; /* Slate 950 */
-            color: #e2e8f0; 
+            background-color: #f8fafc; /* Slate 50 */
+            color: #334155; 
             overflow-x: hidden; 
+            padding-bottom: 80px; /* Space for bottom nav on mobile */
         }
         
-        h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); }
+        h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
+        /* Hide Scrollbar but keep functionality */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Glassmorphism Utilities */
-        .glass-nav {
-            background: rgba(2, 6, 23, 0.8);
+        /* Glassmorphism Light */
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
         
         .glass-card {
-            background: linear-gradient(180deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.6) 100%);
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .glass-card:hover {
-            border-color: var(--color-primary);
-            box-shadow: 0 0 30px -10px var(--color-primary);
+            border: 1px solid rgba(226, 232, 240, 0.6); /* Slate-200 */
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
         }
 
         /* Animations */
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
         .animate-float { animation: float 6s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         
-        @keyframes glow { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
-        .animate-glow { animation: glow 3s ease-in-out infinite; }
+        .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .text-glow { text-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
-        
-        .bg-grid {
-            background-size: 50px 50px;
-            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+        /* Custom Shapes */
+        .blob-bg {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23E0F2FE' d='M44.7,-76.4C58.9,-69.2,71.8,-59.1,79.6,-46.3C87.4,-33.5,90.1,-18,88.6,-3.3C87.1,11.4,81.5,25.3,73.1,37.8C64.7,50.3,53.5,61.4,40.7,69.6C27.9,77.8,13.5,83.1,-0.4,83.8C-14.3,84.5,-28.3,80.6,-40.3,72.3C-52.3,64,-62.3,51.3,-69.8,37.5C-77.3,23.7,-82.3,8.8,-80.7,-5.4C-79.1,-19.6,-70.9,-33.1,-60.7,-44.6C-50.5,-56.1,-38.3,-65.6,-25.3,-73.4C-12.3,-81.2,-1.5,-87.3,11.7,-85.3C24.9,-83.3,30.5,-68.6,44.7,-76.4Z' transform='translate(100 100)' /%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right top;
+            background-size: contain;
         }
 
         [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="antialiased selection:bg-blue-500 selection:text-white" x-data="{ scrolled: false, mobileMenu: false }" @scroll.window="scrolled = (window.pageYOffset > 20)">
+<body class="antialiased selection:bg-cyan-500 selection:text-white" x-data="{ scrolled: false }">
 
-    <!-- Background Elements -->
-    <div class="fixed inset-0 z-0 pointer-events-none">
-        <div class="absolute inset-0 bg-grid"></div>
-        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3"></div>
-        <div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-[120px] translate-y-1/3 -translate-x-1/4"></div>
-    </div>
-
-    <!-- Announcement Bar -->
-    @if(($pengaturan['announcement_active'] ?? '0') == '1')
-        <div class="relative z-50 bg-blue-600/10 border-b border-blue-500/20 backdrop-blur-sm text-center py-2 px-4 overflow-hidden">
-            <span class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-blue-400 animate-pulse mr-2">Info</span>
-            <span class="text-xs md:text-sm font-medium text-blue-100">{{ $pengaturan['announcement_text'] }}</span>
-        </div>
-    @endif
-
-    <!-- Navbar -->
-    <nav :class="{ 'glass-nav py-4': scrolled, 'bg-transparent py-6': !scrolled }" class="fixed w-full z-40 transition-all duration-500 top-0 left-0 right-0">
+    <!-- Navbar Desktop (Sticky Glass) -->
+    <nav :class="{ 'py-3 shadow-sm': scrolled, 'py-5': !scrolled }" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 glass hidden md:block" @scroll.window="scrolled = (window.pageYOffset > 20)">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="flex items-center justify-between">
                 <!-- Logo -->
-                <a href="#" class="flex items-center gap-3 group">
-                    <div class="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform duration-300">
-                        <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                <a href="#" class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/30">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                     </div>
                     <div>
-                        <h1 class="font-black text-xl tracking-tight text-white leading-none">{{ $pengaturan['app_name'] ?? 'SATRIA' }}</h1>
-                        <p class="text-[9px] font-bold uppercase tracking-[0.25em] text-blue-400 mt-0.5">Enterprise</p>
+                        <h1 class="font-black text-xl text-slate-800 tracking-tight leading-none">{{ $pengaturan['app_name'] ?? 'SATRIA' }}</h1>
+                        <p class="text-[10px] font-bold text-cyan-600 uppercase tracking-widest">Healthcare</p>
                     </div>
                 </a>
 
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center gap-8">
-                    @foreach(['Beranda', 'Layanan', 'Dokter', 'Fasilitas', 'Berita'] as $item)
-                        <a href="#{{ strtolower($item) }}" class="text-sm font-bold text-slate-400 hover:text-white transition-colors uppercase tracking-wider relative group">
-                            {{ $item }}
-                            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
-                        </a>
+                <!-- Menu -->
+                <div class="flex items-center gap-8">
+                    @foreach(['Beranda', 'Layanan', 'Jadwal', 'Fasilitas', 'Berita'] as $item)
+                        <a href="#{{ strtolower($item) }}" class="text-sm font-bold text-slate-500 hover:text-cyan-600 transition-colors">{{ $item }}</a>
                     @endforeach
                 </div>
 
                 <!-- CTA -->
-                <div class="hidden md:flex items-center gap-4">
+                <div class="flex items-center gap-3">
                     @auth
-                        <a href="{{ url('/dashboard') }}" class="px-6 py-2.5 rounded-full bg-white/5 border border-white/10 text-white text-xs font-bold uppercase tracking-wider hover:bg-white/10 transition-all flex items-center gap-2">
+                        <a href="{{ url('/dashboard') }}" class="px-6 py-2.5 rounded-full bg-slate-900 text-white text-xs font-bold uppercase tracking-wider hover:bg-slate-800 transition-all shadow-lg">
                             Dashboard
-                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="text-sm font-bold text-slate-400 hover:text-white transition-colors">Login Staff</a>
-                        <a href="{{ route('antrean.monitor') }}" class="px-6 py-2.5 rounded-full bg-blue-600 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-blue-600/25 hover:shadow-blue-600/50 hover:bg-blue-500 transition-all transform hover:-translate-y-0.5">
+                        <a href="{{ route('login') }}" class="text-sm font-bold text-slate-500 hover:text-slate-800">Masuk Staff</a>
+                        <a href="{{ route('antrean.monitor') }}" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold uppercase tracking-wider hover:shadow-cyan-500/40 hover:-translate-y-0.5 transition-all shadow-lg">
                             Ambil Antrean
                         </a>
                     @endauth
                 </div>
-
-                <!-- Mobile Button -->
-                <button @click="mobileMenu = !mobileMenu" class="md:hidden text-white p-2 rounded-lg hover:bg-white/10 transition-colors">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-
-        <!-- Mobile Menu -->
-        <div x-show="mobileMenu" 
-             x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0 -translate-y-2"
-             x-transition:enter-end="opacity-100 translate-y-0"
-             x-transition:leave="transition ease-in duration-150"
-             x-transition:leave-start="opacity-100 translate-y-0"
-             x-transition:leave-end="opacity-0 -translate-y-2"
-             class="absolute top-full left-0 w-full bg-[#020617] border-b border-white/10 p-6 md:hidden shadow-2xl">
-            <div class="flex flex-col gap-4">
-                @foreach(['Beranda', 'Layanan', 'Dokter', 'Fasilitas', 'Berita'] as $item)
-                    <a href="#{{ strtolower($item) }}" @click="mobileMenu = false" class="text-sm font-bold text-slate-300 hover:text-white uppercase tracking-wider">{{ $item }}</a>
-                @endforeach
-                <div class="h-px bg-white/10 my-2"></div>
-                @auth
-                    <a href="{{ url('/dashboard') }}" class="text-center w-full py-3 bg-white/10 rounded-xl text-white font-bold text-sm">Dashboard</a>
-                @else
-                    <a href="{{ route('antrean.monitor') }}" class="text-center w-full py-3 bg-blue-600 rounded-xl text-white font-bold text-sm shadow-lg shadow-blue-600/20">Daftar Antrean</a>
-                    <a href="{{ route('login') }}" class="text-center w-full py-3 border border-white/10 rounded-xl text-slate-300 font-bold text-sm">Login Staff</a>
-                @endauth
             </div>
         </div>
     </nav>
 
-    <!-- HERO SECTION -->
-    <section id="beranda" class="relative min-h-screen flex items-center pt-20 overflow-hidden">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10 w-full">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+    <!-- Mobile Top Bar -->
+    <div class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 px-4 py-3 flex justify-between items-center md:hidden">
+        <a href="#" class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+            </div>
+            <span class="font-black text-lg text-slate-800">{{ $pengaturan['app_name'] ?? 'SATRIA' }}</span>
+        </a>
+        @auth
+            <a href="{{ url('/dashboard') }}" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+            </a>
+        @else
+            <a href="{{ route('login') }}" class="text-xs font-bold text-cyan-600 bg-cyan-50 px-3 py-1.5 rounded-full">Login</a>
+        @endauth
+    </div>
+
+    <!-- MAIN HERO SECTION -->
+    <header id="beranda" class="relative pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden blob-bg">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+            <div class="flex flex-col lg:flex-row items-center gap-12">
                 <!-- Text Content -->
-                <div class="space-y-8 text-center lg:text-left">
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-900/30 border border-blue-500/30 backdrop-blur-sm animate-fade-in-up">
-                        <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-                        <span class="text-xs font-bold text-blue-300 uppercase tracking-widest">{{ $pengaturan['app_tagline'] ?? 'Next Gen Healthcare' }}</span>
+                <div class="flex-1 text-center lg:text-left space-y-6">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-cyan-100 shadow-sm animate-fade-in-up">
+                        <span class="relative flex h-2 w-2">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wide">{{ $pengaturan['app_tagline'] ?? 'Layanan Kesehatan Modern' }}</span>
                     </div>
                     
-                    <h1 class="text-5xl lg:text-7xl font-black text-white leading-tight tracking-tight animate-fade-in-up" style="animation-delay: 0.1s">
-                        {{ $pengaturan['hero_title'] ?? 'Masa Depan Layanan' }} 
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400 text-glow">
-                            {{ $pengaturan['hero_subtitle'] ?? 'Kesehatan' }}
-                        </span>
+                    <h1 class="text-4xl md:text-6xl font-black text-slate-900 leading-tight tracking-tight animate-fade-in-up" style="animation-delay: 0.1s">
+                        Sehat Lebih Mudah <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600">Bersama Kami</span>
                     </h1>
                     
-                    <p class="text-lg text-slate-400 leading-relaxed max-w-xl mx-auto lg:mx-0 animate-fade-in-up" style="animation-delay: 0.2s">
-                        {{ $pengaturan['app_description'] }}
+                    <p class="text-slate-500 text-lg leading-relaxed max-w-xl mx-auto lg:mx-0 animate-fade-in-up" style="animation-delay: 0.2s">
+                        Akses layanan kesehatan terpadu mulai dari pendaftaran antrean, konsultasi dokter, hingga riwayat medis dalam satu genggaman.
                     </p>
                     
                     <div class="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start animate-fade-in-up" style="animation-delay: 0.3s">
-                        <a href="{{ route('antrean.monitor') }}" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold text-sm uppercase tracking-wider hover:shadow-[0_0_40px_-10px_rgba(59,130,246,0.6)] transition-all transform hover:-translate-y-1 text-center">
-                            Mulai Registrasi
+                        <a href="{{ route('antrean.monitor') }}" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm uppercase tracking-wider shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all flex items-center justify-center gap-3">
+                            <div class="p-1 bg-white/20 rounded-full"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg></div>
+                            Daftar Berobat
                         </a>
-                        @if(($pengaturan['show_pengaduan_cta'] ?? '1') == '1')
-                            <a href="{{ route('pengaduan.public') }}" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-bold text-sm uppercase tracking-wider hover:bg-white/10 hover:border-white/20 transition-all flex items-center justify-center gap-2 group">
-                                <span>Layanan Pengaduan</span>
-                                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                            </a>
-                        @endif
+                        <a href="#jadwal" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-white border border-slate-200 text-slate-700 font-bold text-sm uppercase tracking-wider hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-2">
+                            <span>Cek Jadwal Dokter</span>
+                        </a>
                     </div>
 
-                    <!-- Stats Strip -->
-                    <div class="grid grid-cols-3 gap-4 pt-8 border-t border-white/5 animate-fade-in-up" style="animation-delay: 0.4s">
-                        <div>
-                            <p class="text-3xl font-black text-white">{{ $stats['dokter_total'] ?? '0' }}</p>
-                            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Dokter Ahli</p>
+                    <!-- Trust Markers -->
+                    <div class="pt-8 flex items-center justify-center lg:justify-start gap-6 opacity-70 grayscale hover:grayscale-0 transition-all duration-500 animate-fade-in-up" style="animation-delay: 0.4s">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            <span class="text-xs font-bold">Terverifikasi</span>
                         </div>
-                        <div>
-                            <p class="text-3xl font-black text-white">{{ $stats['layanan_total'] ?? '0' }}+</p>
-                            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Pasien Terlayani</p>
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg></div>
+                            <span class="text-xs font-bold">Data Aman</span>
                         </div>
-                        <div>
-                            <p class="text-3xl font-black text-white">24/7</p>
-                            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Layanan IGD</p>
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 bg-rose-100 rounded-lg flex items-center justify-center text-rose-600"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg></div>
+                            <span class="text-xs font-bold">Pelayanan Ramah</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Visual/Illustration -->
-                <div class="relative lg:h-[600px] flex items-center justify-center animate-float hidden lg:flex">
-                    <!-- Decorative Circles -->
-                    <div class="absolute inset-0 border border-white/5 rounded-full scale-75 animate-spin-slow"></div>
-                    <div class="absolute inset-0 border border-dashed border-white/10 rounded-full scale-100 animate-spin-reverse-slow"></div>
-                    
-                    <!-- Glass Card Floating -->
-                    <div class="relative z-10 glass-card p-8 rounded-3xl max-w-sm w-full transform rotate-3 hover:rotate-0 transition-transform duration-500">
-                        <div class="flex items-center gap-4 mb-6">
-                            <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400">
-                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <!-- Illustration/Image -->
+                <div class="flex-1 w-full relative animate-float hidden lg:block">
+                    <div class="relative z-10 bg-white p-4 rounded-[2.5rem] shadow-2xl border border-slate-100 max-w-md mx-auto rotate-2 hover:rotate-0 transition-transform duration-500">
+                        <img src="https://images.unsplash.com/photo-1638202993928-7267aad84c31?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Doctor" class="w-full h-auto rounded-[2rem] object-cover aspect-[4/5]">
+                        
+                        <!-- Floating Card -->
+                        <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-2xl shadow-xl border border-slate-50 flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600">
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             </div>
                             <div>
-                                <h3 class="font-bold text-white text-lg">Sistem Terintegrasi</h3>
-                                <p class="text-xs text-slate-400">Real-time Data Sync</p>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase">Waktu Tunggu</p>
+                                <p class="text-lg font-black text-slate-800">~15 Menit</p>
                             </div>
-                        </div>
-                        <div class="space-y-3">
-                            <div class="h-2 w-full bg-white/10 rounded-full overflow-hidden">
-                                <div class="h-full bg-blue-500 w-3/4 rounded-full animate-pulse"></div>
-                            </div>
-                            <div class="h-2 w-2/3 bg-white/10 rounded-full"></div>
-                            <div class="h-2 w-1/2 bg-white/10 rounded-full"></div>
-                        </div>
-                        <div class="mt-6 flex justify-between items-center">
-                            <div class="flex -space-x-2">
-                                <div class="w-8 h-8 rounded-full bg-slate-700 border-2 border-slate-800"></div>
-                                <div class="w-8 h-8 rounded-full bg-slate-600 border-2 border-slate-800"></div>
-                                <div class="w-8 h-8 rounded-full bg-slate-500 border-2 border-slate-800"></div>
-                            </div>
-                            <span class="text-xs font-bold text-emerald-400">System Online</span>
                         </div>
                     </div>
+                    
+                    <!-- Decorative Circles -->
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cyan-200/20 rounded-full blur-3xl -z-10"></div>
                 </div>
             </div>
         </div>
-    </section>
+    </header>
 
-    <!-- LAYANAN POLI -->
-    @if(($pengaturan['show_layanan_poli'] ?? '1') == '1')
-    <section id="layanan" class="py-24 relative bg-slate-900/50">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-            <div class="text-center mb-16">
-                <span class="text-blue-500 font-bold tracking-[0.2em] uppercase text-xs mb-2 block">Poliklinik</span>
-                <h2 class="text-3xl md:text-5xl font-black text-white mb-6">Layanan Spesialis</h2>
-                <p class="text-slate-400 max-w-2xl mx-auto">Kami menyediakan berbagai layanan poliklinik dengan dokter spesialis berpengalaman dan peralatan medis terkini.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                @foreach($layanan as $poli)
-                <div class="glass-card p-8 rounded-3xl group relative overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <div class="relative z-10">
-                        <div class="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center text-blue-400 mb-6 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
-                            <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
-                        </div>
-                        <h3 class="text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">{{ $poli->nama_poli }}</h3>
-                        <p class="text-slate-400 text-sm leading-relaxed mb-6">Layanan medis komprehensif dengan standar pelayanan terbaik untuk pasien.</p>
-                        <span class="inline-flex items-center gap-2 text-xs font-bold text-blue-500 uppercase tracking-wider group-hover:gap-3 transition-all">
-                            Detail Layanan <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                        </span>
+    <!-- QUICK MENU (COLORFUL GRID) -->
+    <section class="py-8 px-6 lg:px-8 -mt-8 relative z-20">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                <!-- Card 1 -->
+                <a href="#layanan" class="group bg-white p-6 rounded-3xl shadow-lg shadow-slate-200/50 border border-slate-100 hover:-translate-y-1 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center text-2xl mb-4 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
                     </div>
-                </div>
-                @endforeach
+                    <h3 class="font-bold text-slate-800 text-lg">Poliklinik</h3>
+                    <p class="text-xs text-slate-400 mt-1">Layanan Spesialis</p>
+                </a>
+                
+                <!-- Card 2 -->
+                <a href="{{ route('antrean.monitor') }}" class="group bg-white p-6 rounded-3xl shadow-lg shadow-slate-200/50 border border-slate-100 hover:-translate-y-1 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-2xl mb-4 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-lg">Daftar Online</h3>
+                    <p class="text-xs text-slate-400 mt-1">Tanpa Antre Lama</p>
+                </a>
+
+                <!-- Card 3 -->
+                <a href="#jadwal" class="group bg-white p-6 rounded-3xl shadow-lg shadow-slate-200/50 border border-slate-100 hover:-translate-y-1 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-2xl bg-purple-50 text-purple-500 flex items-center justify-center text-2xl mb-4 group-hover:bg-purple-500 group-hover:text-white transition-colors">
+                        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-lg">Jadwal Dokter</h3>
+                    <p class="text-xs text-slate-400 mt-1">Cek Ketersediaan</p>
+                </a>
+
+                <!-- Card 4 -->
+                <a href="#" class="group bg-white p-6 rounded-3xl shadow-lg shadow-slate-200/50 border border-slate-100 hover:-translate-y-1 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center text-2xl mb-4 group-hover:bg-orange-500 group-hover:text-white transition-colors">
+                        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-lg">Farmasi</h3>
+                    <p class="text-xs text-slate-400 mt-1">Info Obat</p>
+                </a>
             </div>
         </div>
     </section>
-    @endif
 
     <!-- JADWAL DOKTER -->
     @if(($pengaturan['show_jadwal_dokter'] ?? '1') == '1')
-    <section id="dokter" class="py-24 relative overflow-hidden" x-data="{ searchDokter: '' }">
-        <!-- Background Grid -->
-        <div class="absolute inset-0 bg-grid opacity-20"></div>
-        
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-                <div>
-                    <span class="text-emerald-500 font-bold tracking-[0.2em] uppercase text-xs mb-2 block">Jadwal Praktik</span>
-                    <h2 class="text-3xl md:text-5xl font-black text-white">Dokter Hari Ini</h2>
-                </div>
-                
-                <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
-                    <!-- Search Input -->
-                    <div class="relative w-full md:w-64">
-                        <input type="text" x-model="searchDokter" placeholder="Cari nama dokter..." 
-                               class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-bold backdrop-blur-sm transition-all focus:bg-white/10">
-                        <svg class="w-4 h-4 text-slate-500 absolute left-3 top-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                    </div>
-
-                    <div class="px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur text-white text-sm font-bold flex items-center justify-center gap-3 whitespace-nowrap">
-                        <span class="relative flex h-3 w-3">
-                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                          <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-                        </span>
-                        {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}
-                    </div>
-                </div>
+    <section id="jadwal" class="py-16 md:py-24 relative">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <span class="text-cyan-600 font-bold tracking-widest uppercase text-xs mb-2 block">Dokter Kami</span>
+                <h2 class="text-3xl md:text-4xl font-black text-slate-900">Jadwal Praktik Hari Ini</h2>
             </div>
 
             @if(isset($jadwalHariIni) && count($jadwalHariIni) > 0)
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach($jadwalHariIni as $jadwal)
-                    <div class="glass-card p-6 rounded-3xl group hover:-translate-y-1 transition-transform duration-300" x-show="searchDokter === '' || $el.innerText.toLowerCase().includes(searchDokter.toLowerCase())" x-transition.opacity>
-                        <div class="flex items-center gap-4 mb-6">
-                            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-2xl font-black text-white shadow-lg shrink-0">
-                                {{ substr($jadwal->pegawai->user->name ?? 'D', 0, 1) }}
-                            </div>
-                            <div class="min-w-0">
-                                <h4 class="font-bold text-white text-lg truncate">{{ $jadwal->pegawai->user->name ?? 'Dokter' }}</h4>
-                                <p class="text-xs text-emerald-400 font-bold uppercase tracking-wider truncate">{{ $jadwal->pegawai->poli->nama_poli ?? 'Umum' }}</p>
-                            </div>
+                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-4 hover:shadow-lg transition-all duration-300">
+                        <div class="w-16 h-16 rounded-2xl bg-slate-100 overflow-hidden shrink-0">
+                            @if($jadwal->pegawai->foto_profil ?? false)
+                                <img src="{{ Storage::url($jadwal->pegawai->foto_profil) }}" class="w-full h-full object-cover">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center text-slate-400 font-bold text-xl">
+                                    {{ substr($jadwal->pegawai->user->name ?? 'D', 0, 1) }}
+                                </div>
+                            @endif
                         </div>
-                        <div class="flex justify-between items-center pt-4 border-t border-white/5">
-                            <span class="text-xs text-slate-400 uppercase font-bold tracking-wider">Jam Praktik</span>
-                            <span class="px-3 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-bold border border-emerald-500/20">
-                                {{ $jadwal->shift->jam_masuk ?? '08:00' }} - {{ $jadwal->shift->jam_keluar ?? '14:00' }}
+                        <div class="min-w-0 flex-1">
+                            <h4 class="font-bold text-slate-800 truncate">{{ $jadwal->pegawai->user->name ?? 'Dokter' }}</h4>
+                            <p class="text-xs text-slate-500 uppercase tracking-wide font-bold mb-2">{{ $jadwal->pegawai->poli->nama_poli ?? 'Umum' }}</p>
+                            <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase">
+                                {{ $jadwal->shift->jam_masuk ?? '00:00' }} - {{ $jadwal->shift->jam_keluar ?? '00:00' }}
                             </span>
                         </div>
                     </div>
                     @endforeach
                 </div>
-                
-                <div class="mt-8 text-center text-slate-500 text-sm italic" x-show="searchDokter !== ''" style="display: none;">
-                    Menampilkan hasil pencarian untuk "<span x-text="searchDokter"></span>"
-                </div>
             @else
-                <div class="glass-card p-12 text-center rounded-3xl border-dashed border-2 border-white/10">
-                    <p class="text-slate-400">Jadwal dokter belum tersedia untuk hari ini.</p>
+                <div class="bg-white p-12 text-center rounded-[2.5rem] border border-dashed border-slate-200">
+                    <p class="text-slate-400 font-bold">Tidak ada jadwal dokter untuk hari ini.</p>
                 </div>
             @endif
         </div>
     </section>
     @endif
 
-    <!-- FASILITAS -->
-    @if(($pengaturan['show_fasilitas'] ?? '1') == '1')
-    <section id="fasilitas" class="py-24 relative bg-slate-900/50">
+    <!-- STATS BANNER -->
+    <section class="py-16 bg-slate-900 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-            <div class="mb-16">
-                <h2 class="text-3xl md:text-5xl font-black text-white mb-6">Fasilitas Unggulan</h2>
-                <div class="h-1 w-20 bg-blue-500 rounded-full"></div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <p class="text-4xl font-black text-white mb-1">{{ $stats['dokter_total'] ?? 0 }}</p>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Dokter Ahli</p>
+                </div>
+                <div>
+                    <p class="text-4xl font-black text-white mb-1">{{ $layanan->count() }}</p>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Poliklinik</p>
+                </div>
+                <div>
+                    <p class="text-4xl font-black text-white mb-1">{{ $stats['pasien_total'] ?? 0 }}</p>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Pasien Terdaftar</p>
+                </div>
+                <div>
+                    <p class="text-4xl font-black text-white mb-1">24<span class="text-cyan-500">/</span>7</p>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Layanan UGD</p>
+                </div>
             </div>
-
-            @if(isset($fasilitas) && count($fasilitas) > 0)
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    @foreach($fasilitas as $f)
-                    <div class="group relative h-80 rounded-3xl overflow-hidden cursor-pointer">
-                        @if($f->gambar)
-                            <img src="{{ Storage::url($f->gambar) }}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="{{ $f->nama_fasilitas }}">
-                        @else
-                            <div class="absolute inset-0 bg-slate-800 flex items-center justify-center">
-                                <svg class="w-16 h-16 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                            </div>
-                        @endif
-                        
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent opacity-80 group-hover:opacity-90 transition-opacity"></div>
-                        
-                        <div class="absolute bottom-0 left-0 p-8 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                            <h3 class="text-2xl font-bold text-white mb-2">{{ $f->nama_fasilitas }}</h3>
-                            <p class="text-slate-300 text-sm line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">{{ $f->deskripsi }}</p>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            @endif
         </div>
     </section>
-    @endif
 
-    <!-- BERITA -->
-    <section id="berita" class="py-24 relative">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-            <div class="flex justify-between items-end mb-12">
-                <h2 class="text-3xl md:text-5xl font-black text-white">Berita Terkini</h2>
-                <a href="#" class="hidden md:block text-sm font-bold text-blue-500 hover:text-white transition-colors uppercase tracking-wider">Lihat Semua &rarr;</a>
+    <!-- BERITA SLIDER (Simple Grid) -->
+    <section id="berita" class="py-16 md:py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex justify-between items-end mb-10">
+                <h2 class="text-2xl md:text-3xl font-black text-slate-900">Info Sehat</h2>
+                <a href="#" class="text-sm font-bold text-cyan-600 hover:underline">Lihat Semua</a>
             </div>
 
             @if(isset($beritaTerbaru) && count($beritaTerbaru) > 0)
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     @foreach($beritaTerbaru as $berita)
-                    <article class="glass-card rounded-3xl overflow-hidden group flex flex-col h-full hover:-translate-y-2 transition-transform duration-300">
-                        <div class="h-48 bg-slate-800 relative overflow-hidden">
+                    <article class="group cursor-pointer">
+                        <div class="rounded-3xl overflow-hidden mb-4 relative h-48 bg-slate-100">
                             @if($berita->thumbnail)
-                                <img src="{{ Storage::url($berita->thumbnail) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="{{ $berita->judul }}">
+                                <img src="{{ Storage::url($berita->thumbnail) }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                             @endif
-                            <div class="absolute top-4 left-4 bg-black/50 backdrop-blur px-3 py-1 rounded-lg border border-white/10">
-                                <span class="text-[10px] font-bold text-white uppercase tracking-wider">{{ $berita->kategori ?? 'Umum' }}</span>
+                            <div class="absolute top-3 left-3 bg-white/90 backdrop-blur px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider text-slate-800">
+                                {{ $berita->kategori ?? 'Umum' }}
                             </div>
                         </div>
-                        <div class="p-8 flex-1 flex flex-col">
-                            <time class="text-xs font-bold text-blue-500 mb-3 block">{{ $berita->created_at->translatedFormat('d F Y') }}</time>
-                            <h3 class="text-xl font-bold text-white mb-4 leading-tight group-hover:text-blue-400 transition-colors">{{ $berita->judul }}</h3>
-                            <p class="text-slate-400 text-sm line-clamp-3 mb-6 flex-1">{{ Str::limit(strip_tags($berita->konten), 100) }}</p>
-                            <span class="text-xs font-bold text-white uppercase tracking-wider group-hover:text-blue-400 transition-colors flex items-center gap-2">
-                                Baca Selengkapnya <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                            </span>
-                        </div>
+                        <h3 class="font-bold text-lg text-slate-800 leading-tight mb-2 group-hover:text-cyan-600 transition-colors line-clamp-2">
+                            {{ $berita->judul }}
+                        </h3>
+                        <p class="text-slate-500 text-sm line-clamp-2">{{ Str::limit(strip_tags($berita->konten), 100) }}</p>
                     </article>
                     @endforeach
                 </div>
             @else
-                <div class="glass-card p-12 text-center rounded-3xl">
-                    <p class="text-slate-400">Belum ada berita dipublikasikan.</p>
+                <div class="text-center py-12 border border-dashed border-slate-200 rounded-3xl">
+                    <p class="text-slate-400">Belum ada berita terbaru.</p>
                 </div>
             @endif
         </div>
     </section>
 
     <!-- FOOTER -->
-    <footer class="relative bg-slate-950 pt-24 pb-12 border-t border-white/5">
-        <div class="absolute inset-0 bg-grid opacity-10"></div>
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-                <div class="col-span-1 md:col-span-2">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="h-10 w-10 rounded-xl bg-blue-600 flex items-center justify-center text-white">
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                        </div>
-                        <span class="text-2xl font-black text-white tracking-tight">{{ $pengaturan['app_name'] ?? 'SATRIA' }}</span>
-                    </div>
-                    <p class="text-slate-400 text-sm leading-relaxed max-w-sm mb-8">
-                        {{ $pengaturan['app_address'] ?? 'Alamat belum diatur.' }}
-                    </p>
-                    <div class="flex gap-4">
-                        <!-- Social Placeholders -->
-                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all">
-                            <span class="sr-only">Facebook</span>
-                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" /></svg>
-                        </a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:bg-blue-400 hover:text-white transition-all">
-                            <span class="sr-only">Twitter</span>
-                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.106 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" /></svg>
-                        </a>
-                    </div>
+    <footer class="bg-slate-50 pt-16 pb-32 md:pb-16 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+                <div class="space-y-4">
+                    <h4 class="font-black text-lg text-slate-800">{{ $pengaturan['app_name'] ?? 'SATRIA' }}</h4>
+                    <p class="text-sm text-slate-500 leading-relaxed">{{ $pengaturan['app_address'] ?? 'Alamat instansi kesehatan.' }}</p>
                 </div>
                 <div>
-                    <h4 class="text-white font-bold uppercase tracking-wider text-sm mb-6">Tautan</h4>
-                    <ul class="space-y-4 text-sm text-slate-400">
-                        <li><a href="#beranda" class="hover:text-blue-400 transition-colors">Beranda</a></li>
-                        <li><a href="#layanan" class="hover:text-blue-400 transition-colors">Layanan Medis</a></li>
-                        <li><a href="#dokter" class="hover:text-blue-400 transition-colors">Jadwal Dokter</a></li>
-                        <li><a href="#berita" class="hover:text-blue-400 transition-colors">Berita & Artikel</a></li>
+                    <h4 class="font-bold text-slate-800 mb-4">Layanan</h4>
+                    <ul class="space-y-2 text-sm text-slate-500">
+                        <li><a href="#" class="hover:text-cyan-600">Poliklinik</a></li>
+                        <li><a href="#" class="hover:text-cyan-600">Unit Gawat Darurat</a></li>
+                        <li><a href="#" class="hover:text-cyan-600">Rawat Inap</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-white font-bold uppercase tracking-wider text-sm mb-6">Kontak</h4>
-                    <ul class="space-y-4 text-sm text-slate-400">
-                        <li class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
-                            <span>{{ $pengaturan['app_phone'] ?? '-' }}</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                            <span>{{ $pengaturan['app_email'] ?? '-' }}</span>
-                        </li>
+                    <h4 class="font-bold text-slate-800 mb-4">Kontak</h4>
+                    <ul class="space-y-2 text-sm text-slate-500">
+                        <li>{{ $pengaturan['app_phone'] ?? '-' }}</li>
+                        <li>{{ $pengaturan['app_email'] ?? '-' }}</li>
                     </ul>
                 </div>
             </div>
-            <div class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold text-slate-500 uppercase tracking-widest">
-                <p>&copy; {{ date('Y') }} {{ $pengaturan['footer_text'] ?? 'All Rights Reserved.' }}</p>
-                <div class="flex gap-6">
-                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
-                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
-                </div>
+            <div class="pt-8 border-t border-slate-200 text-center text-xs font-bold text-slate-400 uppercase tracking-widest">
+                &copy; {{ date('Y') }} {{ $pengaturan['footer_text'] ?? 'Sistem Kesehatan Terintegrasi' }}
             </div>
         </div>
     </footer>
+
+    <!-- MOBILE BOTTOM NAVIGATION (APP STYLE) -->
+    <div class="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 pb-safe md:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+        <div class="grid grid-cols-4 h-16">
+            <a href="#beranda" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-cyan-600 active:text-cyan-600">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                <span class="text-[10px] font-bold">Beranda</span>
+            </a>
+            <a href="{{ route('antrean.monitor') }}" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-cyan-600 active:text-cyan-600">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                <span class="text-[10px] font-bold">Daftar</span>
+            </a>
+            <a href="#jadwal" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-cyan-600 active:text-cyan-600">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                <span class="text-[10px] font-bold">Jadwal</span>
+            </a>
+            <a href="{{ url('/dashboard') }}" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-cyan-600 active:text-cyan-600">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                <span class="text-[10px] font-bold">Akun</span>
+            </a>
+        </div>
+    </div>
 
 </body>
 </html>
