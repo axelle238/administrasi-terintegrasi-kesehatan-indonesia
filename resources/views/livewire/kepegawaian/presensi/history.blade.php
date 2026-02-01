@@ -261,40 +261,102 @@
                         @endif
                     </div>
 
-                    <!-- Kolom Kanan: Timeline Laporan -->
-                    <div class="lg:col-span-7">
-                        <div class="flex justify-between items-center mb-4">
-                            <h4 class="font-black text-slate-800 text-sm uppercase tracking-wider">Laporan Aktivitas</h4>
-                            <a href="{{ route('kepegawaian.aktivitas.create', ['tanggal' => $selectedDate]) }}" class="text-xs font-bold text-blue-600 hover:bg-blue-50 px-3 py-1 rounded-lg transition-colors">
-                                {{ $detailLaporan ? 'Edit Laporan' : '+ Buat Laporan' }}
-                            </a>
-                        </div>
-
-                        <div class="bg-slate-50 rounded-3xl p-6 border border-slate-100 max-h-64 overflow-y-auto custom-scrollbar">
-                            @if($detailLaporan && $detailLaporan->details->count() > 0)
-                                <div class="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-300 before:to-transparent">
-                                    @foreach($detailLaporan->details as $item)
-                                    <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                                        <!-- Icon -->
-                                        <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-slate-300 group-[.is-active]:bg-emerald-500 text-slate-500 group-[.is-active]:text-emerald-50 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">
-                                            <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                    <!-- Kolom Kanan: Input & Timeline Laporan -->
+                    <div class="lg:col-span-7 space-y-6">
+                        
+                        <!-- FORM INPUT AKTIVITAS (Inline) -->
+                        @if($selectedItem && !in_array($selectedItem['status'], ['Libur', 'Cuti', 'Future', 'Akhir Pekan']))
+                            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+                                <h4 class="font-black text-slate-800 text-sm uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Input Aktivitas Baru</h4>
+                                
+                                <form wire:submit.prevent="saveActivity" class="space-y-4">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Mulai</label>
+                                            <input type="time" wire:model="inputForm.jam_mulai" class="w-full rounded-xl border-slate-200 text-sm font-bold focus:border-blue-500 focus:ring-blue-500">
+                                            @error('inputForm.jam_mulai') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                                         </div>
-                                        <!-- Content -->
-                                        <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl border border-slate-200 bg-white shadow-sm">
-                                            <div class="flex items-center justify-between space-x-2 mb-1">
-                                                <div class="font-bold text-slate-900 text-sm">{{ $item->kegiatan }}</div>
-                                                <time class="font-mono text-xs font-medium text-slate-500">{{ \Carbon\Carbon::parse($item->jam_mulai)->format('H:i') }}</time>
-                                            </div>
-                                            <div class="text-slate-500 text-xs">{{ $item->output }}</div>
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Selesai</label>
+                                            <input type="time" wire:model="inputForm.jam_selesai" class="w-full rounded-xl border-slate-200 text-sm font-bold focus:border-blue-500 focus:ring-blue-500">
+                                            @error('inputForm.jam_selesai') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                                         </div>
                                     </div>
-                                    @endforeach
-                                </div>
-                            @else
-                                <div class="text-center py-8">
-                                    <p class="text-slate-400 text-sm">Belum ada aktivitas yang direkam.</p>
-                                </div>
-                            @endif
+                                    
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Kegiatan</label>
+                                        <textarea wire:model="inputForm.kegiatan" rows="2" placeholder="Deskripsikan aktivitas..." class="w-full rounded-xl border-slate-200 text-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                                        @error('inputForm.kegiatan') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Output / Hasil</label>
+                                        <input type="text" wire:model="inputForm.output" placeholder="Contoh: Dokumen selesai, Rapat dihadiri" class="w-full rounded-xl border-slate-200 text-sm focus:border-blue-500 focus:ring-blue-500">
+                                        @error('inputForm.output') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <div class="flex justify-end pt-2">
+                                        <button type="submit" class="bg-slate-800 text-white px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-700 transition-all flex items-center gap-2">
+                                            <span wire:loading.remove wire:target="saveActivity">Simpan Aktivitas</span>
+                                            <span wire:loading wire:target="saveActivity">Menyimpan...</span>
+                                            <svg wire:loading.remove wire:target="saveActivity" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        @endif
+
+                        <!-- TIMELINE LIST -->
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 class="font-black text-slate-800 text-sm uppercase tracking-wider">Riwayat Aktivitas</h4>
+                                <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded">{{ $detailLaporan ? $detailLaporan->details->count() : 0 }} Item</span>
+                            </div>
+
+                            <div class="bg-slate-50 rounded-3xl p-6 border border-slate-100 max-h-[400px] overflow-y-auto custom-scrollbar">
+                                @if($detailLaporan && $detailLaporan->details->count() > 0)
+                                    <div class="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-300 before:to-transparent">
+                                        @foreach($detailLaporan->details->sortByDesc('jam_mulai') as $item)
+                                        <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                                            <!-- Icon -->
+                                            <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-white text-emerald-500 shadow-sm shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            </div>
+                                            <!-- Content -->
+                                            <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow relative group/item">
+                                                
+                                                <!-- Delete Button (Hover) -->
+                                                <button wire:click="deleteActivity({{ $item->id }})" wire:confirm="Hapus aktivitas ini?" class="absolute top-2 right-2 text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover/item:opacity-100 p-1">
+                                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                                </button>
+
+                                                <div class="flex items-center justify-between space-x-2 mb-1 pr-6">
+                                                    <div class="font-bold text-slate-900 text-sm line-clamp-1">{{ $item->kegiatan }}</div>
+                                                </div>
+                                                <div class="flex items-center gap-2 text-xs font-mono text-slate-500 mb-2">
+                                                    <span class="bg-slate-100 px-1.5 py-0.5 rounded">{{ \Carbon\Carbon::parse($item->jam_mulai)->format('H:i') }}</span>
+                                                    <span>-</span>
+                                                    <span class="bg-slate-100 px-1.5 py-0.5 rounded">{{ \Carbon\Carbon::parse($item->jam_selesai)->format('H:i') }}</span>
+                                                    <span class="text-slate-300">|</span>
+                                                    <span class="text-emerald-600 font-bold">{{ $item->durasi }} mnt</span>
+                                                </div>
+                                                <div class="text-slate-600 text-xs border-t border-slate-50 pt-2 mt-2">
+                                                    <span class="font-bold text-slate-400 uppercase text-[10px] mr-1">Output:</span> {{ $item->output }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="text-center py-12 flex flex-col items-center justify-center">
+                                        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-3 text-slate-400">
+                                            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                                        </div>
+                                        <p class="text-slate-500 font-bold text-sm">Belum ada aktivitas.</p>
+                                        <p class="text-slate-400 text-xs mt-1">Silakan input aktivitas harian Anda pada form di atas.</p>
+                                    </div>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>

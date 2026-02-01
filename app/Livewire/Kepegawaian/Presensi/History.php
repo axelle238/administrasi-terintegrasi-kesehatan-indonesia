@@ -15,11 +15,26 @@ class History extends Component
     public $bulan;
     public $tahun;
     public $selectedDate = null;
+    
+    // Form Input Inline
+    public $inputForm = [
+        'jam_mulai' => '',
+        'jam_selesai' => '',
+        'kegiatan' => '',
+        'output' => '',
+    ];
 
     public function mount()
     {
         $this->bulan = Carbon::now()->month;
         $this->tahun = Carbon::now()->year;
+        $this->setDefaultTime();
+    }
+    
+    private function setDefaultTime()
+    {
+        $this->inputForm['jam_mulai'] = Carbon::now()->format('H:i');
+        $this->inputForm['jam_selesai'] = Carbon::now()->addHour()->format('H:i');
     }
 
     // Navigasi Bulan Modern
@@ -42,6 +57,72 @@ class History extends Component
     public function selectDate($date)
     {
         $this->selectedDate = $date;
+        $this->setDefaultTime();
+        // Reset validasi jika ada
+        $this->resetValidation();
+    }
+
+    public function saveActivity()
+    {
+        $this->validate([
+            'inputForm.jam_mulai' => 'required',
+            'inputForm.jam_selesai' => 'required|after:inputForm.jam_mulai',
+            'inputForm.kegiatan' => 'required|min:5',
+            'inputForm.output' => 'required',
+        ], [
+            'inputForm.jam_selesai.after' => 'Jam selesai harus lebih akhir dari jam mulai.',
+            'inputForm.kegiatan.required' => 'Kegiatan wajib diisi.',
+            'inputForm.output.required' => 'Output/Hasil wajib diisi.'
+        ]);
+
+        $userId = Auth::id();
+        
+        // 1. Cari atau Buat Header Laporan Harian
+        $laporan = LaporanHarian::firstOrCreate(
+            [
+                'user_id' => $userId,
+                'tanggal' => $this->selectedDate
+            ],
+            [
+                'status' => 'Draft', // Default status
+                'waktu_verifikasi' => null
+            ]
+        );
+
+        // 2. Hitung Durasi (Menit)
+        $start = Carbon::parse($this->inputForm['jam_mulai']);
+        $end = Carbon::parse($this->inputForm['jam_selesai']);
+        $durasi = $end->diffInMinutes($start);
+
+        // 3. Simpan Detail
+        $laporan->details()->create([
+            'jam_mulai' => $this->inputForm['jam_mulai'],
+            'jam_selesai' => $this->inputForm['jam_selesai'],
+            'kegiatan' => $this->inputForm['kegiatan'],
+            'output' => $this->inputForm['output'],
+            'durasi' => $durasi,
+        ]);
+
+        // 4. Reset Form & Notif
+        $this->inputForm['kegiatan'] = '';
+        $this->inputForm['output'] = '';
+        $this->setDefaultTime(); // Reset jam ke default/current
+        
+        // Optional: Kirim notifikasi flash/toast jika ada komponen toast
+        session()->flash('success', 'Aktivitas berhasil ditambahkan.');
+    }
+
+    public function deleteActivity($detailId)
+    {
+        $detail = \App\Models\LaporanHarianDetail::find($detailId);
+        
+        if ($detail) {
+            // Pastikan user pemilik laporan
+            if ($detail->laporan->user_id == Auth::id()) {
+                $detail->delete();
+                session()->flash('success', 'Aktivitas dihapus.');
+            }
+        }
     }
 
     public function render()
