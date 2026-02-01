@@ -204,9 +204,30 @@
 
                 <!-- Smart Action Center -->
                 <div class="flex items-center gap-3">
+                    <!-- Language Switcher -->
+                    <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                        <button @click="open = !open" class="w-9 h-9 rounded-full bg-white/60 dark:bg-slate-800/60 backdrop-blur-md flex items-center justify-center hover:bg-white dark:hover:bg-slate-700 transition-all border border-transparent dark:border-slate-700">
+                            <span class="text-[10px] font-black text-slate-600 dark:text-slate-300">ID</span>
+                        </button>
+                        <div x-show="open" 
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 translate-y-2"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             x-transition:leave="transition ease-in duration-150"
+                             class="absolute top-full right-0 mt-2 w-32 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-100 dark:border-slate-700 p-1 z-50">
+                            <button class="flex items-center justify-between w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-700 text-xs font-bold text-slate-700 dark:text-white cursor-default">
+                                <span>Indonesia</span>
+                                <svg class="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                            </button>
+                            <button class="flex items-center justify-between w-full px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 text-xs font-bold text-slate-500 dark:text-slate-400 transition-colors">
+                                <span>English</span>
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- Dark Mode Toggle -->
                     <button @click="toggleTheme()" class="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300"
-                            :class="darkMode ? 'bg-slate-800 text-yellow-400 hover:bg-slate-700' : 'bg-white/60 text-slate-500 hover:text-slate-800 hover:bg-white'">
+                            :class="darkMode ? 'bg-slate-800 text-yellow-400 hover:bg-slate-700 ring-1 ring-slate-700' : 'bg-white/60 text-slate-500 hover:text-slate-800 hover:bg-white'">
                         <!-- Sun Icon -->
                         <svg x-show="!darkMode" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                         <!-- Moon Icon -->
@@ -387,6 +408,7 @@
 
         <!-- Mobile Navigation Drawer -->
         <div x-show="mobileMenuOpen" class="fixed inset-0 z-[60] md:hidden" style="display: none;">
+            <!-- Backdrop -->
             <div x-show="mobileMenuOpen" 
                  x-transition:enter="transition-opacity ease-linear duration-300"
                  x-transition:enter-start="opacity-0"
@@ -397,6 +419,7 @@
                  class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" 
                  @click="mobileMenuOpen = false"></div>
 
+            <!-- Panel -->
             <div x-show="mobileMenuOpen" 
                  x-transition:enter="transition ease-in-out duration-300 transform"
                  x-transition:enter-start="translate-x-full"
@@ -404,69 +427,108 @@
                  x-transition:leave="transition ease-in-out duration-300 transform"
                  x-transition:leave-start="translate-x-0"
                  x-transition:leave-end="translate-x-full"
-                 class="fixed inset-y-0 right-0 w-full max-w-xs bg-white shadow-2xl flex flex-col h-full overflow-hidden">
+                 class="fixed inset-y-0 right-0 w-full max-w-xs bg-white dark:bg-slate-900 shadow-2xl flex flex-col h-full overflow-hidden border-l border-slate-200 dark:border-slate-800">
                 
-                <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                    <h2 class="font-black text-lg text-slate-800">Menu Utama</h2>
+                <!-- Drawer Header -->
+                <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
+                    <h2 class="font-black text-lg text-slate-800 dark:text-white">Menu Utama</h2>
                     <button @click="mobileMenuOpen = false" class="p-2 -mr-2 text-slate-400 hover:text-rose-500 transition-colors">
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
 
+                <!-- Drawer Content -->
                 <div class="flex-1 overflow-y-auto p-6 space-y-8">
+                    
+                    <!-- Mobile Search -->
+                    <div class="relative">
+                        <input type="text" placeholder="Cari layanan atau dokter..." class="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-sm font-bold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-emerald-500 placeholder:text-slate-400">
+                        <svg class="w-5 h-5 text-slate-400 absolute left-3 top-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    </div>
+
+                    <!-- Main Links -->
                     <div class="space-y-2">
                         <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Navigasi</p>
                         @foreach(['Beranda' => '#beranda', 'Keunggulan' => '#keunggulan', 'Alur Pelayanan' => '#alur', 'Jadwal Dokter' => '#jadwal', 'Berita Terkini' => '#berita'] as $label => $link)
-                            <a href="{{ $link }}" @click="mobileMenuOpen = false" class="block py-2 text-base font-bold text-slate-600 hover:text-emerald-600 hover:translate-x-1 transition-all border-b border-dashed border-slate-100 last:border-0">
+                            <a href="{{ $link }}" @click="mobileMenuOpen = false" class="block py-2 text-base font-bold text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:translate-x-1 transition-all border-b border-dashed border-slate-100 dark:border-slate-800 last:border-0">
                                 {{ $label }}
                             </a>
                         @endforeach
                     </div>
 
+                    <!-- Layanan Accordion -->
                     <div x-data="{ layananOpen: false }">
-                        <button @click="layananOpen = !layananOpen" class="flex items-center justify-between w-full text-xs font-black text-slate-400 uppercase tracking-widest mb-3 hover:text-slate-600">
+                        <button @click="layananOpen = !layananOpen" class="flex items-center justify-between w-full text-xs font-black text-slate-400 uppercase tracking-widest mb-3 hover:text-slate-600 dark:hover:text-slate-300">
                             <span>Layanan Medis</span>
                             <svg class="w-4 h-4 transition-transform" :class="layananOpen ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                         </button>
-                        <div x-show="layananOpen" x-collapse class="space-y-2 pl-2 border-l-2 border-slate-100" style="display: none;">
+                        <div x-show="layananOpen" x-collapse class="space-y-2 pl-2 border-l-2 border-slate-100 dark:border-slate-800" style="display: none;">
                             @foreach($layanan as $poli)
-                                <a href="#layanan" @click="mobileMenuOpen = false" class="block py-1.5 text-sm font-medium text-slate-500 hover:text-emerald-600 transition-colors">
+                                <a href="#layanan" @click="mobileMenuOpen = false" class="block py-1.5 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
                                     {{ $poli->nama_poli }}
                                 </a>
                             @endforeach
                         </div>
                     </div>
 
+                    <!-- Settings (Dark Mode) -->
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 border border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                        <span class="text-sm font-bold text-slate-700 dark:text-slate-200">Mode Gelap</span>
+                        <button @click="toggleTheme()" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2" :class="darkMode ? 'bg-emerald-600' : 'bg-slate-200'">
+                            <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform" :class="darkMode ? 'translate-x-6' : 'translate-x-1'"></span>
+                        </button>
+                    </div>
+
+                    <!-- Auth Actions -->
                     <div>
                         @auth
-                            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                            <div class="bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 border border-slate-100 dark:border-slate-700">
                                 <div class="flex items-center gap-3 mb-3">
-                                    <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold text-lg">
+                                    <div class="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-bold text-lg">
                                         {{ substr(Auth::user()->name, 0, 1) }}
                                     </div>
-                                    <div>
-                                        <p class="text-sm font-bold text-slate-800">{{ Auth::user()->name }}</p>
-                                        <p class="text-xs text-slate-500">{{ Auth::user()->email }}</p>
+                                    <div class="overflow-hidden">
+                                        <p class="text-sm font-bold text-slate-800 dark:text-white truncate">{{ Auth::user()->name }}</p>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ Auth::user()->email }}</p>
                                     </div>
                                 </div>
-                                <a href="{{ url('/dashboard') }}" class="block w-full py-2.5 text-center bg-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-800 transition-all shadow-md">
-                                    Buka Dashboard
-                                </a>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <a href="{{ url('/dashboard') }}" class="py-2.5 text-center bg-slate-900 dark:bg-white dark:text-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-all shadow-md">
+                                        Dashboard
+                                    </a>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="w-full py-2.5 text-center bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-800/50 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-all">
+                                            Keluar
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         @else
-                            <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Area Pasien</p>
+                            <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Akses Cepat</p>
+                            <div class="grid grid-cols-2 gap-3 mb-3">
+                                <a href="{{ route('antrean.monitor') }}" class="flex flex-col items-center justify-center py-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800/50 rounded-2xl hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-all group">
+                                    <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400 mb-1 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                                    <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 uppercase">Cek Antrean</span>
+                                </a>
+                                <a href="#jadwal" class="flex flex-col items-center justify-center py-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/50 rounded-2xl hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-all group">
+                                    <svg class="w-6 h-6 text-blue-600 dark:text-blue-400 mb-1 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                    <span class="text-[10px] font-bold text-blue-700 dark:text-blue-300 uppercase">Jadwal</span>
+                                </a>
+                            </div>
                             <a href="{{ route('antrean.monitor') }}" class="flex items-center justify-center gap-2 w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl text-sm font-bold uppercase tracking-wider shadow-lg shadow-emerald-500/30 hover:-translate-y-1 transition-all mb-3">
                                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                                Ambil Antrean
+                                Ambil Nomor Antrean
                             </a>
-                            <a href="{{ route('login') }}" class="flex items-center justify-center w-full py-3.5 bg-white border border-slate-200 text-slate-700 rounded-2xl text-sm font-bold uppercase tracking-wider hover:bg-slate-50 transition-all">
+                            <a href="{{ route('login') }}" class="flex items-center justify-center w-full py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-2xl text-sm font-bold uppercase tracking-wider hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
                                 Login Petugas
                             </a>
                         @endauth
                     </div>
                 </div>
 
-                <div class="p-6 bg-slate-50 border-t border-slate-100 text-center">
+                <!-- Drawer Footer -->
+                <div class="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700 text-center">
                     <p class="text-[10px] font-bold text-slate-400">
                         &copy; {{ date('Y') }} {{ $pengaturan['app_name'] }}<br>
                         {{ $pengaturan['app_tagline'] }}
