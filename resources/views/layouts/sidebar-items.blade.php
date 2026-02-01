@@ -1,16 +1,34 @@
 <!-- A. DASHBOARD UTAMA -->
-<x-nav.dropdown label="Dashboard Utama" :active="request()->routeIs('dashboard') || request()->routeIs('system.notification.*') || request()->routeIs('admin.berita.*')">
+<x-nav.dropdown label="Dashboard Utama" :active="request()->routeIs('dashboard') || request()->routeIs('system.notification.*')">
     <x-slot:icon>
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
     </x-slot:icon>
     <x-nav.link-child :href="route('dashboard')" :active="request()->routeIs('dashboard')">Ringkasan Eksekutif</x-nav.link-child>
     <x-nav.link-child :href="route('system.notification.index')" :active="request()->routeIs('system.notification.*')">Pusat Notifikasi</x-nav.link-child>
-    @if(Auth::user()->can('admin'))
-    <x-nav.link-child :href="route('admin.berita.index')" :active="request()->routeIs('admin.berita.*')">Kelola Berita & Info</x-nav.link-child>
-    @endif
 </x-nav.dropdown>
 
-<!-- B. KESEHATAN -->
+<!-- B. MANAJEMEN HALAMAN DEPAN (NEW FRONTEND CMS) -->
+@if(Auth::user()->can('admin') || Auth::user()->role === 'admin')
+<x-nav.dropdown label="Manajemen Halaman Depan" :active="request()->routeIs('system.cms.*') || request()->routeIs('admin.berita.*') || request()->routeIs('system.alur.*') || request()->routeIs('system.harga.*') || request()->routeIs('jadwal-jaga.*')">
+    <x-slot:icon>
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+    </x-slot:icon>
+    
+    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Tampilan & Konten</div>
+    <x-nav.link-child :href="route('system.cms.index')" :active="request()->routeIs('system.cms.*')">Konfigurasi Tampilan (CMS)</x-nav.link-child>
+    <x-nav.link-child :href="route('admin.berita.index')" :active="request()->routeIs('admin.berita.*')">Berita & Artikel</x-nav.link-child>
+
+    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Layanan Publik</div>
+    <x-nav.link-child :href="route('system.alur.index')" :active="request()->routeIs('system.alur.*')">Alur Pelayanan</x-nav.link-child>
+    <x-nav.link-child :href="route('system.harga.index')" :active="request()->routeIs('system.harga.*')">Harga Pelayanan/Tindakan</x-nav.link-child>
+    
+    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Jadwal & Info</div>
+    <x-nav.link-child :href="route('jadwal-jaga.index')" :active="request()->routeIs('jadwal-jaga.*')">Jadwal Dokter</x-nav.link-child>
+    <!-- Asumsi Jadwal Pelayanan sama dengan Jadwal Dokter atau Shift, jika ada modul khusus Jadwal Pelayanan Poli bisa ditambahkan disini -->
+</x-nav.dropdown>
+@endif
+
+<!-- C. KESEHATAN -->
 @if(Auth::user()->can('medis') || Auth::user()->role === 'admin')
 <x-nav.dropdown label="Kesehatan" :active="request()->routeIs('medical.*') || request()->routeIs('antrean.*') || request()->routeIs('rekam-medis.*') || request()->routeIs('rawat-inap.*') || request()->routeIs('pharmacy.*') || request()->routeIs('obat.*')">
     <x-slot:icon>
@@ -25,7 +43,7 @@
 </x-nav.dropdown>
 @endif
 
-<!-- C. KESEHATAN MASYARAKAT -->
+<!-- D. KESEHATAN MASYARAKAT -->
 @if(Auth::user()->can('tata_usaha') || Auth::user()->role === 'admin')
 <x-nav.dropdown label="Kesehatan Masyarakat" :active="request()->routeIs('ukm.*') || request()->routeIs('masyarakat.*') || request()->routeIs('public.*')">
     <x-slot:icon>
@@ -38,7 +56,7 @@
 </x-nav.dropdown>
 @endif
 
-<!-- D. MANAJEMEN KEPEGAWAIAN (ADMIN - HR SYSTEM) -->
+<!-- E. MANAJEMEN KEPEGAWAIAN (ADMIN - HR SYSTEM) -->
 @if(Auth::user()->can('admin'))
 <x-nav.dropdown label="Manajemen Kepegawaian" :active="request()->routeIs('hrd.*') || request()->routeIs('pegawai.*') || request()->routeIs('shift.*') || request()->routeIs('jadwal-jaga.*') || request()->routeIs('kepegawaian.*') || request()->routeIs('mutasi.*') || request()->routeIs('aset-pegawai.*') || request()->routeIs('kinerja.*') || request()->routeIs('offboarding.*')">
     <x-slot:icon>
@@ -79,7 +97,7 @@
 </x-nav.dropdown>
 @endif
 
-<!-- E. MANAJEMEN KEUANGAN -->
+<!-- F. MANAJEMEN KEUANGAN -->
 @if(Auth::user()->can('admin'))
 <x-nav.dropdown label="Manajemen Keuangan" :active="request()->routeIs('finance.*') || request()->routeIs('kasir.*')">
     <x-slot:icon>
@@ -91,7 +109,7 @@
 </x-nav.dropdown>
 @endif
 
-<!-- F. MANAJEMEN ASET DAN INVENTARIS BARANG -->
+<!-- G. MANAJEMEN ASET DAN INVENTARIS BARANG -->
 @if(Auth::user()->can('tata_usaha') || Auth::user()->role === 'admin')
 <x-nav.dropdown label="Manajemen Aset dan Inventaris Barang" :active="request()->routeIs('barang.*') || request()->routeIs('supplier.*') || request()->routeIs('ruangan.*') || request()->routeIs('kategori-barang.*')">
     <x-slot:icon>
@@ -120,16 +138,13 @@
 </x-nav.dropdown>
 @endif
 
-<!-- G. MANAJEMEN SISTEM PENGATURAN TERPUSAT -->
+<!-- H. MANAJEMEN SISTEM PENGATURAN TERPUSAT -->
 @if(Auth::user()->role === 'admin')
-<x-nav.dropdown label="Manajemen Sistem Pengaturan Terpusat" :active="request()->routeIs('system.*') && !request()->routeIs('system.backup')">
+<x-nav.dropdown label="Manajemen Sistem Pengaturan Terpusat" :active="request()->routeIs('system.*') && !request()->routeIs('system.backup') && !request()->routeIs('system.cms.*') && !request()->routeIs('system.alur.*') && !request()->routeIs('system.harga.*')">
     <x-slot:icon>
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
     </x-slot:icon>
     
-    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">CMS & Tampilan</div>
-    <x-nav.link-child :href="route('system.cms.index')" :active="request()->routeIs('system.cms.*')">Manajemen Halaman Depan</x-nav.link-child>
-
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Monitoring</div>
     <x-nav.link-child :href="route('system.dashboard')" :active="request()->routeIs('system.dashboard')">Dashboard Sistem</x-nav.link-child>
     <x-nav.link-child :href="route('system.integration.index')" :active="request()->routeIs('system.integration.*')">Status Integrasi</x-nav.link-child>
@@ -145,8 +160,6 @@
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Data Master</div>
     <x-nav.link-child :href="route('system.poli.index')" :active="request()->routeIs('system.poli.*')">Master Poli</x-nav.link-child>
     <x-nav.link-child :href="route('system.tindakan.index')" :active="request()->routeIs('system.tindakan.*')">Master Tindakan (Medis)</x-nav.link-child>
-    <x-nav.link-child :href="route('system.harga.index')" :active="request()->routeIs('system.harga.*')">Katalog Harga Publik</x-nav.link-child>
-    <x-nav.link-child :href="route('system.alur.index')" :active="request()->routeIs('system.alur.*')">Alur Pelayanan</x-nav.link-child>
 
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Utilitas & Developer</div>
     <x-nav.link-child :href="route('system.backup')" :active="request()->routeIs('system.backup')">Backup & Database</x-nav.link-child>
@@ -154,7 +167,7 @@
 </x-nav.dropdown>
 @endif
 
-<!-- H. MANAJEMEN KEAMANAN TERPUSAT -->
+<!-- I. MANAJEMEN KEAMANAN TERPUSAT -->
 @if(Auth::user()->role === 'admin')
 <x-nav.dropdown label="Manajemen Keamanan Terpusat" :active="request()->routeIs('security.*') || request()->routeIs('activity-log') || request()->routeIs('system.backup')">
     <x-slot:icon>
