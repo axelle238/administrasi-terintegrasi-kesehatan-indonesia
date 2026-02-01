@@ -52,12 +52,62 @@
         [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="antialiased" x-data="{ scrolled: false }">
+<body class="antialiased" 
+      x-data="{ 
+          scrolled: false, 
+          activeSection: 'beranda',
+          init() {
+              this.onScroll();
+              window.addEventListener('scroll', () => this.onScroll());
+          },
+          onScroll() {
+              this.scrolled = window.scrollY > 40;
+              const sections = ['beranda', 'alur', 'jadwal', 'layanan'];
+              for (const id of sections) {
+                  const el = document.getElementById(id);
+                  if (el) {
+                      const rect = el.getBoundingClientRect();
+                      if (rect.top <= 150 && rect.bottom >= 150) {
+                          this.activeSection = id;
+                      }
+                  }
+              }
+          },
+          scrollTo(id) {
+              const el = document.getElementById(id);
+              if (el) {
+                  window.scrollTo({ top: el.offsetTop - 100, behavior: 'smooth' });
+              }
+          }
+      }">
+
+    <!-- Top Utility Bar -->
+    <div class="bg-slate-900 text-slate-400 text-[10px] font-bold uppercase tracking-widest py-2.5 hidden md:block relative z-50">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 flex justify-between items-center">
+            <div class="flex items-center gap-6">
+                <span class="flex items-center gap-2 hover:text-white transition-colors cursor-default">
+                    <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 12.284 3 6V5z" /></svg>
+                    {{ $pengaturan['app_phone'] ?? '119' }}
+                </span>
+                <span class="flex items-center gap-2 hover:text-white transition-colors cursor-default">
+                    <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                    {{ $pengaturan['app_email'] ?? 'info@satria.id' }}
+                </span>
+            </div>
+            <div class="flex items-center gap-6">
+                <span class="flex items-center gap-2">
+                    <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span>
+                    <span class="text-emerald-400">UGD 24 Jam Siaga</span>
+                </span>
+                <div class="h-3 w-px bg-slate-700"></div>
+                <span>{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
+            </div>
+        </div>
+    </div>
 
     <!-- Navbar -->
-    <nav :class="{ 'py-4 bg-white/90 backdrop-blur-md shadow-lg border-b border-slate-200/50': scrolled, 'py-6 bg-transparent border-transparent': !scrolled }" 
-         class="fixed top-0 left-0 right-0 z-50 transition-all duration-500 hidden md:block" 
-         @scroll.window="scrolled = (window.pageYOffset > 20)">
+    <nav :class="{ 'py-3 bg-white/90 backdrop-blur-md shadow-lg border-b border-slate-200/50 top-0': scrolled, 'py-5 bg-transparent border-transparent top-9': !scrolled }" 
+         class="fixed left-0 right-0 z-40 transition-all duration-500 hidden md:block">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="flex items-center justify-between">
                 <!-- Logo -->
@@ -76,15 +126,18 @@
 
                 <!-- Navigation Links -->
                 <div class="flex items-center gap-1 bg-white/50 p-1.5 rounded-full border border-white/40 backdrop-blur-md shadow-sm">
-                    @foreach(['Beranda' => '#beranda', 'Alur' => '#alur', 'Jadwal' => '#jadwal'] as $label => $link)
-                        <a href="{{ $link }}" class="px-5 py-2 rounded-full text-sm font-bold text-slate-500 hover:text-primary hover:bg-white hover:shadow-md transition-all duration-300 relative group">
+                    @foreach(['beranda' => 'Beranda', 'alur' => 'Alur', 'jadwal' => 'Jadwal'] as $id => $label)
+                        <button @click="scrollTo('{{ $id }}')" 
+                           :class="activeSection === '{{ $id }}' ? 'text-primary bg-white shadow-md ring-1 ring-slate-100' : 'text-slate-500 hover:text-primary hover:bg-white/50'"
+                           class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group">
                             {{ $label }}
-                        </a>
+                        </button>
                     @endforeach
                     
                     <!-- Dropdown Layanan -->
                     <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
-                        <button class="px-5 py-2 rounded-full text-sm font-bold text-slate-500 hover:text-primary hover:bg-white hover:shadow-md transition-all duration-300 flex items-center gap-1 group">
+                        <button class="px-5 py-2 rounded-full text-sm font-bold hover:text-primary hover:bg-white/50 transition-all duration-300 flex items-center gap-1 group"
+                                :class="activeSection === 'layanan' ? 'text-primary bg-white shadow-md ring-1 ring-slate-100' : 'text-slate-500'">
                             Layanan <svg class="w-3 h-3 transition-transform duration-300" :class="open ? 'rotate-180 text-primary' : 'text-slate-400 group-hover:text-primary'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                         </button>
                         <div x-show="open" 
@@ -102,7 +155,7 @@
                              <div class="relative z-10">
                                  <p class="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50 mb-1">Poliklinik Tersedia</p>
                                  @foreach($layanan->take(5) as $poli)
-                                    <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group/item">
+                                    <a href="#layanan" @click="open = false; scrollTo('layanan')" class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group/item">
                                         <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover/item:bg-emerald-500 group-hover/item:text-white transition-colors">
                                             <span class="font-bold text-xs">{{ substr($poli->nama_poli, 0, 1) }}</span>
                                         </div>
@@ -111,14 +164,10 @@
                                         </div>
                                     </a>
                                  @endforeach
-                                 <a href="#layanan" class="mt-2 block w-full py-2 text-[10px] font-bold text-center text-slate-500 hover:text-primary hover:bg-slate-50 rounded-lg uppercase tracking-wider transition-colors">Lihat Semua Layanan &rarr;</a>
+                                 <button @click="scrollTo('layanan')" class="mt-2 block w-full py-2 text-[10px] font-bold text-center text-slate-500 hover:text-primary hover:bg-slate-50 rounded-lg uppercase tracking-wider transition-colors">Lihat Semua Layanan &rarr;</button>
                              </div>
                         </div>
                     </div>
-
-                    <a href="#berita" class="px-5 py-2 rounded-full text-sm font-bold text-slate-500 hover:text-primary hover:bg-white hover:shadow-md transition-all duration-300 relative group">
-                        Berita
-                    </a>
                 </div>
 
                 <!-- Action Buttons -->
