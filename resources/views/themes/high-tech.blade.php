@@ -303,14 +303,58 @@
                     @else
                         <!-- Guest Actions -->
                         <div class="flex items-center gap-2">
-                            <a href="{{ route('login') }}" class="px-5 py-2.5 rounded-full text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-white/60 transition-all">
-                                Masuk Staf
-                            </a>
-                            <a href="{{ route('antrean.monitor') }}" class="group relative px-6 py-2.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-0.5 transition-all overflow-hidden flex items-center gap-2">
-                                <span class="relative z-10">Ambil Antrean</span>
-                                <svg class="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                        <a href="{{ route('login') }}" class="text-sm font-bold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white px-5 py-2.5 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md rounded-full transition-all border border-transparent hover:border-slate-100 dark:hover:border-slate-700">Login Staf</a>
+                        
+                        <!-- Quick Access Dropdown -->
+                        <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                            <button @click="open = !open" class="group relative px-6 py-2.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-0.5 transition-all overflow-hidden flex items-center gap-2">
+                                <span class="relative z-10">Layanan Pasien</span>
+                                <svg class="w-4 h-4 relative z-10 transition-transform duration-300" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                                 <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                            </a>
+                            </button>
+
+                            <div x-show="open" 
+                                 x-transition:enter="transition ease-out duration-200"
+                                 x-transition:enter-start="opacity-0 translate-y-2 scale-95"
+                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave="transition ease-in duration-150"
+                                 class="absolute top-full right-0 mt-3 w-56 bg-white dark:bg-slate-800 backdrop-blur-xl rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 p-2 z-50 overflow-hidden">
+                                
+                                <div class="px-3 py-2 border-b border-slate-100 dark:border-slate-700 mb-1">
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Akses Cepat</p>
+                                </div>
+
+                                <a href="{{ route('antrean.monitor') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-emerald-50 dark:hover:bg-slate-700 transition-colors group">
+                                    <div class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">Ambil Antrean</p>
+                                        <p class="text-[9px] text-slate-400">Daftar berobat online</p>
+                                    </div>
+                                </a>
+
+                                <a href="{{ route('antrean.monitor') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors group">
+                                    <div class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">Cek Status</p>
+                                        <p class="text-[9px] text-slate-400">Pantau nomor antrean</p>
+                                    </div>
+                                </a>
+
+                                <a href="#jadwal" @click="scrollTo('jadwal')" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-purple-50 dark:hover:bg-slate-700 transition-colors group">
+                                    <div class="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center text-purple-600 dark:text-purple-400 group-hover:bg-purple-500 group-hover:text-white transition-colors">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-purple-600 dark:group-hover:text-purple-400">Jadwal Dokter</p>
+                                        <p class="text-[9px] text-slate-400">Lihat praktik hari ini</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
                         </div>
                     @endauth
                 </div>
