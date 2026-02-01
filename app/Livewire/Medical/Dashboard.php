@@ -59,6 +59,31 @@ class Dashboard extends Component
 
             $dataTab['pasienBaru'] = Pasien::whereMonth('created_at', Carbon::now()->month)->count();
             $dataTab['pasienLama'] = max(0, $totalKunjunganBulanIni - $dataTab['pasienBaru']);
+
+            // Tambahan: Antrean Live Monitoring
+            $dataTab['antreanLive'] = Poli::whereHas('antreans', function($q) {
+                    $q->whereDate('tanggal_antrean', Carbon::today());
+                })
+                ->withCount(['antreans as menunggu' => function($q) {
+                    $q->whereDate('tanggal_antrean', Carbon::today())->where('status', 'Menunggu');
+                }])
+                ->get()
+                ->map(function($poli) {
+                    $sedangDilayani = Antrean::with('pasien')
+                        ->where('poli_id', $poli->id)
+                        ->whereDate('tanggal_antrean', Carbon::today())
+                        ->whereIn('status', ['Dipanggil', 'Sedang Diperiksa'])
+                        ->latest('updated_at')
+                        ->first();
+                    
+                    return [
+                        'nama_poli' => $poli->nama_poli,
+                        'menunggu' => $poli->menunggu,
+                        'sedang_dilayani_nama' => $sedangDilayani ? $sedangDilayani->pasien->nama : '-',
+                        'sedang_dilayani_nomor' => $sedangDilayani ? $sedangDilayani->nomor_antrean : '-',
+                        'status_poli' => $poli->menunggu > 0 || $sedangDilayani ? 'Aktif' : 'Istirahat'
+                    ];
+                });
         }
 
         if ($this->tabAktif == 'demografi') {
@@ -88,6 +113,15 @@ class Dashboard extends Component
         if ($this->tabAktif == 'rawat_inap') {
             // Group by Kelas
             $dataTab['kamars'] = Kamar::orderBy('kelas')->get();
+            
+            // Statistik Bangsal
+            $dataTab['borPerBangsal'] = Kamar::select('nama_bangsal', DB::raw('sum(bed_terisi) as terisi'), DB::raw('sum(kapasitas_bed) as kapasitas'))
+                ->groupBy('nama_bangsal')
+                ->get()
+                ->map(function($bangsal) {
+                    $bangsal->persentase = $bangsal->kapasitas > 0 ? ($bangsal->terisi / $bangsal->kapasitas) * 100 : 0;
+                    return $bangsal;
+                });
         }
 
         return view('livewire.medical.dashboard', compact(

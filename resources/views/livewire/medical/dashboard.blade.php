@@ -73,16 +73,60 @@
                 <div id="chart-tren-medis" class="w-full h-[300px]"></div>
             </div>
 
-            <!-- Aktivitas Poli -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                <h4 class="font-bold text-slate-800 mb-4">Aktivitas Poliklinik</h4>
-                <div class="space-y-4 max-h-[300px] overflow-y-auto custom-scrollbar">
-                    @foreach($dataTab['poliActivity'] ?? [] as $poli)
-                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-                        <span class="text-sm font-medium text-slate-700">{{ $poli->poli->nama_poli ?? 'N/A' }}</span>
-                        <span class="text-xs font-black bg-white px-2 py-1 rounded shadow-sm text-slate-800">{{ $poli->total }}</span>
+            <!-- Aktivitas Poli & Monitor Live -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Monitor Antrean Live -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="font-bold text-slate-800">Monitor Antrean Live</h4>
+                        <span class="px-2 py-1 rounded text-[10px] font-bold bg-green-100 text-green-700 animate-pulse">LIVE</span>
                     </div>
-                    @endforeach
+                    <div class="space-y-3 max-h-[400px] overflow-y-auto custom-scrollbar">
+                        @forelse($dataTab['antreanLive'] ?? [] as $live)
+                        <div class="p-4 rounded-xl border {{ $live['status_poli'] == 'Aktif' ? 'bg-blue-50 border-blue-100' : 'bg-slate-50 border-slate-100 opacity-70' }}">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-sm font-bold text-slate-700">{{ $live['nama_poli'] }}</span>
+                                <span class="text-[10px] font-bold uppercase {{ $live['status_poli'] == 'Aktif' ? 'text-blue-600' : 'text-slate-400' }}">{{ $live['status_poli'] }}</span>
+                            </div>
+                            
+                            @if($live['status_poli'] == 'Aktif')
+                            <div class="flex items-end justify-between">
+                                <div>
+                                    <p class="text-[10px] text-slate-500 uppercase">Sedang Dilayani</p>
+                                    <p class="text-lg font-black text-slate-800 leading-none mt-1">{{ $live['sedang_dilayani_nomor'] }}</p>
+                                    <p class="text-xs font-medium text-slate-600 truncate max-w-[120px]">{{ $live['sedang_dilayani_nama'] }}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-[10px] text-slate-500 uppercase">Menunggu</p>
+                                    <p class="text-lg font-black text-orange-500 leading-none mt-1">{{ $live['menunggu'] }}</p>
+                                    <p class="text-[10px] text-slate-400">Pasien</p>
+                                </div>
+                            </div>
+                            @else
+                            <div class="text-center py-2 text-xs text-slate-400">
+                                Tidak ada aktivitas antrean saat ini.
+                            </div>
+                            @endif
+                        </div>
+                        @empty
+                        <div class="text-center py-8 text-slate-400 text-sm">
+                            Belum ada data antrean hari ini.
+                        </div>
+                        @endforelse
+                    </div>
+                </div>
+
+                <!-- Aktivitas Poli Summary (Small) -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                     <h4 class="font-bold text-slate-800 mb-4">Ringkasan Total Pasien</h4>
+                     <div class="space-y-2">
+                        @foreach($dataTab['poliActivity'] ?? [] as $poli)
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-slate-600">{{ $poli->poli->nama_poli ?? 'N/A' }}</span>
+                            <span class="font-bold text-slate-800">{{ $poli->total }}</span>
+                        </div>
+                        @endforeach
+                     </div>
                 </div>
             </div>
 
@@ -179,6 +223,26 @@
 
         <!-- 4. RAWAT INAP -->
         @if($tabAktif === 'rawat_inap')
+        <div class="mb-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 animate-fade-in-up">
+            <h4 class="font-bold text-slate-800 mb-4">Okupansi Bed per Bangsal (BOR)</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                @foreach($dataTab['borPerBangsal'] ?? [] as $bangsal)
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-slate-700">{{ $bangsal->nama_bangsal ?? 'Umum' }}</span>
+                        <span class="text-xs font-bold px-2 py-1 rounded {{ $bangsal->persentase >= 85 ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700' }}">
+                            {{ number_format($bangsal->persentase, 1) }}%
+                        </span>
+                    </div>
+                    <div class="w-full bg-white rounded-full h-2 mb-2">
+                        <div class="h-2 rounded-full {{ $bangsal->persentase >= 85 ? 'bg-red-500' : 'bg-blue-500' }}" style="width: {{ $bangsal->persentase }}%"></div>
+                    </div>
+                    <p class="text-xs text-slate-500 text-right">{{ $bangsal->terisi }} / {{ $bangsal->kapasitas }} Bed Terisi</p>
+                </div>
+                @endforeach
+            </div>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up">
             @foreach($dataTab['kamars'] ?? [] as $kamar)
             <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 relative overflow-hidden">
