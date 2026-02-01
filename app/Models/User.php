@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\HasRoles;
 
 /**
  * Model User
@@ -21,7 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, LogsActivity, SoftDeletes;
+    use HasFactory, Notifiable, LogsActivity, SoftDeletes, HasRoles;
 
     /**
      * Konfigurasi Log Aktivitas.

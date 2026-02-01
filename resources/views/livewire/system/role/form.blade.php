@@ -29,7 +29,7 @@
     </div>
 
     <!-- Permission Matrix -->
-    @if($groupedPermissions->isEmpty())
+    @if(empty($groupedPermissions))
         <div class="text-center py-12 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
             <p class="text-slate-400 font-bold mb-2">Belum ada fitur terdaftar.</p>
             <button wire:click="syncPermissions" class="text-blue-600 font-bold hover:underline">Klik di sini untuk memindai fitur sistem</button>
@@ -49,11 +49,11 @@
                         @foreach($permissions as $perm)
                         <label class="flex items-start gap-3 cursor-pointer group hover:bg-slate-50 p-2 rounded-lg transition-colors -mx-2">
                             <div class="relative flex items-start">
-                                <input type="checkbox" wire:model="selectedPermissions" value="{{ $perm->id }}" class="peer h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                <input type="checkbox" wire:model="selectedPermissions" value="{{ $perm['id'] }}" class="peer h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
                             </div>
                             <div class="text-sm">
-                                <span class="font-bold text-slate-700 block group-hover:text-blue-700 transition-colors">{{ $perm->readable_name }}</span>
-                                <span class="text-xs text-slate-400 font-mono">{{ $perm->name }}</span>
+                                <span class="font-bold text-slate-700 block group-hover:text-blue-700 transition-colors">{{ $perm['readable_name'] }}</span>
+                                <span class="text-xs text-slate-400 font-mono">{{ $perm['name'] }}</span>
                             </div>
                         </label>
                         @endforeach

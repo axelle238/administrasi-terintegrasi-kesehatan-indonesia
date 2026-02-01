@@ -31,8 +31,9 @@ class Form extends Component
     public function loadPermissions()
     {
         // Ambil semua permission, dikelompokkan berdasarkan group_name
+        // Konversi ke array agar Livewire tidak error saat serialize Eloquent Collection yang di-group
         $permissions = Permission::orderBy('group_name')->orderBy('name')->get();
-        $this->groupedPermissions = $permissions->groupBy('group_name');
+        $this->groupedPermissions = $permissions->groupBy('group_name')->toArray();
     }
 
     public function syncPermissions()
@@ -71,7 +72,8 @@ class Form extends Component
     public function toggleGroup($groupName)
     {
         // Fitur "Pilih Semua" per grup
-        $permissionsInGroup = $this->groupedPermissions[$groupName]->pluck('id')->map(fn($id) => (string)$id)->toArray();
+        // Karena groupedPermissions adalah array, kita gunakan collect() untuk mempermudah
+        $permissionsInGroup = collect($this->groupedPermissions[$groupName])->pluck('id')->map(fn($id) => (string)$id)->toArray();
         
         $hasAll = !array_diff($permissionsInGroup, $this->selectedPermissions);
 
