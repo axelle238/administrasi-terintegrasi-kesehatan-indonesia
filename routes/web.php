@@ -139,7 +139,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/kepegawaian/gaji-admin', \App\Livewire\Kepegawaian\Gaji\Index::class)->name('kepegawaian.gaji.admin.index'); // Perlu dicek, ini conflict dengan user?
         // Admin Gaji biasanya "Create Gaji" atau "List Semua Gaji"
         // Kita gunakan route lama tapi rename name-nya biar jelas
-        Route::get('/admin/gaji', \App\Livewire\Kepegawaian\Gaji\Index::class)->name('admin.gaji.index'); 
+        Route::get('/admin/gaji', \App\Livewire\Admin\Gaji\Index::class)->name('admin.gaji.index'); 
         Route::get('/admin/gaji/create', \App\Livewire\Kepegawaian\Gaji\Create::class)->name('admin.gaji.create');
         
         Route::get('/pegawai', \App\Livewire\Pegawai\Index::class)->name('pegawai.index');

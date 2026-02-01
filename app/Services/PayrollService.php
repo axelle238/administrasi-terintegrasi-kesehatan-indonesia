@@ -2,76 +2,84 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use App\Models\Pegawai;
+use App\Models\Penggajian;
+use App\Models\KomponenGaji;
+use App\Models\Lembur;
+use App\Models\Presensi;
+use Carbon\Carbon;
 
 class PayrollService
 {
-    /**
-     * Hitung estimasi gaji berdasarkan data pegawai dan aturan perusahaan.
-     */
-    public function calculatePayroll(User $user, $bulan, $tahun)
+    public function generateSlip(Pegawai $pegawai, $bulan, $tahun)
     {
-        // 1. Base Salary by Role (Simulasi Standar Gaji)
-        $gajiPokok = match($user->role) {
-            'dokter' => 7000000,
-            'apoteker' => 5000000,
-            'perawat' => 4500000,
-            'admin' => 4000000,
-            default => 3500000
-        };
-
-        // 2. Tunjangan
-        $tunjanganJabatan = 0;
-        if ($user->role == 'dokter') $tunjanganJabatan = 2000000;
-        if ($user->role == 'apoteker') $tunjanganJabatan = 1000000;
-
-        $tunjanganFungsional = 500000; // Flat untuk tenaga medis
-        $tunjanganUmum = 200000;
+        // 1. Inisialisasi
+        $gajiPokok = $pegawai->gaji_pokok;
+        $totalTunjangan = 0;
+        $totalPotongan = 0;
         
-        // Simulasi Kehadiran (20 Hari Kerja)
-        $hariKerja = 20; 
-        $uangMakanHarian = 30000;
-        $uangTransportHarian = 20000;
+        // 2. Hitung Tunjangan Tetap (Dari Master Komponen)
+        $tunjanganTetap = KomponenGaji::where('jenis', 'Penerimaan')->where('is_active', true)->get();
+        foreach ($tunjanganTetap as $t) {
+            $totalTunjangan += $t->nilai_default;
+        }
+
+        // 3. Hitung Lembur
+        $lembur = Lembur::where('user_id', $pegawai->user_id)
+            ->whereMonth('tanggal', $bulan)
+            ->whereYear('tanggal', $tahun)
+            ->where('status', 'Disetujui')
+            ->get();
+            
+        // Asumsi hitungan lembur sederhana: durasi * 20.000
+        $totalJamLembur = 0;
+        foreach ($lembur as $l) {
+            $start = Carbon::parse($l->jam_mulai);
+            $end = Carbon::parse($l->jam_selesai);
+            $totalJamLembur += $end->diffInHours($start);
+        }
+        $uangLembur = $totalJamLembur * 20000;
+        $totalTunjangan += $uangLembur;
+
+        // 4. Hitung Potongan (Misal: Terlambat)
+        $terlambat = Presensi::where('user_id', $pegawai->user_id)
+            ->whereMonth('tanggal', $bulan)
+            ->whereYear('tanggal', $tahun)
+            ->where('status_masuk', 'Terlambat')
+            ->count();
         
-        $tunjanganMakan = $hariKerja * $uangMakanHarian;
-        $tunjanganTransport = $hariKerja * $uangTransportHarian;
+        $potonganTelat = $terlambat * 50000; // Denda 50k per telat
+        $totalPotongan += $potonganTelat;
 
-        $totalTunjangan = $tunjanganJabatan + $tunjanganFungsional + $tunjanganUmum + $tunjanganMakan + $tunjanganTransport;
-
-        // 3. Potongan (BPJS & Pajak)
-        // BPJS Kesehatan (1% Pegawai, 4% Kantor - disini kita hitung yg dipotong dari gaji pegawai)
-        $potonganBpjsKes = $gajiPokok * 0.01; 
-        
-        // BPJS TK (2% JHT)
-        $potonganBpjsTk = $gajiPokok * 0.02;
-
-        // PPh 21 (Simulasi 5% dari PKP sebulan - simplifikasi)
-        $potonganPph21 = ($gajiPokok + $totalTunjangan) * 0.05;
-
-        // Absensi (Simulasi 0)
-        $potonganAbsen = 0;
-
-        $totalPotongan = $potonganBpjsKes + $potonganBpjsTk + $potonganPph21 + $potonganAbsen;
-
-        return [
+        // 5. Create Penggajian Header
+        $penggajian = Penggajian::create([
+            'user_id' => $pegawai->user_id,
+            'bulan' => $bulan,
+            'tahun' => $tahun,
             'gaji_pokok' => $gajiPokok,
-            'tunjangan' => [
-                'jabatan' => $tunjanganJabatan,
-                'fungsional' => $tunjanganFungsional,
-                'umum' => $tunjanganUmum,
-                'makan' => $tunjanganMakan,
-                'transport' => $tunjanganTransport,
-                'total' => $totalTunjangan
-            ],
-            'potongan' => [
-                'bpjs_kesehatan' => $potonganBpjsKes,
-                'bpjs_tk' => $potonganBpjsTk,
-                'pph21' => $potonganPph21,
-                'absen' => $potonganAbsen,
-                'total' => $totalPotongan
-            ],
-            'total_gaji' => ($gajiPokok + $totalTunjangan) - $totalPotongan
-        ];
+            'total_tunjangan' => $totalTunjangan,
+            'total_potongan' => $totalPotongan,
+            'gaji_bersih' => ($gajiPokok + $totalTunjangan) - $totalPotongan,
+            'status' => 'Draft'
+        ]);
+
+        // 6. Simpan Detail
+        $this->saveDetail($penggajian, 'Gaji Pokok', 'Penerimaan', $gajiPokok);
+        $this->saveDetail($penggajian, 'Uang Lembur', 'Penerimaan', $uangLembur);
+        if ($potonganTelat > 0) {
+            $this->saveDetail($penggajian, 'Denda Keterlambatan', 'Potongan', $potonganTelat);
+        }
+        // ... simpan detail lain dari loop tunjanganTetap ...
+
+        return $penggajian;
+    }
+
+    private function saveDetail($penggajian, $nama, $jenis, $jumlah)
+    {
+        $penggajian->details()->create([
+            'nama_komponen' => $nama,
+            'jenis' => $jenis,
+            'jumlah' => $jumlah
+        ]);
     }
 }
