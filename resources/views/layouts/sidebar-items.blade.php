@@ -75,7 +75,7 @@
     
     <!-- PHASE 6: TERMINASI -->
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Exit Management</div>
-    <x-nav.link-child :href="route('offboarding.index')" :active="request()->routeIs('offboarding.index')">Offboarding & Resign</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.offboarding.index')" :active="request()->routeIs('kepegawaian.offboarding.index')">Offboarding & Resign</x-nav.link-child>
 </x-nav.dropdown>
 @endif
 
