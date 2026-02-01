@@ -43,9 +43,12 @@ Route::get('/', function () {
     $pengaturan = array_merge($defaults, $dbSettings);
 
     // 4. Data Dinamis
-    $layanan = Poli::all();
-    // NEW: Load Alur & Harga
-    $alurPelayanan = \App\Models\AlurPelayanan::where('is_active', true)->orderBy('urutan')->get();
+    $layanan = Poli::with(['jenisPelayanans' => function($q) {
+        $q->where('is_active', true)->with(['alurPelayanans' => function($sq) {
+            $sq->where('is_active', true)->orderBy('urutan');
+        }]);
+    }])->get();
+    
     $hargaLayanan = \App\Models\Tindakan::where('is_active', true)->whereNotNull('harga')->inRandomOrder()->limit(6)->get();
     
     // NEW: Load CMS Sections

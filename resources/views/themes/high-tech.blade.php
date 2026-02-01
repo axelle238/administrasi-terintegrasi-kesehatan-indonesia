@@ -650,65 +650,144 @@
     </section>
     @endif
 
-    <!-- ALUR PELAYANAN -->
-    @if(isset($alurPelayanan) && count($alurPelayanan) > 0)
-    <section id="alur" class="py-24 bg-slate-50 relative" x-data="{ activeTab: 'all' }">
+    <!-- ALUR PELAYANAN (Interactive Explorer) -->
+    <section id="alur" class="py-24 bg-slate-50 relative overflow-hidden" x-data="{ activePoli: {{ $layanan->first()->id ?? 'null' }}, activeService: null }">
+        <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent"></div>
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-                <div>
-                    <span class="text-primary font-black tracking-widest uppercase text-xs mb-2 block">Panduan Pasien</span>
-                    <h2 class="text-3xl md:text-4xl font-black text-slate-900">Alur Pelayanan</h2>
-                </div>
-                
-                <!-- Modern Tabs -->
-                <div class="inline-flex flex-wrap gap-2 bg-white p-1.5 rounded-2xl border border-slate-200/50 shadow-sm">
-                    <button @click="activeTab = 'all'" 
-                            :class="activeTab === 'all' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-500 hover:text-slate-900'"
-                            class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all">
-                        Semua
-                    </button>
-                    @php 
-                        $jenisList = $alurPelayanan->pluck('jenisPelayanan.nama_layanan')->unique()->filter();
-                    @endphp
-                    @foreach($jenisList as $jenis)
-                    <button @click="activeTab = '{{ Str::slug($jenis) }}'" 
-                            :class="activeTab === '{{ Str::slug($jenis) }}' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-500 hover:text-slate-900'"
-                            class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all">
-                        {{ $jenis }}
+            
+            <div class="text-center mb-12">
+                <span class="text-primary font-black tracking-widest uppercase text-xs mb-2 block">Panduan Prosedur</span>
+                <h2 class="text-3xl md:text-5xl font-black text-slate-900 mb-4">Eksplorasi Alur Layanan</h2>
+                <p class="text-slate-500 text-lg max-w-2xl mx-auto">Pilih unit layanan di bawah ini untuk melihat prosedur dan tahapan pelayanan secara detail.</p>
+            </div>
+
+            <!-- 1. Poli Tabs (Horizontal Scroll) -->
+            <div class="flex justify-center mb-10">
+                <div class="inline-flex gap-2 p-2 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-x-auto max-w-full custom-scrollbar">
+                    @foreach($layanan as $poli)
+                    <button @click="activePoli = {{ $poli->id }}; activeService = null" 
+                            :class="activePoli === {{ $poli->id }} ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'"
+                            class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap">
+                        {{ $poli->nama_poli }}
                     </button>
                     @endforeach
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-                @foreach($alurPelayanan as $index => $alur)
-                @php $slug = $alur->jenisPelayanan ? Str::slug($alur->jenisPelayanan->nama_layanan) : 'umum'; @endphp
-                
-                <div x-show="activeTab === 'all' || activeTab === '{{ $slug }}'" 
-                     class="group relative bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500 h-full flex flex-col overflow-hidden"
-                     x-transition:enter="transition ease-out duration-500"
-                     x-transition:enter-start="opacity-0 scale-90"
-                     x-transition:enter-end="opacity-100 scale-100">
+            <!-- 2. Services Grid (Dynamic Content) -->
+            <div class="min-h-[400px]">
+                @foreach($layanan as $poli)
+                <div x-show="activePoli === {{ $poli->id }}" 
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 translate-y-4"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     style="display: none;">
                     
-                    <div class="flex justify-between items-start mb-6 relative z-10">
-                        <div class="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-900 text-xl font-black group-hover:bg-primary group-hover:text-white transition-colors duration-500">
-                            {{ $alur->urutan }}
+                    @if($poli->jenisPelayanans->count() > 0)
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                            @foreach($poli->jenisPelayanans as $jenis)
+                            <button @click="activeService = activeService === {{ $jenis->id }} ? null : {{ $jenis->id }}" 
+                                    :class="activeService === {{ $jenis->id }} ? 'ring-2 ring-primary border-primary bg-slate-50' : 'border-slate-100 hover:border-slate-300 bg-white'"
+                                    class="group text-left p-6 rounded-[2rem] border shadow-sm hover:shadow-lg transition-all duration-300 relative overflow-hidden h-full flex flex-col">
+                                
+                                <div class="flex justify-between items-start mb-4">
+                                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center transition-colors"
+                                         :class="activeService === {{ $jenis->id }} ? 'bg-primary text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-primary group-hover:text-white'">
+                                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                                    </div>
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400" x-show="activeService !== {{ $jenis->id }}">Klik Detail</span>
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-primary" x-show="activeService === {{ $jenis->id }}">Sedang Aktif</span>
+                                </div>
+                                
+                                <h3 class="text-lg font-black text-slate-800 mb-2 leading-tight group-hover:text-primary transition-colors">{{ $jenis->nama_layanan }}</h3>
+                                <p class="text-sm text-slate-500 line-clamp-2 mb-4">{{ $jenis->deskripsi }}</p>
+                                
+                                <div class="mt-auto pt-4 border-t border-slate-50 flex items-center gap-2 text-xs font-bold text-slate-400 group-hover:text-primary transition-colors">
+                                    <span>Lihat Tahapan</span>
+                                    <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                                </div>
+                            </button>
+                            @endforeach
                         </div>
-                        @if($alur->jenisPelayanan)
-                        <span class="px-3 py-1 bg-slate-50 text-slate-500 text-[10px] font-black uppercase rounded-lg border border-slate-100">
-                            {{ $alur->jenisPelayanan->nama_layanan }}
-                        </span>
-                        @endif
-                    </div>
-                    
-                    <h3 class="font-bold text-xl text-slate-900 mb-3 leading-tight relative z-10">{{ $alur->judul }}</h3>
-                    <p class="text-sm text-slate-500 leading-relaxed flex-1 relative z-10">{{ $alur->deskripsi }}</p>
-                    
-                    @if($alur->estimasi_waktu)
-                    <div class="mt-6 pt-6 border-t border-dashed border-slate-100 flex items-center gap-2 text-xs font-bold text-emerald-600 relative z-10">
-                        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                        Estimasi: {{ $alur->estimasi_waktu }}
-                    </div>
+
+                        <!-- 3. Detail Flow Timeline (Expandable) -->
+                        @foreach($poli->jenisPelayanans as $jenis)
+                        <div x-show="activeService === {{ $jenis->id }}" 
+                             x-collapse
+                             class="bg-white rounded-[3rem] border border-slate-200 shadow-xl overflow-hidden relative">
+                            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-emerald-400 to-teal-500"></div>
+                            
+                            <div class="p-8 md:p-12">
+                                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+                                    <div>
+                                        <h3 class="text-2xl font-black text-slate-900 mb-1">Alur: {{ $jenis->nama_layanan }}</h3>
+                                        <p class="text-slate-500">{{ $jenis->deskripsi }}</p>
+                                    </div>
+                                    <a href="{{ route('alur-pelayanan.index') }}" class="px-6 py-3 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-slate-800 transition-colors flex items-center gap-2">
+                                        Mode Layar Penuh
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 01-2 2v10a2 2 0 012 2h10a2 2 0 012-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                    </a>
+                                </div>
+
+                                <!-- Horizontal Steps Scroll -->
+                                <div class="relative">
+                                    <div class="flex gap-8 overflow-x-auto pb-8 custom-scrollbar snap-x">
+                                        @forelse($jenis->alurPelayanans as $index => $alur)
+                                        <div class="flex-shrink-0 w-80 snap-start relative group">
+                                            <!-- Step Number -->
+                                            <div class="absolute -top-3 -left-3 w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black text-lg shadow-lg z-10 group-hover:scale-110 transition-transform {{ $alur->is_critical ? 'bg-rose-600' : '' }}">
+                                                {{ $loop->iteration }}
+                                            </div>
+                                            
+                                            <div class="bg-slate-50 rounded-3xl p-6 border border-slate-100 h-full hover:bg-white hover:shadow-lg hover:border-primary/30 transition-all duration-300">
+                                                <div class="pl-4 mb-4">
+                                                    <h4 class="font-bold text-lg text-slate-800 mb-1 leading-tight">{{ $alur->judul }}</h4>
+                                                    <div class="flex gap-2">
+                                                        <span class="text-[10px] font-bold uppercase tracking-wider bg-white px-2 py-1 rounded border border-slate-200 text-slate-500">{{ $alur->waktu_range ?? $alur->estimasi_waktu }}</span>
+                                                        @if($alur->is_critical)
+                                                        <span class="text-[10px] font-bold uppercase tracking-wider bg-rose-100 px-2 py-1 rounded text-rose-600">Wajib</span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                
+                                                @if($alur->gambar)
+                                                <div class="mb-4 rounded-xl overflow-hidden h-32 bg-slate-200">
+                                                    <img src="{{ asset('storage/'.$alur->gambar) }}" class="w-full h-full object-cover">
+                                                </div>
+                                                @endif
+
+                                                <p class="text-sm text-slate-600 leading-relaxed mb-4 text-justify">{{ $alur->deskripsi }}</p>
+                                                
+                                                @if($alur->dokumen_syarat)
+                                                <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100">
+                                                    <p class="text-[9px] font-black uppercase tracking-widest text-indigo-400 mb-1">Syarat</p>
+                                                    <p class="text-xs font-bold text-indigo-900">{{ $alur->dokumen_syarat }}</p>
+                                                </div>
+                                                @endif
+                                            </div>
+                                            
+                                            <!-- Connector Line (except last) -->
+                                            @if(!$loop->last)
+                                            <div class="hidden md:block absolute top-1/2 -right-6 w-8 h-0.5 bg-slate-200"></div>
+                                            <div class="hidden md:block absolute top-1/2 -right-2 w-2 h-2 bg-slate-300 rounded-full"></div>
+                                            @endif
+                                        </div>
+                                        @empty
+                                        <div class="w-full text-center py-12 text-slate-400">Belum ada langkah prosedur yang diinputkan.</div>
+                                        @endforelse
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+
+                    @else
+                        <div class="flex flex-col items-center justify-center py-20 bg-white rounded-[3rem] border border-dashed border-slate-200">
+                            <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 mb-4">
+                                <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                            </div>
+                            <p class="text-slate-500 font-bold">Belum ada jenis pelayanan terdaftar di unit ini.</p>
+                        </div>
                     @endif
                 </div>
                 @endforeach
@@ -717,7 +796,10 @@
     </section>
     @endif
 
-    <!-- TARIF LAYANAN (NEW SECTION) -->
+    <!-- ALUR PELAYANAN (Legacy/Backup Hidden) -->
+    <!-- Removed old section to prevent conflict -->
+
+    <!-- JADWAL DOKTER -->
     @if(isset($hargaLayanan) && count($hargaLayanan) > 0)
     <section id="tarif" class="py-24 bg-white relative overflow-hidden">
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
