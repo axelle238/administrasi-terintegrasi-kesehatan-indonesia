@@ -63,6 +63,8 @@
         }
 
         [x-cloak] { display: none !important; }
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .animate-marquee { animation: marquee 25s linear infinite; }
     </style>
 </head>
 <body class="antialiased transition-colors duration-300" 
@@ -128,6 +130,24 @@
             </div>
         </div>
     </div>
+
+    <!-- Announcement Bar -->
+    @if(($pengaturan['announcement_active'] ?? '0') == '1')
+    <div x-data="{ showAnnouncement: true }" x-show="showAnnouncement" class="bg-gradient-to-r from-rose-600 to-orange-600 text-white text-xs font-bold py-2.5 relative z-[45] border-b border-white/10 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 flex items-center gap-4">
+            <div class="flex items-center gap-2 shrink-0 animate-pulse">
+                <div class="p-1 bg-white/20 rounded-full"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg></div>
+                <span class="uppercase tracking-widest hidden sm:inline">Info Penting:</span>
+            </div>
+            <div class="flex-1 overflow-hidden relative h-4">
+                <div class="absolute whitespace-nowrap animate-marquee w-full">
+                    {{ $pengaturan['announcement_text'] ?? 'Layanan Gawat Darurat tersedia 24 Jam. Harap membawa identitas diri saat berobat.' }} &nbsp;&nbsp;&bull;&nbsp;&nbsp; {{ $pengaturan['announcement_text'] ?? 'Layanan Gawat Darurat tersedia 24 Jam. Harap membawa identitas diri saat berobat.' }}
+                </div>
+            </div>
+            <button @click="showAnnouncement = false" class="shrink-0 hover:bg-white/20 rounded-full p-1 transition-colors"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
+        </div>
+    </div>
+    @endif
 
     <!-- Navbar -->
     <nav :class="{ 'py-3 shadow-lg top-0': scrolled, 'py-5 bg-transparent border-transparent top-0 md:top-10': !scrolled, 'bg-white/80 border-slate-200/50': !darkMode && scrolled, 'bg-slate-900/80 border-slate-700/50': darkMode && scrolled }" 
