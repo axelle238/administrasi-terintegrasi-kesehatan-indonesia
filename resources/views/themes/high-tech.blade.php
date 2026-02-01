@@ -286,12 +286,17 @@
                         <div class="space-y-2">
                             @foreach($layanan as $poli)
                             <div class="space-y-2">
-                                <button @click="activePoli = {{ $poli->id }}" class="w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all flex justify-between items-center {{ $activePoli === $poli->id ? 'bg-slate-900 text-white shadow-md' : 'bg-slate-50 text-slate-600 hover:bg-slate-100' }}">
+                                <button @click="activePoli = {{ $poli->id }}" 
+                                        :class="activePoli === {{ $poli->id }} ? 'bg-slate-900 text-white shadow-md' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'"
+                                        class="w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all flex justify-between items-center group">
                                     <span>{{ $poli->nama_poli }}</span>
+                                    <svg class="w-4 h-4 transition-transform duration-300" :class="activePoli === {{ $poli->id }} ? 'rotate-90 text-white' : 'text-slate-400'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                                 </button>
                                 <div x-show="activePoli === {{ $poli->id }}" x-collapse class="pl-2 space-y-1">
                                     @foreach($poli->jenisPelayanans as $jenis)
-                                    <button @click="activeService = {{ $jenis->id }}" class="w-full text-left px-4 py-2.5 rounded-lg text-xs font-bold transition-all border-l-2 {{ $activeService === $jenis->id ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-500 hover:border-slate-300' }}">
+                                    <button @click="activeService = {{ $jenis->id }}" 
+                                            :class="activeService === {{ $jenis->id }} ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-500 hover:border-slate-300'"
+                                            class="w-full text-left px-4 py-2.5 rounded-lg text-xs font-bold transition-all border-l-2">
                                         {{ $jenis->nama_layanan }}
                                     </button>
                                     @endforeach
