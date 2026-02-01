@@ -89,7 +89,7 @@
           },
           onScroll() {
               this.scrolled = window.scrollY > 40;
-              const sections = ['beranda', 'alur', 'tarif', 'jadwal', 'layanan'];
+              const sections = ['beranda', 'jadwal-pelayanan', 'berita'];
               for (const id of sections) {
                   const el = document.getElementById(id);
                   if (el) {
@@ -157,7 +157,7 @@
             </div>
             <div class="flex-1 overflow-hidden relative h-4">
                 <div class="absolute whitespace-nowrap animate-marquee w-full">
-                    {{ $pengaturan['announcement_text'] ?? 'Layanan Gawat Darurat tersedia 24 Jam. Harap membawa identitas diri saat berobat.' }} &nbsp;&nbsp;&bull;&nbsp;&nbsp; {{ $pengaturan['announcement_text'] ?? 'Layanan Gawat Darurat tersedia 24 Jam. Harap membawa identitas diri saat berobat.' }}
+                    {{ $pengaturan['announcement_text'] ?? 'Layanan Gawat Darurat tersedia 24 Jam. Harap membawa identitas diri saat berobat.' }}
                 </div>
             </div>
             <button @click="showAnnouncement = false" class="shrink-0 hover:bg-white/20 rounded-full p-1 transition-colors"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
@@ -198,25 +198,11 @@
                         <span class="relative z-10">Alur</span>
                     </a>
 
-                    <a href="#tarif" 
-                       @click.prevent="scrollTo('tarif')"
+                    <a href="#jadwal-pelayanan" 
+                       @click.prevent="scrollTo('jadwal-pelayanan')"
                        class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden decoration-0 cursor-pointer"
-                       :class="activeSection === 'tarif' ? 'text-primary bg-white dark:bg-slate-700 shadow-md ring-1 ring-slate-100 dark:ring-slate-600' : 'text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-white/60'">
-                        <span class="relative z-10">Tarif</span>
-                    </a>
-
-                    <a href="#jadwal" 
-                       @click.prevent="scrollTo('jadwal')"
-                       class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden decoration-0 cursor-pointer"
-                       :class="activeSection === 'jadwal' ? 'text-primary bg-white dark:bg-slate-700 shadow-md ring-1 ring-slate-100 dark:ring-slate-600' : 'text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-white/60'">
+                       :class="activeSection === 'jadwal-pelayanan' ? 'text-primary bg-white dark:bg-slate-700 shadow-md ring-1 ring-slate-100 dark:ring-slate-600' : 'text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-white/60'">
                         <span class="relative z-10">Jadwal</span>
-                    </a>
-
-                    <a href="#layanan" 
-                       @click.prevent="scrollTo('layanan')"
-                       class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden decoration-0 cursor-pointer"
-                       :class="activeSection === 'layanan' ? 'text-primary bg-white dark:bg-slate-700 shadow-md ring-1 ring-slate-100 dark:ring-slate-600' : 'text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-white/60'">
-                        <span class="relative z-10">Layanan</span>
                     </a>
 
                     <a href="#berita" 
@@ -230,8 +216,6 @@
                 <!-- Simplified Action Center -->
                 <div class="flex items-center gap-3">
                     @auth
-
-
                         <!-- User Dropdown -->
                         <div class="relative" x-data="{ open: false }" @click.outside="open = false">
                             <button @click="open = !open" class="flex items-center gap-3 pl-1 pr-3 py-1 bg-white/60 hover:bg-white backdrop-blur-md border border-white/60 rounded-full transition-all duration-300 shadow-sm hover:shadow-md group">
@@ -286,58 +270,6 @@
                         <!-- Guest Actions -->
                         <div class="flex items-center gap-2">
                         <a href="{{ route('login') }}" class="text-sm font-bold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white px-5 py-2.5 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md rounded-full transition-all border border-transparent hover:border-slate-100 dark:hover:border-slate-700">Login Staf</a>
-                        
-                        <!-- Quick Access Dropdown -->
-                        <div class="relative z-50" x-data="{ open: false }" @click.outside="open = false">
-                            <button @click="open = !open" class="group relative z-10 px-6 py-2.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-0.5 transition-all overflow-hidden flex items-center gap-2">
-                                <span class="relative z-10">Layanan Pasien</span>
-                                <svg class="w-4 h-4 relative z-10 transition-transform duration-300" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                                <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                            </button>
-
-                            <div x-show="open" 
-                                 x-transition:enter="transition ease-out duration-200"
-                                 x-transition:enter-start="opacity-0 translate-y-2 scale-95"
-                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-                                 x-transition:leave="transition ease-in duration-150"
-                                 class="absolute top-full right-0 mt-3 w-56 bg-white dark:bg-slate-800 backdrop-blur-xl rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 p-2 z-50 overflow-hidden">
-                                
-                                <div class="px-3 py-2 border-b border-slate-100 dark:border-slate-700 mb-1">
-                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Akses Cepat</p>
-                                </div>
-
-                                <a href="{{ route('antrean.monitor') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-emerald-50 dark:hover:bg-slate-700 transition-colors group">
-                                    <div class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">Ambil Antrean</p>
-                                        <p class="text-[9px] text-slate-400">Daftar berobat online</p>
-                                    </div>
-                                </a>
-
-                                <a href="{{ route('antrean.monitor') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors group">
-                                    <div class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition-colors">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">Cek Status</p>
-                                        <p class="text-[9px] text-slate-400">Pantau nomor antrean</p>
-                                    </div>
-                                </a>
-
-                                <a href="#jadwal" @click="scrollTo('jadwal')" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-purple-50 dark:hover:bg-slate-700 transition-colors group">
-                                    <div class="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center text-purple-600 dark:text-purple-400 group-hover:bg-purple-500 group-hover:text-white transition-colors">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-purple-600 dark:group-hover:text-purple-400">Jadwal Dokter</p>
-                                        <p class="text-[9px] text-slate-400">Lihat praktik hari ini</p>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        </div>
                     @endauth
                 </div>
             </div>
@@ -401,35 +333,14 @@
                 <!-- Drawer Content -->
                 <div class="flex-1 overflow-y-auto p-6 space-y-8">
                     
-                    <!-- Mobile Search -->
-                    <div class="relative">
-                        <input type="text" placeholder="Cari layanan atau dokter..." class="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-sm font-bold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-emerald-500 placeholder:text-slate-400">
-                        <svg class="w-5 h-5 text-slate-400 absolute left-3 top-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                    </div>
-
                     <!-- Main Links -->
                     <div class="space-y-2">
                         <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Navigasi</p>
-                        @foreach(['Beranda' => '#beranda', 'Keunggulan' => '#keunggulan', 'Alur Pelayanan' => '#alur', 'Jadwal Dokter' => '#jadwal', 'Berita Terkini' => '#berita'] as $label => $link)
+                        @foreach(['Beranda' => '#beranda', 'Alur Pelayanan' => route('alur-pelayanan.index'), 'Jadwal' => '#jadwal-pelayanan', 'Berita' => '#berita'] as $label => $link)
                             <a href="{{ $link }}" @click="mobileMenuOpen = false" class="block py-2 text-base font-bold text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:translate-x-1 transition-all border-b border-dashed border-slate-100 dark:border-slate-800 last:border-0">
                                 {{ $label }}
                             </a>
                         @endforeach
-                    </div>
-
-                    <!-- Layanan Accordion -->
-                    <div x-data="{ layananOpen: false }">
-                        <button @click="layananOpen = !layananOpen" class="flex items-center justify-between w-full text-xs font-black text-slate-400 uppercase tracking-widest mb-3 hover:text-slate-600 dark:hover:text-slate-300">
-                            <span>Layanan Medis</span>
-                            <svg class="w-4 h-4 transition-transform" :class="layananOpen ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                        </button>
-                        <div x-show="layananOpen" x-collapse class="space-y-2 pl-2 border-l-2 border-slate-100 dark:border-slate-800" style="display: none;">
-                            @foreach($layanan as $poli)
-                                <a href="#layanan" @click="mobileMenuOpen = false" class="block py-1.5 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
-                                    {{ $poli->nama_poli }}
-                                </a>
-                            @endforeach
-                        </div>
                     </div>
 
                     <!-- Settings (Dark Mode) -->
@@ -466,21 +377,6 @@
                                 </div>
                             </div>
                         @else
-                            <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Akses Cepat</p>
-                            <div class="grid grid-cols-2 gap-3 mb-3">
-                                <a href="{{ route('antrean.monitor') }}" class="flex flex-col items-center justify-center py-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800/50 rounded-2xl hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-all group">
-                                    <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400 mb-1 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
-                                    <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 uppercase">Cek Antrean</span>
-                                </a>
-                                <a href="#jadwal" class="flex flex-col items-center justify-center py-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/50 rounded-2xl hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-all group">
-                                    <svg class="w-6 h-6 text-blue-600 dark:text-blue-400 mb-1 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                    <span class="text-[10px] font-bold text-blue-700 dark:text-blue-300 uppercase">Jadwal</span>
-                                </a>
-                            </div>
-                            <a href="{{ route('antrean.monitor') }}" class="flex items-center justify-center gap-2 w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl text-sm font-bold uppercase tracking-wider shadow-lg shadow-emerald-500/30 hover:-translate-y-1 transition-all mb-3">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                                Ambil Nomor Antrean
-                            </a>
                             <a href="{{ route('login') }}" class="flex items-center justify-center w-full py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-2xl text-sm font-bold uppercase tracking-wider hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
                                 Login Petugas
                             </a>
@@ -490,25 +386,13 @@
 
                 <!-- Drawer Footer -->
                 <div class="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700 text-center">
-                    <div class="flex justify-center gap-4 mb-4">
-                        <a href="#" class="w-8 h-8 rounded-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-400 hover:text-blue-500 hover:border-blue-200 transition-colors shadow-sm">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                        </a>
-                        <a href="#" class="w-8 h-8 rounded-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-400 hover:text-sky-400 hover:border-sky-200 transition-colors shadow-sm">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.892 3.213 2.251 4.122a4.909 4.92 0 01-2.229-.616c-.054 2.281 1.581 4.415 3.949 4.89a4.935 4.935 0 01-2.224.084 4.928 4.928 0 004.6 3.419A9.9 9.9 0 010 21.543a13.94 13.94 0 007.548 2.212c9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
-                        </a>
-                        <a href="#" class="w-8 h-8 rounded-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-400 hover:text-pink-500 hover:border-pink-200 transition-colors shadow-sm">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.072 3.269.153 5.023 1.916 5.176 5.194.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.892 5.011-5.122 5.176-1.265.058-1.644.069-4.849.069-3.204 0-3.584-.012-4.849-.069-3.229-.149-5.011-1.892-5.176-5.122-.058-1.265-.069-1.644-.069-4.849 0-3.204.012-3.584.069-4.849.153-3.269 1.916-5.023 5.194-5.176 1.265-.058 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                        </a>
-                    </div>
                     <p class="text-[10px] font-bold text-slate-400">
-                        &copy; {{ date('Y') }} {{ $pengaturan['app_name'] }}<br>
-                        {{ $pengaturan['app_tagline'] }}
+                        &copy; {{ date('Y') }} {{ $pengaturan['app_name'] }}
                     </p>
                 </div>
             </div>
         </div>
-    </div>
+    </nav>
 
     <!-- HERO SECTION -->
     @if($cmsSections['hero']->is_active ?? false)
@@ -537,17 +421,6 @@
                         {{ $cmsSections['hero']->content ?? '' }}
                     </p>
                     
-                    <!-- CTA Buttons -->
-                    <div class="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start animate-fade-in-up" style="animation-delay: 0.3s">
-                        <a href="{{ route('antrean.monitor') }}" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm uppercase tracking-wider shadow-xl shadow-slate-900/20 hover:shadow-slate-900/40 hover:-translate-y-1 transition-all flex items-center justify-center gap-3 group">
-                            <div class="p-1 bg-white/20 rounded-full group-hover:rotate-12 transition-transform"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg></div>
-                            {{ $cmsSections['hero']->metadata['cta_primary_text'] ?? 'Daftar Berobat' }}
-                        </a>
-                        <a href="{{ $cmsSections['hero']->metadata['cta_secondary_url'] ?? '#jadwal' }}" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-white border border-white shadow-lg text-slate-700 font-bold text-sm uppercase tracking-wider hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
-                            <span>{{ $cmsSections['hero']->metadata['cta_secondary_text'] ?? 'Jadwal Dokter' }}</span>
-                        </a>
-                    </div>
-
                     <!-- Trust Markers -->
                     <div class="pt-8 flex items-center justify-center lg:justify-start gap-8 opacity-80 animate-fade-in-up" style="animation-delay: 0.4s">
                         <div class="flex items-center gap-3">
@@ -575,28 +448,6 @@
                         @else
                             <img src="https://images.unsplash.com/photo-1638202993928-7267aad84c31?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="w-full h-auto rounded-[2.5rem] object-cover aspect-[4/5] shadow-inner">
                         @endif
-                        
-                        <!-- Floating Card 1 -->
-                        <div class="absolute top-10 -left-10 glass p-4 rounded-2xl shadow-xl flex items-center gap-4 animate-float" style="animation-delay: 1s;">
-                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg">
-                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-bold text-slate-500 uppercase">Respon Cepat</p>
-                                <p class="text-lg font-black text-slate-800">24 Jam</p>
-                            </div>
-                        </div>
-
-                        <!-- Floating Card 2 -->
-                        <div class="absolute bottom-10 -right-10 glass p-4 rounded-2xl shadow-xl flex items-center gap-4 animate-float" style="animation-delay: 2.5s;">
-                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg">
-                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-bold text-slate-500 uppercase">Dokter Ahli</p>
-                                <p class="text-lg font-black text-slate-800">Profesional</p>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -604,9 +455,8 @@
     </header>
     @endif
 
-    <!-- KEUNGGULAN (Why Us) - NEW SECTION -->
+    <!-- KEUNGGULAN (Why Us) -->
     @if($cmsSections['why_us']->is_active ?? true) 
-    <!-- Fallback true for demo if not in DB yet -->
     <section id="layanan" class="py-24 bg-white relative overflow-hidden">
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
             <div class="text-center mb-16">
@@ -650,165 +500,60 @@
     </section>
     @endif
 
-    <!-- ALUR PELAYANAN -->
-    @if(isset($alurPelayanan) && count($alurPelayanan) > 0)
-    <section id="alur" class="py-24 bg-slate-50 relative" x-data="{ activeTab: 'all' }">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-                <div>
-                    <span class="text-primary font-black tracking-widest uppercase text-xs mb-2 block">Panduan Pasien</span>
-                    <h2 class="text-3xl md:text-4xl font-black text-slate-900">Alur Pelayanan</h2>
-                </div>
-                
-                <!-- Modern Tabs -->
-                <div class="inline-flex flex-wrap gap-2 bg-white p-1.5 rounded-2xl border border-slate-200/50 shadow-sm">
-                    <button @click="activeTab = 'all'" 
-                            :class="activeTab === 'all' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-500 hover:text-slate-900'"
-                            class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all">
-                        Semua
-                    </button>
-                    @php 
-                        $jenisList = $alurPelayanan->pluck('jenisPelayanan.nama_layanan')->unique()->filter();
-                    @endphp
-                    @foreach($jenisList as $jenis)
-                    <button @click="activeTab = '{{ Str::slug($jenis) }}'" 
-                            :class="activeTab === '{{ Str::slug($jenis) }}' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-500 hover:text-slate-900'"
-                            class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all">
-                        {{ $jenis }}
-                    </button>
-                    @endforeach
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-                @foreach($alurPelayanan as $index => $alur)
-                @php $slug = $alur->jenisPelayanan ? Str::slug($alur->jenisPelayanan->nama_layanan) : 'umum'; @endphp
-                
-                <div x-show="activeTab === 'all' || activeTab === '{{ $slug }}'" 
-                     class="group relative bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500 h-full flex flex-col overflow-hidden"
-                     x-transition:enter="transition ease-out duration-500"
-                     x-transition:enter-start="opacity-0 scale-90"
-                     x-transition:enter-end="opacity-100 scale-100">
-                    
-                    <div class="flex justify-between items-start mb-6 relative z-10">
-                        <div class="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-900 text-xl font-black group-hover:bg-primary group-hover:text-white transition-colors duration-500">
-                            {{ $alur->urutan }}
-                        </div>
-                        @if($alur->jenisPelayanan)
-                        <span class="px-3 py-1 bg-slate-50 text-slate-500 text-[10px] font-black uppercase rounded-lg border border-slate-100">
-                            {{ $alur->jenisPelayanan->nama_layanan }}
-                        </span>
-                        @endif
-                    </div>
-                    
-                    <h3 class="font-bold text-xl text-slate-900 mb-3 leading-tight relative z-10">{{ $alur->judul }}</h3>
-                    <p class="text-sm text-slate-500 leading-relaxed flex-1 relative z-10">{{ $alur->deskripsi }}</p>
-                    
-                    @if($alur->estimasi_waktu)
-                    <div class="mt-6 pt-6 border-t border-dashed border-slate-100 flex items-center gap-2 text-xs font-bold text-emerald-600 relative z-10">
-                        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                        Estimasi: {{ $alur->estimasi_waktu }}
-                    </div>
-                    @endif
-                </div>
-                @endforeach
-            </div>
-        </div>
-    </section>
-    @endif
-
-    <!-- TARIF LAYANAN (NEW SECTION) -->
-    @if(isset($hargaLayanan) && count($hargaLayanan) > 0)
-    <section id="tarif" class="py-24 bg-white relative overflow-hidden">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+    <!-- JADWAL PELAYANAN (NEW REPLACEMENT) -->
+    <section id="jadwal-pelayanan" class="py-24 bg-slate-50 relative">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="text-center mb-16">
-                <span class="text-blue-600 font-black tracking-widest uppercase text-xs mb-2 block">Transparansi Biaya</span>
-                <h2 class="text-3xl md:text-5xl font-black text-slate-900 mb-6">Tarif Layanan Unggulan</h2>
-                <p class="text-slate-500 max-w-2xl mx-auto text-lg font-medium">Informasi estimasi biaya layanan untuk kenyamanan perencanaan kesehatan Anda.</p>
+                <span class="text-emerald-600 font-black tracking-widest uppercase text-xs mb-2 block">Jam Operasional</span>
+                <h2 class="text-3xl md:text-5xl font-black text-slate-900">Jadwal Pelayanan Poli</h2>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                @foreach($hargaLayanan as $tarif)
-                <div class="group p-8 rounded-[2.5rem] bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-2xl hover:border-blue-200 transition-all duration-500">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-blue-600 shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-colors duration-500">
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                @forelse($jadwalPelayanan as $poli)
+                <div class="group bg-white p-6 rounded-[2rem] border border-slate-100 shadow-lg hover:shadow-2xl hover:border-emerald-200 transition-all duration-500 flex flex-col relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-emerald-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    
+                    <div class="flex items-center gap-4 mb-4 relative z-10">
+                        <div class="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center text-emerald-600 font-black text-xl shadow-inner group-hover:bg-white transition-colors">
+                            {{ substr($poli->nama_poli, 0, 1) }}
                         </div>
-                        <span class="px-3 py-1 bg-white text-slate-400 text-[10px] font-black uppercase rounded-lg border border-slate-100">Estimasi</span>
+                        <div>
+                            <h4 class="font-black text-lg text-slate-900">{{ $poli->nama_poli }}</h4>
+                            <p class="text-xs text-slate-500 font-bold uppercase tracking-wide">{{ $poli->kode_poli ?? 'UMUM' }}</p>
+                        </div>
                     </div>
-                    <h3 class="text-lg font-black text-slate-800 mb-2 group-hover:text-blue-600 transition-colors">{{ $tarif->nama_tindakan }}</h3>
-                    <div class="text-3xl font-black text-slate-900 mt-4">
-                        <span class="text-sm font-bold text-slate-400">Rp</span> {{ number_format($tarif->harga, 0, ',', '.') }}
+                    
+                    <div class="mt-auto space-y-2 relative z-10">
+                        <div class="flex justify-between items-center text-sm border-t border-slate-100 pt-3">
+                            <span class="text-slate-500 font-medium">Hari</span>
+                            <span class="font-bold text-slate-800">{{ $poli->hari_buka ?? 'Senin - Sabtu' }}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-slate-500 font-medium">Jam</span>
+                            <span class="font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">{{ $poli->jam_operasional ?? '08:00 - 14:00' }}</span>
+                        </div>
                     </div>
-                    <p class="text-xs text-slate-400 font-bold uppercase mt-6 tracking-widest">{{ $tarif->poli->nama_poli ?? 'Layanan Umum' }}</p>
                 </div>
-                @endforeach
-            </div>
-            
-            <div class="mt-16 text-center">
-                <p class="text-sm text-slate-400 font-medium">* Tarif dapat berubah sewaktu-waktu sesuai dengan kebijakan dan kondisi medis pasien.</p>
+                @empty
+                <div class="col-span-3 text-center py-12">
+                    <p class="text-slate-400">Belum ada data jadwal pelayanan.</p>
+                </div>
+                @endforelse
             </div>
         </div>
     </section>
-    @endif
 
-    <!-- JADWAL DOKTER -->
-    @if(($pengaturan['show_jadwal_dokter'] ?? '1') == '1')
-    <section id="jadwal" class="py-24 bg-white relative">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <span class="text-emerald-600 font-black tracking-widest uppercase text-xs mb-2 block">Tim Medis</span>
-                <h2 class="text-3xl md:text-5xl font-black text-slate-900">Jadwal Praktik Hari Ini</h2>
-            </div>
-
-            @if(isset($jadwalHariIni) && count($jadwalHariIni) > 0)
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    @foreach($jadwalHariIni as $jadwal)
-                    <div class="group bg-white p-6 rounded-[2rem] border border-slate-100 shadow-lg hover:shadow-2xl hover:border-emerald-200 transition-all duration-500 flex items-center gap-6 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-r from-emerald-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        
-                        <div class="relative w-20 h-20 rounded-2xl bg-slate-100 overflow-hidden shrink-0 shadow-inner">
-                            @if($jadwal->pegawai->foto_profil ?? false)
-                                <img src="{{ Storage::url($jadwal->pegawai->foto_profil) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                            @else
-                                <div class="w-full h-full flex items-center justify-center text-slate-300 font-black text-2xl bg-slate-50">
-                                    {{ substr($jadwal->pegawai->user->name ?? 'D', 0, 1) }}
-                                </div>
-                            @endif
-                        </div>
-                        <div class="min-w-0 flex-1 relative">
-                            <h4 class="font-black text-lg text-slate-900 truncate mb-1">{{ $jadwal->pegawai->user->name ?? 'Dokter' }}</h4>
-                            <p class="text-xs text-slate-500 font-bold uppercase tracking-wide mb-3">{{ $jadwal->pegawai->poli->nama_poli ?? 'Umum' }}</p>
-                            <span class="inline-block px-3 py-1 rounded-lg bg-slate-900 text-white text-[10px] font-black uppercase tracking-wider group-hover:bg-emerald-600 transition-colors">
-                                {{ $jadwal->shift->jam_masuk ?? '00:00' }} - {{ $jadwal->shift->jam_keluar ?? '00:00' }}
-                            </span>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="bg-slate-50 p-16 text-center rounded-[3rem] border border-dashed border-slate-200">
-                    <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm text-slate-300">
-                        <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                    </div>
-                    <p class="text-slate-400 font-bold text-lg">Tidak ada jadwal dokter untuk hari ini.</p>
-                </div>
-            @endif
-        </div>
-    </section>
-    @endif
-
-    <!-- BERITA TERKINI (New Design) -->
-    <section id="berita" class="py-24 bg-slate-900 relative overflow-hidden">
+    <!-- BERITA TERKINI -->
+    <section id="berita" class="py-24 bg-white relative overflow-hidden">
         <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-3xl"></div>
         
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
             <div class="flex justify-between items-end mb-16">
                 <div>
                     <span class="text-emerald-400 font-black tracking-widest uppercase text-xs mb-2 block">Wawasan</span>
-                    <h2 class="text-3xl md:text-5xl font-black text-white">Berita & Artikel</h2>
+                    <h2 class="text-3xl md:text-5xl font-black text-slate-900">Berita & Artikel</h2>
                 </div>
-                <a href="#" class="hidden md:flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-white transition-colors">
+                <a href="#" class="hidden md:flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-emerald-600 transition-colors">
                     Lihat Semua <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                 </a>
             </div>
@@ -816,12 +561,12 @@
             @if(isset($beritaTerbaru) && count($beritaTerbaru) > 0)
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 @foreach($beritaTerbaru as $news)
-                <article class="group bg-white/5 border border-white/10 rounded-[2rem] overflow-hidden hover:bg-white/10 transition-all duration-500 hover:-translate-y-2">
+                <article class="group bg-white/5 border border-white/10 rounded-[2rem] overflow-hidden hover:bg-white/10 transition-all duration-500 hover:-translate-y-2 cursor-pointer shadow-lg hover:shadow-xl">
                     <div class="h-48 bg-slate-800 relative overflow-hidden">
                         @if($news->thumbnail)
                             <img src="{{ Storage::url($news->thumbnail) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                         @else
-                            <div class="w-full h-full flex items-center justify-center text-slate-700 bg-slate-800">
+                            <div class="w-full h-full flex items-center justify-center text-slate-700 bg-slate-100">
                                 <svg class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                             </div>
                         @endif
@@ -833,107 +578,25 @@
                         <div class="flex items-center gap-3 text-xs text-slate-400 mb-4">
                             <span class="flex items-center gap-1"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> {{ $news->created_at->format('d M Y') }}</span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-4 leading-tight group-hover:text-emerald-400 transition-colors">{{ $news->judul }}</h3>
-                        <a href="#" class="inline-flex items-center gap-2 text-sm font-bold text-emerald-500 hover:text-emerald-400">
+                        <h3 class="text-xl font-bold text-slate-900 mb-4 leading-tight group-hover:text-emerald-600 transition-colors">{{ $news->judul }}</h3>
+                        <span class="inline-flex items-center gap-2 text-sm font-bold text-emerald-500 hover:text-emerald-400">
                             Baca Selengkapnya <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                        </a>
+                        </span>
                     </div>
                 </article>
                 @endforeach
             </div>
             @else
-            <div class="text-center py-12 border border-white/10 rounded-[2rem] bg-white/5">
+            <div class="text-center py-12 border border-slate-200 rounded-[2rem] bg-slate-50">
                 <p class="text-slate-400">Belum ada berita terbaru.</p>
             </div>
             @endif
         </div>
     </section>
 
-    <!-- FAQ SECTION (Interactive Accordion) -->
-    <section id="faq" class="py-24 bg-white" x-data="{ activeAccordion: null }">
-        <div class="max-w-3xl mx-auto px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <span class="text-emerald-600 font-black tracking-widest uppercase text-xs mb-2 block">Bantuan</span>
-                <h2 class="text-3xl md:text-4xl font-black text-slate-900">Pertanyaan Umum</h2>
-            </div>
-
-            <div class="space-y-4">
-                <!-- FAQ Item 1 -->
-                <div class="border border-slate-200 rounded-3xl overflow-hidden transition-all duration-300" :class="activeAccordion === 1 ? 'border-emerald-500 ring-4 ring-emerald-500/10' : 'hover:border-slate-300'">
-                    <button @click="activeAccordion = activeAccordion === 1 ? null : 1" class="w-full flex items-center justify-between p-6 text-left bg-white">
-                        <span class="font-bold text-lg text-slate-800">Bagaimana cara mendaftar antrean online?</span>
-                        <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center transition-transform duration-300" :class="activeAccordion === 1 ? 'rotate-180 bg-emerald-100 text-emerald-600' : 'text-slate-400'">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                        </div>
-                    </button>
-                    <div x-show="activeAccordion === 1" x-collapse>
-                        <div class="p-6 pt-0 text-slate-500 leading-relaxed border-t border-slate-100">
-                            Anda dapat mendaftar melalui menu "Ambil Antrean" di halaman ini atau melalui aplikasi mobile kami. Pastikan Anda memiliki nomor KTP/BPJS yang valid.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- FAQ Item 2 -->
-                <div class="border border-slate-200 rounded-3xl overflow-hidden transition-all duration-300" :class="activeAccordion === 2 ? 'border-emerald-500 ring-4 ring-emerald-500/10' : 'hover:border-slate-300'">
-                    <button @click="activeAccordion = activeAccordion === 2 ? null : 2" class="w-full flex items-center justify-between p-6 text-left bg-white">
-                        <span class="font-bold text-lg text-slate-800">Apakah menerima pasien BPJS?</span>
-                        <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center transition-transform duration-300" :class="activeAccordion === 2 ? 'rotate-180 bg-emerald-100 text-emerald-600' : 'text-slate-400'">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                        </div>
-                    </button>
-                    <div x-show="activeAccordion === 2" x-collapse>
-                        <div class="p-6 pt-0 text-slate-500 leading-relaxed border-t border-slate-100">
-                            Ya, kami melayani pasien BPJS Kesehatan untuk semua poli yang tersedia. Mohon membawa kartu BPJS dan surat rujukan (jika diperlukan) saat berkunjung.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- FAQ Item 3 -->
-                <div class="border border-slate-200 rounded-3xl overflow-hidden transition-all duration-300" :class="activeAccordion === 3 ? 'border-emerald-500 ring-4 ring-emerald-500/10' : 'hover:border-slate-300'">
-                    <button @click="activeAccordion = activeAccordion === 3 ? null : 3" class="w-full flex items-center justify-between p-6 text-left bg-white">
-                        <span class="font-bold text-lg text-slate-800">Berapa biaya konsultasi dokter umum?</span>
-                        <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center transition-transform duration-300" :class="activeAccordion === 3 ? 'rotate-180 bg-emerald-100 text-emerald-600' : 'text-slate-400'">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                        </div>
-                    </button>
-                    <div x-show="activeAccordion === 3" x-collapse>
-                        <div class="p-6 pt-0 text-slate-500 leading-relaxed border-t border-slate-100">
-                            Biaya konsultasi bervariasi tergantung jenis layanan. Silakan cek menu "Harga Layanan" di halaman depan untuk informasi tarif terbaru.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CALL TO ACTION (CTA) -->
-    <section class="py-24 px-6 lg:px-8 bg-white">
-        <div class="max-w-7xl mx-auto">
-            <div class="bg-gradient-to-r from-slate-900 to-slate-800 rounded-[3rem] p-12 md:p-24 text-center relative overflow-hidden shadow-2xl">
-                <!-- Decorative Blobs -->
-                <div class="absolute top-0 left-0 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl -ml-20 -mt-20"></div>
-                <div class="absolute bottom-0 right-0 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl -mr-20 -mb-20"></div>
-                
-                <div class="relative z-10 max-w-3xl mx-auto">
-                    <h2 class="text-4xl md:text-6xl font-black text-white mb-8 tracking-tight">Kesehatan Anda Adalah <span class="text-emerald-400">Prioritas Kami</span></h2>
-                    <p class="text-slate-400 text-lg md:text-xl mb-12 font-medium">Bergabunglah dengan ribuan pasien yang telah mempercayakan kesehatan mereka kepada tim profesional kami.</p>
-                    
-                    <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
-                        <a href="{{ route('antrean.monitor') }}" class="w-full sm:w-auto px-10 py-5 bg-emerald-500 hover:bg-emerald-400 text-white rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl shadow-emerald-500/30 transition-all hover:-translate-y-1">
-                            Daftar Sekarang
-                        </a>
-                        <a href="tel:{{ $pengaturan['app_phone'] ?? '' }}" class="w-full sm:w-auto px-10 py-5 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-2xl font-black uppercase tracking-widest text-sm backdrop-blur-md transition-all">
-                            Hubungi Kami
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- FOOTER (Dynamic) -->
     @if($cmsSections['footer']->is_active ?? true)
-    <footer class="bg-white pt-24 pb-12 border-t border-slate-100">
+    <footer class="bg-slate-900 text-white pt-24 pb-12">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
                 <div class="space-y-6">
@@ -941,33 +604,34 @@
                         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                         </div>
-                        <h4 class="font-black text-2xl text-slate-900">{{ $pengaturan['app_name'] ?? 'SATRIA' }}</h4>
+                        <h4 class="font-black text-2xl text-white">{{ $pengaturan['app_name'] ?? 'SATRIA' }}</h4>
                     </div>
-                    <p class="text-sm text-slate-500 leading-relaxed font-medium">{{ $cmsSections['footer']->content ?? 'Sistem pelayanan kesehatan terpadu yang mengutamakan kecepatan, ketepatan, dan kenyamanan pasien.' }}</p>
+                    <p class="text-sm text-slate-400 leading-relaxed font-medium">{{ $cmsSections['footer']->content ?? 'Sistem pelayanan kesehatan terpadu yang mengutamakan kecepatan, ketepatan, dan kenyamanan pasien.' }}</p>
                 </div>
                 
                 <div>
-                    <h4 class="font-black text-slate-900 mb-6 text-lg">Layanan Utama</h4>
-                    <ul class="space-y-4 text-sm text-slate-500 font-medium">
-                        @foreach($layanan->take(4) as $poli)
-                        <li><a href="#" class="hover:text-emerald-600 transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-200"></span> {{ $poli->nama_poli }}</a></li>
-                        @endforeach
+                    <h4 class="font-black text-white mb-6 text-lg">Layanan Utama</h4>
+                    <ul class="space-y-4 text-sm text-slate-400 font-medium">
+                        <li><a href="#" class="hover:text-emerald-400 transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span> Poli Umum</a></li>
+                        <li><a href="#" class="hover:text-emerald-400 transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span> Poli Gigi</a></li>
+                        <li><a href="#" class="hover:text-emerald-400 transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span> Poli KIA</a></li>
+                        <li><a href="#" class="hover:text-emerald-400 transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span> Laboratorium</a></li>
                     </ul>
                 </div>
                 
                 <div>
-                    <h4 class="font-black text-slate-900 mb-6 text-lg">Tautan Cepat</h4>
-                    <ul class="space-y-4 text-sm text-slate-500 font-medium">
-                        <li><a href="#jadwal" class="hover:text-emerald-600 transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-200"></span> Jadwal Dokter</a></li>
-                        <li><a href="#alur" class="hover:text-emerald-600 transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-200"></span> Alur Pendaftaran</a></li>
-                        <li><a href="#faq" class="hover:text-emerald-600 transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-200"></span> Bantuan (FAQ)</a></li>
-                        <li><a href="{{ route('login') }}" class="hover:text-emerald-600 transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-200"></span> Login Staf</a></li>
+                    <h4 class="font-black text-white mb-6 text-lg">Tautan Cepat</h4>
+                    <ul class="space-y-4 text-sm text-slate-400 font-medium">
+                        <li><a href="#jadwal-pelayanan" class="hover:text-emerald-400 transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span> Jadwal Pelayanan</a></li>
+                        <li><a href="{{ route('alur-pelayanan.index') }}" class="hover:text-emerald-400 transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span> Alur Pendaftaran</a></li>
+                        <li><a href="#faq" class="hover:text-emerald-400 transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span> Bantuan (FAQ)</a></li>
+                        <li><a href="{{ route('login') }}" class="hover:text-emerald-400 transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span> Login Staf</a></li>
                     </ul>
                 </div>
 
                 <div>
-                    <h4 class="font-black text-slate-900 mb-6 text-lg">Hubungi Kami</h4>
-                    <ul class="space-y-4 text-sm text-slate-500 font-medium">
+                    <h4 class="font-black text-white mb-6 text-lg">Hubungi Kami</h4>
+                    <ul class="space-y-4 text-sm text-slate-400 font-medium">
                         <li class="flex items-start gap-3">
                             <svg class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                             <span>{{ $pengaturan['app_address'] ?? 'Jl. Kesehatan No. 1, Jakarta' }}</span>
@@ -984,13 +648,13 @@
                 </div>
             </div>
             
-            <div class="pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">
+            <div class="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">
                     &copy; {{ date('Y') }} {{ $pengaturan['footer_text'] ?? 'System' }}. All rights reserved.
                 </p>
                 <div class="flex items-center gap-6">
-                    <a href="#" class="text-slate-400 hover:text-emerald-600 transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg></a>
-                    <a href="#" class="text-slate-400 hover:text-emerald-600 transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.072 3.269.153 5.023 1.916 5.176 5.194.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.892 5.011-5.122 5.176-1.265.058-1.644.069-4.849.069-3.204 0-3.584-.012-4.849-.069-3.229-.149-5.011-1.892-5.176-5.122-.058-1.265-.069-1.644-.069-4.849 0-3.204.012-3.584.069-4.849.153-3.269 1.916-5.023 5.194-5.176 1.265-.058 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+                    <a href="#" class="text-slate-500 hover:text-emerald-400 transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg></a>
+                    <a href="#" class="text-slate-500 hover:text-emerald-400 transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.072 3.269.153 5.023 1.916 5.176 5.194.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.892 5.011-5.122 5.176-1.265.058-1.644.069-4.849.069-3.204 0-3.584-.012-4.849-.069-3.229-.149-5.011-1.892-5.176-5.122-.058-1.265-.069-1.644-.069-4.849 0-3.204.012-3.584.069-4.849.153-3.269 1.916-5.023 5.194-5.176 1.265-.058 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
                 </div>
             </div>
         </div>
