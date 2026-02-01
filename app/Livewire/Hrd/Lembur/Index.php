@@ -10,33 +10,37 @@ class Index extends Component
 {
     use WithPagination;
 
-    public $filterStatus = 'Menunggu';
+    public $filterStatus = 'Pending';
 
     public function approve($id)
     {
-        $lembur = Lembur::findOrFail($id);
-        $lembur->update(['status' => 'Disetujui', 'catatan_approval' => 'Disetujui Admin']);
-        $this->dispatch('notify', 'success', 'Lembur disetujui.');
+        $lembur = Lembur::find($id);
+        if($lembur && $lembur->status == 'Pending') {
+            $lembur->update(['status' => 'Disetujui']);
+            session()->flash('message', 'Lembur disetujui.');
+        }
     }
 
     public function reject($id)
     {
-        $lembur = Lembur::findOrFail($id);
-        $lembur->update(['status' => 'Ditolak', 'catatan_approval' => 'Ditolak Admin']);
-        $this->dispatch('notify', 'success', 'Lembur ditolak.');
+        $lembur = Lembur::find($id);
+        if($lembur && $lembur->status == 'Pending') {
+            $lembur->update(['status' => 'Ditolak']);
+            session()->flash('message', 'Lembur ditolak.');
+        }
     }
 
     public function render()
     {
-        $lemburs = Lembur::with(['user.pegawai'])
+        $data = Lembur::with(['user.pegawai'])
             ->when($this->filterStatus, function($q) {
-                $q->where('status', $this->filterStatus);
+                return $q->where('status', $this->filterStatus);
             })
-            ->latest()
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
 
         return view('livewire.hrd.lembur.index', [
-            'lemburs' => $lemburs
-        ])->layout('layouts.app', ['header' => 'Persetujuan Lembur']);
+            'data' => $data
+        ])->layout('layouts.app', ['header' => 'Verifikasi Lembur']);
     }
 }

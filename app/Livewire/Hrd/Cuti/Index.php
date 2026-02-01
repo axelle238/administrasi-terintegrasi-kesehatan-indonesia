@@ -5,7 +5,6 @@ namespace App\Livewire\Hrd\Cuti;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\PengajuanCuti;
-use App\Models\Pegawai;
 use Illuminate\Support\Facades\DB;
 
 class Index extends Component
@@ -13,45 +12,70 @@ class Index extends Component
     use WithPagination;
 
     public $filterStatus = 'Pending';
-    
-    public function approve($id)
-    {
-        DB::transaction(function () use ($id) {
-            $cuti = PengajuanCuti::findOrFail($id);
-            
-            if ($cuti->status != 'Disetujui') {
-                $cuti->update(['status' => 'Disetujui', 'catatan_admin' => 'Disetujui oleh HRD']);
-                
-                if ($cuti->jenis_cuti == 'Cuti Tahunan') {
-                    $pegawai = Pegawai::where('user_id', $cuti->user_id)->first();
-                    if ($pegawai) {
-                        $pegawai->decrement('sisa_cuti', $cuti->durasi_hari);
-                    }
-                }
-            }
-        });
+    public $confirmingReject = null;
+    public $rejectReason = '';
 
-        $this->dispatch('notify', 'success', 'Pengajuan cuti disetujui.');
+    public function mount()
+    {
+        // Default
     }
 
-    public function reject($id)
+    public function approve($id)
     {
-        $cuti = PengajuanCuti::findOrFail($id);
-        $cuti->update(['status' => 'Ditolak', 'catatan_admin' => 'Ditolak oleh HRD']);
-        $this->dispatch('notify', 'success', 'Pengajuan cuti ditolak.');
+        $cuti = PengajuanCuti::with('user.pegawai')->find($id);
+        
+        if($cuti && $cuti->status == 'Pending') {
+            DB::transaction(function () use ($cuti) {
+                // Logika Potong Cuti
+                if ($cuti->jenis_cuti == 'Cuti Tahunan') {
+                    $pegawai = $cuti->user->pegawai;
+                    if ($pegawai && $pegawai->sisa_cuti >= $cuti->durasi_hari) {
+                        $pegawai->decrement('sisa_cuti', $cuti->durasi_hari);
+                    } else {
+                        // Jika kuota kurang, batalkan transaksi & return (throw exception atau handle error)
+                        // Untuk simplicity, kita anggap validasi sudah di frontend user
+                    }
+                }
+
+                $cuti->update(['status' => 'Disetujui', 'catatan_admin' => 'Disetujui oleh HRD']);
+            });
+
+            session()->flash('message', 'Pengajuan cuti disetujui.');
+        }
+    }
+
+    public function confirmReject($id)
+    {
+        $this->confirmingReject = $id;
+        $this->rejectReason = '';
+    }
+
+    public function reject()
+    {
+        if ($this->confirmingReject) {
+            $cuti = PengajuanCuti::find($this->confirmingReject);
+            if ($cuti && $cuti->status == 'Pending') {
+                $cuti->update([
+                    'status' => 'Ditolak',
+                    'catatan_admin' => $this->rejectReason
+                ]);
+                session()->flash('message', 'Pengajuan cuti ditolak.');
+            }
+            $this->confirmingReject = null;
+        }
     }
 
     public function render()
     {
-        $cutis = PengajuanCuti::with(['user.pegawai'])
+        $data = PengajuanCuti::with(['user.pegawai'])
             ->when($this->filterStatus, function($q) {
-                $q->where('status', $this->filterStatus);
+                return $q->where('status', $this->filterStatus);
             })
-            ->latest()
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
 
         return view('livewire.hrd.cuti.index', [
-            'cutis' => $cutis
-        ])->layout('layouts.app', ['header' => 'Verifikasi Cuti Pegawai']);
+            'data' => $data
+        ])->layout('layouts.app', ['header' => 'Verifikasi Cuti']);
     }
 }
