@@ -11,6 +11,11 @@ class JenisPelayanan extends Model
 
     protected $guarded = ['id'];
 
+    public function poli()
+    {
+        return $this->belongsTo(Poli::class);
+    }
+
     public function alurPelayanans()
     {
         return $this->hasMany(AlurPelayanan::class)->orderBy('urutan');

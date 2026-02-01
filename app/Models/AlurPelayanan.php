@@ -16,6 +16,7 @@ class AlurPelayanan extends Model
         'is_critical' => 'boolean',
         'faq' => 'array',
         'tags' => 'array',
+        'estimasi_biaya' => 'decimal:2',
     ];
 
     public function jenisPelayanan()

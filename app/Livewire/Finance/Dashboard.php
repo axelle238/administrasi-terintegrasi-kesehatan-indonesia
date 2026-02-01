@@ -130,14 +130,14 @@ class Dashboard extends Component
             'labaBersihBulan',
             'rasioMargin',
             'rataTransaksiPasien',
-            'dataGrafik' => $dataGrafik,
-            'pendapatanPoli' => $pendapatanPoli,
-            'distribusiPendapatan' => $distribusiPendapatan,
-            'metodePembayaran' => $metodePembayaran,
-            'transaksiTerakhir' => $transaksiTerakhir,
-            'piutangPending' => $piutangPending,
-            'piutangCount' => $piutangCount,
-            'costPerPatient' => $costPerPatient,
+            'dataGrafik',
+            'pendapatanPoli',
+            'distribusiPendapatan',
+            'metodePembayaran',
+            'transaksiTerakhir',
+            'piutangPending',
+            'piutangCount',
+            'costPerPatient'
         ))->layout('layouts.app', ['header' => 'Pusat Analitik Keuangan & Aset']);
     }
 

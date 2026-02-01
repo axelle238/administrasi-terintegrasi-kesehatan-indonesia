@@ -3,48 +3,80 @@
 namespace App\Livewire\Public;
 
 use Livewire\Component;
-use App\Models\AlurPelayanan as AlurModel;
+use App\Models\Poli;
 use App\Models\JenisPelayanan;
+use App\Models\AlurPelayanan as AlurModel;
 
 class AlurPelayanan extends Component
 {
-    public $activeTab = 0; // ID of active JenisPelayanan
+    public $activePoli = null;
+    public $activeLayanan = null;
     public $search = '';
 
     public function mount()
     {
-        // Set default active tab to the first JenisPelayanan that has alurs
-        $first = JenisPelayanan::whereHas('alurPelayanans')->first();
-        if ($first) {
-            $this->activeTab = $first->id;
+        // Default ke Poli pertama yang punya layanan aktif
+        $firstPoli = Poli::whereHas('jenisPelayanans', function($q) {
+            $q->where('is_active', true);
+        })->first();
+
+        if ($firstPoli) {
+            $this->activePoli = $firstPoli->id;
+            
+            // Default ke layanan pertama di poli tersebut
+            $firstLayanan = $firstPoli->jenisPelayanans()->where('is_active', true)->first();
+            if ($firstLayanan) {
+                $this->activeLayanan = $firstLayanan->id;
+            }
         }
     }
 
-    public function setActiveTab($id)
+    public function setPoli($id)
     {
-        $this->activeTab = $id;
+        $this->activePoli = $id;
+        // Reset layanan ke yang pertama di poli ini
+        $firstLayanan = JenisPelayanan::where('poli_id', $id)->where('is_active', true)->first();
+        $this->activeLayanan = $firstLayanan ? $firstLayanan->id : null;
+    }
+
+    public function setLayanan($id)
+    {
+        $this->activeLayanan = $id;
     }
 
     public function render()
     {
-        // Get all types that have alurs for tabs
-        $jenisPelayanans = JenisPelayanan::whereHas('alurPelayanans')
-            ->where('is_active', true)
-            ->get();
+        // Ambil semua Poli yang punya layanan aktif
+        $polis = Poli::whereHas('jenisPelayanans', function($q) {
+            $q->where('is_active', true);
+        })->get();
 
-        // Get alurs for active tab
-        $alurs = AlurModel::where('jenis_pelayanan_id', $this->activeTab)
-            ->where('is_active', true)
-            ->where(function($q) {
-                $q->where('judul', 'like', '%' . $this->search . '%')
-                  ->orWhere('deskripsi', 'like', '%' . $this->search . '%');
-            })
-            ->orderBy('urutan')
-            ->get();
+        // Ambil Jenis Pelayanan berdasarkan Poli aktif
+        $layanans = [];
+        if ($this->activePoli) {
+            $layanans = JenisPelayanan::where('poli_id', $this->activePoli)
+                ->where('is_active', true)
+                ->get();
+        }
+
+        // Ambil Alur berdasarkan Layanan aktif + Search
+        $alurs = [];
+        if ($this->activeLayanan) {
+            $alurs = AlurModel::where('jenis_pelayanan_id', $this->activeLayanan)
+                ->where('is_active', true)
+                ->where(function($q) {
+                    $q->where('judul', 'like', '%' . $this->search . '%')
+                      ->orWhere('deskripsi', 'like', '%' . $this->search . '%');
+                })
+                ->orderBy('urutan')
+                ->get();
+        }
 
         return view('livewire.public.alur-pelayanan', [
-            'jenisPelayanans' => $jenisPelayanans,
-            'alurs' => $alurs
-        ])->layout('layouts.guest'); // Assuming guest layout for public pages
+            'polis' => $polis,
+            'layanans' => $layanans,
+            'alurs' => $alurs,
+            'currentLayanan' => JenisPelayanan::find($this->activeLayanan)
+        ])->layout('layouts.guest');
     }
 }

@@ -25,4 +25,9 @@ class Poli extends Model
     {
         return $this->hasMany(Pegawai::class);
     }
+
+    public function jenisPelayanans()
+    {
+        return $this->hasMany(JenisPelayanan::class);
+    }
 }
