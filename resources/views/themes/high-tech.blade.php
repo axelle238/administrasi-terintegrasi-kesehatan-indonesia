@@ -55,29 +55,88 @@
 <body class="antialiased" x-data="{ scrolled: false }">
 
     <!-- Navbar -->
-    <nav :class="{ 'py-3 shadow-sm': scrolled, 'py-5': !scrolled }" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 glass hidden md:block" @scroll.window="scrolled = (window.pageYOffset > 20)">
+    <nav :class="{ 'py-4 bg-white/90 backdrop-blur-md shadow-lg border-b border-slate-200/50': scrolled, 'py-6 bg-transparent border-transparent': !scrolled }" 
+         class="fixed top-0 left-0 right-0 z-50 transition-all duration-500 hidden md:block" 
+         @scroll.window="scrolled = (window.pageYOffset > 20)">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="flex items-center justify-between">
-                <a href="#" class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                <!-- Logo -->
+                <a href="#" class="flex items-center gap-3 group">
+                    <div class="relative w-10 h-10">
+                        <div class="absolute inset-0 bg-primary/20 rounded-xl rotate-6 transition-transform group-hover:rotate-12"></div>
+                        <div class="relative w-full h-full rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30 transition-transform group-hover:-translate-y-1">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                        </div>
                     </div>
                     <div>
-                        <h1 class="font-black text-xl text-slate-800 tracking-tight leading-none">{{ $pengaturan['app_name'] ?? 'SATRIA' }}</h1>
-                        <p class="text-[10px] font-bold text-primary uppercase tracking-widest">{{ $pengaturan['app_tagline'] }}</p>
+                        <h1 class="font-black text-xl text-slate-800 tracking-tight leading-none group-hover:text-primary transition-colors">{{ $pengaturan['app_name'] ?? 'SATRIA' }}</h1>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-slate-500 transition-colors">{{ $pengaturan['app_tagline'] }}</p>
                     </div>
                 </a>
-                <div class="flex items-center gap-8">
-                    @foreach(['Beranda', 'Alur', 'Layanan', 'Jadwal', 'Fasilitas', 'Berita'] as $item)
-                        <a href="#{{ strtolower($item) }}" class="text-sm font-bold text-slate-500 hover:text-primary transition-colors">{{ $item }}</a>
+
+                <!-- Navigation Links -->
+                <div class="flex items-center gap-1 bg-white/50 p-1.5 rounded-full border border-white/40 backdrop-blur-md shadow-sm">
+                    @foreach(['Beranda' => '#beranda', 'Alur' => '#alur', 'Jadwal' => '#jadwal'] as $label => $link)
+                        <a href="{{ $link }}" class="px-5 py-2 rounded-full text-sm font-bold text-slate-500 hover:text-primary hover:bg-white hover:shadow-md transition-all duration-300 relative group">
+                            {{ $label }}
+                        </a>
                     @endforeach
+                    
+                    <!-- Dropdown Layanan -->
+                    <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
+                        <button class="px-5 py-2 rounded-full text-sm font-bold text-slate-500 hover:text-primary hover:bg-white hover:shadow-md transition-all duration-300 flex items-center gap-1 group">
+                            Layanan <svg class="w-3 h-3 transition-transform duration-300" :class="open ? 'rotate-180 text-primary' : 'text-slate-400 group-hover:text-primary'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                        </button>
+                        <div x-show="open" 
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 translate-y-2"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="opacity-100 translate-y-0"
+                             x-transition:leave-end="opacity-0 translate-y-2"
+                             class="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-72 bg-white rounded-2xl shadow-xl border border-slate-100 p-3 grid gap-1 z-50">
+                             
+                             <!-- Dropdown Arrow -->
+                             <div class="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45 border-t border-l border-slate-100"></div>
+
+                             <div class="relative z-10">
+                                 <p class="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50 mb-1">Poliklinik Tersedia</p>
+                                 @foreach($layanan->take(5) as $poli)
+                                    <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group/item">
+                                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover/item:bg-emerald-500 group-hover/item:text-white transition-colors">
+                                            <span class="font-bold text-xs">{{ substr($poli->nama_poli, 0, 1) }}</span>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs font-bold text-slate-800 group-hover/item:text-emerald-600 transition-colors">{{ $poli->nama_poli }}</p>
+                                        </div>
+                                    </a>
+                                 @endforeach
+                                 <a href="#layanan" class="mt-2 block w-full py-2 text-[10px] font-bold text-center text-slate-500 hover:text-primary hover:bg-slate-50 rounded-lg uppercase tracking-wider transition-colors">Lihat Semua Layanan &rarr;</a>
+                             </div>
+                        </div>
+                    </div>
+
+                    <a href="#berita" class="px-5 py-2 rounded-full text-sm font-bold text-slate-500 hover:text-primary hover:bg-white hover:shadow-md transition-all duration-300 relative group">
+                        Berita
+                    </a>
                 </div>
+
+                <!-- Action Buttons -->
                 <div class="flex items-center gap-3">
                     @auth
-                        <a href="{{ url('/dashboard') }}" class="px-6 py-2.5 rounded-full bg-slate-900 text-white text-xs font-bold uppercase tracking-wider hover:bg-slate-800 transition-all shadow-lg">Dashboard</a>
+                        <a href="{{ url('/dashboard') }}" class="group px-6 py-2.5 rounded-full bg-slate-900 text-white text-xs font-bold uppercase tracking-wider hover:bg-slate-800 transition-all shadow-lg hover:shadow-slate-900/30 flex items-center gap-2">
+                            <span>Dashboard</span>
+                            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                        </a>
                     @else
-                        <a href="{{ route('login') }}" class="text-sm font-bold text-slate-500 hover:text-slate-800">Masuk Staff</a>
-                        <a href="{{ route('antrean.monitor') }}" class="px-6 py-2.5 rounded-full bg-primary text-white text-xs font-bold uppercase tracking-wider hover:shadow-lg transition-all shadow-md">Ambil Antrean</a>
+                        <a href="{{ route('login') }}" class="text-sm font-bold text-slate-500 hover:text-slate-800 px-5 py-2.5 hover:bg-white hover:shadow-md rounded-full transition-all border border-transparent hover:border-slate-100">Staf Login</a>
+                        <a href="{{ route('antrean.monitor') }}" class="group relative px-6 py-2.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-0.5 transition-all overflow-hidden">
+                            <span class="relative z-10 flex items-center gap-2">
+                                Ambil Antrean
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                            </span>
+                            <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                        </a>
                     @endauth
                 </div>
             </div>
@@ -85,18 +144,23 @@
     </nav>
 
     <!-- Mobile Top Bar -->
-    <div class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 px-4 py-3 flex justify-between items-center md:hidden">
-        <a href="#" class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">
+    <div class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200/50 px-5 py-4 flex justify-between items-center md:hidden shadow-sm transition-all duration-300" :class="{ 'bg-white shadow-md': scrolled }" @scroll.window="scrolled = (window.pageYOffset > 20)">
+        <a href="#" class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
             </div>
-            <span class="font-black text-lg text-slate-800">{{ $pengaturan['app_name'] }}</span>
+            <div>
+                <h1 class="font-black text-lg text-slate-800 leading-none">{{ $pengaturan['app_name'] }}</h1>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{{ $pengaturan['app_tagline'] }}</p>
+            </div>
         </a>
-        @auth
-            <a href="{{ url('/dashboard') }}" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg></a>
-        @else
-            <a href="{{ route('login') }}" class="text-xs font-bold text-primary bg-slate-50 px-3 py-1.5 rounded-full">Login</a>
-        @endauth
+        <div class="flex items-center gap-2">
+            @auth
+                <a href="{{ url('/dashboard') }}" class="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 active:scale-95 transition-transform"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg></a>
+            @else
+                <a href="{{ route('login') }}" class="text-[10px] font-bold text-slate-600 bg-slate-50 border border-slate-200 px-4 py-2 rounded-full uppercase tracking-wider active:bg-slate-100">Login</a>
+            @endauth
+        </div>
     </div>
 
     <!-- MAIN HERO SECTION -->
