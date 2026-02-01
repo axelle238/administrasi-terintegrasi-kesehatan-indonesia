@@ -27,7 +27,7 @@
             background-color: #f8fafc;
             color: #334155; 
             overflow-x: hidden; 
-            padding-bottom: 80px; 
+            padding-bottom: 0; 
         }
         
         h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
@@ -40,15 +40,28 @@
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.5); }
+        .glass-dark { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        
         .animate-float { animation: float 6s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .animate-pulse-slow { animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        
+        .animate-fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        
         .blob-bg {
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23F0FDF4' d='M44.7,-76.4C58.9,-69.2,71.8,-59.1,79.6,-46.3C87.4,-33.5,90.1,-18,88.6,-3.3C87.1,11.4,81.5,25.3,73.1,37.8C64.7,50.3,53.5,61.4,40.7,69.6C27.9,77.8,13.5,83.1,-0.4,83.8C-14.3,84.5,-28.3,80.6,-40.3,72.3C-52.3,64,-62.3,51.3,-69.8,37.5C-77.3,23.7,-82.3,8.8,-80.7,-5.4C-79.1,-19.6,-70.9,-33.1,-60.7,-44.6C-50.5,-56.1,-38.3,-65.6,-25.3,-73.4C-12.3,-81.2,-1.5,-87.3,11.7,-85.3C24.9,-83.3,30.5,-68.6,44.7,-76.4Z' transform='translate(100 100)' /%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right top; background-size: contain;
+            background-image: radial-gradient(circle at 100% 0%, #ecfdf5 0%, transparent 25%), radial-gradient(circle at 0% 0%, #f0f9ff 0%, transparent 25%);
         }
+        
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, var(--color-primary), #0d9488);
+        }
+
         [x-cloak] { display: none !important; }
     </style>
 </head>
@@ -62,12 +75,12 @@
           },
           onScroll() {
               this.scrolled = window.scrollY > 40;
-              const sections = ['beranda', 'alur', 'jadwal', 'layanan'];
+              const sections = ['beranda', 'keunggulan', 'alur', 'jadwal', 'berita', 'faq'];
               for (const id of sections) {
                   const el = document.getElementById(id);
                   if (el) {
                       const rect = el.getBoundingClientRect();
-                      if (rect.top <= 150 && rect.bottom >= 150) {
+                      if (rect.top <= 200 && rect.bottom >= 200) {
                           this.activeSection = id;
                       }
                   }
@@ -82,39 +95,39 @@
       }">
 
     <!-- Top Utility Bar -->
-    <div class="bg-slate-900 text-slate-400 text-[10px] font-bold uppercase tracking-widest py-2.5 hidden md:block relative z-50">
+    <div class="bg-slate-900 text-slate-400 text-[10px] font-bold uppercase tracking-widest py-3 hidden md:block relative z-50 border-b border-white/5">
         <div class="max-w-7xl mx-auto px-6 lg:px-8 flex justify-between items-center">
-            <div class="flex items-center gap-6">
-                <span class="flex items-center gap-2 hover:text-white transition-colors cursor-default">
-                    <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 12.284 3 6V5z" /></svg>
+            <div class="flex items-center gap-8">
+                <a href="tel:{{ $pengaturan['app_phone'] ?? '' }}" class="flex items-center gap-2 hover:text-emerald-400 transition-colors">
+                    <div class="w-5 h-5 rounded bg-white/10 flex items-center justify-center"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 12.284 3 6V5z" /></svg></div>
                     {{ $pengaturan['app_phone'] ?? '119' }}
-                </span>
-                <span class="flex items-center gap-2 hover:text-white transition-colors cursor-default">
-                    <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                </a>
+                <a href="mailto:{{ $pengaturan['app_email'] ?? '' }}" class="flex items-center gap-2 hover:text-emerald-400 transition-colors">
+                    <div class="w-5 h-5 rounded bg-white/10 flex items-center justify-center"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg></div>
                     {{ $pengaturan['app_email'] ?? 'info@satria.id' }}
-                </span>
+                </a>
             </div>
             <div class="flex items-center gap-6">
                 <span class="flex items-center gap-2">
                     <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span>
-                    <span class="text-emerald-400">UGD 24 Jam Siaga</span>
+                    <span class="text-emerald-400">Layanan Gawat Darurat 24/7</span>
                 </span>
-                <div class="h-3 w-px bg-slate-700"></div>
+                <div class="h-3 w-px bg-white/10"></div>
                 <span>{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
             </div>
         </div>
     </div>
 
     <!-- Navbar -->
-    <nav :class="{ 'py-3 bg-white/90 backdrop-blur-md shadow-lg border-b border-slate-200/50 top-0': scrolled, 'py-5 bg-transparent border-transparent top-9': !scrolled }" 
+    <nav :class="{ 'py-3 bg-white/80 backdrop-blur-xl shadow-lg shadow-slate-200/20 border-b border-white/50 top-0': scrolled, 'py-5 bg-transparent border-transparent top-10': !scrolled }" 
          class="fixed left-0 right-0 z-40 transition-all duration-500 hidden md:block">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="flex items-center justify-between">
                 <!-- Logo -->
                 <a href="#" class="flex items-center gap-3 group">
-                    <div class="relative w-10 h-10">
+                    <div class="relative w-11 h-11">
                         <div class="absolute inset-0 bg-primary/20 rounded-xl rotate-6 transition-transform group-hover:rotate-12"></div>
-                        <div class="relative w-full h-full rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30 transition-transform group-hover:-translate-y-1">
+                        <div class="relative w-full h-full rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-xl shadow-emerald-500/30 transition-transform group-hover:-translate-y-1">
                             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                         </div>
                     </div>
@@ -125,8 +138,8 @@
                 </a>
 
                 <!-- Navigation Links -->
-                <div class="flex items-center gap-1 bg-white/50 p-1.5 rounded-full border border-white/40 backdrop-blur-md shadow-sm">
-                    @foreach(['beranda' => 'Beranda', 'alur' => 'Alur', 'jadwal' => 'Jadwal'] as $id => $label)
+                <div class="flex items-center gap-1 bg-white/60 p-1.5 rounded-full border border-white/60 backdrop-blur-md shadow-sm ring-1 ring-slate-100">
+                    @foreach(['beranda' => 'Beranda', 'keunggulan' => 'Keunggulan', 'alur' => 'Alur', 'jadwal' => 'Jadwal'] as $id => $label)
                         <button @click="scrollTo('{{ $id }}')" 
                            :class="activeSection === '{{ $id }}' ? 'text-primary bg-white shadow-md ring-1 ring-slate-100' : 'text-slate-500 hover:text-primary hover:bg-white/50'"
                            class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group">
@@ -148,39 +161,45 @@
                              x-transition:leave="transition ease-in duration-150"
                              x-transition:leave-start="opacity-100 translate-y-0"
                              x-transition:leave-end="opacity-0 translate-y-2"
-                             class="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-72 bg-white rounded-2xl shadow-xl border border-slate-100 p-3 grid gap-1 z-50"
+                             class="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-80 bg-white/95 backdrop-blur-xl rounded-[2rem] shadow-2xl shadow-slate-200/50 border border-white/50 p-4 grid gap-1 z-50"
                              style="display: none;">
                              
-                             <!-- Dropdown Arrow -->
                              <div class="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45 border-t border-l border-slate-100"></div>
 
                              <div class="relative z-10">
-                                 <p class="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50 mb-1">Poliklinik Tersedia</p>
-                                 @foreach($layanan->take(5) as $poli)
-                                    <a href="#layanan" @click="open = false; scrollTo('layanan')" class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group/item">
-                                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover/item:bg-emerald-500 group-hover/item:text-white transition-colors">
-                                            <span class="font-bold text-xs">{{ substr($poli->nama_poli, 0, 1) }}</span>
-                                        </div>
-                                        <div>
-                                            <p class="text-xs font-bold text-slate-800 group-hover/item:text-emerald-600 transition-colors">{{ $poli->nama_poli }}</p>
-                                        </div>
-                                    </a>
-                                 @endforeach
-                                 <button @click="open = false; scrollTo('layanan')" class="mt-2 block w-full py-2 text-[10px] font-bold text-center text-slate-500 hover:text-primary hover:bg-slate-50 rounded-lg uppercase tracking-wider transition-colors">Lihat Semua Layanan &rarr;</button>
+                                 <p class="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 mb-2">Poliklinik & Unit</p>
+                                 <div class="grid gap-1">
+                                     @foreach($layanan->take(5) as $poli)
+                                        <a href="#layanan" @click="open = false; scrollTo('layanan')" class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-slate-50 transition-colors group/item border border-transparent hover:border-slate-100">
+                                            <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover/item:bg-emerald-500 group-hover/item:text-white transition-all shadow-sm">
+                                                <span class="font-black text-xs">{{ substr($poli->nama_poli, 0, 1) }}</span>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-bold text-slate-800 group-hover/item:text-emerald-600 transition-colors">{{ $poli->nama_poli }}</p>
+                                                <p class="text-[10px] text-slate-400">Layanan Medis</p>
+                                            </div>
+                                        </a>
+                                     @endforeach
+                                 </div>
+                                 <button @click="open = false; scrollTo('layanan')" class="mt-3 block w-full py-3 text-[10px] font-black text-center text-slate-500 hover:text-primary hover:bg-slate-50 rounded-xl uppercase tracking-wider transition-colors border border-dashed border-slate-200 hover:border-primary/30">Lihat Katalog Lengkap &rarr;</button>
                              </div>
                         </div>
                     </div>
+
+                    <button @click="scrollTo('berita')" class="px-5 py-2 rounded-full text-sm font-bold text-slate-500 hover:text-primary hover:bg-white/50 transition-all duration-300 relative group">
+                        Berita
+                    </button>
                 </div>
 
                 <!-- Action Buttons -->
                 <div class="flex items-center gap-3">
                     @auth
-                        <a href="{{ url('/dashboard') }}" class="group px-6 py-2.5 rounded-full bg-slate-900 text-white text-xs font-bold uppercase tracking-wider hover:bg-slate-800 transition-all shadow-lg hover:shadow-slate-900/30 flex items-center gap-2">
+                        <a href="{{ url('/dashboard') }}" class="group px-6 py-2.5 rounded-full bg-slate-900 text-white text-xs font-bold uppercase tracking-wider hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/20 hover:shadow-slate-900/40 flex items-center gap-2">
                             <span>Dashboard</span>
                             <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="text-sm font-bold text-slate-500 hover:text-slate-800 px-5 py-2.5 hover:bg-white hover:shadow-md rounded-full transition-all border border-transparent hover:border-slate-100">Staf Login</a>
+                        <a href="{{ route('login') }}" class="text-sm font-bold text-slate-500 hover:text-slate-800 px-5 py-2.5 hover:bg-white hover:shadow-md rounded-full transition-all border border-transparent hover:border-slate-100">Staff Login</a>
                         <a href="{{ route('antrean.monitor') }}" class="group relative px-6 py-2.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-0.5 transition-all overflow-hidden">
                             <span class="relative z-10 flex items-center gap-2">
                                 Ambil Antrean
@@ -196,7 +215,6 @@
 
     <!-- Mobile Top Bar & Drawer -->
     <div x-data="{ mobileMenuOpen: false }">
-        
         <!-- Mobile Header -->
         <div class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl border-b border-slate-200/50 px-5 py-4 flex justify-between items-center md:hidden shadow-sm transition-all duration-300" :class="{ 'bg-white shadow-md': scrolled }" @scroll.window="scrolled = (window.pageYOffset > 20)">
             <a href="#" class="flex items-center gap-2.5">
@@ -220,7 +238,6 @@
 
         <!-- Mobile Navigation Drawer -->
         <div x-show="mobileMenuOpen" class="fixed inset-0 z-[60] md:hidden" style="display: none;">
-            <!-- Backdrop -->
             <div x-show="mobileMenuOpen" 
                  x-transition:enter="transition-opacity ease-linear duration-300"
                  x-transition:enter-start="opacity-0"
@@ -228,10 +245,9 @@
                  x-transition:leave="transition-opacity ease-linear duration-300"
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0"
-                 class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm" 
+                 class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" 
                  @click="mobileMenuOpen = false"></div>
 
-            <!-- Panel -->
             <div x-show="mobileMenuOpen" 
                  x-transition:enter="transition ease-in-out duration-300 transform"
                  x-transition:enter-start="translate-x-full"
@@ -241,7 +257,6 @@
                  x-transition:leave-end="translate-x-full"
                  class="fixed inset-y-0 right-0 w-full max-w-xs bg-white shadow-2xl flex flex-col h-full overflow-hidden">
                 
-                <!-- Drawer Header -->
                 <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                     <h2 class="font-black text-lg text-slate-800">Menu Utama</h2>
                     <button @click="mobileMenuOpen = false" class="p-2 -mr-2 text-slate-400 hover:text-rose-500 transition-colors">
@@ -249,19 +264,16 @@
                     </button>
                 </div>
 
-                <!-- Drawer Content -->
                 <div class="flex-1 overflow-y-auto p-6 space-y-8">
-                    <!-- Main Links -->
                     <div class="space-y-2">
                         <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Navigasi</p>
-                        @foreach(['Beranda' => '#beranda', 'Alur Pelayanan' => '#alur', 'Jadwal Dokter' => '#jadwal', 'Berita Terkini' => '#berita'] as $label => $link)
+                        @foreach(['Beranda' => '#beranda', 'Keunggulan' => '#keunggulan', 'Alur Pelayanan' => '#alur', 'Jadwal Dokter' => '#jadwal', 'Berita Terkini' => '#berita'] as $label => $link)
                             <a href="{{ $link }}" @click="mobileMenuOpen = false" class="block py-2 text-base font-bold text-slate-600 hover:text-emerald-600 hover:translate-x-1 transition-all border-b border-dashed border-slate-100 last:border-0">
                                 {{ $label }}
                             </a>
                         @endforeach
                     </div>
 
-                    <!-- Layanan Accordion -->
                     <div x-data="{ layananOpen: false }">
                         <button @click="layananOpen = !layananOpen" class="flex items-center justify-between w-full text-xs font-black text-slate-400 uppercase tracking-widest mb-3 hover:text-slate-600">
                             <span>Layanan Medis</span>
@@ -276,7 +288,6 @@
                         </div>
                     </div>
 
-                    <!-- Auth Actions -->
                     <div>
                         @auth
                             <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100">
@@ -306,7 +317,6 @@
                     </div>
                 </div>
 
-                <!-- Drawer Footer -->
                 <div class="p-6 bg-slate-50 border-t border-slate-100 text-center">
                     <p class="text-[10px] font-bold text-slate-400">
                         &copy; {{ date('Y') }} {{ $pengaturan['app_name'] }}<br>
@@ -317,100 +327,170 @@
         </div>
     </div>
 
-    <!-- MAIN HERO SECTION -->
+    <!-- HERO SECTION -->
     @if($cmsSections['hero']->is_active ?? false)
-    <header id="beranda" class="relative pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden blob-bg">
+    <header id="beranda" class="relative pt-32 pb-24 md:pt-48 md:pb-32 overflow-hidden blob-bg">
+        <!-- Animated Background Elements -->
+        <div class="absolute top-20 left-10 w-72 h-72 bg-purple-200/30 rounded-full blur-3xl animate-float" style="animation-delay: 0s;"></div>
+        <div class="absolute bottom-20 right-10 w-96 h-96 bg-emerald-200/30 rounded-full blur-3xl animate-float" style="animation-delay: 2s;"></div>
+
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-            <div class="flex flex-col lg:flex-row items-center gap-12">
-                <div class="flex-1 text-center lg:text-left space-y-6">
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-emerald-100 shadow-sm animate-fade-in-up">
-                        <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span></span>
-                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wide">{{ $cmsSections['hero']->subtitle ?? 'Layanan Kesehatan' }}</span>
+            <div class="flex flex-col lg:flex-row items-center gap-16">
+                <div class="flex-1 text-center lg:text-left space-y-8">
+                    <!-- Badge -->
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 backdrop-blur-md border border-white shadow-sm animate-fade-in-up">
+                        <span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span></span>
+                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wide">{{ $cmsSections['hero']->subtitle ?? 'Layanan Kesehatan Terdepan' }}</span>
                     </div>
                     
-                    <h1 class="text-4xl md:text-6xl font-black text-slate-900 leading-tight tracking-tight animate-fade-in-up" style="animation-delay: 0.1s">
-                        {{ $cmsSections['hero']->title ?? 'Judul Hero' }}
+                    <!-- Headline -->
+                    <h1 class="text-5xl md:text-7xl font-black text-slate-900 leading-[1.1] tracking-tight animate-fade-in-up" style="animation-delay: 0.1s">
+                        <span class="text-gradient">{{ $cmsSections['hero']->title ?? 'Judul Hero' }}</span>
+                        <br>Untuk Indonesia.
                     </h1>
                     
-                    <p class="text-slate-500 text-lg leading-relaxed max-w-xl mx-auto lg:mx-0 animate-fade-in-up" style="animation-delay: 0.2s">
+                    <!-- Description -->
+                    <p class="text-slate-500 text-lg md:text-xl leading-relaxed max-w-xl mx-auto lg:mx-0 animate-fade-in-up font-medium" style="animation-delay: 0.2s">
                         {{ $cmsSections['hero']->content ?? '' }}
                     </p>
                     
+                    <!-- CTA Buttons -->
                     <div class="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start animate-fade-in-up" style="animation-delay: 0.3s">
-                        <a href="{{ route('antrean.monitor') }}" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm uppercase tracking-wider shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all flex items-center justify-center gap-3">
-                            <div class="p-1 bg-white/20 rounded-full"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg></div>
+                        <a href="{{ route('antrean.monitor') }}" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm uppercase tracking-wider shadow-xl shadow-slate-900/20 hover:shadow-slate-900/40 hover:-translate-y-1 transition-all flex items-center justify-center gap-3 group">
+                            <div class="p-1 bg-white/20 rounded-full group-hover:rotate-12 transition-transform"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg></div>
                             {{ $cmsSections['hero']->metadata['cta_primary_text'] ?? 'Daftar Berobat' }}
                         </a>
-                        <a href="{{ $cmsSections['hero']->metadata['cta_secondary_url'] ?? '#jadwal' }}" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-white border border-slate-200 text-slate-700 font-bold text-sm uppercase tracking-wider hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
+                        <a href="{{ $cmsSections['hero']->metadata['cta_secondary_url'] ?? '#jadwal' }}" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-white border border-white shadow-lg text-slate-700 font-bold text-sm uppercase tracking-wider hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
                             <span>{{ $cmsSections['hero']->metadata['cta_secondary_text'] ?? 'Jadwal Dokter' }}</span>
                         </a>
                     </div>
 
                     <!-- Trust Markers -->
-                    <div class="pt-8 flex items-center justify-center lg:justify-start gap-6 opacity-70 grayscale hover:grayscale-0 transition-all duration-500 animate-fade-in-up" style="animation-delay: 0.4s">
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
-                            <span class="text-xs font-bold">{{ $cmsSections['hero']->metadata['trust_1'] ?? 'Terverifikasi' }}</span>
+                    <div class="pt-8 flex items-center justify-center lg:justify-start gap-8 opacity-80 animate-fade-in-up" style="animation-delay: 0.4s">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-blue-50 border border-blue-100 rounded-xl flex items-center justify-center text-blue-600 shadow-sm"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            <div class="text-left">
+                                <p class="text-xs font-black text-slate-800 uppercase">Terakreditasi</p>
+                                <p class="text-[10px] font-bold text-slate-400">Paripurna Kemenkes</p>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg></div>
-                            <span class="text-xs font-bold">{{ $cmsSections['hero']->metadata['trust_2'] ?? 'Data Aman' }}</span>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 shadow-sm"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg></div>
+                            <div class="text-left">
+                                <p class="text-xs font-black text-slate-800 uppercase">Data Aman</p>
+                                <p class="text-[10px] font-bold text-slate-400">Enkripsi 256-bit</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Illustration (Dynamic Image) -->
+                <!-- Illustration -->
                 <div class="flex-1 w-full relative animate-float hidden lg:block">
-                    <div class="relative z-10 bg-white p-4 rounded-[2.5rem] shadow-2xl border border-slate-100 max-w-md mx-auto rotate-2 hover:rotate-0 transition-transform duration-500">
+                    <div class="relative z-10 p-2 bg-white/40 backdrop-blur-sm rounded-[3rem] border border-white/60 shadow-2xl">
                         @if($cmsSections['hero']->image)
-                            <img src="{{ Storage::url($cmsSections['hero']->image) }}" class="w-full h-auto rounded-[2rem] object-cover aspect-[4/5]">
+                            <img src="{{ Storage::url($cmsSections['hero']->image) }}" class="w-full h-auto rounded-[2.5rem] object-cover aspect-[4/5] shadow-inner">
                         @else
-                            <img src="https://images.unsplash.com/photo-1638202993928-7267aad84c31?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Doctor" class="w-full h-auto rounded-[2rem] object-cover aspect-[4/5]">
+                            <img src="https://images.unsplash.com/photo-1638202993928-7267aad84c31?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="w-full h-auto rounded-[2.5rem] object-cover aspect-[4/5] shadow-inner">
                         @endif
                         
-                        <!-- Floating Card -->
-                        <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-2xl shadow-xl border border-slate-50 flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600">
-                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <!-- Floating Card 1 -->
+                        <div class="absolute top-10 -left-10 glass p-4 rounded-2xl shadow-xl flex items-center gap-4 animate-float" style="animation-delay: 1s;">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg">
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                             </div>
                             <div>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase">Respon Cepat</p>
+                                <p class="text-[10px] font-bold text-slate-500 uppercase">Respon Cepat</p>
                                 <p class="text-lg font-black text-slate-800">24 Jam</p>
                             </div>
                         </div>
+
+                        <!-- Floating Card 2 -->
+                        <div class="absolute bottom-10 -right-10 glass p-4 rounded-2xl shadow-xl flex items-center gap-4 animate-float" style="animation-delay: 2.5s;">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg">
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-500 uppercase">Dokter Ahli</p>
+                                <p class="text-lg font-black text-slate-800">Profesional</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-200/20 rounded-full blur-3xl -z-10"></div>
                 </div>
             </div>
         </div>
     </header>
     @endif
 
-    <!-- ALUR PELAYANAN (Improved UI) -->
-    @if(isset($alurPelayanan) && count($alurPelayanan) > 0)
-    <section id="alur" class="py-20 bg-white relative" x-data="{ activeTab: 'all' }">
-        <!-- Background Pattern -->
-        <div class="absolute inset-0 opacity-30 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]"></div>
-        
+    <!-- KEUNGGULAN (Why Us) - NEW SECTION -->
+    @if($cmsSections['why_us']->is_active ?? true) 
+    <!-- Fallback true for demo if not in DB yet -->
+    <section id="keunggulan" class="py-24 bg-white relative overflow-hidden">
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-            <div class="text-center mb-12">
-                <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Panduan Pasien</span>
-                <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-6">Alur Pelayanan</h2>
+            <div class="text-center mb-16">
+                <span class="text-emerald-600 font-black tracking-widest uppercase text-xs mb-2 block">Kenapa Memilih Kami?</span>
+                <h2 class="text-3xl md:text-5xl font-black text-slate-900 mb-6">Standar Kesehatan <br>Masa Depan</h2>
+                <p class="text-slate-500 max-w-2xl mx-auto text-lg">Kombinasi teknologi medis mutakhir dan pelayanan humanis untuk pengalaman berobat terbaik.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="group bg-slate-50 p-8 rounded-[2.5rem] border border-slate-100 hover:bg-slate-900 hover:text-white transition-all duration-500 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-colors"></div>
+                    <div class="w-16 h-16 rounded-2xl bg-white text-emerald-600 flex items-center justify-center text-3xl mb-6 shadow-sm group-hover:bg-white/10 group-hover:text-emerald-400 transition-colors">
+                        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" /></svg>
+                    </div>
+                    <h3 class="text-xl font-black text-slate-900 mb-3 group-hover:text-white transition-colors">Teknologi Mutakhir</h3>
+                    <p class="text-slate-500 group-hover:text-slate-400 transition-colors leading-relaxed">Peralatan medis diagnostik terbaru dengan akurasi tinggi untuk penanganan presisi.</p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="group bg-slate-50 p-8 rounded-[2.5rem] border border-slate-100 hover:bg-slate-900 hover:text-white transition-all duration-500 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/20 transition-colors"></div>
+                    <div class="w-16 h-16 rounded-2xl bg-white text-blue-600 flex items-center justify-center text-3xl mb-6 shadow-sm group-hover:bg-white/10 group-hover:text-blue-400 transition-colors">
+                        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    </div>
+                    <h3 class="text-xl font-black text-slate-900 mb-3 group-hover:text-white transition-colors">Tim Dokter Ahli</h3>
+                    <p class="text-slate-500 group-hover:text-slate-400 transition-colors leading-relaxed">Didukung oleh dokter spesialis berpengalaman dengan sertifikasi nasional.</p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="group bg-slate-50 p-8 rounded-[2.5rem] border border-slate-100 hover:bg-slate-900 hover:text-white transition-all duration-500 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/20 transition-colors"></div>
+                    <div class="w-16 h-16 rounded-2xl bg-white text-purple-600 flex items-center justify-center text-3xl mb-6 shadow-sm group-hover:bg-white/10 group-hover:text-purple-400 transition-colors">
+                        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <h3 class="text-xl font-black text-slate-900 mb-3 group-hover:text-white transition-colors">Pelayanan Cepat</h3>
+                    <p class="text-slate-500 group-hover:text-slate-400 transition-colors leading-relaxed">Sistem antrean digital dan rekam medis elektronik untuk efisiensi waktu Anda.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    @endif
+
+    <!-- ALUR PELAYANAN -->
+    @if(isset($alurPelayanan) && count($alurPelayanan) > 0)
+    <section id="alur" class="py-24 bg-slate-50 relative" x-data="{ activeTab: 'all' }">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+                <div>
+                    <span class="text-primary font-black tracking-widest uppercase text-xs mb-2 block">Panduan Pasien</span>
+                    <h2 class="text-3xl md:text-4xl font-black text-slate-900">Alur Pelayanan</h2>
+                </div>
                 
                 <!-- Modern Tabs -->
-                <div class="inline-flex flex-wrap justify-center gap-2 bg-slate-50 p-1.5 rounded-full border border-slate-100 shadow-sm max-w-full overflow-x-auto no-scrollbar">
+                <div class="inline-flex flex-wrap gap-2 bg-white p-1.5 rounded-2xl border border-slate-200/50 shadow-sm">
                     <button @click="activeTab = 'all'" 
-                            :class="activeTab === 'all' ? 'bg-white text-primary shadow-md ring-1 ring-slate-200' : 'text-slate-500 hover:text-slate-700'"
-                            class="px-6 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap">
-                        Semua Alur
+                            :class="activeTab === 'all' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-500 hover:text-slate-900'"
+                            class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all">
+                        Semua
                     </button>
                     @php 
                         $jenisList = $alurPelayanan->pluck('jenisPelayanan.nama_layanan')->unique()->filter();
                     @endphp
                     @foreach($jenisList as $jenis)
                     <button @click="activeTab = '{{ Str::slug($jenis) }}'" 
-                            :class="activeTab === '{{ Str::slug($jenis) }}' ? 'bg-white text-primary shadow-md ring-1 ring-slate-200' : 'text-slate-500 hover:text-slate-700'"
-                            class="px-6 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap">
+                            :class="activeTab === '{{ Str::slug($jenis) }}' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-500 hover:text-slate-900'"
+                            class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all">
                         {{ $jenis }}
                     </button>
                     @endforeach
@@ -422,109 +502,31 @@
                 @php $slug = $alur->jenisPelayanan ? Str::slug($alur->jenisPelayanan->nama_layanan) : 'umum'; @endphp
                 
                 <div x-show="activeTab === 'all' || activeTab === '{{ $slug }}'" 
-                     class="group relative bg-white p-6 rounded-[2rem] border border-slate-100 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col overflow-hidden"
-                     x-transition:enter="transition ease-out duration-300"
-                     x-transition:enter-start="opacity-0 transform scale-95"
-                     x-transition:enter-end="opacity-100 transform scale-100">
+                     class="group relative bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500 h-full flex flex-col overflow-hidden"
+                     x-transition:enter="transition ease-out duration-500"
+                     x-transition:enter-start="opacity-0 scale-90"
+                     x-transition:enter-end="opacity-100 scale-100">
                     
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-emerald-50 to-transparent rounded-bl-[3rem] -mr-4 -mt-4 opacity-50 group-hover:opacity-100 transition-opacity"></div>
-
-                    <div class="flex justify-between items-start mb-4 relative z-10">
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-lg font-black shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform">
+                    <div class="flex justify-between items-start mb-6 relative z-10">
+                        <div class="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-900 text-xl font-black group-hover:bg-primary group-hover:text-white transition-colors duration-500">
                             {{ $alur->urutan }}
                         </div>
                         @if($alur->jenisPelayanan)
-                        <span class="px-2.5 py-1 bg-slate-50 text-slate-500 text-[10px] font-bold uppercase rounded-lg border border-slate-100">
+                        <span class="px-3 py-1 bg-slate-50 text-slate-500 text-[10px] font-black uppercase rounded-lg border border-slate-100">
                             {{ $alur->jenisPelayanan->nama_layanan }}
                         </span>
                         @endif
                     </div>
                     
-                    <h3 class="font-bold text-lg text-slate-800 mb-2 leading-tight relative z-10">{{ $alur->judul }}</h3>
+                    <h3 class="font-bold text-xl text-slate-900 mb-3 leading-tight relative z-10">{{ $alur->judul }}</h3>
                     <p class="text-sm text-slate-500 leading-relaxed flex-1 relative z-10">{{ $alur->deskripsi }}</p>
                     
                     @if($alur->estimasi_waktu)
-                    <div class="mt-4 pt-4 border-t border-dashed border-slate-100 flex items-center gap-2 text-xs font-bold text-emerald-600 relative z-10">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <div class="mt-6 pt-6 border-t border-dashed border-slate-100 flex items-center gap-2 text-xs font-bold text-emerald-600 relative z-10">
+                        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                         Estimasi: {{ $alur->estimasi_waktu }}
                     </div>
                     @endif
-                </div>
-                @endforeach
-            </div>
-            
-            <!-- Empty State for Tab -->
-            <div x-show="$el.querySelectorAll('.grid > div[x-show]:not([style*=\'display: none\'])').length === 0" style="display: none;" class="text-center py-12">
-                <p class="text-slate-400 font-bold">Belum ada alur untuk kategori ini.</p>
-            </div>
-        </div>
-    </section>
-    @endif
-
-    <!-- QUICK MENU (COLORFUL GRID) -->
-    <section class="py-8 px-6 lg:px-8 -mt-8 relative z-20">
-        <div class="max-w-7xl mx-auto">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                <!-- Card 1 -->
-                <a href="#layanan" class="group bg-white p-6 rounded-3xl shadow-lg shadow-slate-200/50 border border-slate-100 hover:-translate-y-1 transition-all duration-300">
-                    <div class="w-14 h-14 rounded-2xl bg-teal-50 text-teal-500 flex items-center justify-center text-2xl mb-4 group-hover:bg-teal-500 group-hover:text-white transition-colors">
-                        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-                    </div>
-                    <h3 class="font-bold text-slate-800 text-lg">Poliklinik</h3>
-                    <p class="text-xs text-slate-400 mt-1">Layanan Spesialis</p>
-                </a>
-                
-                <!-- Card 2 -->
-                <a href="{{ route('antrean.monitor') }}" class="group bg-white p-6 rounded-3xl shadow-lg shadow-slate-200/50 border border-slate-100 hover:-translate-y-1 transition-all duration-300">
-                    <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-2xl mb-4 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
-                        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
-                    </div>
-                    <h3 class="font-bold text-slate-800 text-lg">Daftar Online</h3>
-                    <p class="text-xs text-slate-400 mt-1">Tanpa Antre Lama</p>
-                </a>
-
-                <!-- Card 3 -->
-                <a href="#jadwal" class="group bg-white p-6 rounded-3xl shadow-lg shadow-slate-200/50 border border-slate-100 hover:-translate-y-1 transition-all duration-300">
-                    <div class="w-14 h-14 rounded-2xl bg-lime-50 text-lime-600 flex items-center justify-center text-2xl mb-4 group-hover:bg-lime-500 group-hover:text-white transition-colors">
-                        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    </div>
-                    <h3 class="font-bold text-slate-800 text-lg">Jadwal Dokter</h3>
-                    <p class="text-xs text-slate-400 mt-1">Cek Ketersediaan</p>
-                </a>
-
-                <!-- Card 4 -->
-                <a href="#" class="group bg-white p-6 rounded-3xl shadow-lg shadow-slate-200/50 border border-slate-100 hover:-translate-y-1 transition-all duration-300">
-                    <div class="w-14 h-14 rounded-2xl bg-cyan-50 text-cyan-600 flex items-center justify-center text-2xl mb-4 group-hover:bg-cyan-600 group-hover:text-white transition-colors">
-                        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
-                    </div>
-                    <h3 class="font-bold text-slate-800 text-lg">Farmasi</h3>
-                    <p class="text-xs text-slate-400 mt-1">Info Obat</p>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- HARGA LAYANAN (Dynamic) -->
-    @if(isset($hargaLayanan) && count($hargaLayanan) > 0)
-    <section class="py-16 bg-slate-50">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="flex justify-between items-end mb-10">
-                <h2 class="text-2xl md:text-3xl font-black text-slate-900">Tarif Layanan</h2>
-                <a href="#" class="text-sm font-bold text-emerald-600 hover:underline">Lihat Katalog Lengkap</a>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach($hargaLayanan as $harga)
-                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-all">
-                    <div>
-                        <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-wider mb-3 inline-block">{{ $harga->kategori }}</span>
-                        <h4 class="font-bold text-lg text-slate-800 mb-2">{{ $harga->nama_tindakan }}</h4>
-                        <p class="text-sm text-slate-500 line-clamp-2">{{ $harga->deskripsi ?? 'Layanan medis standar.' }}</p>
-                    </div>
-                    <div class="mt-6 pt-4 border-t border-dashed border-slate-100 flex justify-between items-center">
-                        <span class="text-xs font-bold text-slate-400 uppercase">Mulai Dari</span>
-                        <span class="text-xl font-black text-emerald-600">Rp {{ number_format($harga->harga, 0, ',', '.') }}</span>
-                    </div>
                 </div>
                 @endforeach
             </div>
@@ -534,30 +536,32 @@
 
     <!-- JADWAL DOKTER -->
     @if(($pengaturan['show_jadwal_dokter'] ?? '1') == '1')
-    <section id="jadwal" class="py-16 md:py-24 relative bg-white">
+    <section id="jadwal" class="py-24 bg-white relative">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <span class="text-emerald-600 font-bold tracking-widest uppercase text-xs mb-2 block">Dokter Kami</span>
-                <h2 class="text-3xl md:text-4xl font-black text-slate-900">Jadwal Praktik Hari Ini</h2>
+            <div class="text-center mb-16">
+                <span class="text-emerald-600 font-black tracking-widest uppercase text-xs mb-2 block">Tim Medis</span>
+                <h2 class="text-3xl md:text-5xl font-black text-slate-900">Jadwal Praktik Hari Ini</h2>
             </div>
 
             @if(isset($jadwalHariIni) && count($jadwalHariIni) > 0)
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     @foreach($jadwalHariIni as $jadwal)
-                    <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-4 hover:shadow-lg transition-all duration-300">
-                        <div class="w-16 h-16 rounded-2xl bg-white overflow-hidden shrink-0 shadow-sm">
+                    <div class="group bg-white p-6 rounded-[2rem] border border-slate-100 shadow-lg hover:shadow-2xl hover:border-emerald-200 transition-all duration-500 flex items-center gap-6 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-r from-emerald-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        
+                        <div class="relative w-20 h-20 rounded-2xl bg-slate-100 overflow-hidden shrink-0 shadow-inner">
                             @if($jadwal->pegawai->foto_profil ?? false)
-                                <img src="{{ Storage::url($jadwal->pegawai->foto_profil) }}" class="w-full h-full object-cover">
+                                <img src="{{ Storage::url($jadwal->pegawai->foto_profil) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                             @else
-                                <div class="w-full h-full flex items-center justify-center text-slate-400 font-bold text-xl">
+                                <div class="w-full h-full flex items-center justify-center text-slate-300 font-black text-2xl bg-slate-50">
                                     {{ substr($jadwal->pegawai->user->name ?? 'D', 0, 1) }}
                                 </div>
                             @endif
                         </div>
-                        <div class="min-w-0 flex-1">
-                            <h4 class="font-bold text-slate-800 truncate">{{ $jadwal->pegawai->user->name ?? 'Dokter' }}</h4>
-                            <p class="text-xs text-slate-500 uppercase tracking-wide font-bold mb-2">{{ $jadwal->pegawai->poli->nama_poli ?? 'Umum' }}</p>
-                            <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase">
+                        <div class="min-w-0 flex-1 relative">
+                            <h4 class="font-black text-lg text-slate-900 truncate mb-1">{{ $jadwal->pegawai->user->name ?? 'Dokter' }}</h4>
+                            <p class="text-xs text-slate-500 font-bold uppercase tracking-wide mb-3">{{ $jadwal->pegawai->poli->nama_poli ?? 'Umum' }}</p>
+                            <span class="inline-block px-3 py-1 rounded-lg bg-slate-900 text-white text-[10px] font-black uppercase tracking-wider group-hover:bg-emerald-600 transition-colors">
                                 {{ $jadwal->shift->jam_masuk ?? '00:00' }} - {{ $jadwal->shift->jam_keluar ?? '00:00' }}
                             </span>
                         </div>
@@ -565,79 +569,215 @@
                     @endforeach
                 </div>
             @else
-                <div class="bg-slate-50 p-12 text-center rounded-[2.5rem] border border-dashed border-slate-200">
-                    <p class="text-slate-400 font-bold">Tidak ada jadwal dokter untuk hari ini.</p>
+                <div class="bg-slate-50 p-16 text-center rounded-[3rem] border border-dashed border-slate-200">
+                    <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm text-slate-300">
+                        <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    </div>
+                    <p class="text-slate-400 font-bold text-lg">Tidak ada jadwal dokter untuk hari ini.</p>
                 </div>
             @endif
         </div>
     </section>
     @endif
 
-    <!-- STATS BANNER (Dynamic) -->
-    @if($cmsSections['stats']->is_active ?? false)
-    <section class="py-16 bg-slate-900 relative overflow-hidden">
-        <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+    <!-- BERITA TERKINI (New Design) -->
+    <section id="berita" class="py-24 bg-slate-900 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-3xl"></div>
+        
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl font-black text-white">{{ $cmsSections['stats']->title ?? 'Statistik' }}</h2>
-                <p class="text-slate-400 text-sm">{{ $cmsSections['stats']->subtitle ?? '' }}</p>
+            <div class="flex justify-between items-end mb-16">
+                <div>
+                    <span class="text-emerald-400 font-black tracking-widest uppercase text-xs mb-2 block">Wawasan</span>
+                    <h2 class="text-3xl md:text-5xl font-black text-white">Berita & Artikel</h2>
+                </div>
+                <a href="#" class="hidden md:flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-white transition-colors">
+                    Lihat Semua <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                </a>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                <div>
-                    <p class="text-4xl font-black text-white mb-1">{{ $stats['dokter_total'] ?? 0 }}</p>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">{{ $cmsSections['stats']->metadata['label_1'] ?? 'Dokter Ahli' }}</p>
+
+            @if(isset($beritaTerbaru) && count($beritaTerbaru) > 0)
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                @foreach($beritaTerbaru as $news)
+                <article class="group bg-white/5 border border-white/10 rounded-[2rem] overflow-hidden hover:bg-white/10 transition-all duration-500 hover:-translate-y-2">
+                    <div class="h-48 bg-slate-800 relative overflow-hidden">
+                        @if($news->thumbnail)
+                            <img src="{{ Storage::url($news->thumbnail) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        @else
+                            <div class="w-full h-full flex items-center justify-center text-slate-700 bg-slate-800">
+                                <svg class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                            </div>
+                        @endif
+                        <div class="absolute top-4 left-4 bg-emerald-500 text-white text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-wider">
+                            {{ $news->kategori ?? 'Umum' }}
+                        </div>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex items-center gap-3 text-xs text-slate-400 mb-4">
+                            <span class="flex items-center gap-1"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> {{ $news->created_at->format('d M Y') }}</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4 leading-tight group-hover:text-emerald-400 transition-colors">{{ $news->judul }}</h3>
+                        <a href="#" class="inline-flex items-center gap-2 text-sm font-bold text-emerald-500 hover:text-emerald-400">
+                            Baca Selengkapnya <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                        </a>
+                    </div>
+                </article>
+                @endforeach
+            </div>
+            @else
+            <div class="text-center py-12 border border-white/10 rounded-[2rem] bg-white/5">
+                <p class="text-slate-400">Belum ada berita terbaru.</p>
+            </div>
+            @endif
+        </div>
+    </section>
+
+    <!-- FAQ SECTION (Interactive Accordion) -->
+    <section id="faq" class="py-24 bg-white" x-data="{ activeAccordion: null }">
+        <div class="max-w-3xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-emerald-600 font-black tracking-widest uppercase text-xs mb-2 block">Bantuan</span>
+                <h2 class="text-3xl md:text-4xl font-black text-slate-900">Pertanyaan Umum</h2>
+            </div>
+
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="border border-slate-200 rounded-3xl overflow-hidden transition-all duration-300" :class="activeAccordion === 1 ? 'border-emerald-500 ring-4 ring-emerald-500/10' : 'hover:border-slate-300'">
+                    <button @click="activeAccordion = activeAccordion === 1 ? null : 1" class="w-full flex items-center justify-between p-6 text-left bg-white">
+                        <span class="font-bold text-lg text-slate-800">Bagaimana cara mendaftar antrean online?</span>
+                        <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center transition-transform duration-300" :class="activeAccordion === 1 ? 'rotate-180 bg-emerald-100 text-emerald-600' : 'text-slate-400'">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                        </div>
+                    </button>
+                    <div x-show="activeAccordion === 1" x-collapse>
+                        <div class="p-6 pt-0 text-slate-500 leading-relaxed border-t border-slate-100">
+                            Anda dapat mendaftar melalui menu "Ambil Antrean" di halaman ini atau melalui aplikasi mobile kami. Pastikan Anda memiliki nomor KTP/BPJS yang valid.
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <p class="text-4xl font-black text-white mb-1">{{ $layanan->count() }}</p>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">{{ $cmsSections['stats']->metadata['label_2'] ?? 'Poliklinik' }}</p>
+
+                <!-- FAQ Item 2 -->
+                <div class="border border-slate-200 rounded-3xl overflow-hidden transition-all duration-300" :class="activeAccordion === 2 ? 'border-emerald-500 ring-4 ring-emerald-500/10' : 'hover:border-slate-300'">
+                    <button @click="activeAccordion = activeAccordion === 2 ? null : 2" class="w-full flex items-center justify-between p-6 text-left bg-white">
+                        <span class="font-bold text-lg text-slate-800">Apakah menerima pasien BPJS?</span>
+                        <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center transition-transform duration-300" :class="activeAccordion === 2 ? 'rotate-180 bg-emerald-100 text-emerald-600' : 'text-slate-400'">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                        </div>
+                    </button>
+                    <div x-show="activeAccordion === 2" x-collapse>
+                        <div class="p-6 pt-0 text-slate-500 leading-relaxed border-t border-slate-100">
+                            Ya, kami melayani pasien BPJS Kesehatan untuk semua poli yang tersedia. Mohon membawa kartu BPJS dan surat rujukan (jika diperlukan) saat berkunjung.
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <p class="text-4xl font-black text-white mb-1">{{ $stats['pasien_total'] ?? 0 }}</p>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">{{ $cmsSections['stats']->metadata['label_3'] ?? 'Pasien' }}</p>
-                </div>
-                <div>
-                    <p class="text-4xl font-black text-white mb-1">24/7</p>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">{{ $cmsSections['stats']->metadata['label_4'] ?? 'UGD' }}</p>
+
+                <!-- FAQ Item 3 -->
+                <div class="border border-slate-200 rounded-3xl overflow-hidden transition-all duration-300" :class="activeAccordion === 3 ? 'border-emerald-500 ring-4 ring-emerald-500/10' : 'hover:border-slate-300'">
+                    <button @click="activeAccordion = activeAccordion === 3 ? null : 3" class="w-full flex items-center justify-between p-6 text-left bg-white">
+                        <span class="font-bold text-lg text-slate-800">Berapa biaya konsultasi dokter umum?</span>
+                        <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center transition-transform duration-300" :class="activeAccordion === 3 ? 'rotate-180 bg-emerald-100 text-emerald-600' : 'text-slate-400'">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                        </div>
+                    </button>
+                    <div x-show="activeAccordion === 3" x-collapse>
+                        <div class="p-6 pt-0 text-slate-500 leading-relaxed border-t border-slate-100">
+                            Biaya konsultasi bervariasi tergantung jenis layanan. Silakan cek menu "Harga Layanan" di halaman depan untuk informasi tarif terbaru.
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
-    @endif
+
+    <!-- CALL TO ACTION (CTA) -->
+    <section class="py-24 px-6 lg:px-8 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="bg-gradient-to-r from-slate-900 to-slate-800 rounded-[3rem] p-12 md:p-24 text-center relative overflow-hidden shadow-2xl">
+                <!-- Decorative Blobs -->
+                <div class="absolute top-0 left-0 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl -ml-20 -mt-20"></div>
+                <div class="absolute bottom-0 right-0 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl -mr-20 -mb-20"></div>
+                
+                <div class="relative z-10 max-w-3xl mx-auto">
+                    <h2 class="text-4xl md:text-6xl font-black text-white mb-8 tracking-tight">Kesehatan Anda Adalah <span class="text-emerald-400">Prioritas Kami</span></h2>
+                    <p class="text-slate-400 text-lg md:text-xl mb-12 font-medium">Bergabunglah dengan ribuan pasien yang telah mempercayakan kesehatan mereka kepada tim profesional kami.</p>
+                    
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+                        <a href="{{ route('antrean.monitor') }}" class="w-full sm:w-auto px-10 py-5 bg-emerald-500 hover:bg-emerald-400 text-white rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl shadow-emerald-500/30 transition-all hover:-translate-y-1">
+                            Daftar Sekarang
+                        </a>
+                        <a href="tel:{{ $pengaturan['app_phone'] ?? '' }}" class="w-full sm:w-auto px-10 py-5 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-2xl font-black uppercase tracking-widest text-sm backdrop-blur-md transition-all">
+                            Hubungi Kami
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- FOOTER (Dynamic) -->
     @if($cmsSections['footer']->is_active ?? true)
-    <footer class="bg-white pt-16 pb-32 md:pb-16 border-t border-slate-200">
+    <footer class="bg-white pt-24 pb-12 border-t border-slate-100">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-                <div class="space-y-4">
-                    <h4 class="font-black text-lg text-slate-800">{{ $pengaturan['app_name'] ?? 'SATRIA' }}</h4>
-                    <p class="text-sm text-slate-500 leading-relaxed">{{ $cmsSections['footer']->content ?? '' }}</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+                <div class="space-y-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                        </div>
+                        <h4 class="font-black text-2xl text-slate-900">{{ $pengaturan['app_name'] ?? 'SATRIA' }}</h4>
+                    </div>
+                    <p class="text-sm text-slate-500 leading-relaxed font-medium">{{ $cmsSections['footer']->content ?? 'Sistem pelayanan kesehatan terpadu yang mengutamakan kecepatan, ketepatan, dan kenyamanan pasien.' }}</p>
                 </div>
+                
                 <div>
-                    <h4 class="font-bold text-slate-800 mb-4">Layanan</h4>
-                    <ul class="space-y-2 text-sm text-slate-500">
+                    <h4 class="font-black text-slate-900 mb-6 text-lg">Layanan Utama</h4>
+                    <ul class="space-y-4 text-sm text-slate-500 font-medium">
                         @foreach($layanan->take(4) as $poli)
-                        <li><a href="#" class="hover:text-primary">{{ $poli->nama_poli }}</a></li>
+                        <li><a href="#" class="hover:text-emerald-600 transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-200"></span> {{ $poli->nama_poli }}</a></li>
                         @endforeach
                     </ul>
                 </div>
+                
                 <div>
-                    <h4 class="font-bold text-slate-800 mb-4">Kontak</h4>
-                    <ul class="space-y-2 text-sm text-slate-500">
-                        <li>{{ $pengaturan['app_phone'] ?? '-' }}</li>
-                        <li>{{ $pengaturan['app_email'] ?? '-' }}</li>
-                        <li>{{ $pengaturan['app_address'] ?? '-' }}</li>
+                    <h4 class="font-black text-slate-900 mb-6 text-lg">Tautan Cepat</h4>
+                    <ul class="space-y-4 text-sm text-slate-500 font-medium">
+                        <li><a href="#jadwal" class="hover:text-emerald-600 transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-200"></span> Jadwal Dokter</a></li>
+                        <li><a href="#alur" class="hover:text-emerald-600 transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-200"></span> Alur Pendaftaran</a></li>
+                        <li><a href="#faq" class="hover:text-emerald-600 transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-200"></span> Bantuan (FAQ)</a></li>
+                        <li><a href="{{ route('login') }}" class="hover:text-emerald-600 transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-200"></span> Login Staf</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-black text-slate-900 mb-6 text-lg">Hubungi Kami</h4>
+                    <ul class="space-y-4 text-sm text-slate-500 font-medium">
+                        <li class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            <span>{{ $pengaturan['app_address'] ?? 'Jl. Kesehatan No. 1, Jakarta' }}</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 12.284 3 6V5z" /></svg>
+                            <span>{{ $pengaturan['app_phone'] ?? '(021) 123-4567' }}</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                            <span>{{ $pengaturan['app_email'] ?? 'info@satria.id' }}</span>
+                        </li>
                     </ul>
                 </div>
             </div>
-            <div class="pt-8 border-t border-slate-200 text-center text-xs font-bold text-slate-400 uppercase tracking-widest">
-                &copy; {{ date('Y') }} {{ $pengaturan['footer_text'] ?? 'System' }}
+            
+            <div class="pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                    &copy; {{ date('Y') }} {{ $pengaturan['footer_text'] ?? 'System' }}. All rights reserved.
+                </p>
+                <div class="flex items-center gap-6">
+                    <a href="#" class="text-slate-400 hover:text-emerald-600 transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg></a>
+                    <a href="#" class="text-slate-400 hover:text-emerald-600 transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.072 3.269.153 5.023 1.916 5.176 5.194.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.892 5.011-5.122 5.176-1.265.058-1.644.069-4.849.069-3.204 0-3.584-.012-4.849-.069-3.229-.149-5.011-1.892-5.176-5.122-.058-1.265-.069-1.644-.069-4.849 0-3.204.012-3.584.069-4.849.153-3.269 1.916-5.023 5.194-5.176 1.265-.058 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+                </div>
             </div>
         </div>
     </footer>
     @endif
-
-
 
 </body>
 </html>
