@@ -86,6 +86,16 @@ class Dashboard extends Component
                 ->with('user')
                 ->orderByRaw('DAY(tanggal_lahir)')
                 ->get();
+
+            // Statistik Pelatihan (NEW)
+            $dataTab['statistikDiklat'] = \App\Models\Diklat::whereYear('tanggal_mulai', $now->year)
+                ->select('status', DB::raw('count(*) as total'))
+                ->groupBy('status')
+                ->get();
+            
+            // Turnover Rate (Simulasi/NEW)
+            $pegawaiKeluar = \App\Models\PengajuanBerhenti::whereYear('tanggal_berhenti', $now->year)->count();
+            $dataTab['turnoverRate'] = $totalPegawai > 0 ? ($pegawaiKeluar / $totalPegawai) * 100 : 0;
         }
 
         // === TAB 2: PRESENSI & JADWAL ===
