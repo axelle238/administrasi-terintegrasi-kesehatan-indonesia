@@ -41,7 +41,7 @@
     
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Program & Surveilans</div>
     <x-nav.link-child :href="route('medical.penyakit.index')" :active="request()->routeIs('medical.penyakit.*')">Surveilans P2P (Penyakit)</x-nav.link-child>
-    <x-nav.link-child :href="route('ukm.kegiatan.index')" :active="request()->routeIs('ukm.kegiatan.*')">Kegiatan UKM Luar Gedung</x-nav.link-child>
+    <x-nav.link-child :href="route('ukm.index')" :active="request()->routeIs('ukm.index') || request()->routeIs('ukm.create') || request()->routeIs('ukm.edit')">Kegiatan UKM Luar Gedung</x-nav.link-child>
     
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Data Kependudukan</div>
     <x-nav.link-child :href="route('masyarakat.index')" :active="request()->routeIs('masyarakat.*')">Basis Data Masyarakat</x-nav.link-child>
