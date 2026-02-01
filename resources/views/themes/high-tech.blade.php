@@ -89,7 +89,7 @@
           },
           onScroll() {
               this.scrolled = window.scrollY > 40;
-              const sections = ['beranda', 'alur', 'jadwal', 'layanan'];
+              const sections = ['beranda', 'alur', 'tarif', 'jadwal', 'layanan'];
               for (const id of sections) {
                   const el = document.getElementById(id);
                   if (el) {
@@ -196,6 +196,13 @@
                     <a href="{{ route('alur-pelayanan.index') }}" 
                        class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden decoration-0 text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-white/60 cursor-pointer">
                         <span class="relative z-10">Alur</span>
+                    </a>
+
+                    <a href="#tarif" 
+                       @click.prevent="scrollTo('tarif')"
+                       class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden decoration-0 cursor-pointer"
+                       :class="activeSection === 'tarif' ? 'text-primary bg-white dark:bg-slate-700 shadow-md ring-1 ring-slate-100 dark:ring-slate-600' : 'text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-white/60'">
+                        <span class="relative z-10">Tarif</span>
                     </a>
 
                     <a href="#jadwal" 
@@ -705,6 +712,41 @@
                     @endif
                 </div>
                 @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
+
+    <!-- TARIF LAYANAN (NEW SECTION) -->
+    @if(isset($hargaLayanan) && count($hargaLayanan) > 0)
+    <section id="tarif" class="py-24 bg-white relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16">
+                <span class="text-blue-600 font-black tracking-widest uppercase text-xs mb-2 block">Transparansi Biaya</span>
+                <h2 class="text-3xl md:text-5xl font-black text-slate-900 mb-6">Tarif Layanan Unggulan</h2>
+                <p class="text-slate-500 max-w-2xl mx-auto text-lg font-medium">Informasi estimasi biaya layanan untuk kenyamanan perencanaan kesehatan Anda.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                @foreach($hargaLayanan as $tarif)
+                <div class="group p-8 rounded-[2.5rem] bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-2xl hover:border-blue-200 transition-all duration-500">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-blue-600 shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-colors duration-500">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                        </div>
+                        <span class="px-3 py-1 bg-white text-slate-400 text-[10px] font-black uppercase rounded-lg border border-slate-100">Estimasi</span>
+                    </div>
+                    <h3 class="text-lg font-black text-slate-800 mb-2 group-hover:text-blue-600 transition-colors">{{ $tarif->nama_tindakan }}</h3>
+                    <div class="text-3xl font-black text-slate-900 mt-4">
+                        <span class="text-sm font-bold text-slate-400">Rp</span> {{ number_format($tarif->harga, 0, ',', '.') }}
+                    </div>
+                    <p class="text-xs text-slate-400 font-bold uppercase mt-6 tracking-widest">{{ $tarif->poli->nama_poli ?? 'Layanan Umum' }}</p>
+                </div>
+                @endforeach
+            </div>
+            
+            <div class="mt-16 text-center">
+                <p class="text-sm text-slate-400 font-medium">* Tarif dapat berubah sewaktu-waktu sesuai dengan kebijakan dan kondisi medis pasien.</p>
             </div>
         </div>
     </section>
