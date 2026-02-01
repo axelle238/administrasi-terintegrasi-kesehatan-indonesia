@@ -151,8 +151,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/system/cms', \App\Livewire\System\Cms\Index::class)->name('system.cms.index'); // New CMS Route
         Route::get('/system/surat-templates', \App\Livewire\Surat\Template\Index::class)->name('system.surat-template.index');
         Route::get('/system/tindakan', \App\Livewire\System\Tindakan\Index::class)->name('system.tindakan.index');
-        Route::get('/system/alur-pelayanan', \App\Livewire\System\Alur\Index::class)->name('system.alur.index'); // New
-        Route::get('/system/harga-layanan', \App\Livewire\System\Harga\Index::class)->name('system.harga.index'); // New
+        Route::get('/system/alur-pelayanan', \App\Livewire\System\Alur\Index::class)->name('system.alur.index');
+        Route::get('/system/jenis-pelayanan', \App\Livewire\System\JenisPelayanan\Index::class)->name('system.jenis-pelayanan.index'); // New Route
+        Route::get('/system/harga-layanan', \App\Livewire\System\Harga\Index::class)->name('system.harga.index');
         // Route::get('/hrd/dashboard', ...) -> Sudah dipindah ke group HRD
         
         // Manajemen Gaji Admin (Proses Gaji)

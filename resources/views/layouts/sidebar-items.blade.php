@@ -19,6 +19,7 @@
     <x-nav.link-child :href="route('admin.berita.index')" :active="request()->routeIs('admin.berita.*')">Berita & Artikel</x-nav.link-child>
 
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Layanan Publik</div>
+    <x-nav.link-child :href="route('system.jenis-pelayanan.index')" :active="request()->routeIs('system.jenis-pelayanan.*')">Jenis Pelayanan</x-nav.link-child>
     <x-nav.link-child :href="route('system.alur.index')" :active="request()->routeIs('system.alur.*')">Alur Pelayanan</x-nav.link-child>
     <x-nav.link-child :href="route('system.harga.index')" :active="request()->routeIs('system.harga.*')">Harga Pelayanan/Tindakan</x-nav.link-child>
     
