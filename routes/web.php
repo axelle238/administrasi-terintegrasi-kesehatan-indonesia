@@ -44,6 +44,10 @@ Route::get('/', function () {
 
     // 4. Data Dinamis
     $layanan = Poli::all();
+    // NEW: Load Alur & Harga
+    $alurPelayanan = \App\Models\AlurPelayanan::where('is_active', true)->orderBy('urutan')->get();
+    $hargaLayanan = \App\Models\Tindakan::where('is_active', true)->whereNotNull('harga')->inRandomOrder()->limit(6)->get();
+
     $jadwalHariIni = JadwalJaga::with(['pegawai.user', 'shift'])
         ->whereDate('tanggal', Carbon::today())
         ->get();
@@ -68,7 +72,7 @@ Route::get('/', function () {
         $view = 'themes.high-tech'; // Fallback
     }
 
-    return view($view, compact('pengaturan', 'layanan', 'jadwalHariIni', 'beritaTerbaru', 'fasilitas', 'stats'));
+    return view($view, compact('pengaturan', 'layanan', 'jadwalHariIni', 'beritaTerbaru', 'fasilitas', 'stats', 'alurPelayanan', 'hargaLayanan'));
 });
 
 Route::get('/dashboard', \App\Livewire\Dashboard::class)->middleware(['auth', 'verified'])->name('dashboard');
@@ -143,6 +147,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/system/integrations', \App\Livewire\System\Integration\Index::class)->name('system.integration.index');
         Route::get('/system/surat-templates', \App\Livewire\Surat\Template\Index::class)->name('system.surat-template.index');
         Route::get('/system/tindakan', \App\Livewire\System\Tindakan\Index::class)->name('system.tindakan.index');
+        Route::get('/system/alur-pelayanan', \App\Livewire\System\Alur\Index::class)->name('system.alur.index'); // New
+        Route::get('/system/harga-layanan', \App\Livewire\System\Harga\Index::class)->name('system.harga.index'); // New
         // Route::get('/hrd/dashboard', ...) -> Sudah dipindah ke group HRD
         
         // Manajemen Gaji Admin (Proses Gaji)

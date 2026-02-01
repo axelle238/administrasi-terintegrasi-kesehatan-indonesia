@@ -88,7 +88,7 @@
 
                 <!-- Menu -->
                 <div class="flex items-center gap-8">
-                    @foreach(['Beranda', 'Layanan', 'Jadwal', 'Fasilitas', 'Berita'] as $item)
+                    @foreach(['Beranda', 'Alur', 'Layanan', 'Jadwal', 'Fasilitas', 'Berita'] as $item)
                         <a href="#{{ strtolower($item) }}" class="text-sm font-bold text-slate-500 hover:text-emerald-600 transition-colors">{{ $item }}</a>
                     @endforeach
                 </div>
@@ -201,6 +201,33 @@
         </div>
     </header>
 
+    <!-- ALUR PELAYANAN (NEW SECTION) -->
+    @if(isset($alurPelayanan) && count($alurPelayanan) > 0)
+    <section id="alur" class="py-16 bg-white relative">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-emerald-600 font-bold tracking-widest uppercase text-xs mb-2 block">Panduan</span>
+                <h2 class="text-3xl md:text-4xl font-black text-slate-900">Alur Pelayanan Mudah</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+                <!-- Connecting Line (Desktop) -->
+                <div class="hidden md:block absolute top-12 left-0 w-full h-1 bg-emerald-100 -z-10"></div>
+
+                @foreach($alurPelayanan as $index => $alur)
+                <div class="group relative bg-white p-6 rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/50 hover:-translate-y-2 transition-all duration-300">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-2xl font-black mb-6 shadow-lg shadow-emerald-500/30 mx-auto md:mx-0 relative z-10">
+                        {{ $index + 1 }}
+                    </div>
+                    <h3 class="font-bold text-xl text-slate-800 mb-2 text-center md:text-left">{{ $alur->judul }}</h3>
+                    <p class="text-sm text-slate-500 text-center md:text-left leading-relaxed">{{ $alur->deskripsi }}</p>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
+
     <!-- QUICK MENU (COLORFUL GRID) -->
     <section class="py-8 px-6 lg:px-8 -mt-8 relative z-20">
         <div class="max-w-7xl mx-auto">
@@ -243,6 +270,34 @@
             </div>
         </div>
     </section>
+
+    <!-- HARGA LAYANAN (NEW SECTION) -->
+    @if(isset($hargaLayanan) && count($hargaLayanan) > 0)
+    <section class="py-16 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex justify-between items-end mb-10">
+                <h2 class="text-2xl md:text-3xl font-black text-slate-900">Tarif Layanan</h2>
+                <a href="#" class="text-sm font-bold text-emerald-600 hover:underline">Lihat Katalog Lengkap</a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($hargaLayanan as $harga)
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-all">
+                    <div>
+                        <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-wider mb-3 inline-block">{{ $harga->kategori }}</span>
+                        <h4 class="font-bold text-lg text-slate-800 mb-2">{{ $harga->nama_tindakan }}</h4>
+                        <p class="text-sm text-slate-500 line-clamp-2">{{ $harga->deskripsi ?? 'Layanan medis standar.' }}</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-dashed border-slate-100 flex justify-between items-center">
+                        <span class="text-xs font-bold text-slate-400 uppercase">Mulai Dari</span>
+                        <span class="text-xl font-black text-emerald-600">Rp {{ number_format($harga->harga, 0, ',', '.') }}</span>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
 
     <!-- JADWAL DOKTER -->
     @if(($pengaturan['show_jadwal_dokter'] ?? '1') == '1')

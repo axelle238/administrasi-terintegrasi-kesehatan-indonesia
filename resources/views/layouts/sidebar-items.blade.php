@@ -141,7 +141,9 @@
 
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Data Master</div>
     <x-nav.link-child :href="route('system.poli.index')" :active="request()->routeIs('system.poli.*')">Master Poli</x-nav.link-child>
-    <x-nav.link-child :href="route('system.tindakan.index')" :active="request()->routeIs('system.tindakan.*')">Master Tindakan</x-nav.link-child>
+    <x-nav.link-child :href="route('system.tindakan.index')" :active="request()->routeIs('system.tindakan.*')">Master Tindakan (Medis)</x-nav.link-child>
+    <x-nav.link-child :href="route('system.harga.index')" :active="request()->routeIs('system.harga.*')">Katalog Harga Publik</x-nav.link-child>
+    <x-nav.link-child :href="route('system.alur.index')" :active="request()->routeIs('system.alur.*')">Alur Pelayanan</x-nav.link-child>
 
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Utilitas & Developer</div>
     <x-nav.link-child :href="route('system.backup')" :active="request()->routeIs('system.backup')">Backup & Database</x-nav.link-child>
