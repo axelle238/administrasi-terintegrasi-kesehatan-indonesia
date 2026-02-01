@@ -80,10 +80,17 @@
                     {{ $slot }}
                     
                     <!-- Footer Info -->
-                    <div class="mt-12 py-6 border-t border-dashed border-slate-200 text-center">
+                    <div class="mt-12 py-6 border-t border-dashed border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                            {{ config('app.name') }} © {{ date('Y') }} • Enterprise Health System v2.0
+                            {{ config('app.name') }} © {{ date('Y') }} • Enterprise Health System v2.1 (Stable)
                         </p>
+                        <div class="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                            <span class="flex h-2 w-2 relative">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            </span>
+                            System Operational
+                        </div>
                     </div>
                 </main>
             </div>
