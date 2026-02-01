@@ -23,7 +23,7 @@
         <div class="lg:col-span-1">
             <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm sticky top-24">
                 
-                <!-- GPS Status -->
+                <!-- GPS Status & Distance -->
                 <div class="mb-6 p-4 rounded-xl border flex items-center justify-between" :class="gpsLocked ? 'bg-emerald-50 border-emerald-100' : 'bg-amber-50 border-amber-100'">
                     <div class="flex items-center gap-3">
                         <div class="p-2 rounded-full" :class="gpsLocked ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600 animate-pulse'">
@@ -34,18 +34,29 @@
                             <p class="text-[10px] font-mono mt-0.5" x-text="coordsText"></p>
                         </div>
                     </div>
+                    <div x-show="distance !== null" class="text-right">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Jarak ke Lokasi</p>
+                        <p class="text-lg font-black text-slate-800" :class="distance > 200 ? 'text-red-500' : 'text-emerald-600'" x-text="Math.round(distance) + ' m'"></p>
+                    </div>
                 </div>
 
                 <form wire:submit.prevent="save" class="space-y-5">
                     
+                    <!-- Status Kehadiran Toggle -->
+                    <div class="flex bg-slate-100 p-1 rounded-xl">
+                        <button type="button" @click="$wire.set('status_kehadiran', 'Hadir')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all" :class="$wire.status_kehadiran === 'Hadir' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'">Hadir</button>
+                        <button type="button" @click="$wire.set('status_kehadiran', 'Izin')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all" :class="$wire.status_kehadiran === 'Izin' ? 'bg-white text-amber-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'">Izin</button>
+                        <button type="button" @click="$wire.set('status_kehadiran', 'Sakit')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all" :class="$wire.status_kehadiran === 'Sakit' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'">Sakit</button>
+                    </div>
+
                     <!-- Jenis Upacara -->
                     <div>
                         <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Jenis Upacara</label>
                         <div class="relative">
-                            <select wire:model="jenis_upacara_id" class="w-full rounded-xl border-slate-200 text-sm font-bold text-slate-700 focus:border-blue-500 focus:ring-blue-500 py-3 pl-4 pr-10 appearance-none bg-slate-50 hover:bg-white transition-colors cursor-pointer">
+                            <select wire:model="jenis_upacara_id" x-model="selectedJenisId" class="w-full rounded-xl border-slate-200 text-sm font-bold text-slate-700 focus:border-blue-500 focus:ring-blue-500 py-3 pl-4 pr-10 appearance-none bg-slate-50 hover:bg-white transition-colors cursor-pointer">
                                 <option value="">-- Pilih Jenis --</option>
                                 @foreach($jenisUpacaraList as $jenis)
-                                    <option value="{{ $jenis->id }}">{{ $jenis->nama_upacara }} ({{ $jenis->kategori }})</option>
+                                    <option value="{{ $jenis->id }}" data-lat="{{ $jenis->target_latitude }}" data-long="{{ $jenis->target_longitude }}">{{ $jenis->nama_upacara }} ({{ $jenis->kategori }})</option>
                                 @endforeach
                             </select>
                             <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-slate-400">
@@ -55,49 +66,76 @@
                         @error('jenis_upacara_id') <span class="text-[10px] text-red-500 font-bold mt-1">{{ $message }}</span> @enderror
                     </div>
 
-                    <!-- CAMERA VIEWPORT -->
-                    <div class="relative rounded-2xl overflow-hidden bg-black aspect-[3/4] shadow-inner group">
-                        
-                        <!-- Video Feed -->
-                        <video x-ref="video" class="absolute inset-0 w-full h-full object-cover" autoplay playsinline muted x-show="!photoTaken"></video>
-                        
-                        <!-- Captured Photo Preview -->
-                        <img x-ref="photoPreview" class="absolute inset-0 w-full h-full object-cover" x-show="photoTaken">
+                    <!-- MODE HADIR: KAMERA -->
+                    <div x-show="$wire.status_kehadiran === 'Hadir'" x-transition>
+                        <div class="relative rounded-2xl overflow-hidden bg-black aspect-[3/4] shadow-inner group">
+                            <!-- Video Feed -->
+                            <video x-ref="video" class="absolute inset-0 w-full h-full object-cover" autoplay playsinline muted x-show="!photoTaken"></video>
+                            
+                            <!-- Captured Photo Preview -->
+                            <img x-ref="photoPreview" class="absolute inset-0 w-full h-full object-cover" x-show="photoTaken">
 
-                        <!-- Overlay Info (Watermark Simulation for UI) -->
-                        <div class="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/80 to-transparent text-white">
-                            <p class="text-xl font-black font-mono tracking-tight" x-text="clock"></p>
-                            <p class="text-[10px] font-mono opacity-80 truncate" x-text="coordsText"></p>
+                            <!-- Overlay Info -->
+                            <div class="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/80 to-transparent text-white">
+                                <p class="text-xl font-black font-mono tracking-tight" x-text="clock"></p>
+                                <p class="text-[10px] font-mono opacity-80 truncate" x-text="coordsText"></p>
+                            </div>
+
+                            <!-- Loading Camera -->
+                            <div class="absolute inset-0 flex items-center justify-center bg-slate-900 text-white z-20" x-show="loadingCamera">
+                                <div class="flex flex-col items-center gap-3">
+                                    <svg class="w-8 h-8 animate-spin text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                    <span class="text-xs font-bold uppercase tracking-widest">Memuat Kamera</span>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Loading Camera -->
-                        <div class="absolute inset-0 flex items-center justify-center bg-slate-900 text-white z-20" x-show="loadingCamera">
-                            <div class="flex flex-col items-center gap-3">
-                                <svg class="w-8 h-8 animate-spin text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                                <span class="text-xs font-bold uppercase tracking-widest">Memuat Kamera</span>
-                            </div>
+                        <!-- Action Buttons -->
+                        <div class="grid grid-cols-2 gap-3 mt-4">
+                            <button type="button" @click="takePhoto" x-show="!photoTaken" :disabled="!gpsLocked" class="col-span-2 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold uppercase tracking-wider shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                Ambil Presensi
+                            </button>
+
+                            <button type="button" @click="resetCamera" x-show="photoTaken" class="py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold uppercase tracking-wider transition-all">
+                                Ulangi Foto
+                            </button>
+
+                            <button type="submit" x-show="photoTaken" class="py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2">
+                                <span wire:loading.remove wire:target="save">Kirim Data</span>
+                                <span wire:loading wire:target="save">Mengirim...</span>
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Action Buttons -->
-                    <div class="grid grid-cols-2 gap-3">
-                        <button type="button" @click="takePhoto" x-show="!photoTaken" :disabled="!gpsLocked" class="col-span-2 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold uppercase tracking-wider shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                            Ambil Presensi
-                        </button>
-
-                        <button type="button" @click="resetCamera" x-show="photoTaken" class="py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold uppercase tracking-wider transition-all">
-                            Ulangi Foto
-                        </button>
-
-                        <button type="submit" x-show="photoTaken" class="py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2">
-                            <span wire:loading.remove wire:target="save">Kirim Data</span>
-                            <span wire:loading wire:target="save">Mengirim...</span>
-                        </button>
+                    <!-- MODE IZIN/SAKIT: UPLOAD FILE -->
+                    <div x-show="$wire.status_kehadiran !== 'Hadir'" x-transition>
+                        <div class="flex items-center justify-center w-full">
+                            <label for="file-upload" class="flex flex-col items-center justify-center w-full h-48 border-2 border-slate-300 border-dashed rounded-2xl cursor-pointer bg-slate-50 hover:bg-blue-50 transition-all group">
+                                @if ($bukti_foto && !is_string($bukti_foto))
+                                    <div class="text-center p-4">
+                                        <p class="text-sm font-bold text-emerald-600">File Terpilih:</p>
+                                        <p class="text-xs text-slate-500 truncate max-w-[200px]">{{ $bukti_foto->getClientOriginalName() }}</p>
+                                    </div>
+                                @else
+                                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                        <svg class="w-10 h-10 mb-3 text-slate-400 group-hover:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                        <p class="text-xs text-slate-500"><span class="font-bold">Upload Surat Keterangan</span></p>
+                                        <p class="text-[10px] text-slate-400 mt-1">PDF / JPG (Max 2MB)</p>
+                                    </div>
+                                @endif
+                                <input id="file-upload" type="file" wire:model="bukti_foto" class="hidden" accept=".pdf,image/*" />
+                            </label>
+                        </div>
+                        <div class="mt-4">
+                            <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold uppercase tracking-wider shadow-lg shadow-blue-600/20 transition-all">
+                                Ajukan Izin / Sakit
+                            </button>
+                        </div>
                     </div>
                     
                     @error('bukti_foto') <span class="text-[10px] text-red-500 font-bold mt-1 block text-center">{{ $message }}</span> @enderror
-                    @error('latitude') <span class="text-[10px] text-red-500 font-bold mt-1 block text-center">Data Lokasi Wajib Ada.</span> @enderror
+                    @error('latitude') <span class="text-[10px] text-red-500 font-bold mt-1 block text-center">{{ $message }}</span> @enderror
 
                     <!-- Keterangan -->
                     <div>
@@ -183,6 +221,10 @@
             clock: '00:00:00',
             latitude: null,
             longitude: null,
+            selectedJenisId: '',
+            targetLat: null,
+            targetLong: null,
+            distance: null,
 
             init() {
                 this.startCamera();
@@ -191,6 +233,20 @@
                 
                 Livewire.on('presensi-saved', () => {
                     this.resetCamera();
+                });
+
+                // Watch Selection Change for Target Coords
+                this.$watch('selectedJenisId', value => {
+                    const option = document.querySelector(`option[value="${value}"]`);
+                    if(option && option.dataset.lat) {
+                        this.targetLat = parseFloat(option.dataset.lat);
+                        this.targetLong = parseFloat(option.dataset.long);
+                        this.calculateDistance();
+                    } else {
+                        this.targetLat = null;
+                        this.targetLong = null;
+                        this.distance = null;
+                    }
                 });
             },
 
@@ -204,7 +260,7 @@
                     this.loadingCamera = false;
                 } catch (error) {
                     console.error("Camera Error:", error);
-                    alert("Gagal mengakses kamera. Pastikan izin diberikan.");
+                    // Silent fail if needed, or show UI placeholder
                     this.loadingCamera = false;
                 }
             },
@@ -220,6 +276,8 @@
                         // Sync to Livewire
                         @this.set('latitude', this.latitude);
                         @this.set('longitude', this.longitude);
+                        
+                        this.calculateDistance();
                     }, (error) => {
                         this.coordsText = "Gagal mendapatkan lokasi.";
                         console.error("GPS Error:", error);
@@ -230,6 +288,23 @@
                     });
                 } else {
                     this.coordsText = "GPS tidak didukung.";
+                }
+            },
+
+            calculateDistance() {
+                if (this.latitude && this.longitude && this.targetLat && this.targetLong) {
+                    const R = 6371e3; // metres
+                    const φ1 = this.latitude * Math.PI/180; // φ, λ in radians
+                    const φ2 = this.targetLat * Math.PI/180;
+                    const Δφ = (this.targetLat - this.latitude) * Math.PI/180;
+                    const Δλ = (this.targetLong - this.longitude) * Math.PI/180;
+
+                    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                            Math.cos(φ1) * Math.cos(φ2) *
+                            Math.sin(Δλ/2) * Math.sin(Δλ/2);
+                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+                    this.distance = R * c; // in metres
                 }
             },
 
