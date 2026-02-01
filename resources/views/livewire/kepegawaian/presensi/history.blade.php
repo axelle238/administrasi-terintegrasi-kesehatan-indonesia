@@ -264,42 +264,62 @@
                     <!-- Kolom Kanan: Input & Timeline Laporan -->
                     <div class="lg:col-span-7 space-y-6">
                         
-                        <!-- FORM INPUT AKTIVITAS (Inline) -->
+                        <!-- FORM INPUT AKTIVITAS (Multi-Row / Batch) -->
                         @if($selectedItem && !in_array($selectedItem['status'], ['Libur', 'Cuti', 'Future', 'Akhir Pekan']))
                             <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-                                <h4 class="font-black text-slate-800 text-sm uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Input Aktivitas Baru</h4>
+                                <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-2">
+                                    <h4 class="font-black text-slate-800 text-sm uppercase tracking-wider">Input Aktivitas Harian</h4>
+                                    <button wire:click="addActivityRow" class="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded-lg transition-colors">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                                        Tambah Baris
+                                    </button>
+                                </div>
                                 
-                                <form wire:submit.prevent="saveActivity" class="space-y-4">
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Mulai</label>
-                                            <input type="time" wire:model="inputForm.jam_mulai" class="w-full rounded-xl border-slate-200 text-sm font-bold focus:border-blue-500 focus:ring-blue-500">
-                                            @error('inputForm.jam_mulai') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
-                                        </div>
-                                        <div>
-                                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Selesai</label>
-                                            <input type="time" wire:model="inputForm.jam_selesai" class="w-full rounded-xl border-slate-200 text-sm font-bold focus:border-blue-500 focus:ring-blue-500">
-                                            @error('inputForm.jam_selesai') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
-                                        </div>
-                                    </div>
-                                    
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Kegiatan</label>
-                                        <textarea wire:model="inputForm.kegiatan" rows="2" placeholder="Deskripsikan aktivitas..." class="w-full rounded-xl border-slate-200 text-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
-                                        @error('inputForm.kegiatan') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
-                                    </div>
+                                <form wire:submit.prevent="saveAllActivities" class="space-y-4">
+                                    @foreach($activityRows as $index => $row)
+                                    <div class="relative p-4 bg-slate-50 rounded-xl border border-slate-200 group transition-all hover:shadow-sm">
+                                        <!-- Remove Row Button -->
+                                        @if(count($activityRows) > 1)
+                                            <button type="button" wire:click="removeActivityRow({{ $index }})" class="absolute -top-2 -right-2 bg-white text-red-400 hover:text-red-600 p-1 rounded-full shadow-sm border border-slate-200 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                            </button>
+                                        @endif
 
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Output / Hasil</label>
-                                        <input type="text" wire:model="inputForm.output" placeholder="Contoh: Dokumen selesai, Rapat dihadiri" class="w-full rounded-xl border-slate-200 text-sm focus:border-blue-500 focus:ring-blue-500">
-                                        @error('inputForm.output') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                                        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-start">
+                                            <!-- Waktu -->
+                                            <div class="md:col-span-3 grid grid-cols-2 md:grid-cols-1 gap-2">
+                                                <div>
+                                                    <label class="block text-[9px] font-bold text-slate-400 uppercase mb-0.5">Mulai</label>
+                                                    <input type="time" wire:model="activityRows.{{ $index }}.jam_mulai" class="w-full rounded-lg border-slate-200 text-xs font-bold focus:border-blue-500 focus:ring-blue-500 py-1.5">
+                                                    @error("activityRows.{$index}.jam_mulai") <span class="text-[9px] text-red-500 block">{{ $message }}</span> @enderror
+                                                </div>
+                                                <div>
+                                                    <label class="block text-[9px] font-bold text-slate-400 uppercase mb-0.5">Selesai</label>
+                                                    <input type="time" wire:model="activityRows.{{ $index }}.jam_selesai" class="w-full rounded-lg border-slate-200 text-xs font-bold focus:border-blue-500 focus:ring-blue-500 py-1.5">
+                                                    @error("activityRows.{$index}.jam_selesai") <span class="text-[9px] text-red-500 block">{{ $message }}</span> @enderror
+                                                </div>
+                                            </div>
+
+                                            <!-- Detail -->
+                                            <div class="md:col-span-9 space-y-2">
+                                                <div>
+                                                    <input type="text" wire:model="activityRows.{{ $index }}.kegiatan" placeholder="Nama Kegiatan / Aktivitas..." class="w-full rounded-lg border-slate-200 text-xs font-medium focus:border-blue-500 focus:ring-blue-500 py-1.5 px-3">
+                                                    @error("activityRows.{$index}.kegiatan") <span class="text-[9px] text-red-500 block">{{ $message }}</span> @enderror
+                                                </div>
+                                                <div>
+                                                    <input type="text" wire:model="activityRows.{{ $index }}.output" placeholder="Output / Hasil Kerja..." class="w-full rounded-lg border-slate-200 text-xs text-slate-500 focus:border-blue-500 focus:ring-blue-500 py-1.5 px-3 bg-white">
+                                                    @error("activityRows.{$index}.output") <span class="text-[9px] text-red-500 block">{{ $message }}</span> @enderror
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
+                                    @endforeach
 
                                     <div class="flex justify-end pt-2">
-                                        <button type="submit" class="bg-slate-800 text-white px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-700 transition-all flex items-center gap-2">
-                                            <span wire:loading.remove wire:target="saveActivity">Simpan Aktivitas</span>
-                                            <span wire:loading wire:target="saveActivity">Menyimpan...</span>
-                                            <svg wire:loading.remove wire:target="saveActivity" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                                        <button type="submit" class="bg-slate-800 text-white px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-700 transition-all flex items-center gap-2 shadow-lg shadow-slate-800/20">
+                                            <span wire:loading.remove wire:target="saveAllActivities">Simpan Semua ({{ count($activityRows) }})</span>
+                                            <span wire:loading wire:target="saveAllActivities">Menyimpan...</span>
+                                            <svg wire:loading.remove wire:target="saveAllActivities" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
                                         </button>
                                     </div>
                                 </form>

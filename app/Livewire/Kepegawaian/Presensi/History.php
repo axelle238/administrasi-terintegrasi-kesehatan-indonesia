@@ -16,25 +16,55 @@ class History extends Component
     public $tahun;
     public $selectedDate = null;
     
-    // Form Input Inline
-    public $inputForm = [
-        'jam_mulai' => '',
-        'jam_selesai' => '',
-        'kegiatan' => '',
-        'output' => '',
-    ];
+    // Multi-Row Input Form
+    public $activityRows = [];
 
     public function mount()
     {
         $this->bulan = Carbon::now()->month;
         $this->tahun = Carbon::now()->year;
-        $this->setDefaultTime();
+        // Inisialisasi satu baris default saat load
+        $this->resetRows(); 
     }
     
-    private function setDefaultTime()
+    public function resetRows()
     {
-        $this->inputForm['jam_mulai'] = Carbon::now()->format('H:i');
-        $this->inputForm['jam_selesai'] = Carbon::now()->addHour()->format('H:i');
+        $this->activityRows = [
+            [
+                'jam_mulai' => Carbon::now()->format('H:i'),
+                'jam_selesai' => Carbon::now()->addHour()->format('H:i'),
+                'kegiatan' => '',
+                'output' => '',
+            ]
+        ];
+    }
+
+    public function addActivityRow()
+    {
+        // Ambil baris terakhir untuk referensi waktu
+        $lastRow = end($this->activityRows);
+        
+        $startTime = isset($lastRow['jam_selesai']) && $lastRow['jam_selesai'] 
+            ? $lastRow['jam_selesai'] 
+            : Carbon::now()->format('H:i');
+            
+        $endTime = Carbon::parse($startTime)->addHour()->format('H:i');
+
+        $this->activityRows[] = [
+            'jam_mulai' => $startTime,
+            'jam_selesai' => $endTime,
+            'kegiatan' => '',
+            'output' => '',
+        ];
+    }
+
+    public function removeActivityRow($index)
+    {
+        // Cegah hapus semua, sisakan minimal 1
+        if (count($this->activityRows) > 1) {
+            unset($this->activityRows[$index]);
+            $this->activityRows = array_values($this->activityRows); // Re-index array
+        }
     }
 
     // Navigasi Bulan Modern
@@ -57,22 +87,21 @@ class History extends Component
     public function selectDate($date)
     {
         $this->selectedDate = $date;
-        $this->setDefaultTime();
-        // Reset validasi jika ada
+        $this->resetRows();
         $this->resetValidation();
     }
 
-    public function saveActivity()
+    public function saveAllActivities()
     {
         $this->validate([
-            'inputForm.jam_mulai' => 'required',
-            'inputForm.jam_selesai' => 'required|after:inputForm.jam_mulai',
-            'inputForm.kegiatan' => 'required|min:5',
-            'inputForm.output' => 'required',
+            'activityRows.*.jam_mulai' => 'required',
+            'activityRows.*.jam_selesai' => 'required|after:activityRows.*.jam_mulai',
+            'activityRows.*.kegiatan' => 'required|min:3',
+            'activityRows.*.output' => 'required',
         ], [
-            'inputForm.jam_selesai.after' => 'Jam selesai harus lebih akhir dari jam mulai.',
-            'inputForm.kegiatan.required' => 'Kegiatan wajib diisi.',
-            'inputForm.output.required' => 'Output/Hasil wajib diisi.'
+            'activityRows.*.jam_selesai.after' => 'Jam selesai harus > jam mulai.',
+            'activityRows.*.kegiatan.required' => 'Kegiatan wajib diisi.',
+            'activityRows.*.output.required' => 'Output wajib diisi.'
         ]);
 
         $userId = Auth::id();
@@ -84,32 +113,29 @@ class History extends Component
                 'tanggal' => $this->selectedDate
             ],
             [
-                'status' => 'Draft', // Default status
+                'status' => 'Draft',
                 'waktu_verifikasi' => null
             ]
         );
 
-        // 2. Hitung Durasi (Menit)
-        $start = Carbon::parse($this->inputForm['jam_mulai']);
-        $end = Carbon::parse($this->inputForm['jam_selesai']);
-        $durasi = $end->diffInMinutes($start);
+        // 2. Loop Save
+        foreach ($this->activityRows as $row) {
+            $start = Carbon::parse($row['jam_mulai']);
+            $end = Carbon::parse($row['jam_selesai']);
+            $durasi = $end->diffInMinutes($start);
 
-        // 3. Simpan Detail
-        $laporan->details()->create([
-            'jam_mulai' => $this->inputForm['jam_mulai'],
-            'jam_selesai' => $this->inputForm['jam_selesai'],
-            'kegiatan' => $this->inputForm['kegiatan'],
-            'output' => $this->inputForm['output'],
-            'durasi' => $durasi,
-        ]);
+            $laporan->details()->create([
+                'jam_mulai' => $row['jam_mulai'],
+                'jam_selesai' => $row['jam_selesai'],
+                'kegiatan' => $row['kegiatan'],
+                'output' => $row['output'],
+                'durasi' => $durasi,
+            ]);
+        }
 
-        // 4. Reset Form & Notif
-        $this->inputForm['kegiatan'] = '';
-        $this->inputForm['output'] = '';
-        $this->setDefaultTime(); // Reset jam ke default/current
-        
-        // Optional: Kirim notifikasi flash/toast jika ada komponen toast
-        session()->flash('success', 'Aktivitas berhasil ditambahkan.');
+        // 3. Reset
+        $this->resetRows();
+        session()->flash('success', count($this->activityRows) . ' aktivitas berhasil ditambahkan.');
     }
 
     public function deleteActivity($detailId)
