@@ -97,6 +97,14 @@ Route::middleware('auth')->group(function () {
              $gaji = \App\Models\Penggajian::where('user_id', auth()->id())->findOrFail($id);
              return view('print.slip-gaji', compact('gaji'));
         })->name('gaji.print');
+        
+        // HRIS Advanced Features (New)
+        Route::get('/kredensial', \App\Livewire\Kepegawaian\Kredensial\Index::class)->name('kredensial.index');
+        Route::get('/diklat', \App\Livewire\Kepegawaian\Diklat\Index::class)->name('diklat.index');
+        Route::get('/mutasi-jabatan', \App\Livewire\Kepegawaian\Mutasi\Index::class)->name('mutasi.index');
+        Route::get('/inventaris-pegawai', \App\Livewire\Kepegawaian\Aset\Index::class)->name('aset-pegawai.index');
+        Route::get('/kinerja-kpi', \App\Livewire\Kepegawaian\Kinerja\Assessment::class)->name('kinerja.assessment');
+        Route::get('/offboarding', \App\Livewire\Kepegawaian\Offboarding\Index::class)->name('offboarding.index');
     });
 
     Route::get('/notifications', \App\Livewire\System\Notification\Index::class)->name('system.notification.index');

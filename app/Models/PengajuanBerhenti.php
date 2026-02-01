@@ -5,16 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PerjalananDinas extends Model
+class PengajuanBerhenti extends Model
 {
     use HasFactory;
 
-    protected $table = 'perjalanan_dinas';
     protected $guarded = ['id'];
 
     protected $casts = [
-        'tanggal_berangkat' => 'date',
-        'tanggal_kembali' => 'date',
+        'tanggal_pengajuan' => 'date',
+        'tanggal_efektif_keluar' => 'date',
     ];
 
     public function pegawai()

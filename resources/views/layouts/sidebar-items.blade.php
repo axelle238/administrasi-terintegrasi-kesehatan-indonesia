@@ -51,25 +51,32 @@
 
     <!-- GROUP 2: CORE DATA -->
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Database & Arsip</div>
-    <x-nav.link-child :href="route('pegawai.index')" :active="request()->routeIs('pegawai.*')">Database Pegawai</x-nav.link-child>
-    <x-nav.link-child href="#" onclick="alert('Modul Arsip Digital & Riwayat Jabatan dalam pengembangan tahap selanjutnya.')" :active="false">Arsip & Dokumen</x-nav.link-child>
-    <x-nav.link-child href="#" onclick="alert('Modul Kredensial (STR/SIP) dalam pengembangan tahap selanjutnya.')" :active="false">Monitoring Kredensial</x-nav.link-child>
+    <x-nav.link-child :href="route('pegawai.index')" :active="request()->routeIs('pegawai.index') || request()->routeIs('pegawai.create')">Database Pegawai</x-nav.link-child>
+    <x-nav.link-child :href="route('pegawai.index')" :active="request()->routeIs('pegawai.show')">Dossier & Arsip Digital</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.kredensial.index')" :active="request()->routeIs('kepegawaian.kredensial.index')">Monitoring Kredensial (STR/SIP)</x-nav.link-child>
 
     <!-- GROUP 3: OPERASIONAL -->
-    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Operasional Harian</div>
-    <x-nav.link-child :href="route('shift.index')" :active="request()->routeIs('shift.*')">Master Shift Kerja</x-nav.link-child>
-    <x-nav.link-child :href="route('jadwal-jaga.index')" :active="request()->routeIs('jadwal-jaga.*')">Ploting Jadwal Dinas</x-nav.link-child>
-    <x-nav.link-child :href="route('hrd.presensi.index')" :active="request()->routeIs('hrd.presensi.*')">Monitoring Presensi</x-nav.link-child>
+    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Manajemen Waktu</div>
+    <x-nav.link-child :href="route('shift.index')" :active="request()->routeIs('shift.*')">Master Shift & Pola</x-nav.link-child>
+    <x-nav.link-child :href="route('jadwal-jaga.index')" :active="request()->routeIs('jadwal-jaga.*')">Jadwal Dinas (Roster)</x-nav.link-child>
+    <x-nav.link-child :href="route('hrd.presensi.index')" :active="request()->routeIs('hrd.presensi.*')">Log Presensi & Kehadiran</x-nav.link-child>
 
-    <!-- GROUP 4: VERIFIKASI -->
-    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Pusat Verifikasi</div>
+    <!-- GROUP 4: ASET & FASILITAS (NEW) -->
+    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Inventaris SDM</div>
+    <x-nav.link-child :href="route('aset-pegawai.index')" :active="request()->routeIs('aset-pegawai.index')">Fasilitas & Aset Pegawai</x-nav.link-child>
+
+    <!-- GROUP 5: KOMPENSASI -->
+    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Kompensasi & Benefit</div>
     <x-nav.link-child :href="route('hrd.cuti.index')" :active="request()->routeIs('hrd.cuti.*')">Approval Cuti</x-nav.link-child>
     <x-nav.link-child :href="route('hrd.lembur.index')" :active="request()->routeIs('hrd.lembur.*')">Approval Lembur</x-nav.link-child>
+    <x-nav.link-child :href="route('admin.gaji.index')" :active="request()->routeIs('admin.gaji.*')">Payroll & Penggajian</x-nav.link-child>
 
-    <!-- GROUP 5: COMPENSATION -->
-    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Payroll & Kinerja</div>
-    <x-nav.link-child :href="route('admin.gaji.index')" :active="request()->routeIs('admin.gaji.*') || request()->routeIs('kepegawaian.gaji.*')">Manajemen Penggajian</x-nav.link-child>
-    <x-nav.link-child :href="route('kepegawaian.kinerja.index')" :active="request()->routeIs('kepegawaian.kinerja.*')">Indikator Kinerja (KPI)</x-nav.link-child>
+    <!-- GROUP 6: TALENT -->
+    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Pengembangan Karir</div>
+    <x-nav.link-child :href="route('kinerja.assessment')" :active="request()->routeIs('kinerja.assessment')">Manajemen Kinerja (KPI)</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.diklat.index')" :active="request()->routeIs('kepegawaian.diklat.index')">Diklat & Pelatihan</x-nav.link-child>
+    <x-nav.link-child :href="route('mutasi.index')" :active="request()->routeIs('mutasi.index')">Mutasi & Promosi Jabatan</x-nav.link-child>
+    <x-nav.link-child :href="route('offboarding.index')" :active="request()->routeIs('offboarding.index')">Terminasi & Offboarding</x-nav.link-child>
 </x-nav.dropdown>
 @endif
 

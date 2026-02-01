@@ -5,20 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PerjalananDinas extends Model
+class AsetPegawai extends Model
 {
     use HasFactory;
 
-    protected $table = 'perjalanan_dinas';
     protected $guarded = ['id'];
 
     protected $casts = [
-        'tanggal_berangkat' => 'date',
+        'tanggal_terima' => 'date',
         'tanggal_kembali' => 'date',
     ];
 
     public function pegawai()
     {
         return $this->belongsTo(Pegawai::class);
+    }
+
+    public function barang()
+    {
+        return $this->belongsTo(Barang::class);
     }
 }

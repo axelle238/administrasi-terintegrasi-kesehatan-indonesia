@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Diklat extends Model
+class PeriodePenilaian extends Model
 {
     use HasFactory;
 
@@ -16,8 +16,8 @@ class Diklat extends Model
         'tanggal_selesai' => 'date',
     ];
 
-    public function pesertas()
+    public function penilaians()
     {
-        return $this->hasMany(DiklatPeserta::class);
+        return $this->hasMany(PenilaianPegawai::class, 'periode_id');
     }
 }

@@ -72,4 +72,44 @@ class Pegawai extends Model
     {
         return $this->belongsTo(Poli::class);
     }
+
+    /**
+     * Relasi: Riwayat Karir / Jabatan.
+     */
+    public function riwayatKarir()
+    {
+        return $this->hasMany(RiwayatJabatan::class)->orderByDesc('tanggal_efektif');
+    }
+
+    /**
+     * Relasi: Keluarga Pegawai (BPJS).
+     */
+    public function keluarga()
+    {
+        return $this->hasMany(KeluargaPegawai::class);
+    }
+
+    /**
+     * Relasi: Riwayat Pendidikan Formal.
+     */
+    public function pendidikan()
+    {
+        return $this->hasMany(RiwayatPendidikan::class)->orderByDesc('tahun_lulus');
+    }
+
+    /**
+     * Relasi: Catatan Pelanggaran & Sanksi.
+     */
+    public function pelanggaran()
+    {
+        return $this->hasMany(Pelanggaran::class)->orderByDesc('tanggal_kejadian');
+    }
+
+    /**
+     * Relasi: Aset / Inventaris yang dipegang pegawai.
+     */
+    public function aset()
+    {
+        return $this->hasMany(AsetPegawai::class)->where('status', 'Dipakai');
+    }
 }
