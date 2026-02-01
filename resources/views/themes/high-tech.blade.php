@@ -143,23 +143,126 @@
         </div>
     </nav>
 
-    <!-- Mobile Top Bar -->
-    <div class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200/50 px-5 py-4 flex justify-between items-center md:hidden shadow-sm transition-all duration-300" :class="{ 'bg-white shadow-md': scrolled }" @scroll.window="scrolled = (window.pageYOffset > 20)">
-        <a href="#" class="flex items-center gap-2.5">
-            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+    <!-- Mobile Top Bar & Drawer -->
+    <div x-data="{ mobileMenuOpen: false }">
+        
+        <!-- Mobile Header -->
+        <div class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl border-b border-slate-200/50 px-5 py-4 flex justify-between items-center md:hidden shadow-sm transition-all duration-300" :class="{ 'bg-white shadow-md': scrolled }" @scroll.window="scrolled = (window.pageYOffset > 20)">
+            <a href="#" class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                </div>
+                <div>
+                    <h1 class="font-black text-lg text-slate-800 leading-none">{{ $pengaturan['app_name'] }}</h1>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{{ $pengaturan['app_tagline'] }}</p>
+                </div>
+            </a>
+            <div class="flex items-center gap-3">
+                @auth
+                    <a href="{{ url('/dashboard') }}" class="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 active:scale-95 transition-transform"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg></a>
+                @endauth
+                <button @click="mobileMenuOpen = true" class="p-2 -mr-2 text-slate-600 hover:text-slate-900">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+                </button>
             </div>
-            <div>
-                <h1 class="font-black text-lg text-slate-800 leading-none">{{ $pengaturan['app_name'] }}</h1>
-                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{{ $pengaturan['app_tagline'] }}</p>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <div x-show="mobileMenuOpen" class="fixed inset-0 z-[60] md:hidden" style="display: none;">
+            <!-- Backdrop -->
+            <div x-show="mobileMenuOpen" 
+                 x-transition:enter="transition-opacity ease-linear duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition-opacity ease-linear duration-300"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm" 
+                 @click="mobileMenuOpen = false"></div>
+
+            <!-- Panel -->
+            <div x-show="mobileMenuOpen" 
+                 x-transition:enter="transition ease-in-out duration-300 transform"
+                 x-transition:enter-start="translate-x-full"
+                 x-transition:enter-end="translate-x-0"
+                 x-transition:leave="transition ease-in-out duration-300 transform"
+                 x-transition:leave-start="translate-x-0"
+                 x-transition:leave-end="translate-x-full"
+                 class="fixed inset-y-0 right-0 w-full max-w-xs bg-white shadow-2xl flex flex-col h-full overflow-hidden">
+                
+                <!-- Drawer Header -->
+                <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                    <h2 class="font-black text-lg text-slate-800">Menu Utama</h2>
+                    <button @click="mobileMenuOpen = false" class="p-2 -mr-2 text-slate-400 hover:text-rose-500 transition-colors">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+
+                <!-- Drawer Content -->
+                <div class="flex-1 overflow-y-auto p-6 space-y-8">
+                    <!-- Main Links -->
+                    <div class="space-y-2">
+                        <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Navigasi</p>
+                        @foreach(['Beranda' => '#beranda', 'Alur Pelayanan' => '#alur', 'Jadwal Dokter' => '#jadwal', 'Berita Terkini' => '#berita'] as $label => $link)
+                            <a href="{{ $link }}" @click="mobileMenuOpen = false" class="block py-2 text-base font-bold text-slate-600 hover:text-emerald-600 hover:translate-x-1 transition-all border-b border-dashed border-slate-100 last:border-0">
+                                {{ $label }}
+                            </a>
+                        @endforeach
+                    </div>
+
+                    <!-- Layanan Accordion -->
+                    <div x-data="{ layananOpen: true }">
+                        <button @click="layananOpen = !layananOpen" class="flex items-center justify-between w-full text-xs font-black text-slate-400 uppercase tracking-widest mb-3 hover:text-slate-600">
+                            <span>Layanan Medis</span>
+                            <svg class="w-4 h-4 transition-transform" :class="layananOpen ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                        </button>
+                        <div x-show="layananOpen" x-collapse class="space-y-2 pl-2 border-l-2 border-slate-100">
+                            @foreach($layanan as $poli)
+                                <a href="#layanan" @click="mobileMenuOpen = false" class="block py-1.5 text-sm font-medium text-slate-500 hover:text-emerald-600 transition-colors">
+                                    {{ $poli->nama_poli }}
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- Auth Actions -->
+                    <div>
+                        @auth
+                            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold text-lg">
+                                        {{ substr(Auth::user()->name, 0, 1) }}
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-bold text-slate-800">{{ Auth::user()->name }}</p>
+                                        <p class="text-xs text-slate-500">{{ Auth::user()->email }}</p>
+                                    </div>
+                                </div>
+                                <a href="{{ url('/dashboard') }}" class="block w-full py-2.5 text-center bg-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-800 transition-all shadow-md">
+                                    Buka Dashboard
+                                </a>
+                            </div>
+                        @else
+                            <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Area Pasien</p>
+                            <a href="{{ route('antrean.monitor') }}" class="flex items-center justify-center gap-2 w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl text-sm font-bold uppercase tracking-wider shadow-lg shadow-emerald-500/30 hover:-translate-y-1 transition-all mb-3">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                                Ambil Antrean
+                            </a>
+                            <a href="{{ route('login') }}" class="flex items-center justify-center w-full py-3.5 bg-white border border-slate-200 text-slate-700 rounded-2xl text-sm font-bold uppercase tracking-wider hover:bg-slate-50 transition-all">
+                                Login Petugas
+                            </a>
+                        @endauth
+                    </div>
+                </div>
+
+                <!-- Drawer Footer -->
+                <div class="p-6 bg-slate-50 border-t border-slate-100 text-center">
+                    <p class="text-[10px] font-bold text-slate-400">
+                        &copy; {{ date('Y') }} {{ $pengaturan['app_name'] }}<br>
+                        {{ $pengaturan['app_tagline'] }}
+                    </p>
+                </div>
             </div>
-        </a>
-        <div class="flex items-center gap-2">
-            @auth
-                <a href="{{ url('/dashboard') }}" class="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 active:scale-95 transition-transform"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg></a>
-            @else
-                <a href="{{ route('login') }}" class="text-[10px] font-bold text-slate-600 bg-slate-50 border border-slate-200 px-4 py-2 rounded-full uppercase tracking-wider active:bg-slate-100">Login</a>
-            @endauth
         </div>
     </div>
 
@@ -483,15 +586,7 @@
     </footer>
     @endif
 
-    <!-- MOBILE BOTTOM NAV -->
-    <div class="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 pb-safe md:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
-        <div class="grid grid-cols-4 h-16">
-            <a href="#beranda" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary active:text-primary"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg><span class="text-[10px] font-bold">Beranda</span></a>
-            <a href="#alur" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary active:text-primary"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg><span class="text-[10px] font-bold">Alur</span></a>
-            <a href="#jadwal" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary active:text-primary"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg><span class="text-[10px] font-bold">Jadwal</span></a>
-            <a href="{{ url('/dashboard') }}" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary active:text-primary"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg><span class="text-[10px] font-bold">Akun</span></a>
-        </div>
-    </div>
+
 
 </body>
 </html>
