@@ -17,10 +17,32 @@ class AlurPelayanan extends Model
         'faq' => 'array',
         'tags' => 'array',
         'estimasi_biaya' => 'decimal:2',
+        'biaya_sarana' => 'decimal:2',
+        'biaya_pelayanan' => 'decimal:2',
     ];
 
     public function jenisPelayanan()
     {
         return $this->belongsTo(JenisPelayanan::class);
+    }
+
+    public function requiredRole()
+    {
+        return $this->belongsTo(Role::class, 'required_role_id');
+    }
+
+    // Accessor: Total Biaya Real
+    public function getTotalBiayaAttribute()
+    {
+        return $this->estimasi_biaya + $this->biaya_sarana + $this->biaya_pelayanan;
+    }
+
+    // Accessor: Estimasi Waktu String
+    public function getWaktuRangeAttribute()
+    {
+        if ($this->waktu_min && $this->waktu_max) {
+            return "{$this->waktu_min}-{$this->waktu_max} Menit";
+        }
+        return $this->estimasi_waktu;
     }
 }

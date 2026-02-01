@@ -10,6 +10,10 @@
             <h2 class="text-2xl font-black text-slate-800">Editor Alur Layanan</h2>
         </div>
         <div class="flex gap-3">
+            <a href="{{ route('alur-pelayanan.index', ['poli' => $jenisPelayanan->poli_id, 'layanan' => $jenisPelayanan->id]) }}" target="_blank" class="px-5 py-2.5 rounded-xl border border-slate-200 text-emerald-600 text-xs font-bold uppercase tracking-wider hover:bg-emerald-50 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                Preview Publik
+            </a>
             <a href="{{ route('system.alur.index') }}" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-xs font-bold uppercase tracking-wider hover:bg-slate-50 flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
                 Kembali
@@ -75,14 +79,45 @@
             <!-- Tab Content: Details -->
             @if($activeTabForm === 'details')
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Estimasi Waktu</label>
-                    <input wire:model="estimasi_waktu" type="text" placeholder="10 Menit" class="w-full rounded-xl border-slate-200 text-sm font-bold">
+                <!-- Time Estimation -->
+                <div class="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Estimasi Waktu (Menit)</label>
+                    <div class="flex gap-4 items-center">
+                        <div class="flex-1">
+                            <label class="text-[10px] text-slate-400 font-bold uppercase mb-1 block">Minimal</label>
+                            <input wire:model="waktu_min" type="number" placeholder="Min" class="w-full rounded-xl border-slate-200 text-sm font-bold">
+                        </div>
+                        <div class="flex-1">
+                            <label class="text-[10px] text-slate-400 font-bold uppercase mb-1 block">Maksimal</label>
+                            <input wire:model="waktu_max" type="number" placeholder="Max" class="w-full rounded-xl border-slate-200 text-sm font-bold">
+                        </div>
+                        <div class="flex-1">
+                            <label class="text-[10px] text-slate-400 font-bold uppercase mb-1 block">Label Display</label>
+                            <input wire:model="estimasi_waktu" type="text" placeholder="e.g. 10-15 Menit" class="w-full rounded-xl border-slate-200 text-sm">
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Estimasi Biaya (Rp)</label>
-                    <input wire:model="estimasi_biaya" type="number" class="w-full rounded-xl border-slate-200 text-sm font-bold text-right" placeholder="0">
+
+                <!-- Cost Estimation -->
+                <div class="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Komponen Biaya (Rp)</label>
+                    <div class="flex gap-4 items-center">
+                        <div class="flex-1">
+                            <label class="text-[10px] text-slate-400 font-bold uppercase mb-1 block">Jasa Sarana</label>
+                            <input wire:model="biaya_sarana" type="number" class="w-full rounded-xl border-slate-200 text-sm font-bold text-right">
+                        </div>
+                        <div class="flex-1">
+                            <label class="text-[10px] text-slate-400 font-bold uppercase mb-1 block">Jasa Pelayanan</label>
+                            <input wire:model="biaya_pelayanan" type="number" class="w-full rounded-xl border-slate-200 text-sm font-bold text-right">
+                        </div>
+                        <div class="flex-1">
+                            <label class="text-[10px] text-slate-400 font-bold uppercase mb-1 block">Biaya Lainnya</label>
+                            <input wire:model="estimasi_biaya" type="number" class="w-full rounded-xl border-slate-200 text-sm font-bold text-right">
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-2 text-right">*Total biaya akan dikalkulasi otomatis.</p>
                 </div>
+
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Target Pasien</label>
                     <select wire:model="target_pasien" class="w-full rounded-xl border-slate-200 text-sm font-bold">
@@ -109,6 +144,7 @@
             <!-- Tab Content: Media -->
             @if($activeTabForm === 'media')
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
+                <!-- Image -->
                 <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center">
                     <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Foto Ilustrasi</label>
                     @if ($gambar)
@@ -120,7 +156,7 @@
                             <span class="text-slate-400 text-xs">Belum ada foto</span>
                         </div>
                     @endif
-                    <input type="file" wire:model="gambar" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700"/>
+                    <input type="file" wire:model="gambar" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"/>
                 </div>
 
                 <div class="space-y-4">
@@ -139,9 +175,20 @@
             <!-- Tab Content: Advanced -->
             @if($activeTabForm === 'advanced')
             <div class="space-y-6 animate-fade-in">
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Penanggung Jawab</label>
-                    <input wire:model="penanggung_jawab" type="text" class="w-full rounded-xl border-slate-200 text-sm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Penanggung Jawab (Nama)</label>
+                        <input wire:model="penanggung_jawab" type="text" class="w-full rounded-xl border-slate-200 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Role/Jabatan Terkait</label>
+                        <select wire:model="required_role_id" class="w-full rounded-xl border-slate-200 text-sm">
+                            <option value="">-- Pilih Role --</option>
+                            @foreach($roles as $role)
+                                <option value="{{ $role->id }}">{{ $role->nama }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="grid grid-cols-2 gap-4">
@@ -192,9 +239,14 @@
                             <div>
                                 <h3 class="text-xl font-black text-slate-800 mb-2">{{ $alur->judul }}</h3>
                                 <div class="flex flex-wrap gap-2 mb-4">
-                                    <span class="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black uppercase">{{ $alur->estimasi_waktu }}</span>
-                                    @if($alur->estimasi_biaya > 0)
-                                    <span class="px-2.5 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[10px] font-black uppercase">Rp {{ number_format($alur->estimasi_biaya) }}</span>
+                                    <span class="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black uppercase flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        {{ $alur->waktu_range ?? $alur->estimasi_waktu }}
+                                    </span>
+                                    @if($alur->total_biaya > 0)
+                                    <span class="px-2.5 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[10px] font-black uppercase flex items-center gap-1">
+                                        Rp {{ number_format($alur->total_biaya) }}
+                                    </span>
                                     @endif
                                     @if($alur->is_critical)
                                     <span class="px-2.5 py-1 bg-rose-50 text-rose-600 rounded-lg text-[10px] font-black uppercase">Wajib</span>
@@ -202,6 +254,7 @@
                                 </div>
                             </div>
                             <div class="flex gap-2">
+                                <button wire:click="duplicate({{ $alur->id }})" class="p-2 bg-slate-50 text-slate-400 hover:text-teal-600 rounded-xl transition-colors" title="Duplikat"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button>
                                 <button wire:click="edit({{ $alur->id }})" class="p-2 bg-slate-50 text-slate-400 hover:text-indigo-600 rounded-xl transition-colors"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg></button>
                                 <button wire:click="delete({{ $alur->id }})" onclick="confirm('Hapus langkah ini?') || event.stopImmediatePropagation()" class="p-2 bg-slate-50 text-slate-400 hover:text-rose-600 rounded-xl transition-colors"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
                             </div>

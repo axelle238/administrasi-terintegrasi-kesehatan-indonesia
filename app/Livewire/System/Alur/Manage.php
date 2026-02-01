@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\AlurPelayanan;
 use App\Models\JenisPelayanan;
+use App\Models\Role; // Use Role model
 use Illuminate\Support\Facades\Storage;
 
 class Manage extends Component
@@ -17,8 +18,9 @@ class Manage extends Component
     // State Form Langkah
     public $alurId;
     public $judul, $deskripsi, $urutan, $is_active = true, $is_critical = false;
-    public $estimasi_waktu, $estimasi_biaya = 0;
-    public $target_pasien = 'Umum', $penanggung_jawab, $lokasi, $jam_operasional;
+    public $estimasi_waktu, $waktu_min, $waktu_max; // Time upgrades
+    public $estimasi_biaya = 0, $biaya_sarana = 0, $biaya_pelayanan = 0; // Cost upgrades
+    public $target_pasien = 'Umum', $penanggung_jawab, $required_role_id, $lokasi, $jam_operasional;
     public $dokumen_syarat, $output_langkah;
     public $video_url, $action_label, $action_url;
     public $tipe_alur = 'Offline';
@@ -41,14 +43,14 @@ class Manage extends Component
     public function render()
     {
         return view('livewire.system.alur.manage', [
-            'alurs' => $this->jenisPelayanan->alurPelayanans()->orderBy('urutan')->get()
+            'alurs' => $this->jenisPelayanan->alurPelayanans()->orderBy('urutan')->get(),
+            'roles' => Role::all() // Pass roles for dropdown
         ])->layout('layouts.app', ['header' => 'Editor Alur: ' . $this->jenisPelayanan->nama_layanan]);
     }
 
     public function create()
     {
         $this->resetInput();
-        // Auto increment urutan
         $lastAlur = $this->jenisPelayanan->alurPelayanans()->orderByDesc('urutan')->first();
         $this->urutan = ($lastAlur->urutan ?? 0) + 1;
         
@@ -59,22 +61,48 @@ class Manage extends Component
     public function edit($id)
     {
         $alur = AlurPelayanan::find($id);
-        $this->alurId = $id;
-        
+        $this->fillForm($alur);
+        $this->isFormOpen = true;
+        $this->activeTabForm = 'general';
+    }
+
+    public function duplicate($id)
+    {
+        $source = AlurPelayanan::find($id);
+        $newAlur = $source->replicate();
+        $newAlur->judul = $newAlur->judul . ' (Copy)';
+        $newAlur->urutan = $this->jenisPelayanan->alurPelayanans()->max('urutan') + 1;
+        $newAlur->created_at = now();
+        $newAlur->updated_at = now();
+        $newAlur->save();
+
+        $this->dispatch('notify', 'success', 'Langkah berhasil diduplikasi.');
+    }
+
+    private function fillForm($alur)
+    {
+        $this->alurId = $alur->id;
         $this->judul = $alur->judul;
-        $this->deskripsi = $alur->deskripsi; // Maps to detail_proses concept
+        $this->deskripsi = $alur->deskripsi;
         $this->urutan = $alur->urutan;
         $this->is_active = $alur->is_active;
         $this->is_critical = $alur->is_critical;
         
         $this->estimasi_waktu = $alur->estimasi_waktu;
+        $this->waktu_min = $alur->waktu_min;
+        $this->waktu_max = $alur->waktu_max;
+        
         $this->estimasi_biaya = $alur->estimasi_biaya;
+        $this->biaya_sarana = $alur->biaya_sarana;
+        $this->biaya_pelayanan = $alur->biaya_pelayanan;
+        
         $this->target_pasien = $alur->target_pasien;
         $this->penanggung_jawab = $alur->penanggung_jawab;
-        $this->lokasi = $alur->lokasi; // Maps to lokasi_ruangan concept
+        $this->required_role_id = $alur->required_role_id;
+        $this->lokasi = $alur->lokasi;
         $this->jam_operasional = $alur->jam_operasional;
         
-        $this->dokumen_syarat = $alur->dokumen_syarat; // Text field
+        $this->dokumen_syarat = $alur->dokumen_syarat;
         $this->output_langkah = $alur->output_langkah;
         
         $this->video_url = $alur->video_url;
@@ -91,9 +119,6 @@ class Manage extends Component
         
         $this->faqs = $alur->faq ?? [['q' => '', 'a' => '']];
         if(empty($this->faqs)) $this->faqs = [['q' => '', 'a' => '']];
-
-        $this->isFormOpen = true;
-        $this->activeTabForm = 'general';
     }
 
     public function store()
@@ -112,10 +137,18 @@ class Manage extends Component
             'urutan' => $this->urutan,
             'is_active' => $this->is_active,
             'is_critical' => $this->is_critical,
+            // Time
             'estimasi_waktu' => $this->estimasi_waktu,
+            'waktu_min' => $this->waktu_min,
+            'waktu_max' => $this->waktu_max,
+            // Cost
             'estimasi_biaya' => $this->estimasi_biaya,
+            'biaya_sarana' => $this->biaya_sarana,
+            'biaya_pelayanan' => $this->biaya_pelayanan,
+            
             'target_pasien' => $this->target_pasien,
             'penanggung_jawab' => $this->penanggung_jawab,
+            'required_role_id' => $this->required_role_id,
             'lokasi' => $this->lokasi,
             'jam_operasional' => $this->jam_operasional,
             'dokumen_syarat' => $this->dokumen_syarat,
@@ -150,7 +183,6 @@ class Manage extends Component
         if ($alur->gambar) Storage::disk('public')->delete($alur->gambar);
         if ($alur->file_template) Storage::disk('public')->delete($alur->file_template);
         $alur->delete();
-        
         $this->dispatch('notify', 'success', 'Langkah dihapus.');
     }
 
@@ -180,7 +212,9 @@ class Manage extends Component
     {
         $this->reset([
             'alurId', 'judul', 'deskripsi', 'urutan', 'is_active', 'is_critical',
-            'estimasi_waktu', 'estimasi_biaya', 'target_pasien', 'penanggung_jawab',
+            'estimasi_waktu', 'waktu_min', 'waktu_max',
+            'estimasi_biaya', 'biaya_sarana', 'biaya_pelayanan',
+            'target_pasien', 'penanggung_jawab', 'required_role_id',
             'lokasi', 'jam_operasional', 'dokumen_syarat', 'output_langkah',
             'video_url', 'action_label', 'action_url', 'tipe_alur', 'icon',
             'internal_notes', 'tagsInput', 'gambar', 'existingGambar', 
