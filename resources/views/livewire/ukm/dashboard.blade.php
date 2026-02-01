@@ -29,6 +29,67 @@
         </div>
     </div>
 
+    <!-- EWS & RISIKO WILAYAH SECTION (NEW) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- EWS ALERT -->
+        <div class="bg-red-50 p-6 rounded-[2rem] border border-red-100 relative overflow-hidden">
+            <div class="absolute -right-6 -top-6 w-24 h-24 bg-red-100 rounded-full blur-2xl opacity-50"></div>
+            <div class="flex items-center justify-between mb-4 relative z-10">
+                <h3 class="font-black text-red-800 flex items-center gap-2">
+                    <svg class="w-6 h-6 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    Sistem Peringatan Dini (EWS)
+                </h3>
+                <span class="text-[10px] font-bold px-2 py-1 bg-white rounded text-red-500 shadow-sm uppercase">Live Monitor</span>
+            </div>
+            <div class="space-y-3 relative z-10">
+                @forelse($ewsAlerts as $alert)
+                <div class="flex justify-between items-center p-3 bg-white rounded-xl shadow-sm border-l-4 border-red-500">
+                    <span class="font-bold text-slate-700 text-sm">{{ $alert->diagnosa }}</span>
+                    <span class="font-black text-red-600">{{ $alert->total }} Kasus</span>
+                </div>
+                @empty
+                <div class="text-center py-4">
+                    <p class="text-sm font-bold text-green-600 flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Tidak ada potensi wabah terdeteksi.
+                    </p>
+                </div>
+                @endforelse
+            </div>
+        </div>
+
+        <!-- RISIKO WILAYAH MAP GRID -->
+        <div class="lg:col-span-2 bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-black text-slate-800">Pemetaan Risiko Kesehatan Wilayah</h3>
+                <div class="flex gap-2">
+                    <span class="flex items-center gap-1 text-[10px] font-bold text-slate-500"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>Aman</span>
+                    <span class="flex items-center gap-1 text-[10px] font-bold text-slate-500"><span class="w-2 h-2 rounded-full bg-yellow-500"></span>Waspada</span>
+                    <span class="flex items-center gap-1 text-[10px] font-bold text-slate-500"><span class="w-2 h-2 rounded-full bg-red-500"></span>Tinggi</span>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                @forelse($risikoWilayah as $wilayah)
+                <div class="p-3 rounded-xl border flex flex-col justify-between h-24 {{ $wilayah->status == 'Merah' ? 'bg-red-50 border-red-100' : ($wilayah->status == 'Kuning' ? 'bg-yellow-50 border-yellow-100' : 'bg-emerald-50 border-emerald-100') }}">
+                    <span class="text-xs font-bold {{ $wilayah->status == 'Merah' ? 'text-red-700' : ($wilayah->status == 'Kuning' ? 'text-yellow-700' : 'text-emerald-700') }} line-clamp-1">
+                        {{ $wilayah->alamat ?? 'Wilayah Tidak Diketahui' }}
+                    </span>
+                    <div class="flex justify-between items-end">
+                        <span class="text-[10px] font-medium text-slate-500 uppercase">Kasus</span>
+                        <span class="text-2xl font-black {{ $wilayah->status == 'Merah' ? 'text-red-600' : ($wilayah->status == 'Kuning' ? 'text-yellow-600' : 'text-emerald-600') }}">
+                            {{ $wilayah->total_pasien }}
+                        </span>
+                    </div>
+                </div>
+                @empty
+                <div class="col-span-3 text-center py-6 text-slate-400 text-sm">
+                    Belum ada data pemetaan wilayah bulan ini.
+                </div>
+                @endforelse
+            </div>
+        </div>
+    </div>
+
     <!-- KPI GRID -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <!-- Partisipan -->

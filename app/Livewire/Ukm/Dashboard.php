@@ -96,6 +96,32 @@ class Dashboard extends Component
             ->limit(5)
             ->get();
 
+        // --- 7. EARLY WARNING SYSTEM (EWS) & RISIKO WILAYAH ---
+        // Deteksi lonjakan kasus (threshold simpel: > 5 kasus/bulan untuk penyakit menular tertentu)
+        $penyakitPotensiWabah = ['Deman Berdarah', 'Diare', 'TBC', 'Covid-19', 'Campak'];
+        $ewsAlerts = \App\Models\RekamMedis::whereIn('diagnosa', $penyakitPotensiWabah)
+            ->whereMonth('created_at', $now->month)
+            ->select('diagnosa', DB::raw('count(*) as total'))
+            ->groupBy('diagnosa')
+            ->having('total', '>=', 2) // Threshold rendah untuk demo
+            ->get();
+
+        // Simulasi Risiko Wilayah (Agregasi dari Alamat Pasien)
+        $risikoWilayah = Pasien::select('alamat', DB::raw('count(*) as total_pasien')) // Asumsi alamat = Desa/Kelurahan
+            ->join('rekam_medis', 'pasiens.id', '=', 'rekam_medis.pasien_id')
+            ->whereMonth('rekam_medis.created_at', $now->month)
+            ->groupBy('alamat')
+            ->orderByDesc('total_pasien')
+            ->limit(6)
+            ->get()
+            ->map(function($item) {
+                // Tentukan status berdasarkan jumlah kasus
+                if ($item->total_pasien > 10) $item->status = 'Merah'; // Risiko Tinggi
+                elseif ($item->total_pasien > 5) $item->status = 'Kuning'; // Waspada
+                else $item->status = 'Hijau'; // Aman
+                return $item;
+            });
+
         return view('livewire.ukm.dashboard', [
             // KPI
             'totalKegiatan' => $totalKegiatanBulanIni,
@@ -108,6 +134,10 @@ class Dashboard extends Component
             'skorIKM' => $skorIKM,
             'totalResponden' => $totalResponden,
             'penyakitTerbanyak' => $penyakitTerbanyak,
+            
+            // EWS & Wilayah
+            'ewsAlerts' => $ewsAlerts,
+            'risikoWilayah' => $risikoWilayah,
 
             // Charts & Tables
             'performansiProgram' => $performansiProgram,
