@@ -135,9 +135,10 @@
                     @endforeach
                     
                     <!-- Dropdown Layanan -->
-                    <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
-                        <button class="px-5 py-2 rounded-full text-sm font-bold hover:text-primary hover:bg-white/50 transition-all duration-300 flex items-center gap-1 group"
-                                :class="activeSection === 'layanan' ? 'text-primary bg-white shadow-md ring-1 ring-slate-100' : 'text-slate-500'">
+                    <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                        <button @click="open = !open" 
+                                class="px-5 py-2 rounded-full text-sm font-bold hover:text-primary hover:bg-white/50 transition-all duration-300 flex items-center gap-1 group"
+                                :class="(activeSection === 'layanan' || open) ? 'text-primary bg-white shadow-md ring-1 ring-slate-100' : 'text-slate-500'">
                             Layanan <svg class="w-3 h-3 transition-transform duration-300" :class="open ? 'rotate-180 text-primary' : 'text-slate-400 group-hover:text-primary'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                         </button>
                         <div x-show="open" 
@@ -147,7 +148,8 @@
                              x-transition:leave="transition ease-in duration-150"
                              x-transition:leave-start="opacity-100 translate-y-0"
                              x-transition:leave-end="opacity-0 translate-y-2"
-                             class="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-72 bg-white rounded-2xl shadow-xl border border-slate-100 p-3 grid gap-1 z-50">
+                             class="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-72 bg-white rounded-2xl shadow-xl border border-slate-100 p-3 grid gap-1 z-50"
+                             style="display: none;">
                              
                              <!-- Dropdown Arrow -->
                              <div class="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45 border-t border-l border-slate-100"></div>
@@ -164,7 +166,7 @@
                                         </div>
                                     </a>
                                  @endforeach
-                                 <button @click="scrollTo('layanan')" class="mt-2 block w-full py-2 text-[10px] font-bold text-center text-slate-500 hover:text-primary hover:bg-slate-50 rounded-lg uppercase tracking-wider transition-colors">Lihat Semua Layanan &rarr;</button>
+                                 <button @click="open = false; scrollTo('layanan')" class="mt-2 block w-full py-2 text-[10px] font-bold text-center text-slate-500 hover:text-primary hover:bg-slate-50 rounded-lg uppercase tracking-wider transition-colors">Lihat Semua Layanan &rarr;</button>
                              </div>
                         </div>
                     </div>
@@ -260,12 +262,12 @@
                     </div>
 
                     <!-- Layanan Accordion -->
-                    <div x-data="{ layananOpen: true }">
+                    <div x-data="{ layananOpen: false }">
                         <button @click="layananOpen = !layananOpen" class="flex items-center justify-between w-full text-xs font-black text-slate-400 uppercase tracking-widest mb-3 hover:text-slate-600">
                             <span>Layanan Medis</span>
                             <svg class="w-4 h-4 transition-transform" :class="layananOpen ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                         </button>
-                        <div x-show="layananOpen" x-collapse class="space-y-2 pl-2 border-l-2 border-slate-100">
+                        <div x-show="layananOpen" x-collapse class="space-y-2 pl-2 border-l-2 border-slate-100" style="display: none;">
                             @foreach($layanan as $poli)
                                 <a href="#layanan" @click="mobileMenuOpen = false" class="block py-1.5 text-sm font-medium text-slate-500 hover:text-emerald-600 transition-colors">
                                     {{ $poli->nama_poli }}
