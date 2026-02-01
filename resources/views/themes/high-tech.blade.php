@@ -185,133 +185,35 @@
                 </a>
 
                 <!-- Navigation Links -->
-                <div class="flex items-center gap-1 bg-white/60 p-1.5 rounded-full border border-white/60 backdrop-blur-md shadow-sm ring-1 ring-slate-100 relative z-50">
-                    <button @click="scrollTo('alur')" 
-                           class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden"
-                           :class="activeSection === 'alur' ? 'text-primary bg-white shadow-md ring-1 ring-slate-100' : 'text-slate-500 hover:text-primary hover:bg-white/60'">
-                            <span class="relative z-10">Alur</span>
+                <div class="flex items-center gap-1 bg-white/60 dark:bg-slate-800/60 p-1.5 rounded-full border border-white/60 dark:border-slate-700 backdrop-blur-md shadow-sm ring-1 ring-slate-100 dark:ring-slate-800 relative z-50">
+                    <a href="{{ url('/') }}#beranda" 
+                       class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden decoration-0"
+                       :class="activeSection === 'beranda' ? 'text-primary bg-white dark:bg-slate-700 shadow-md ring-1 ring-slate-100 dark:ring-slate-600' : 'text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-white/60'">
+                        <span class="relative z-10">Beranda</span>
+                    </a>
+
+                    <a href="{{ route('alur-pelayanan.index') }}" 
+                       class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden decoration-0 text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-white/60">
+                        <span class="relative z-10">Alur</span>
+                    </a>
+
+                    <button @click="scrollTo('layanan')" 
+                       class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden"
+                       :class="activeSection === 'layanan' ? 'text-primary bg-white dark:bg-slate-700 shadow-md ring-1 ring-slate-100 dark:ring-slate-600' : 'text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-white/60'">
+                        <span class="relative z-10">Layanan</span>
                     </button>
 
-                    <!-- Dropdown Jadwal -->
-                    <div class="relative z-50" x-data="{ open: false }" @click.outside="open = false">
-                        <button @click="open = !open" 
-                                class="px-5 py-2 rounded-full text-sm font-bold hover:text-primary hover:bg-white/50 transition-all duration-300 flex items-center gap-1 group relative z-10"
-                                :class="(activeSection === 'jadwal' || open) ? 'text-primary bg-white shadow-md ring-1 ring-slate-100' : 'text-slate-500'">
-                            Jadwal <svg class="w-3 h-3 transition-transform duration-300" :class="open ? 'rotate-180 text-primary' : 'text-slate-400 group-hover:text-primary'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                            <span class="absolute top-0 right-0 -mt-1 -mr-1 px-1.5 py-0.5 rounded-full bg-rose-500 text-white text-[8px] font-black uppercase tracking-wider shadow-sm pointer-events-none">Live</span>
-                        </button>
-                        <div x-show="open" 
-                             x-transition:enter="transition ease-out duration-200"
-                             x-transition:enter-start="opacity-0 translate-y-2"
-                             x-transition:enter-end="opacity-100 translate-y-0"
-                             x-transition:leave="transition ease-in duration-150"
-                             x-transition:leave-start="opacity-100 translate-y-0"
-                             x-transition:leave-end="opacity-0 translate-y-2"
-                             class="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-72 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/50 dark:border-slate-700 p-3 grid gap-1 z-50"
-                             style="display: none;">
-                             
-                             <div class="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rotate-45 border-t border-l border-white/50 dark:border-slate-700"></div>
+                    <button @click="scrollTo('jadwal')" 
+                       class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden"
+                       :class="activeSection === 'jadwal' ? 'text-primary bg-white dark:bg-slate-700 shadow-md ring-1 ring-slate-100 dark:ring-slate-600' : 'text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-white/60'">
+                        <span class="relative z-10">Jadwal</span>
+                    </button>
 
-                             <div class="relative z-10">
-                                 <p class="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700 mb-1">Praktik Hari Ini</p>
-                                 @foreach($jadwalHariIni->take(3) as $jadwal)
-                                    <div class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group/item">
-                                        <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 font-bold text-xs shrink-0">
-                                            {{ substr($jadwal->pegawai->user->name ?? 'D', 0, 1) }}
-                                        </div>
-                                        <div class="min-w-0">
-                                            <p class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">{{ $jadwal->pegawai->user->name ?? 'Dokter' }}</p>
-                                            <p class="text-[9px] text-slate-500 dark:text-slate-400">{{ $jadwal->shift->jam_masuk }} - {{ $jadwal->shift->jam_keluar }}</p>
-                                        </div>
-                                    </div>
-                                 @endforeach
-                                 @if($jadwalHariIni->count() == 0)
-                                    <div class="px-4 py-3 text-center text-xs text-slate-400">Tidak ada jadwal hari ini.</div>
-                                 @endif
-                                 <button @click="open = false; scrollTo('jadwal')" class="mt-2 block w-full py-2 text-[10px] font-bold text-center text-slate-500 hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg uppercase tracking-wider transition-colors">Lihat Semua Jadwal &rarr;</button>
-                             </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Dropdown Layanan -->
-                    <div class="relative z-50" x-data="{ open: false }" @click.outside="open = false">
-                        <button @click="open = !open" 
-                                class="px-5 py-2 rounded-full text-sm font-bold hover:text-primary hover:bg-white/50 transition-all duration-300 flex items-center gap-1 group relative z-10"
-                                :class="(activeSection === 'layanan' || open) ? 'text-primary bg-white shadow-md ring-1 ring-slate-100' : 'text-slate-500'">
-                            Layanan <svg class="w-3 h-3 transition-transform duration-300" :class="open ? 'rotate-180 text-primary' : 'text-slate-400 group-hover:text-primary'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                            <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5 pointer-events-none">
-                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                            </span>
-                        </button>
-                        <div x-show="open" 
-                             x-transition:enter="transition ease-out duration-200"
-                             x-transition:enter-start="opacity-0 translate-y-2"
-                             x-transition:enter-end="opacity-100 translate-y-0"
-                             x-transition:leave="transition ease-in duration-150"
-                             x-transition:leave-start="opacity-100 translate-y-0"
-                             x-transition:leave-end="opacity-0 translate-y-2"
-                             class="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-80 bg-white/95 backdrop-blur-xl rounded-[2rem] shadow-2xl shadow-slate-200/50 border border-white/50 p-4 grid gap-1 z-50"
-                             style="display: none;">
-                             
-                             <div class="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45 border-t border-l border-slate-100"></div>
-
-                             <div class="relative z-10">
-                                 <p class="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 mb-2">Poliklinik & Unit</p>
-                                 <div class="grid gap-1">
-                                     @foreach($layanan->take(5) as $poli)
-                                        <a href="#layanan" @click="open = false; scrollTo('layanan')" class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-slate-50 transition-colors group/item border border-transparent hover:border-slate-100">
-                                            <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover/item:bg-emerald-500 group-hover/item:text-white transition-all shadow-sm">
-                                                <span class="font-black text-xs">{{ substr($poli->nama_poli, 0, 1) }}</span>
-                                            </div>
-                                            <div>
-                                                <p class="text-sm font-bold text-slate-800 group-hover/item:text-emerald-600 transition-colors">{{ $poli->nama_poli }}</p>
-                                                <p class="text-[10px] text-slate-400">Layanan Medis</p>
-                                            </div>
-                                        </a>
-                                     @endforeach
-                                 </div>
-                                 <button @click="open = false; scrollTo('layanan')" class="mt-3 block w-full py-3 text-[10px] font-black text-center text-slate-500 hover:text-primary hover:bg-slate-50 rounded-xl uppercase tracking-wider transition-colors border border-dashed border-slate-200 hover:border-primary/30">Lihat Katalog Lengkap &rarr;</button>
-                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Dropdown Berita -->
-                    <div class="relative z-50" x-data="{ open: false }" @click.outside="open = false">
-                        <button @click="open = !open" 
-                                class="px-5 py-2 rounded-full text-sm font-bold hover:text-primary hover:bg-white/50 transition-all duration-300 flex items-center gap-1 group relative z-10"
-                                :class="(activeSection === 'berita' || open) ? 'text-primary bg-white shadow-md ring-1 ring-slate-100' : 'text-slate-500'">
-                            Wawasan <svg class="w-3 h-3 transition-transform duration-300" :class="open ? 'rotate-180 text-primary' : 'text-slate-400 group-hover:text-primary'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                        </button>
-                        <div x-show="open" 
-                             x-transition:enter="transition ease-out duration-200"
-                             x-transition:enter-start="opacity-0 translate-y-2"
-                             x-transition:enter-end="opacity-100 translate-y-0"
-                             x-transition:leave="transition ease-in duration-150"
-                             x-transition:leave-start="opacity-100 translate-y-0"
-                             x-transition:leave-end="opacity-0 translate-y-2"
-                             class="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-64 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-slate-100 p-3 grid gap-1 z-50"
-                             style="display: none;">
-                             
-                             <div class="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45 border-t border-l border-slate-100"></div>
-
-                             <div class="relative z-10">
-                                 <p class="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 mb-1">Kategori</p>
-                                 <a href="#berita" @click="open = false; scrollTo('berita')" class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group/item">
-                                     <svg class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
-                                     <span class="text-xs font-bold text-slate-700 group-hover/item:text-emerald-600 transition-colors">Berita Utama</span>
-                                 </a>
-                                 <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group/item">
-                                     <svg class="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                                     <span class="text-xs font-bold text-slate-700 group-hover/item:text-blue-600 transition-colors">Artikel Kesehatan</span>
-                                 </a>
-                                 <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group/item">
-                                     <svg class="w-4 h-4 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>
-                                     <span class="text-xs font-bold text-slate-700 group-hover/item:text-purple-600 transition-colors">Pengumuman</span>
-                                 </a>
-                             </div>
-                        </div>
-                    </div>
+                    <button @click="scrollTo('berita')" 
+                       class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden"
+                       :class="activeSection === 'berita' ? 'text-primary bg-white dark:bg-slate-700 shadow-md ring-1 ring-slate-100 dark:ring-slate-600' : 'text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-white/60'">
+                        <span class="relative z-10">Berita</span>
+                    </button>
                 </div>
 
                 <!-- Smart Action Center -->
@@ -764,7 +666,7 @@
     <!-- KEUNGGULAN (Why Us) - NEW SECTION -->
     @if($cmsSections['why_us']->is_active ?? true) 
     <!-- Fallback true for demo if not in DB yet -->
-    <section id="keunggulan" class="py-24 bg-white relative overflow-hidden">
+    <section id="layanan" class="py-24 bg-white relative overflow-hidden">
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
             <div class="text-center mb-16">
                 <span class="text-emerald-600 font-black tracking-widest uppercase text-xs mb-2 block">Kenapa Memilih Kami?</span>
