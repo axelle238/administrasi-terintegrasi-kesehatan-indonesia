@@ -76,6 +76,11 @@ class Dashboard extends Component
             ->take(3)
             ->get();
 
+        // Statistik Status Pengaduan (NEW)
+        $statusPengaduan = Pengaduan::select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->get();
+
         // --- 5. JADWAL KEGIATAN TERDEKAT ---
         $agendaMendatang = KegiatanUkm::where('tanggal_kegiatan', '>=', Carbon::today())
             ->orderBy('tanggal_kegiatan')
@@ -84,9 +89,17 @@ class Dashboard extends Component
             
         // --- 6. IKM & SURVEILANS (NEW) ---
         $rataRataIKM = \App\Models\Survey::whereMonth('created_at', $now->month)->avg('nilai');
-        // Asumsi Nilai 1-4 dikonversi ke Skala 100 (Permenpan RB)
         $skorIKM = $rataRataIKM ? ($rataRataIKM / 4) * 100 : 0;
         $totalResponden = \App\Models\Survey::whereMonth('created_at', $now->month)->count();
+
+        // Detail Nilai per Unsur Layanan (Simulasi/NEW)
+        $detailIKM = [
+            'Prosedur' => 3.8,
+            'Waktu Pelayanan' => 3.2,
+            'Biaya/Tarif' => 4.0,
+            'Sarana Prasarana' => 3.5,
+            'Kompetensi Petugas' => 3.9
+        ];
 
         $penyakitTerbanyak = \App\Models\RekamMedis::select('diagnosa', DB::raw('count(*) as total'))
             ->whereMonth('created_at', $now->month)
@@ -133,6 +146,7 @@ class Dashboard extends Component
             // IKM & Surveilans
             'skorIKM' => $skorIKM,
             'totalResponden' => $totalResponden,
+            'detailIKM' => $detailIKM,
             'penyakitTerbanyak' => $penyakitTerbanyak,
             
             // EWS & Wilayah
@@ -145,6 +159,7 @@ class Dashboard extends Component
             'pesertaData' => $pesertaData,
             'kegiatanData' => $kegiatanData,
             'kategoriPengaduan' => $kategoriPengaduan,
+            'statusPengaduan' => $statusPengaduan,
             
             // Lists
             'agendaMendatang' => $agendaMendatang,

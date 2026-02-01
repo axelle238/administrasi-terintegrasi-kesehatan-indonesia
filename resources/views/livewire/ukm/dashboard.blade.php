@@ -104,7 +104,7 @@
         </div>
 
         <!-- IKM (Indeks Kepuasan Masyarakat) -->
-        <div class="group glass p-5 rounded-[2rem] hover:shadow-xl hover:shadow-pink-500/5 transition-all duration-300">
+        <div class="lg:col-span-1 group glass p-5 rounded-[2rem] hover:shadow-xl hover:shadow-pink-500/5 transition-all duration-300">
             <div class="flex justify-between items-start mb-3">
                 <div class="p-2.5 bg-pink-50 rounded-2xl text-pink-600 group-hover:bg-pink-600 group-hover:text-white transition-colors duration-300">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -112,7 +112,14 @@
             </div>
             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Skor IKM</p>
             <h3 class="text-2xl font-black text-slate-900 font-display tracking-tight">{{ number_format($skorIKM, 1) }}</h3>
-            <p class="text-[10px] font-bold text-pink-500 mt-1">{{ $totalResponden }} Responden</p>
+            <div class="mt-2 space-y-1">
+                @foreach($detailIKM as $unsur => $nilai)
+                <div class="flex justify-between text-[9px] font-medium text-slate-500">
+                    <span>{{ $unsur }}</span>
+                    <span class="font-black text-pink-600">{{ $nilai }}</span>
+                </div>
+                @endforeach
+            </div>
         </div>
 
         <!-- Kegiatan Upcoming -->
@@ -236,7 +243,16 @@
 
             <!-- Recent Complaints -->
              <div class="glass p-8 rounded-[2.5rem]">
-                <h3 class="text-xl font-black text-slate-800 font-display mb-6">Aduan Terbaru</h3>
+                <h3 class="text-xl font-black text-slate-800 font-display mb-6">Status Aspirasi</h3>
+                <div class="grid grid-cols-2 gap-3 mb-6">
+                    @foreach($statusPengaduan as $sp)
+                    <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 text-center">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">{{ $sp->status }}</p>
+                        <p class="text-lg font-black text-slate-800">{{ $sp->total }}</p>
+                    </div>
+                    @endforeach
+                </div>
+                <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Aduan Terbaru</h4>
                 <div class="space-y-4">
                     @forelse($aduanTerbaru as $aduan)
                     <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
