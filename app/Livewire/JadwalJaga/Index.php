@@ -5,67 +5,129 @@ namespace App\Livewire\JadwalJaga;
 use Livewire\Component;
 use App\Models\Pegawai;
 use App\Models\Shift;
+use App\Models\Poli;
 use App\Models\JadwalJaga;
 use Carbon\Carbon;
 
 class Index extends Component
 {
     public $bulan, $tahun;
-    public $pegawais;
-    public $shifts;
+    public $filterPoli = '';
     
-    // Modal State
-    public $isOpen = false;
-    public $selectedDate, $selectedPegawaiId;
-    public $inputShiftId;
+    // Editor State
+    public $isEditorOpen = false;
+    public $selectedDate;
+    public $selectedPegawai; // Object Pegawai
+    public $selectedJadwal; // Object JadwalJaga (if exists)
+    
+    // Form Input
+    public $shift_id, $status_kehadiran = 'Hadir', $kuota_online = 20, $kuota_offline = 30, $catatan;
 
     public function mount()
     {
         $this->bulan = Carbon::now()->month;
         $this->tahun = Carbon::now()->year;
-        $this->pegawais = Pegawai::with('user')->get();
-        $this->shifts = Shift::all();
     }
 
-    public function openModal($date, $pegawaiId)
+    public function previousMonth()
     {
-        $this->selectedDate = $date;
-        $this->selectedPegawaiId = $pegawaiId;
+        $date = Carbon::createFromDate($this->tahun, $this->bulan, 1)->subMonth();
+        $this->bulan = $date->month;
+        $this->tahun = $date->year;
+    }
+
+    public function nextMonth()
+    {
+        $date = Carbon::createFromDate($this->tahun, $this->bulan, 1)->addMonth();
+        $this->bulan = $date->month;
+        $this->tahun = $date->year;
+    }
+
+    public function editCell($pegawaiId, $dateStr)
+    {
+        $this->selectedDate = $dateStr;
+        $this->selectedPegawai = Pegawai::with('user', 'poli')->find($pegawaiId);
         
-        // Cek existing
-        $existing = JadwalJaga::where('pegawai_id', $pegawaiId)
-            ->where('tanggal', $date)
-            ->first();
-            
-        $this->inputShiftId = $existing ? $existing->shift_id : null;
-        $this->isOpen = true;
-    }
+        $jadwal = JadwalJaga::where('pegawai_id', $pegawaiId)->where('tanggal', $dateStr)->first();
+        $this->selectedJadwal = $jadwal;
 
-    public function saveJadwal()
-    {
-        if ($this->inputShiftId) {
-            JadwalJaga::updateOrCreate(
-                ['pegawai_id' => $this->selectedPegawaiId, 'tanggal' => $this->selectedDate],
-                ['shift_id' => $this->inputShiftId]
-            );
+        // Populate Form
+        if ($jadwal) {
+            $this->shift_id = $jadwal->shift_id;
+            $this->status_kehadiran = $jadwal->status_kehadiran;
+            $this->kuota_online = $jadwal->kuota_online;
+            $this->kuota_offline = $jadwal->kuota_offline;
+            $this->catatan = $jadwal->catatan;
         } else {
-            // Jika kosong, hapus jadwal (Libur)
-            JadwalJaga::where('pegawai_id', $this->selectedPegawaiId)
-                ->where('tanggal', $this->selectedDate)
-                ->delete();
+            $this->resetForm();
         }
-        
-        $this->isOpen = false;
-        $this->dispatch('notify', 'success', 'Jadwal diperbarui.');
+
+        $this->isEditorOpen = true;
+    }
+
+    public function save()
+    {
+        if (!$this->shift_id && $this->status_kehadiran == 'Hadir') {
+            $this->addError('shift_id', 'Pilih shift jaga.');
+            return;
+        }
+
+        JadwalJaga::updateOrCreate(
+            ['pegawai_id' => $this->selectedPegawai->id, 'tanggal' => $this->selectedDate],
+            [
+                'shift_id' => $this->shift_id,
+                'status_kehadiran' => $this->status_kehadiran,
+                'kuota_online' => $this->kuota_online,
+                'kuota_offline' => $this->kuota_offline,
+                'catatan' => $this->catatan
+            ]
+        );
+
+        $this->isEditorOpen = false;
+        $this->dispatch('notify', 'success', 'Jadwal berhasil disimpan.');
+    }
+
+    public function delete()
+    {
+        if ($this->selectedJadwal) {
+            $this->selectedJadwal->delete();
+            $this->isEditorOpen = false;
+            $this->dispatch('notify', 'success', 'Jadwal dihapus (Libur).');
+        }
+    }
+
+    public function closeEditor()
+    {
+        $this->isEditorOpen = false;
+    }
+
+    private function resetForm()
+    {
+        $this->shift_id = null;
+        $this->status_kehadiran = 'Hadir';
+        $this->kuota_online = 20;
+        $this->kuota_offline = 30;
+        $this->catatan = '';
     }
 
     public function render()
     {
         $daysInMonth = Carbon::createFromDate($this->tahun, $this->bulan)->daysInMonth;
         
-        // Eager load jadwal untuk bulan ini
-        $jadwals = JadwalJaga::whereMonth('tanggal', $this->bulan)
+        $pegawais = Pegawai::with(['user', 'poli'])
+            ->when($this->filterPoli, function($q) {
+                $q->where('poli_id', $this->filterPoli);
+            })
+            ->whereHas('user', function($q) {
+                $q->whereIn('role', ['dokter', 'perawat', 'bidan']); // Hanya tenaga medis
+            })
+            ->orderBy('poli_id')
+            ->get();
+
+        $jadwals = JadwalJaga::with('shift')
+            ->whereMonth('tanggal', $this->bulan)
             ->whereYear('tanggal', $this->tahun)
+            ->whereIn('pegawai_id', $pegawais->pluck('id'))
             ->get()
             ->groupBy(function($item) {
                 return $item->pegawai_id . '-' . $item->tanggal->format('Y-m-d');
@@ -73,7 +135,11 @@ class Index extends Component
 
         return view('livewire.jadwal-jaga.index', [
             'daysInMonth' => $daysInMonth,
-            'jadwalMap' => $jadwals
-        ])->layout('layouts.app', ['header' => 'Ploting Jadwal Dinas']);
+            'pegawais' => $pegawais,
+            'jadwalMap' => $jadwals,
+            'shifts' => Shift::all(),
+            'polis' => Poli::all(),
+            'currentDate' => Carbon::createFromDate($this->tahun, $this->bulan, 1)
+        ])->layout('layouts.app', ['header' => 'Roster Jadwal Dinas']);
     }
 }

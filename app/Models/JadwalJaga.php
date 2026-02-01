@@ -14,7 +14,14 @@ class JadwalJaga extends Model
         'pegawai_id',
         'shift_id',
         'tanggal',
-        'status_kehadiran'
+        'status_kehadiran',
+        'kuota_online',
+        'kuota_offline',
+        'catatan'
+    ];
+
+    protected $casts = [
+        'tanggal' => 'date',
     ];
 
     public function pegawai(): BelongsTo
@@ -25,5 +32,11 @@ class JadwalJaga extends Model
     public function shift(): BelongsTo
     {
         return $this->belongsTo(Shift::class);
+    }
+    
+    // Helper untuk mengambil poli dari pegawai
+    public function getPoliAttribute()
+    {
+        return $this->pegawai->poli ?? null;
     }
 }

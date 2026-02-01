@@ -9,11 +9,16 @@ class Index extends Component
 {
     public $alurId;
     public $judul, $deskripsi, $icon = 'check-circle', $urutan, $is_active = true;
+    
+    // New Fields
+    public $target_pasien = 'Umum', $estimasi_waktu, $dokumen_syarat;
+    
     public $isEditing = false;
 
     protected $rules = [
         'judul' => 'required',
         'urutan' => 'required|integer',
+        'target_pasien' => 'required',
     ];
 
     public function render()
@@ -38,6 +43,11 @@ class Index extends Component
         $this->icon = $alur->icon;
         $this->urutan = $alur->urutan;
         $this->is_active = $alur->is_active;
+        
+        $this->target_pasien = $alur->target_pasien;
+        $this->estimasi_waktu = $alur->estimasi_waktu;
+        $this->dokumen_syarat = $alur->dokumen_syarat;
+        
         $this->isEditing = true;
     }
 
@@ -51,6 +61,9 @@ class Index extends Component
             'icon' => $this->icon,
             'urutan' => $this->urutan,
             'is_active' => $this->is_active,
+            'target_pasien' => $this->target_pasien,
+            'estimasi_waktu' => $this->estimasi_waktu,
+            'dokumen_syarat' => $this->dokumen_syarat,
         ]);
 
         $this->isEditing = false;
@@ -72,6 +85,6 @@ class Index extends Component
 
     private function resetInput()
     {
-        $this->reset(['alurId', 'judul', 'deskripsi', 'icon', 'urutan', 'is_active']);
+        $this->reset(['alurId', 'judul', 'deskripsi', 'icon', 'urutan', 'is_active', 'target_pasien', 'estimasi_waktu', 'dokumen_syarat']);
     }
 }
