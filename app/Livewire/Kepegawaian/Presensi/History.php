@@ -162,7 +162,7 @@ class History extends Component
 
         return view('livewire.kepegawaian.presensi.history', [
             'calendar' => $calendar,
-            'stats' => $stats, // Pass stats to view
+            'stats' => $stats, 
             'detailPresensi' => $detailPresensi,
             'detailLaporan' => $detailLaporan,
             'detailCuti' => $detailCuti,
