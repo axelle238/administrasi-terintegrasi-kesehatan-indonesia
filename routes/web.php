@@ -144,7 +144,7 @@ Route::middleware('auth')->group(function () {
         
         Route::get('/pegawai', \App\Livewire\Pegawai\Index::class)->name('pegawai.index');
         Route::get('/pegawai/create', \App\Livewire\Pegawai\Create::class)->name('pegawai.create');
-        Route::get('/pegawai/{pegawai}/edit', \App\Livewire\Pegawai\Edit::class)->name('pegawai.edit');
+        Route::get('/pegawai/{pegawai}', \App\Livewire\Pegawai\Show::class)->name('pegawai.edit'); // Dossier View (Edit Unified)
         Route::get('/shift', \App\Livewire\Shift\Index::class)->name('shift.index');
         Route::get('/shift/create', \App\Livewire\Shift\Create::class)->name('shift.create');
         Route::get('/shift/{shift}/edit', \App\Livewire\Shift\Edit::class)->name('shift.edit');
