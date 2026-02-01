@@ -16,6 +16,14 @@
         </div>
 
         <div class="flex items-center gap-3 w-full md:w-auto">
+            <div class="flex gap-2 mr-2">
+                <button wire:click="copyLastMonth" onclick="return confirm('Salin jadwal dari bulan lalu? Jadwal bulan ini harus kosong.') || event.stopImmediatePropagation()" class="p-2 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors" title="Salin dari Bulan Lalu">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 011.414.586l4.414 4.414a1 1 0 01.586 1.414V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" /></svg>
+                </button>
+                <button wire:click="clearMonth" onclick="return confirm('Hapus SEMUA jadwal bulan ini? Tindakan ini tidak bisa dibatalkan.') || event.stopImmediatePropagation()" class="p-2 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 transition-colors" title="Hapus Jadwal Bulan Ini">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                </button>
+            </div>
             <select wire:model.live="filterPoli" class="w-full md:w-64 rounded-xl border-slate-200 text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500 bg-slate-50">
                 <option value="">Semua Unit / Poli</option>
                 @foreach($polis as $poli)

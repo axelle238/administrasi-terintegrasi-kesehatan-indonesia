@@ -43,6 +43,67 @@ class Index extends Component
         $this->tahun = $date->year;
     }
 
+    // === ADVANCED FEATURES ===
+    public function copyLastMonth()
+    {
+        // 1. Cek apakah bulan ini sudah ada jadwal? (Safety check)
+        $countThisMonth = JadwalJaga::whereMonth('tanggal', $this->bulan)->whereYear('tanggal', $this->tahun)->count();
+        if ($countThisMonth > 0) {
+            $this->dispatch('notify', 'error', 'Jadwal bulan ini sudah terisi. Hapus dulu jika ingin menyalin.');
+            return;
+        }
+
+        // 2. Ambil data bulan lalu
+        $lastMonthDate = Carbon::createFromDate($this->tahun, $this->bulan, 1)->subMonth();
+        $lastMonthSchedules = JadwalJaga::whereMonth('tanggal', $lastMonthDate->month)
+            ->whereYear('tanggal', $lastMonthDate->year)
+            ->get();
+
+        if ($lastMonthSchedules->isEmpty()) {
+            $this->dispatch('notify', 'warning', 'Tidak ada jadwal di bulan sebelumnya untuk disalin.');
+            return;
+        }
+
+        // 3. Salin Pattern (Logic: Tanggal 1 ke Tanggal 1, dst. Jika tanggal tidak valid di bulan ini, skip)
+        $newSchedules = [];
+        $now = Carbon::now();
+        
+        foreach ($lastMonthSchedules as $old) {
+            $day = $old->tanggal->day;
+            
+            // Cek validitas tanggal di bulan ini (misal: tgl 31 di Februari)
+            if (!checkdate($this->bulan, $day, $this->tahun)) continue;
+
+            $newDate = Carbon::createFromDate($this->tahun, $this->bulan, $day);
+
+            $newSchedules[] = [
+                'pegawai_id' => $old->pegawai_id,
+                'shift_id' => $old->shift_id,
+                'tanggal' => $newDate->format('Y-m-d'),
+                'status_kehadiran' => $old->status_kehadiran, // Reset ke Hadir jika mau, tapi kita copy status juga gapapa
+                'kuota_online' => $old->kuota_online,
+                'kuota_offline' => $old->kuota_offline,
+                'catatan' => 'Salinan otomatis',
+                'created_at' => $now,
+                'updated_at' => $now
+            ];
+        }
+
+        if (count($newSchedules) > 0) {
+            JadwalJaga::insert($newSchedules);
+            $this->dispatch('notify', 'success', count($newSchedules) . ' jadwal berhasil disalin dari bulan lalu.');
+        }
+    }
+
+    public function clearMonth()
+    {
+        JadwalJaga::whereMonth('tanggal', $this->bulan)
+            ->whereYear('tanggal', $this->tahun)
+            ->delete();
+            
+        $this->dispatch('notify', 'success', 'Semua jadwal bulan ini telah dihapus.');
+    }
+
     public function editCell($pegawaiId, $dateStr)
     {
         $this->selectedDate = $dateStr;
