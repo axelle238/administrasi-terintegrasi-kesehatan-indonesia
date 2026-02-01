@@ -130,6 +130,45 @@
                     </div>
                     @endif
 
+                    @if($key === 'why_us')
+                    <div class="space-y-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                        <label class="block text-xs font-bold text-slate-500 uppercase">Poin Keunggulan (3 Kolom)</label>
+                        
+                        <!-- Card 1 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pb-4 border-b border-slate-200">
+                            <span class="md:col-span-2 text-[10px] font-black text-indigo-400 uppercase tracking-widest">Kartu 1</span>
+                            <div>
+                                <input wire:model="section_metadata.card_1_title" type="text" placeholder="Judul Kartu 1" class="w-full rounded-lg border-slate-200 text-xs font-bold">
+                            </div>
+                            <div>
+                                <input wire:model="section_metadata.card_1_desc" type="text" placeholder="Deskripsi Singkat" class="w-full rounded-lg border-slate-200 text-xs">
+                            </div>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pb-4 border-b border-slate-200">
+                            <span class="md:col-span-2 text-[10px] font-black text-purple-400 uppercase tracking-widest">Kartu 2</span>
+                            <div>
+                                <input wire:model="section_metadata.card_2_title" type="text" placeholder="Judul Kartu 2" class="w-full rounded-lg border-slate-200 text-xs font-bold">
+                            </div>
+                            <div>
+                                <input wire:model="section_metadata.card_2_desc" type="text" placeholder="Deskripsi Singkat" class="w-full rounded-lg border-slate-200 text-xs">
+                            </div>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <span class="md:col-span-2 text-[10px] font-black text-emerald-400 uppercase tracking-widest">Kartu 3</span>
+                            <div>
+                                <input wire:model="section_metadata.card_3_title" type="text" placeholder="Judul Kartu 3" class="w-full rounded-lg border-slate-200 text-xs font-bold">
+                            </div>
+                            <div>
+                                <input wire:model="section_metadata.card_3_desc" type="text" placeholder="Deskripsi Singkat" class="w-full rounded-lg border-slate-200 text-xs">
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
                     <!-- Image Upload -->
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Gambar / Ilustrasi</label>

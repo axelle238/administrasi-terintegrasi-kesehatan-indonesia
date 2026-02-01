@@ -130,30 +130,37 @@
                     <p class="text-slate-500 max-w-2xl mx-auto">{{ $section->content }}</p>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <!-- Dynamic Cards hardcoded for structure but could be loop -->
-                    <div class="group p-8 bg-slate-50 rounded-[2.5rem] hover:bg-indigo-600 transition-all duration-500">
-                        <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-indigo-600 mb-6 shadow-sm group-hover:bg-white/20 group-hover:text-white">
-                            <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
-                        </div>
-                        <h3 class="text-xl font-black text-slate-900 mb-3 group-hover:text-white">Dokter Spesialis</h3>
-                        <p class="text-slate-500 group-hover:text-indigo-100">Tim medis berpengalaman siap melayani dengan standar tertinggi.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="group bg-slate-50 p-8 rounded-[2.5rem] border border-slate-100 hover:bg-slate-900 hover:text-white transition-all duration-500 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-colors"></div>
+                    <div class="w-16 h-16 rounded-2xl bg-white text-emerald-600 flex items-center justify-center text-3xl mb-6 shadow-sm group-hover:bg-white/10 group-hover:text-emerald-400 transition-colors">
+                        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" /></svg>
                     </div>
-                    <div class="group p-8 bg-slate-50 rounded-[2.5rem] hover:bg-purple-600 transition-all duration-500">
-                        <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-purple-600 mb-6 shadow-sm group-hover:bg-white/20 group-hover:text-white">
-                            <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                        </div>
-                        <h3 class="text-xl font-black text-slate-900 mb-3 group-hover:text-white">Teknologi Modern</h3>
-                        <p class="text-slate-500 group-hover:text-purple-100">Peralatan diagnostik terkini untuk hasil yang akurat dan cepat.</p>
-                    </div>
-                    <div class="group p-8 bg-slate-50 rounded-[2.5rem] hover:bg-emerald-600 transition-all duration-500">
-                        <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-emerald-600 mb-6 shadow-sm group-hover:bg-white/20 group-hover:text-white">
-                            <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                        </div>
-                        <h3 class="text-xl font-black text-slate-900 mb-3 group-hover:text-white">Layanan 24/7</h3>
-                        <p class="text-slate-500 group-hover:text-emerald-100">IGD dan Farmasi siap melayani kebutuhan darurat Anda kapan saja.</p>
-                    </div>
+                    <h3 class="text-xl font-black text-slate-900 mb-3 group-hover:text-white transition-colors">{{ $section->metadata['card_1_title'] ?? 'Teknologi Mutakhir' }}</h3>
+                    <p class="text-slate-500 group-hover:text-slate-400 transition-colors leading-relaxed">{{ $section->metadata['card_1_desc'] ?? 'Peralatan medis diagnostik terbaru dengan akurasi tinggi untuk penanganan presisi.' }}</p>
                 </div>
+
+                <!-- Card 2 -->
+                <div class="group bg-slate-50 p-8 rounded-[2.5rem] border border-slate-100 hover:bg-slate-900 hover:text-white transition-all duration-500 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/20 transition-colors"></div>
+                    <div class="w-16 h-16 rounded-2xl bg-white text-blue-600 flex items-center justify-center text-3xl mb-6 shadow-sm group-hover:bg-white/10 group-hover:text-blue-400 transition-colors">
+                        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    </div>
+                    <h3 class="text-xl font-black text-slate-900 mb-3 group-hover:text-white transition-colors">{{ $section->metadata['card_2_title'] ?? 'Tim Dokter Ahli' }}</h3>
+                    <p class="text-slate-500 group-hover:text-slate-400 transition-colors leading-relaxed">{{ $section->metadata['card_2_desc'] ?? 'Didukung oleh dokter spesialis berpengalaman dengan sertifikasi nasional.' }}</p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="group bg-slate-50 p-8 rounded-[2.5rem] border border-slate-100 hover:bg-slate-900 hover:text-white transition-all duration-500 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/20 transition-colors"></div>
+                    <div class="w-16 h-16 rounded-2xl bg-white text-purple-600 flex items-center justify-center text-3xl mb-6 shadow-sm group-hover:bg-white/10 group-hover:text-purple-400 transition-colors">
+                        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <h3 class="text-xl font-black text-slate-900 mb-3 group-hover:text-white transition-colors">{{ $section->metadata['card_3_title'] ?? 'Pelayanan Cepat' }}</h3>
+                    <p class="text-slate-500 group-hover:text-slate-400 transition-colors leading-relaxed">{{ $section->metadata['card_3_desc'] ?? 'Sistem antrean digital dan rekam medis elektronik untuk efisiensi waktu Anda.' }}</p>
+                </div>
+            </div>
             </div>
         </section>
         @endif
