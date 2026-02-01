@@ -1,4 +1,4 @@
-<div class="space-y-8 animate-fade-in">
+<div class="space-y-8 animate-fade-in" x-data="cameraApp()">
     
     <!-- Header Info -->
     <div class="bg-gradient-to-r from-slate-800 to-slate-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-xl">
@@ -6,39 +6,35 @@
         <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div>
                 <div class="flex items-center gap-3 mb-2">
-                    <span class="px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[10px] font-bold uppercase tracking-widest text-blue-200">Kedisiplinan</span>
+                    <span class="px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[10px] font-bold uppercase tracking-widest text-blue-200">Live Presence</span>
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                 </div>
                 <h2 class="text-3xl font-black tracking-tight">Presensi Upacara</h2>
                 <p class="text-slate-400 text-sm mt-1 max-w-lg">
-                    Pencatatan kehadiran upacara rutin dan hari besar nasional. Data yang Anda input akan <span class="text-white font-bold underline decoration-blue-400">otomatis tercatat</span> ke dalam Laporan Aktivitas Harian (LKH).
+                    Ambil foto kehadiran Anda secara langsung di lokasi upacara. Sistem akan mencatat waktu dan koordinat lokasi secara otomatis.
                 </p>
-            </div>
-            
-            <div class="hidden md:block">
-                <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/10">
-                    <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" /></svg>
-                </div>
             </div>
         </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        <!-- FORM SECTION -->
+        <!-- CAMERA & FORM SECTION -->
         <div class="lg:col-span-1">
             <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm sticky top-24">
-                <h3 class="font-black text-slate-800 text-lg mb-6 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                    Input Kehadiran
-                </h3>
-
-                @if (session()->has('message'))
-                    <div class="bg-emerald-50 text-emerald-600 p-4 rounded-xl text-xs font-bold mb-6 flex items-center gap-2 border border-emerald-100">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                        {{ session('message') }}
+                
+                <!-- GPS Status -->
+                <div class="mb-6 p-4 rounded-xl border flex items-center justify-between" :class="gpsLocked ? 'bg-emerald-50 border-emerald-100' : 'bg-amber-50 border-amber-100'">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 rounded-full" :class="gpsLocked ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600 animate-pulse'">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-wider" x-text="gpsLocked ? 'Lokasi Terkunci' : 'Mencari Lokasi...'"></p>
+                            <p class="text-[10px] font-mono mt-0.5" x-text="coordsText"></p>
+                        </div>
                     </div>
-                @endif
+                </div>
 
                 <form wire:submit.prevent="save" class="space-y-5">
                     
@@ -59,47 +55,54 @@
                         @error('jenis_upacara_id') <span class="text-[10px] text-red-500 font-bold mt-1">{{ $message }}</span> @enderror
                     </div>
 
-                    <!-- Tanggal -->
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Tanggal Pelaksanaan</label>
-                        <input type="date" wire:model="tanggal" class="w-full rounded-xl border-slate-200 text-sm font-bold text-slate-700 focus:border-blue-500 focus:ring-blue-500 py-3 bg-slate-50 hover:bg-white transition-colors">
-                        @error('tanggal') <span class="text-[10px] text-red-500 font-bold mt-1">{{ $message }}</span> @enderror
+                    <!-- CAMERA VIEWPORT -->
+                    <div class="relative rounded-2xl overflow-hidden bg-black aspect-[3/4] shadow-inner group">
+                        
+                        <!-- Video Feed -->
+                        <video x-ref="video" class="absolute inset-0 w-full h-full object-cover" autoplay playsinline muted x-show="!photoTaken"></video>
+                        
+                        <!-- Captured Photo Preview -->
+                        <img x-ref="photoPreview" class="absolute inset-0 w-full h-full object-cover" x-show="photoTaken">
+
+                        <!-- Overlay Info (Watermark Simulation for UI) -->
+                        <div class="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/80 to-transparent text-white">
+                            <p class="text-xl font-black font-mono tracking-tight" x-text="clock"></p>
+                            <p class="text-[10px] font-mono opacity-80 truncate" x-text="coordsText"></p>
+                        </div>
+
+                        <!-- Loading Camera -->
+                        <div class="absolute inset-0 flex items-center justify-center bg-slate-900 text-white z-20" x-show="loadingCamera">
+                            <div class="flex flex-col items-center gap-3">
+                                <svg class="w-8 h-8 animate-spin text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                <span class="text-xs font-bold uppercase tracking-widest">Memuat Kamera</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Foto Bukti -->
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Foto Bukti (Selfie di Lokasi)</label>
-                        <div class="flex items-center justify-center w-full">
-                            <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-2xl cursor-pointer bg-slate-50 hover:bg-blue-50 hover:border-blue-300 transition-all group overflow-hidden relative">
-                                
-                                @if ($bukti_foto)
-                                    <img src="{{ $bukti_foto->temporaryUrl() }}" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
-                                    <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <span class="text-white text-xs font-bold">Ganti Foto</span>
-                                    </div>
-                                @else
-                                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                        <svg class="w-8 h-8 mb-3 text-slate-400 group-hover:text-blue-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                                        <p class="text-xs text-slate-500 font-medium">Klik untuk upload foto</p>
-                                    </div>
-                                @endif
-                                
-                                <input id="dropzone-file" type="file" wire:model="bukti_foto" class="hidden" accept="image/*" />
-                            </label>
-                        </div>
-                        @error('bukti_foto') <span class="text-[10px] text-red-500 font-bold mt-1">{{ $message }}</span> @enderror
+                    <!-- Action Buttons -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <button type="button" @click="takePhoto" x-show="!photoTaken" :disabled="!gpsLocked" class="col-span-2 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold uppercase tracking-wider shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            Ambil Presensi
+                        </button>
+
+                        <button type="button" @click="resetCamera" x-show="photoTaken" class="py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold uppercase tracking-wider transition-all">
+                            Ulangi Foto
+                        </button>
+
+                        <button type="submit" x-show="photoTaken" class="py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2">
+                            <span wire:loading.remove wire:target="save">Kirim Data</span>
+                            <span wire:loading wire:target="save">Mengirim...</span>
+                        </button>
                     </div>
+                    
+                    @error('bukti_foto') <span class="text-[10px] text-red-500 font-bold mt-1 block text-center">{{ $message }}</span> @enderror
+                    @error('latitude') <span class="text-[10px] text-red-500 font-bold mt-1 block text-center">Data Lokasi Wajib Ada.</span> @enderror
 
                     <!-- Keterangan -->
                     <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Keterangan Tambahan</label>
-                        <textarea wire:model="keterangan" rows="2" placeholder="Lokasi atau catatan khusus..." class="w-full rounded-xl border-slate-200 text-sm font-medium text-slate-700 focus:border-blue-500 focus:ring-blue-500 bg-slate-50 hover:bg-white transition-colors"></textarea>
+                        <textarea wire:model="keterangan" rows="2" placeholder="Catatan tambahan (opsional)..." class="w-full rounded-xl border-slate-200 text-sm font-medium text-slate-700 focus:border-blue-500 focus:ring-blue-500 bg-slate-50 hover:bg-white transition-colors"></textarea>
                     </div>
-
-                    <button type="submit" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold uppercase tracking-wider shadow-lg shadow-blue-600/20 hover:shadow-blue-600/40 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
-                        <span wire:loading.remove wire:target="save">Simpan Kehadiran</span>
-                        <span wire:loading wire:target="save">Memproses...</span>
-                    </button>
                 </form>
             </div>
         </div>
@@ -115,10 +118,13 @@
                 @forelse($riwayat as $item)
                 <div class="bg-white p-5 rounded-[1.5rem] border border-slate-100 hover:border-blue-200 hover:shadow-md transition-all group relative">
                     <div class="flex items-start gap-5">
-                        <!-- Date Badge -->
-                        <div class="flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 border border-blue-100 shrink-0">
-                            <span class="text-[10px] font-bold uppercase">{{ $item->tanggal->translatedFormat('M') }}</span>
-                            <span class="text-xl font-black">{{ $item->tanggal->format('d') }}</span>
+                        <div class="flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 border border-blue-100 shrink-0 overflow-hidden relative group-hover:scale-105 transition-transform">
+                            @if($item->bukti_foto)
+                                <img src="{{ Storage::url($item->bukti_foto) }}" class="w-full h-full object-cover cursor-pointer" onclick="window.open(this.src)">
+                            @else
+                                <span class="text-[10px] font-bold uppercase">{{ $item->tanggal->translatedFormat('M') }}</span>
+                                <span class="text-xl font-black">{{ $item->tanggal->format('d') }}</span>
+                            @endif
                         </div>
 
                         <div class="flex-1">
@@ -134,28 +140,23 @@
                                 </div>
                             </div>
 
-                            <div class="mt-3 flex items-center gap-4 text-xs text-slate-500">
-                                @if($item->is_integrated_lkh)
-                                    <span class="flex items-center gap-1 text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-md" title="Terintegrasi ke LKH">
-                                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                        LKH Sync
-                                    </span>
+                            <div class="mt-3 flex flex-wrap items-center gap-4 text-xs text-slate-500">
+                                @if($item->latitude && $item->longitude)
+                                    <a href="https://www.google.com/maps?q={{ $item->latitude }},{{ $item->longitude }}" target="_blank" class="flex items-center gap-1 text-blue-500 hover:underline">
+                                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                        Lokasi Terpantau
+                                    </a>
                                 @endif
                                 
-                                @if($item->keterangan)
-                                    <span class="flex items-center gap-1 truncate max-w-[200px]">
-                                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" /></svg>
-                                        {{ $item->keterangan }}
+                                @if($item->is_integrated_lkh)
+                                    <span class="flex items-center gap-1 text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-md">
+                                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        LKH Sync
                                     </span>
                                 @endif
                             </div>
                         </div>
                     </div>
-
-                    <!-- Delete Action -->
-                    <button wire:click="delete({{ $item->id }})" wire:confirm="Hapus data presensi upacara ini?" class="absolute top-4 right-4 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-2 rounded-full hover:bg-red-50">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                    </button>
                 </div>
                 @empty
                 <div class="text-center py-12 bg-slate-50 rounded-[2rem] border border-dashed border-slate-200">
@@ -167,4 +168,133 @@
             </div>
         </div>
     </div>
+
+    <!-- Hidden Canvas for Processing -->
+    <canvas id="canvas" class="hidden"></canvas>
+
+    @script
+    <script>
+        Alpine.data('cameraApp', () => ({
+            stream: null,
+            photoTaken: false,
+            loadingCamera: true,
+            gpsLocked: false,
+            coordsText: 'Mencari satelit...',
+            clock: '00:00:00',
+            latitude: null,
+            longitude: null,
+
+            init() {
+                this.startCamera();
+                this.startGps();
+                this.startClock();
+                
+                Livewire.on('presensi-saved', () => {
+                    this.resetCamera();
+                });
+            },
+
+            async startCamera() {
+                try {
+                    this.stream = await navigator.mediaDevices.getUserMedia({ 
+                        video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 960 } }, 
+                        audio: false 
+                    });
+                    this.$refs.video.srcObject = this.stream;
+                    this.loadingCamera = false;
+                } catch (error) {
+                    console.error("Camera Error:", error);
+                    alert("Gagal mengakses kamera. Pastikan izin diberikan.");
+                    this.loadingCamera = false;
+                }
+            },
+
+            startGps() {
+                if ("geolocation" in navigator) {
+                    navigator.geolocation.watchPosition((position) => {
+                        this.latitude = position.coords.latitude;
+                        this.longitude = position.coords.longitude;
+                        this.gpsLocked = true;
+                        this.coordsText = `${this.latitude.toFixed(6)}, ${this.longitude.toFixed(6)}`;
+                        
+                        // Sync to Livewire
+                        @this.set('latitude', this.latitude);
+                        @this.set('longitude', this.longitude);
+                    }, (error) => {
+                        this.coordsText = "Gagal mendapatkan lokasi.";
+                        console.error("GPS Error:", error);
+                    }, {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    });
+                } else {
+                    this.coordsText = "GPS tidak didukung.";
+                }
+            },
+
+            startClock() {
+                setInterval(() => {
+                    const now = new Date();
+                    this.clock = now.toLocaleTimeString('id-ID', { hour12: false });
+                }, 1000);
+            },
+
+            takePhoto() {
+                if (!this.gpsLocked) {
+                    alert("Tunggu hingga lokasi terkunci!");
+                    return;
+                }
+
+                const video = this.$refs.video;
+                const canvas = document.getElementById('canvas');
+                const context = canvas.getContext('2d');
+
+                // Set Canvas Size matches Video
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+
+                // Draw Video Frame
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                // --- ADD WATERMARK ---
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                const timeStr = now.toLocaleTimeString('id-ID');
+                
+                // Gradient Background for Text
+                const gradient = context.createLinearGradient(0, canvas.height - 150, 0, canvas.height);
+                gradient.addColorStop(0, "transparent");
+                gradient.addColorStop(1, "rgba(0,0,0,0.8)");
+                context.fillStyle = gradient;
+                context.fillRect(0, canvas.height - 150, canvas.width, 150);
+
+                // Draw Text
+                context.fillStyle = "white";
+                context.font = "bold 30px monospace";
+                context.fillText(timeStr, 20, canvas.height - 80);
+                
+                context.font = "20px sans-serif";
+                context.fillText(dateStr, 20, canvas.height - 50);
+                
+                context.font = "16px monospace";
+                context.fillText(`${this.latitude}, ${this.longitude}`, 20, canvas.height - 25);
+
+                // Export to Base64
+                const dataUrl = canvas.toDataURL('image/png');
+                
+                // Set Preview & Livewire
+                this.$refs.photoPreview.src = dataUrl;
+                @this.set('bukti_foto', dataUrl);
+                
+                this.photoTaken = true;
+            },
+
+            resetCamera() {
+                this.photoTaken = false;
+                @this.set('bukti_foto', null);
+            }
+        }))
+    </script>
+    @endscript
 </div>

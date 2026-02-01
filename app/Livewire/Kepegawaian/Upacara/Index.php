@@ -18,8 +18,10 @@ class Index extends Component
     // Form Properties
     public $jenis_upacara_id;
     public $tanggal;
-    public $bukti_foto;
+    public $bukti_foto; // Akan berisi Base64 String dari kamera
     public $keterangan;
+    public $latitude;
+    public $longitude;
     
     public $confirmingDelete = null;
 
@@ -33,7 +35,9 @@ class Index extends Component
         return [
             'jenis_upacara_id' => 'required|exists:jenis_upacaras,id',
             'tanggal' => 'required|date',
-            'bukti_foto' => 'nullable|image|max:2048', // 2MB Max
+            'bukti_foto' => 'required|string', // Base64
+            'latitude' => 'required',
+            'longitude' => 'required',
             'keterangan' => 'nullable|string|max:255',
         ];
     }
@@ -42,8 +46,8 @@ class Index extends Component
     {
         return [
             'jenis_upacara_id.required' => 'Pilih jenis upacara.',
-            'bukti_foto.image' => 'File harus berupa gambar.',
-            'bukti_foto.max' => 'Ukuran foto maksimal 2MB.',
+            'bukti_foto.required' => 'Foto kehadiran wajib diambil.',
+            'latitude.required' => 'Lokasi GPS tidak terdeteksi. Izinkan akses lokasi.',
         ];
     }
 
@@ -55,24 +59,36 @@ class Index extends Component
             $user = Auth::user();
             $jenis = JenisUpacara::find($this->jenis_upacara_id);
             
-            // 1. Simpan Presensi Upacara
-            $path = null;
+            // 1. Proses Simpan Foto Base64
+            $imagePath = null;
             if ($this->bukti_foto) {
-                $path = $this->bukti_foto->store('upacara', 'public');
+                // Decode Base64
+                $image_parts = explode(";base64,", $this->bukti_foto);
+                $image_base64 = base64_decode($image_parts[1]);
+                
+                // Generate Filename
+                $fileName = 'upacara_' . uniqid() . '.png';
+                $path = 'upacara/' . $fileName;
+                
+                // Store
+                \Illuminate\Support\Facades\Storage::disk('public')->put($path, $image_base64);
+                $imagePath = $path;
             }
 
-            $presensi = PresensiUpacara::create([
+            // 2. Simpan Presensi Upacara
+            PresensiUpacara::create([
                 'user_id' => $user->id,
                 'jenis_upacara_id' => $this->jenis_upacara_id,
                 'tanggal' => $this->tanggal,
-                'bukti_foto' => $path,
+                'bukti_foto' => $imagePath,
                 'keterangan' => $this->keterangan,
                 'status' => 'Hadir',
                 'is_integrated_lkh' => true,
+                'latitude' => $this->latitude,
+                'longitude' => $this->longitude,
             ]);
 
-            // 2. Integrasi ke Laporan Aktivitas (LKH)
-            // Cari/Buat Header LKH
+            // 3. Integrasi ke Laporan Aktivitas (LKH)
             $lkh = LaporanHarian::firstOrCreate(
                 [
                     'user_id' => $user->id,
@@ -85,22 +101,18 @@ class Index extends Component
             );
 
             // Tambahkan Detail Kegiatan
-            $jamMulai = '07:00';
-            $jamSelesai = '08:00'; // Default durasi 1 jam untuk upacara
-            
-            // Cek jika bentrok dengan kegiatan lain? (Optional, skip for simplicity)
-            
             $lkh->details()->create([
-                'jam_mulai' => $jamMulai,
-                'jam_selesai' => $jamSelesai,
+                'jam_mulai' => '07:00',
+                'jam_selesai' => '08:00',
                 'kegiatan' => 'Mengikuti ' . $jenis->nama_upacara,
                 'output' => 'Terlaksana',
                 'durasi' => 60,
             ]);
         });
 
-        $this->reset(['jenis_upacara_id', 'bukti_foto', 'keterangan']);
-        session()->flash('message', 'Presensi upacara berhasil disimpan dan dicatat ke LKH.');
+        $this->reset(['jenis_upacara_id', 'bukti_foto', 'keterangan', 'latitude', 'longitude']);
+        $this->dispatch('presensi-saved'); // Trigger JS event to reset camera
+        session()->flash('message', 'Presensi upacara berhasil disimpan dengan data lokasi.');
     }
 
     public function delete($id)
