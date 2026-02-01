@@ -40,43 +40,42 @@
 
 <!-- D. MANAJEMEN KEPEGAWAIAN (ADMIN - HR SYSTEM) -->
 @if(Auth::user()->can('admin'))
-<x-nav.dropdown label="Manajemen Kepegawaian" :active="request()->routeIs('hrd.*') || request()->routeIs('pegawai.*') || request()->routeIs('shift.*') || request()->routeIs('jadwal-jaga.*') || request()->routeIs('kepegawaian.kinerja.*') || request()->routeIs('kepegawaian.gaji.*') || request()->routeIs('admin.gaji.*')">
+<x-nav.dropdown label="Manajemen Kepegawaian" :active="request()->routeIs('hrd.*') || request()->routeIs('pegawai.*') || request()->routeIs('shift.*') || request()->routeIs('jadwal-jaga.*') || request()->routeIs('kepegawaian.*') || request()->routeIs('mutasi.*') || request()->routeIs('aset-pegawai.*') || request()->routeIs('kinerja.*') || request()->routeIs('offboarding.*')">
     <x-slot:icon>
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
     </x-slot:icon>
     
-    <!-- GROUP 1: OVERVIEW -->
-    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Dashboard & Analitik</div>
-    <x-nav.link-child :href="route('hrd.dashboard')" :active="request()->routeIs('hrd.dashboard')">Analitik SDM Global</x-nav.link-child>
+    <!-- PHASE 1: MONITORING -->
+    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Executive Summary</div>
+    <x-nav.link-child :href="route('hrd.dashboard')" :active="request()->routeIs('hrd.dashboard')">Dashboard HRD</x-nav.link-child>
 
-    <!-- GROUP 2: CORE DATA -->
+    <!-- PHASE 2: DATABASE & ARSIP -->
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Database & Arsip</div>
     <x-nav.link-child :href="route('pegawai.index')" :active="request()->routeIs('pegawai.index') || request()->routeIs('pegawai.create')">Database Pegawai</x-nav.link-child>
-    <x-nav.link-child :href="route('pegawai.index')" :active="request()->routeIs('pegawai.show')">Dossier & Arsip Digital</x-nav.link-child>
-    <x-nav.link-child :href="route('kepegawaian.kredensial.index')" :active="request()->routeIs('kepegawaian.kredensial.index')">Monitoring Kredensial (STR/SIP)</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.kredensial.index')" :active="request()->routeIs('kepegawaian.kredensial.index')">Monitoring STR & SIP</x-nav.link-child>
+    <x-nav.link-child :href="route('aset-pegawai.index')" :active="request()->routeIs('aset-pegawai.index')">Inventaris Aset Pegawai</x-nav.link-child>
 
-    <!-- GROUP 3: OPERASIONAL -->
+    <!-- PHASE 3: OPERASIONAL WAKTU -->
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Manajemen Waktu</div>
-    <x-nav.link-child :href="route('shift.index')" :active="request()->routeIs('shift.*')">Master Shift & Pola</x-nav.link-child>
     <x-nav.link-child :href="route('jadwal-jaga.index')" :active="request()->routeIs('jadwal-jaga.*')">Jadwal Dinas (Roster)</x-nav.link-child>
-    <x-nav.link-child :href="route('hrd.presensi.index')" :active="request()->routeIs('hrd.presensi.*')">Log Presensi & Kehadiran</x-nav.link-child>
+    <x-nav.link-child :href="route('shift.index')" :active="request()->routeIs('shift.*')">Master Shift</x-nav.link-child>
+    <x-nav.link-child :href="route('hrd.presensi.index')" :active="request()->routeIs('hrd.presensi.*')">Rekapitulasi Presensi</x-nav.link-child>
 
-    <!-- GROUP 4: ASET & FASILITAS (NEW) -->
-    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Inventaris SDM</div>
-    <x-nav.link-child :href="route('aset-pegawai.index')" :active="request()->routeIs('aset-pegawai.index')">Fasilitas & Aset Pegawai</x-nav.link-child>
-
-    <!-- GROUP 5: KOMPENSASI -->
+    <!-- PHASE 4: KOMPENSASI -->
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Kompensasi & Benefit</div>
-    <x-nav.link-child :href="route('hrd.cuti.index')" :active="request()->routeIs('hrd.cuti.*')">Approval Cuti</x-nav.link-child>
-    <x-nav.link-child :href="route('hrd.lembur.index')" :active="request()->routeIs('hrd.lembur.*')">Approval Lembur</x-nav.link-child>
-    <x-nav.link-child :href="route('admin.gaji.index')" :active="request()->routeIs('admin.gaji.*')">Payroll & Penggajian</x-nav.link-child>
+    <x-nav.link-child :href="route('admin.gaji.index')" :active="request()->routeIs('admin.gaji.*')">Payroll (Penggajian)</x-nav.link-child>
+    <x-nav.link-child :href="route('hrd.cuti.index')" :active="request()->routeIs('hrd.cuti.*')">Persetujuan Cuti</x-nav.link-child>
+    <x-nav.link-child :href="route('hrd.lembur.index')" :active="request()->routeIs('hrd.lembur.*')">Persetujuan Lembur</x-nav.link-child>
 
-    <!-- GROUP 6: TALENT -->
-    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Pengembangan Karir</div>
-    <x-nav.link-child :href="route('kinerja.assessment')" :active="request()->routeIs('kinerja.assessment')">Manajemen Kinerja (KPI)</x-nav.link-child>
+    <!-- PHASE 5: PENGEMBANGAN KARIR -->
+    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Talent Management</div>
+    <x-nav.link-child :href="route('kinerja.assessment')" :active="request()->routeIs('kinerja.assessment')">Penilaian Kinerja (KPI)</x-nav.link-child>
+    <x-nav.link-child :href="route('mutasi.index')" :active="request()->routeIs('mutasi.index')">Mutasi & Promosi</x-nav.link-child>
     <x-nav.link-child :href="route('kepegawaian.diklat.index')" :active="request()->routeIs('kepegawaian.diklat.index')">Diklat & Pelatihan</x-nav.link-child>
-    <x-nav.link-child :href="route('mutasi.index')" :active="request()->routeIs('mutasi.index')">Mutasi & Promosi Jabatan</x-nav.link-child>
-    <x-nav.link-child :href="route('offboarding.index')" :active="request()->routeIs('offboarding.index')">Terminasi & Offboarding</x-nav.link-child>
+    
+    <!-- PHASE 6: TERMINASI -->
+    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Exit Management</div>
+    <x-nav.link-child :href="route('offboarding.index')" :active="request()->routeIs('offboarding.index')">Offboarding & Resign</x-nav.link-child>
 </x-nav.dropdown>
 @endif
 
