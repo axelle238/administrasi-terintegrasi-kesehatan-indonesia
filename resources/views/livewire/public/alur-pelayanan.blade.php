@@ -81,11 +81,22 @@
                     <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-50 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none print:hidden"></div>
 
                     <!-- Detail Header -->
-                    <div class="relative z-10 mb-10 border-b border-slate-100 pb-8 print:hidden">
-                        <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-[10px] font-black uppercase tracking-wider mb-3 inline-block">
-                            {{ $currentLayanan->poli->nama_poli ?? 'Unit' }}
-                        </span>
-                        <h2 class="text-3xl font-black text-slate-900 mb-4">{{ $currentLayanan->nama_layanan }}</h2>
+                    <div class="relative z-10 mb-8 border-b border-slate-100 pb-8 print:hidden">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-4">
+                            <div>
+                                <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-[10px] font-black uppercase tracking-wider mb-3 inline-block">
+                                    {{ $currentLayanan->poli->nama_poli ?? 'Unit' }}
+                                </span>
+                                <h2 class="text-3xl font-black text-slate-900 mb-2">{{ $currentLayanan->nama_layanan }}</h2>
+                            </div>
+                            
+                            <!-- Smart Filter (NEW) -->
+                            <div class="bg-slate-100 p-1 rounded-xl flex">
+                                <button wire:click="setPatientType('Umum')" class="px-4 py-2 rounded-lg text-xs font-bold transition-all {{ $selectedPatientType == 'Umum' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700' }}">Umum</button>
+                                <button wire:click="setPatientType('BPJS')" class="px-4 py-2 rounded-lg text-xs font-bold transition-all {{ $selectedPatientType == 'BPJS' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-700' }}">BPJS</button>
+                                <button wire:click="setPatientType('Asuransi')" class="px-4 py-2 rounded-lg text-xs font-bold transition-all {{ $selectedPatientType == 'Asuransi' ? 'bg-white text-amber-600 shadow-sm' : 'text-slate-500 hover:text-slate-700' }}">Asuransi</button>
+                            </div>
+                        </div>
                         <p class="text-slate-500 leading-relaxed">{{ $currentLayanan->deskripsi }}</p>
                     </div>
 

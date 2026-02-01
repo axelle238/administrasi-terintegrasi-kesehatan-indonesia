@@ -190,6 +190,26 @@
                         </select>
                     </div>
                 </div>
+
+                <!-- Visibility Logic (NEW) -->
+                <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                    <label class="block text-xs font-bold text-indigo-600 uppercase mb-3">Logika Tampilan (Visibility Rules)</label>
+                    <p class="text-[10px] text-slate-500 mb-3">Jika dipilih, langkah ini HANYA akan muncul untuk pasien dengan tipe tersebut. Biarkan kosong untuk semua.</p>
+                    <div class="flex flex-wrap gap-4">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input wire:model="visibility_target" type="checkbox" value="Umum" class="rounded text-indigo-600 focus:ring-indigo-500">
+                            <span class="text-sm font-medium text-slate-700">Pasien Umum/Tunai</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input wire:model="visibility_target" type="checkbox" value="BPJS" class="rounded text-indigo-600 focus:ring-indigo-500">
+                            <span class="text-sm font-medium text-slate-700">Pasien BPJS</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input wire:model="visibility_target" type="checkbox" value="Asuransi" class="rounded text-indigo-600 focus:ring-indigo-500">
+                            <span class="text-sm font-medium text-slate-700">Asuransi Lain</span>
+                        </label>
+                    </div>
+                </div>
                 
                 <div class="grid grid-cols-2 gap-4">
                     <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer">
@@ -250,6 +270,13 @@
                                     @endif
                                     @if($alur->is_critical)
                                     <span class="px-2.5 py-1 bg-rose-50 text-rose-600 rounded-lg text-[10px] font-black uppercase">Wajib</span>
+                                    @endif
+                                    
+                                    @if(!empty($alur->visibility_rules['target_pasien'] ?? []))
+                                    <span class="px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-[10px] font-black uppercase flex items-center gap-1 border border-indigo-100">
+                                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                                        Hanya: {{ implode(', ', $alur->visibility_rules['target_pasien']) }}
+                                    </span>
                                     @endif
                                 </div>
                             </div>

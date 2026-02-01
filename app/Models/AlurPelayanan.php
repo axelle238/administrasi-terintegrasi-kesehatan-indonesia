@@ -16,6 +16,7 @@ class AlurPelayanan extends Model
         'is_critical' => 'boolean',
         'faq' => 'array',
         'tags' => 'array',
+        'visibility_rules' => 'array',
         'estimasi_biaya' => 'decimal:2',
         'biaya_sarana' => 'decimal:2',
         'biaya_pelayanan' => 'decimal:2',

@@ -12,6 +12,9 @@ class AlurPelayanan extends Component
     public $activePoli = null;
     public $activeLayanan = null;
     public $search = '';
+    
+    // Smart Filter
+    public $selectedPatientType = 'Umum'; // Umum, BPJS, Asuransi
 
     public function mount()
     {
@@ -34,7 +37,6 @@ class AlurPelayanan extends Component
     public function setPoli($id)
     {
         $this->activePoli = $id;
-        // Reset layanan ke yang pertama di poli ini
         $firstLayanan = JenisPelayanan::where('poli_id', $id)->where('is_active', true)->first();
         $this->activeLayanan = $firstLayanan ? $firstLayanan->id : null;
     }
@@ -43,15 +45,18 @@ class AlurPelayanan extends Component
     {
         $this->activeLayanan = $id;
     }
+    
+    public function setPatientType($type)
+    {
+        $this->selectedPatientType = $type;
+    }
 
     public function render()
     {
-        // Ambil semua Poli yang punya layanan aktif
         $polis = Poli::whereHas('jenisPelayanans', function($q) {
             $q->where('is_active', true);
         })->get();
 
-        // Ambil Jenis Pelayanan berdasarkan Poli aktif
         $layanans = [];
         if ($this->activePoli) {
             $layanans = JenisPelayanan::where('poli_id', $this->activePoli)
@@ -59,10 +64,9 @@ class AlurPelayanan extends Component
                 ->get();
         }
 
-        // Ambil Alur berdasarkan Layanan aktif + Search
-        $alurs = [];
+        $alurs = collect([]);
         if ($this->activeLayanan) {
-            $alurs = AlurModel::where('jenis_pelayanan_id', $this->activeLayanan)
+            $query = AlurModel::where('jenis_pelayanan_id', $this->activeLayanan)
                 ->where('is_active', true)
                 ->where(function($q) {
                     $q->where('judul', 'like', '%' . $this->search . '%')
@@ -70,6 +74,19 @@ class AlurPelayanan extends Component
                 })
                 ->orderBy('urutan')
                 ->get();
+            
+            // Filter Logic in PHP because JSON querying varies by DB version
+            $alurs = $query->filter(function($alur) {
+                $rules = $alur->visibility_rules;
+                
+                // If no rules, show to everyone
+                if (empty($rules) || empty($rules['target_pasien'])) {
+                    return true;
+                }
+                
+                // If rules exist, check if current selection is allowed
+                return in_array($this->selectedPatientType, $rules['target_pasien']);
+            });
         }
 
         return view('livewire.public.alur-pelayanan', [
