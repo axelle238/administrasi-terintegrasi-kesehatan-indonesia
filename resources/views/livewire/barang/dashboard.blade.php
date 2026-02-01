@@ -128,21 +128,21 @@
         <!-- IKHTISAR -->
         @if($tabAktif === 'ikhtisar')
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in-up" wire:key="tab-content-ikhtisar">
-            <!-- Lokasi Aset -->
+            <!-- Analisis Depresiasi (NEW) -->
             <div class="lg:col-span-2 bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
-                <h4 class="font-bold text-slate-800 mb-6 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                    Distribusi Aset per Ruangan
+                <h4 class="font-bold text-slate-800 mb-6 flex items-center gap-2 uppercase tracking-widest text-[10px]">
+                    <svg class="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                    Akumulasi Depresiasi per Kategori
                 </h4>
-                <div class="space-y-4">
-                    @foreach($dataTab['lokasiAset'] ?? [] as $lokasi)
-                    <div class="group">
-                        <div class="flex justify-between text-sm mb-1">
-                            <span class="font-bold text-slate-700">{{ $lokasi->nama_ruangan }}</span>
-                            <span class="font-bold text-slate-500">{{ $lokasi->barangs_count }} Item</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    @foreach($dataTab['depresiasiKategori'] ?? [] as $dep)
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 group hover:bg-white hover:shadow-md transition-all">
+                        <div class="flex justify-between items-end mb-2">
+                            <span class="text-xs font-bold text-slate-600">{{ $dep->nama_kategori }}</span>
+                            <span class="text-sm font-black text-rose-600">Rp {{ number_format($dep->total_depresiasi, 0, ',', '.') }}</span>
                         </div>
-                        <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                            <div class="bg-blue-500 h-2 rounded-full transition-all duration-1000 group-hover:bg-blue-400" style="width: {{ ($lokasi->barangs_count / ($totalAset > 0 ? $totalAset : 1)) * 100 }}%"></div>
+                        <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                            <div class="bg-rose-500 h-1.5 rounded-full" style="width: 65%"></div>
                         </div>
                     </div>
                     @endforeach

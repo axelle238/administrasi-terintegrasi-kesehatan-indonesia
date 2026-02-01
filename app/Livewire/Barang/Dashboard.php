@@ -89,22 +89,19 @@ class Dashboard extends Component
 
         // === TAB 1: IKHTISAR ===
         if ($this->tabAktif == 'ikhtisar') {
-            $dataTab['distribusiKategori'] = KategoriBarang::withCount(['barangs' => function($q) use ($queryBarang) {
-                    // Filter count logic
-                }])
+            $dataTab['distribusiKategori'] = KategoriBarang::withCount(['barangs'])
                 ->orderByDesc('barangs_count')
                 ->take(6)
                 ->get();
             
+            // Analisis Depresiasi per Kategori (NEW)
+            $dataTab['depresiasiKategori'] = KategoriBarang::join('barangs', 'kategori_barangs.id', '=', 'barangs.kategori_id')
+                ->where('barangs.is_asset', true)
+                ->select('kategori_barangs.nama_kategori', DB::raw('SUM(barangs.harga_perolehan - barangs.nilai_residu) as total_depresiasi'))
+                ->groupBy('kategori_barangs.nama_kategori')
+                ->get();
+
             $dataTab['aktivitasTerbaru'] = RiwayatBarang::with(['barang', 'user'])
-                ->whereHas('barang', function($q) use ($queryBarang) {
-                    // Reuse filter logic
-                    if ($this->tipeFilter == 'medis') {
-                        $q->whereHas('kategori', fn($k) => $k->where('nama_kategori', 'like', '%Medis%'));
-                    } elseif ($this->tipeFilter == 'umum') {
-                        $q->whereHas('kategori', fn($k) => $k->where('nama_kategori', 'not like', '%Medis%'));
-                    }
-                })
                 ->latest()
                 ->take(6)
                 ->get();
