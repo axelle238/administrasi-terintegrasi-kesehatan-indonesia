@@ -186,9 +186,10 @@
                     <!-- Dropdown Jadwal -->
                     <div class="relative" x-data="{ open: false }" @click.outside="open = false">
                         <button @click="open = !open" 
-                                class="px-5 py-2 rounded-full text-sm font-bold hover:text-primary hover:bg-white/50 transition-all duration-300 flex items-center gap-1 group"
+                                class="px-5 py-2 rounded-full text-sm font-bold hover:text-primary hover:bg-white/50 transition-all duration-300 flex items-center gap-1 group relative"
                                 :class="(activeSection === 'jadwal' || open) ? 'text-primary bg-white shadow-md ring-1 ring-slate-100' : 'text-slate-500'">
                             Jadwal <svg class="w-3 h-3 transition-transform duration-300" :class="open ? 'rotate-180 text-primary' : 'text-slate-400 group-hover:text-primary'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                            <span class="absolute top-0 right-0 -mt-1 -mr-1 px-1.5 py-0.5 rounded-full bg-rose-500 text-white text-[8px] font-black uppercase tracking-wider shadow-sm">Live</span>
                         </button>
                         <div x-show="open" 
                              x-transition:enter="transition ease-out duration-200"
@@ -226,9 +227,13 @@
                     <!-- Dropdown Layanan -->
                     <div class="relative" x-data="{ open: false }" @click.outside="open = false">
                         <button @click="open = !open" 
-                                class="px-5 py-2 rounded-full text-sm font-bold hover:text-primary hover:bg-white/50 transition-all duration-300 flex items-center gap-1 group"
+                                class="px-5 py-2 rounded-full text-sm font-bold hover:text-primary hover:bg-white/50 transition-all duration-300 flex items-center gap-1 group relative"
                                 :class="(activeSection === 'layanan' || open) ? 'text-primary bg-white shadow-md ring-1 ring-slate-100' : 'text-slate-500'">
                             Layanan <svg class="w-3 h-3 transition-transform duration-300" :class="open ? 'rotate-180 text-primary' : 'text-slate-400 group-hover:text-primary'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                            <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                            </span>
                         </button>
                         <div x-show="open" 
                              x-transition:enter="transition ease-out duration-200"
