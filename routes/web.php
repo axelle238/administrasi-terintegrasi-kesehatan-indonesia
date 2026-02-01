@@ -47,6 +47,9 @@ Route::get('/', function () {
     // NEW: Load Alur & Harga
     $alurPelayanan = \App\Models\AlurPelayanan::where('is_active', true)->orderBy('urutan')->get();
     $hargaLayanan = \App\Models\Tindakan::where('is_active', true)->whereNotNull('harga')->inRandomOrder()->limit(6)->get();
+    
+    // NEW: Load CMS Sections
+    $cmsSections = \App\Models\LandingComponent::all()->keyBy('section_key');
 
     $jadwalHariIni = JadwalJaga::with(['pegawai.user', 'shift'])
         ->whereDate('tanggal', Carbon::today())
@@ -72,7 +75,7 @@ Route::get('/', function () {
         $view = 'themes.high-tech'; // Fallback
     }
 
-    return view($view, compact('pengaturan', 'layanan', 'jadwalHariIni', 'beritaTerbaru', 'fasilitas', 'stats', 'alurPelayanan', 'hargaLayanan'));
+    return view($view, compact('pengaturan', 'layanan', 'jadwalHariIni', 'beritaTerbaru', 'fasilitas', 'stats', 'alurPelayanan', 'hargaLayanan', 'cmsSections'));
 });
 
 Route::get('/dashboard', \App\Livewire\Dashboard::class)->middleware(['auth', 'verified'])->name('dashboard');
@@ -145,6 +148,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/system/roles/create', \App\Livewire\System\Role\Form::class)->name('system.role.create');
         Route::get('/system/roles/{id}/edit', \App\Livewire\System\Role\Form::class)->name('system.role.edit');
         Route::get('/system/integrations', \App\Livewire\System\Integration\Index::class)->name('system.integration.index');
+        Route::get('/system/cms', \App\Livewire\System\Cms\Index::class)->name('system.cms.index'); // New CMS Route
         Route::get('/system/surat-templates', \App\Livewire\Surat\Template\Index::class)->name('system.surat-template.index');
         Route::get('/system/tindakan', \App\Livewire\System\Tindakan\Index::class)->name('system.tindakan.index');
         Route::get('/system/alur-pelayanan', \App\Livewire\System\Alur\Index::class)->name('system.alur.index'); // New
