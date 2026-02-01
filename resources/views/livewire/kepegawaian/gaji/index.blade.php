@@ -41,62 +41,60 @@
         </div>
     </div>
 
-    <!-- Detail Modal (Slip) -->
+    <!-- Detail Section (Inline - No Modal) -->
     @if($showDetail && $selectedGaji)
-    <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" wire:click="closeDetail"></div>
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            
-            <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full relative">
-                <!-- Receipt Header -->
-                <div class="bg-slate-800 p-6 text-center relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
-                    <div class="w-16 h-16 bg-white rounded-full mx-auto flex items-center justify-center mb-3 shadow-lg">
-                        <svg class="w-8 h-8 text-slate-800" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    </div>
-                    <h3 class="text-white font-bold text-xl">Pembayaran Gaji Sukses</h3>
-                    <p class="text-slate-400 text-sm">{{ $selectedGaji->bulan }} {{ $selectedGaji->tahun }}</p>
+    <div class="bg-white rounded-[2.5rem] border border-blue-100 shadow-xl overflow-hidden animate-fade-in-up mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2">
+            <!-- Receipt Side -->
+            <div class="bg-slate-800 p-10 text-center relative overflow-hidden flex flex-col justify-center">
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+                <div class="w-20 h-20 bg-white/10 rounded-full mx-auto flex items-center justify-center mb-6 backdrop-blur-sm border border-white/10">
+                    <svg class="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </div>
+                <h3 class="text-white font-black text-2xl mb-2">Slip Gaji Digital</h3>
+                <p class="text-slate-400 font-mono tracking-widest uppercase text-xs">{{ $selectedGaji->bulan }} {{ $selectedGaji->tahun }}</p>
+                
+                <div class="mt-8">
+                    <p class="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em] mb-2">Total Diterima</p>
+                    <h2 class="text-4xl font-black text-white">Rp {{ number_format($selectedGaji->total_gaji, 0, ',', '.') }}</h2>
+                </div>
+            </div>
+
+            <!-- Info Side -->
+            <div class="p-10 space-y-8 bg-white">
+                <div class="flex justify-between items-center">
+                    <h4 class="font-black text-slate-800 uppercase tracking-widest text-xs">Rincian Komponen</h4>
+                    <button wire:click="closeDetail" class="text-slate-400 hover:text-slate-600">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
                 </div>
 
-                <!-- Receipt Body -->
-                <div class="p-8 space-y-6">
-                    <div class="text-center">
-                        <p class="text-sm text-slate-500 font-bold uppercase tracking-widest">Total Diterima (Take Home Pay)</p>
-                        <h2 class="text-4xl font-black text-slate-800 mt-2">Rp {{ number_format($selectedGaji->total_gaji, 0, ',', '.') }}</h2>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500 font-bold uppercase tracking-tighter">Gaji Pokok</span>
+                        <span class="font-black text-slate-800">Rp {{ number_format($selectedGaji->gaji_pokok, 0, ',', '.') }}</span>
                     </div>
-
-                    <div class="border-t border-dashed border-slate-200 my-6"></div>
-
-                    <div class="space-y-3 text-sm">
-                        <div class="flex justify-between">
-                            <span class="text-slate-500">Gaji Pokok</span>
-                            <span class="font-bold text-slate-800">Rp {{ number_format($selectedGaji->gaji_pokok, 0, ',', '.') }}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-slate-500">Tunjangan</span>
-                            <span class="font-bold text-slate-800">Rp {{ number_format($selectedGaji->tunjangan, 0, ',', '.') }}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-slate-500">Lembur</span>
-                            <span class="font-bold text-slate-800">Rp {{ number_format($selectedGaji->lembur ?? 0, 0, ',', '.') }}</span>
-                        </div>
-                        <div class="flex justify-between text-red-500">
-                            <span>Potongan</span>
-                            <span class="font-bold">- Rp {{ number_format($selectedGaji->potongan, 0, ',', '.') }}</span>
-                        </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500 font-bold uppercase tracking-tighter">Tunjangan</span>
+                        <span class="font-black text-slate-800">Rp {{ number_format($selectedGaji->tunjangan, 0, ',', '.') }}</span>
                     </div>
-
-                    <div class="bg-slate-50 p-4 rounded-xl text-center">
-                        <p class="text-xs text-slate-400">Dana ditransfer ke rekening:</p>
-                        <p class="font-mono font-bold text-slate-700 mt-1">{{ $selectedGaji->user->pegawai->no_rekening ?? 'XXXXXXXX' }} ({{ $selectedGaji->user->pegawai->bank ?? 'BANK' }})</p>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500 font-bold uppercase tracking-tighter">Lembur</span>
+                        <span class="font-black text-slate-800">Rp {{ number_format($selectedGaji->lembur ?? 0, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="pt-4 border-t border-dashed border-slate-100 flex justify-between items-center text-sm text-rose-600">
+                        <span class="font-bold uppercase tracking-tighter">Total Potongan</span>
+                        <span class="font-black">- Rp {{ number_format($selectedGaji->potongan, 0, ',', '.') }}</span>
                     </div>
                 </div>
 
-                <!-- Footer Actions -->
-                <div class="bg-slate-50 p-4 flex gap-3">
-                    <button wire:click="closeDetail" class="flex-1 py-3 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-100">Tutup</button>
-                    <a href="{{ route('kepegawaian.gaji.print', $selectedGaji->id) }}" target="_blank" class="flex-1 py-3 bg-slate-800 text-white rounded-xl font-bold hover:bg-slate-900 text-center flex items-center justify-center gap-2">
+                <div class="bg-blue-50 p-4 rounded-2xl border border-blue-100">
+                    <p class="text-[10px] text-blue-400 font-black uppercase tracking-wider mb-1 text-center">Rekening Tujuan</p>
+                    <p class="font-mono font-bold text-blue-800 text-center text-sm">{{ $selectedGaji->user->pegawai->no_rekening ?? 'XXXXXXXX' }} ({{ $selectedGaji->user->pegawai->bank ?? 'BANK' }})</p>
+                </div>
+
+                <div class="flex gap-3">
+                    <a href="{{ route('kepegawaian.gaji.print', $selectedGaji->id) }}" target="_blank" class="flex-1 py-3 bg-slate-800 text-white rounded-xl text-xs font-black hover:bg-slate-900 text-center flex items-center justify-center gap-2 uppercase tracking-widest shadow-lg shadow-slate-200">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                         Download PDF
                     </a>
@@ -105,4 +103,6 @@
         </div>
     </div>
     @endif
+
+    <!-- History List -->
 </div>

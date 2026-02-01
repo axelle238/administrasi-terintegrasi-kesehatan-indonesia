@@ -37,6 +37,7 @@ class Edit extends Component
     public $doc_type;
     public $doc_name;
     public $doc_file;
+    public $showUploadForm = false;
 
     public function mount()
     {

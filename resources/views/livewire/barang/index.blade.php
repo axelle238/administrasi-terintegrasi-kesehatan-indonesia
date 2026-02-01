@@ -69,26 +69,20 @@
                 </p> 
             @enderror
 
-            <!-- Camera Modal -->
-            <div x-show="showScanner" style="display: none" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm"
-                 x-transition:enter="transition ease-out duration-300"
-                 x-transition:enter-start="opacity-0"
-                 x-transition:enter-end="opacity-100"
-                 x-transition:leave="transition ease-in duration-200"
-                 x-transition:leave-start="opacity-100"
-                 x-transition:leave-end="opacity-0">
-                
-                <div class="bg-white rounded-2xl p-4 w-full max-w-lg relative shadow-2xl">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-bold text-slate-800">Pindai QR / Barcode</h3>
-                        <button @click="showScanner = false; if(scanner) { scanner.clear(); }" class="text-slate-400 hover:text-red-500">
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                        </button>
-                    </div>
-                    
-                    <div id="reader" class="rounded-xl overflow-hidden bg-black"></div>
-                    <p class="text-center text-xs text-slate-500 mt-4 font-medium">Arahkan kamera ke kode aset.</p>
+            <!-- Inline Camera Scanner (No Modal) -->
+            <div x-show="showScanner" style="display: none" class="mt-6 bg-white rounded-2xl p-4 w-full shadow-inner animate-fade-in-up">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
+                        <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                        Kamera Aktif: Pindai Kode
+                    </h3>
+                    <button @click="showScanner = false; if(scanner) { scanner.clear(); }" class="text-slate-400 hover:text-red-500">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
                 </div>
+                
+                <div id="reader" class="rounded-xl overflow-hidden bg-slate-900 border-4 border-slate-800 shadow-lg aspect-square max-w-xs mx-auto"></div>
+                <p class="text-center text-[10px] text-slate-400 mt-4 font-black uppercase tracking-wider">Arahkan kamera ke kode QR / Barcode pada aset</p>
             </div>
 
             <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>

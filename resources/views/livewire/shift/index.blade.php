@@ -47,46 +47,48 @@
         @endforeach
     </div>
 
-    <!-- Modal Form (Simple Overlay) -->
+    <!-- Form Section (Inline - No Modal) -->
     @if($isOpen)
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-[2rem] p-8 w-full max-w-md shadow-2xl animate-fade-in-up">
-            <h3 class="text-lg font-black text-slate-800 mb-6">{{ $shiftId ? 'Edit Shift' : 'Buat Shift Baru' }}</h3>
+    <div class="bg-white rounded-[2rem] p-8 border border-blue-100 shadow-xl shadow-blue-500/5 mb-8 animate-fade-in-up">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-lg font-black text-slate-800">{{ $shiftId ? 'Edit Shift Kerja' : 'Buat Shift Baru' }}</h3>
+            <button wire:click="closeForm" class="text-slate-400 hover:text-slate-600 transition-colors">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="md:col-span-1">
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Nama Shift</label>
+                <input type="text" wire:model="nama_shift" class="w-full rounded-xl border-slate-200 font-bold focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: Pagi / Siang / Malam">
+                @error('nama_shift') <span class="text-red-500 text-xs font-bold mt-1">{{ $message }}</span> @enderror
+            </div>
             
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Nama Shift</label>
-                    <input type="text" wire:model="nama_shift" class="w-full rounded-xl border-slate-200 font-bold focus:border-blue-500 focus:ring-blue-500" placeholder="Pagi / Siang / Malam">
-                    @error('nama_shift') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Jam Masuk</label>
-                        <input type="time" wire:model="jam_masuk" class="w-full rounded-xl border-slate-200 font-bold focus:border-blue-500 focus:ring-blue-500">
-                        @error('jam_masuk') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Jam Keluar</label>
-                        <input type="time" wire:model="jam_keluar" class="w-full rounded-xl border-slate-200 font-bold focus:border-blue-500 focus:ring-blue-500">
-                        @error('jam_keluar') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Warna Label</label>
-                    <div class="flex gap-3">
-                        @foreach(['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'] as $c)
-                            <button wire:click="$set('color', '{{ $c }}')" class="w-8 h-8 rounded-full border-2 {{ $color === $c ? 'border-slate-800 scale-110' : 'border-transparent' }} transition-all" style="background-color: {{ $c }}"></button>
-                        @endforeach
-                    </div>
-                </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Jam Masuk</label>
+                <input type="time" wire:model="jam_masuk" class="w-full rounded-xl border-slate-200 font-bold focus:border-blue-500 focus:ring-blue-500">
+                @error('jam_masuk') <span class="text-red-500 text-xs font-bold mt-1">{{ $message }}</span> @enderror
             </div>
 
-            <div class="flex justify-end gap-3 mt-8">
-                <button wire:click="closeModal" class="px-6 py-2.5 bg-slate-100 text-slate-600 font-bold text-sm rounded-xl hover:bg-slate-200 transition-colors">Batal</button>
-                <button wire:click="store" class="px-6 py-2.5 bg-blue-600 text-white font-bold text-sm rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-600/20 transition-colors">Simpan</button>
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Jam Keluar</label>
+                <input type="time" wire:model="jam_keluar" class="w-full rounded-xl border-slate-200 font-bold focus:border-blue-500 focus:ring-blue-500">
+                @error('jam_keluar') <span class="text-red-500 text-xs font-bold mt-1">{{ $message }}</span> @enderror
             </div>
+
+            <div class="md:col-span-3">
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Warna Label Visual</label>
+                <div class="flex flex-wrap gap-3">
+                    @foreach(['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#0f172a'] as $c)
+                        <button wire:click="$set('color', '{{ $c }}')" class="w-10 h-10 rounded-xl border-2 {{ $color === $c ? 'border-slate-800 scale-110' : 'border-transparent' }} transition-all shadow-sm" style="background-color: {{ $c }}"></button>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-slate-50">
+            <button wire:click="closeForm" class="px-6 py-2.5 bg-slate-100 text-slate-600 font-bold text-sm rounded-xl hover:bg-slate-200 transition-colors uppercase tracking-widest">Batal</button>
+            <button wire:click="store" class="px-8 py-2.5 bg-blue-600 text-white font-bold text-sm rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-600/20 transition-colors uppercase tracking-widest">Simpan Perubahan</button>
         </div>
     </div>
     @endif

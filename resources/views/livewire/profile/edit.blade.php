@@ -116,10 +116,51 @@
                         <span class="w-1.5 h-6 bg-emerald-500 rounded-full"></span>
                         Arsip Dokumen Digital
                     </h3>
-                    <button onclick="document.getElementById('doc-upload-modal').showModal()" class="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100 hover:bg-emerald-100 transition-colors">
-                        + Upload Dokumen
+                    <button wire:click="$toggle('showUploadForm')" class="text-xs font-bold {{ $showUploadForm ? 'text-rose-600 bg-rose-50 border-rose-100' : 'text-emerald-600 bg-emerald-50 border-emerald-100' }} px-3 py-1.5 rounded-lg border hover:opacity-80 transition-colors">
+                        {{ $showUploadForm ? 'Batal' : '+ Upload Dokumen' }}
                     </button>
                 </div>
+
+                @if($showUploadForm)
+                <div class="mb-8 p-6 bg-slate-50 rounded-2xl border border-slate-100 animate-fade-in-up">
+                    <h4 class="text-sm font-black text-slate-800 mb-4 uppercase tracking-widest">Upload Dokumen Baru</h4>
+                    <form wire:submit.prevent="uploadDocument" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Jenis Dokumen</label>
+                                <select wire:model="doc_type" class="w-full rounded-xl border-slate-200 text-sm font-bold text-slate-600 bg-white focus:bg-white">
+                                    <option value="">Pilih Jenis...</option>
+                                    <option value="KTP">KTP / Identitas</option>
+                                    <option value="Ijazah">Ijazah Pendidikan</option>
+                                    <option value="SK">SK Kepegawaian</option>
+                                    <option value="Sertifikat">Sertifikat Pelatihan</option>
+                                    <option value="Lainnya">Lainnya</option>
+                                </select>
+                                @error('doc_type') <span class="text-red-500 text-[10px] font-bold">{{ $message }}</span> @enderror
+                            </div>
+                            
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Nama Dokumen</label>
+                                <input type="text" wire:model="doc_name" class="w-full rounded-xl border-slate-200 text-sm font-bold bg-white focus:bg-white" placeholder="Contoh: Ijazah S1 Teknik">
+                                @error('doc_name') <span class="text-red-500 text-[10px] font-bold">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-1">File (PDF/JPG, Max 2MB)</label>
+                            <input type="file" wire:model="doc_file" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 transition-all">
+                            @error('doc_file') <span class="text-red-500 text-[10px] font-bold">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="pt-2 flex justify-end">
+                            <button type="submit" class="px-6 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-black hover:bg-emerald-700 shadow-lg shadow-emerald-500/30 uppercase tracking-widest">
+                                <span wire:loading.remove>Upload Sekarang</span>
+                                <span wire:loading>Proses Upload...</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                @endif
 
                 <div class="space-y-4">
                     <!-- Placeholder List (Nanti di-bind ke collection) -->
@@ -189,49 +230,4 @@
             </div>
         </div>
     </div>
-
-    <!-- Upload Modal (Native Dialog) -->
-    <dialog id="doc-upload-modal" class="rounded-2xl p-0 backdrop:bg-slate-900/50 open:animate-fade-in shadow-2xl w-full max-w-md">
-        <div class="bg-white p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-black text-lg text-slate-800">Upload Dokumen</h3>
-                <button onclick="this.closest('dialog').close()" class="text-slate-400 hover:text-slate-600"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
-            </div>
-            
-            <form wire:submit.prevent="uploadDocument" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-1">Jenis Dokumen</label>
-                    <select wire:model="doc_type" class="w-full rounded-xl border-slate-200 text-sm font-bold text-slate-600 bg-slate-50 focus:bg-white">
-                        <option value="">Pilih Jenis...</option>
-                        <option value="KTP">KTP / Identitas</option>
-                        <option value="Ijazah">Ijazah Pendidikan</option>
-                        <option value="SK">SK Kepegawaian</option>
-                        <option value="Sertifikat">Sertifikat Pelatihan</option>
-                        <option value="Lainnya">Lainnya</option>
-                    </select>
-                    @error('doc_type') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-1">Nama Dokumen</label>
-                    <input type="text" wire:model="doc_name" class="w-full rounded-xl border-slate-200 text-sm font-bold bg-slate-50 focus:bg-white" placeholder="Contoh: Ijazah S1 Teknik">
-                    @error('doc_name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                </div>
-
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-1">File (PDF/JPG, Max 2MB)</label>
-                    <input type="file" wire:model="doc_file" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 transition-all">
-                    @error('doc_file') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                </div>
-
-                <div class="pt-4 flex justify-end gap-2">
-                    <button type="button" onclick="this.closest('dialog').close()" class="px-4 py-2 text-xs font-bold text-slate-500 hover:bg-slate-50 rounded-lg">Batal</button>
-                    <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700 shadow-lg shadow-emerald-500/30">
-                        <span wire:loading.remove>Upload Sekarang</span>
-                        <span wire:loading>Uploading...</span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </dialog>
 </div>

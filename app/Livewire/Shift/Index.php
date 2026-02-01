@@ -38,8 +38,8 @@ class Index extends Component
             'color' => $this->color
         ]);
 
-        session()->flash('message', $this->shiftId ? 'Shift updated.' : 'Shift created.');
-        $this->closeModal();
+        session()->flash('message', $this->shiftId ? 'Data shift berhasil diperbarui.' : 'Shift baru berhasil dibuat.');
+        $this->closeForm();
         $this->resetInputFields();
     }
 
@@ -57,10 +57,10 @@ class Index extends Component
     public function delete($id)
     {
         Shift::find($id)->delete();
-        session()->flash('message', 'Shift deleted.');
+        session()->flash('message', 'Data shift berhasil dihapus.');
     }
 
-    public function closeModal()
+    public function closeForm()
     {
         $this->isOpen = false;
     }
