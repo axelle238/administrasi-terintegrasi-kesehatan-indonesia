@@ -53,7 +53,7 @@
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Database & Arsip</div>
     <x-nav.link-child :href="route('pegawai.index')" :active="request()->routeIs('pegawai.index') || request()->routeIs('pegawai.create')">Database Pegawai</x-nav.link-child>
     <x-nav.link-child :href="route('kepegawaian.kredensial.index')" :active="request()->routeIs('kepegawaian.kredensial.index')">Monitoring STR & SIP</x-nav.link-child>
-    <x-nav.link-child :href="route('aset-pegawai.index')" :active="request()->routeIs('aset-pegawai.index')">Inventaris Aset Pegawai</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.aset-pegawai.index')" :active="request()->routeIs('kepegawaian.aset-pegawai.index')">Inventaris Aset Pegawai</x-nav.link-child>
 
     <!-- PHASE 3: OPERASIONAL WAKTU -->
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Manajemen Waktu</div>
