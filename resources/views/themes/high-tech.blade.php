@@ -198,28 +198,28 @@
                              x-transition:leave="transition ease-in duration-150"
                              x-transition:leave-start="opacity-100 translate-y-0"
                              x-transition:leave-end="opacity-0 translate-y-2"
-                             class="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-slate-100 p-3 grid gap-1 z-50"
+                             class="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-72 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/50 dark:border-slate-700 p-3 grid gap-1 z-50"
                              style="display: none;">
                              
-                             <div class="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45 border-t border-l border-slate-100"></div>
+                             <div class="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rotate-45 border-t border-l border-white/50 dark:border-slate-700"></div>
 
                              <div class="relative z-10">
-                                 <p class="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 mb-1">Praktik Hari Ini</p>
+                                 <p class="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700 mb-1">Praktik Hari Ini</p>
                                  @foreach($jadwalHariIni->take(3) as $jadwal)
-                                    <div class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group/item">
-                                        <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs shrink-0">
+                                    <div class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group/item">
+                                        <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 font-bold text-xs shrink-0">
                                             {{ substr($jadwal->pegawai->user->name ?? 'D', 0, 1) }}
                                         </div>
                                         <div class="min-w-0">
-                                            <p class="text-xs font-bold text-slate-800 truncate">{{ $jadwal->pegawai->user->name ?? 'Dokter' }}</p>
-                                            <p class="text-[9px] text-slate-500">{{ $jadwal->shift->jam_masuk }} - {{ $jadwal->shift->jam_keluar }}</p>
+                                            <p class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">{{ $jadwal->pegawai->user->name ?? 'Dokter' }}</p>
+                                            <p class="text-[9px] text-slate-500 dark:text-slate-400">{{ $jadwal->shift->jam_masuk }} - {{ $jadwal->shift->jam_keluar }}</p>
                                         </div>
                                     </div>
                                  @endforeach
                                  @if($jadwalHariIni->count() == 0)
                                     <div class="px-4 py-3 text-center text-xs text-slate-400">Tidak ada jadwal hari ini.</div>
                                  @endif
-                                 <button @click="open = false; scrollTo('jadwal')" class="mt-2 block w-full py-2 text-[10px] font-bold text-center text-slate-500 hover:text-primary hover:bg-slate-50 rounded-lg uppercase tracking-wider transition-colors">Lihat Semua Jadwal &rarr;</button>
+                                 <button @click="open = false; scrollTo('jadwal')" class="mt-2 block w-full py-2 text-[10px] font-bold text-center text-slate-500 hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg uppercase tracking-wider transition-colors">Lihat Semua Jadwal &rarr;</button>
                              </div>
                         </div>
                     </div>
@@ -404,10 +404,16 @@
                                  class="absolute top-full right-0 mt-3 w-64 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/50 p-2 z-50 transform origin-top-right"
                                  style="display: none;">
                                  
-                                <div class="px-4 py-3 border-b border-slate-100 mb-1">
-                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Akun Saya</p>
-                                    <p class="text-sm font-bold text-slate-800 truncate">{{ Auth::user()->name }}</p>
-                                    <p class="text-[10px] text-slate-500 truncate">{{ Auth::user()->email }}</p>
+                                <div class="px-4 py-3 border-b border-slate-100 dark:border-slate-700 mb-1" x-data="{ greeting: '' }" x-init="
+                                    const hour = new Date().getHours();
+                                    if (hour < 11) greeting = 'Selamat Pagi,';
+                                    else if (hour < 15) greeting = 'Selamat Siang,';
+                                    else if (hour < 19) greeting = 'Selamat Sore,';
+                                    else greeting = 'Selamat Malam,';
+                                ">
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="greeting"></p>
+                                    <p class="text-sm font-bold text-slate-800 dark:text-white truncate">{{ Auth::user()->name }}</p>
+                                    <p class="text-[10px] text-slate-500 dark:text-slate-400 truncate">{{ Auth::user()->email }}</p>
                                 </div>
 
                                 <a href="{{ url('/dashboard') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-colors text-xs font-bold text-slate-600 hover:text-primary">
@@ -632,6 +638,17 @@
 
                 <!-- Drawer Footer -->
                 <div class="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700 text-center">
+                    <div class="flex justify-center gap-4 mb-4">
+                        <a href="#" class="w-8 h-8 rounded-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-400 hover:text-blue-500 hover:border-blue-200 transition-colors shadow-sm">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        </a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-400 hover:text-sky-400 hover:border-sky-200 transition-colors shadow-sm">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.892 3.213 2.251 4.122a4.909 4.92 0 01-2.229-.616c-.054 2.281 1.581 4.415 3.949 4.89a4.935 4.935 0 01-2.224.084 4.928 4.928 0 004.6 3.419A9.9 9.9 0 010 21.543a13.94 13.94 0 007.548 2.212c9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+                        </a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-400 hover:text-pink-500 hover:border-pink-200 transition-colors shadow-sm">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.072 3.269.153 5.023 1.916 5.176 5.194.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.892 5.011-5.122 5.176-1.265.058-1.644.069-4.849.069-3.204 0-3.584-.012-4.849-.069-3.229-.149-5.011-1.892-5.176-5.122-.058-1.265-.069-1.644-.069-4.849 0-3.204.012-3.584.069-4.849.153-3.269 1.916-5.023 5.194-5.176 1.265-.058 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                        </a>
+                    </div>
                     <p class="text-[10px] font-bold text-slate-400">
                         &copy; {{ date('Y') }} {{ $pengaturan['app_name'] }}<br>
                         {{ $pengaturan['app_tagline'] }}
