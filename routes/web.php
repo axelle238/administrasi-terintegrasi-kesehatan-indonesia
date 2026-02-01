@@ -88,6 +88,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/aktivitas', \App\Livewire\Kepegawaian\Aktivitas\Index::class)->name('aktivitas.index');
         Route::get('/pelatihan', \App\Livewire\Kepegawaian\Pelatihan\Index::class)->name('pelatihan.index');
         Route::get('/presensi', \App\Livewire\Kepegawaian\Presensi\Index::class)->name('presensi.index'); // Absen
+        Route::get('/presensi/upacara', \App\Livewire\Kepegawaian\Upacara\Index::class)->name('presensi.upacara.index'); // Upacara (NEW)
         Route::get('/presensi/history', \App\Livewire\Kepegawaian\Presensi\History::class)->name('presensi.history');
         Route::get('/lembur', \App\Livewire\Kepegawaian\Lembur\Index::class)->name('lembur.index'); // Self Request
         Route::get('/gaji', \App\Livewire\Kepegawaian\Gaji\Index::class)->name('gaji.index'); // Self Slip
