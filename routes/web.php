@@ -83,6 +83,7 @@ Route::get('/antrean/monitor', \App\Livewire\Antrean\Monitor::class)->name('antr
 Route::get('/kiosk', \App\Livewire\Antrean\Kiosk::class)->name('antrean.kiosk');
 Route::get('/survey', \App\Livewire\Survey\Create::class)->name('survey.create');
 Route::get('/pengaduan', \App\Livewire\Masyarakat\PengaduanPublic::class)->name('pengaduan.public');
+Route::get('/alur-pelayanan', \App\Livewire\Public\AlurPelayanan::class)->name('alur-pelayanan.index');
 
 Route::middleware('auth')->group(function () {
     // === PORTAL PEGAWAI (USER) ===

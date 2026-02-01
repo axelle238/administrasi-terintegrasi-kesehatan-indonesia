@@ -13,6 +13,9 @@ class AlurPelayanan extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+        'is_critical' => 'boolean',
+        'faq' => 'array',
+        'tags' => 'array',
     ];
 
     public function jenisPelayanan()

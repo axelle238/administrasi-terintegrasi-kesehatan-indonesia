@@ -72,7 +72,7 @@
                 <span class="text-[10px] font-bold uppercase tracking-wider {{ $jenis->is_active ? 'text-emerald-500' : 'text-slate-400' }}">
                     {{ $jenis->is_active ? 'Active' : 'Inactive' }}
                 </span>
-                <span class="text-[10px] font-bold text-slate-400">{{ $jenis->alurs()->count() }} Langkah Alur</span>
+                <span class="text-[10px] font-bold text-slate-400">{{ $jenis->alurPelayanans()->count() }} Langkah Alur</span>
             </div>
         </div>
         @empty

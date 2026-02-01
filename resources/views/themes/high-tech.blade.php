@@ -186,110 +186,44 @@
 
                 <!-- Navigation Links -->
                 <div class="flex items-center gap-1 bg-white/60 dark:bg-slate-800/60 p-1.5 rounded-full border border-white/60 dark:border-slate-700 backdrop-blur-md shadow-sm ring-1 ring-slate-100 dark:ring-slate-800 relative z-50">
-                    <a href="{{ url('/') }}#beranda" 
-                       class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden decoration-0"
+                    <a href="#beranda" 
+                       @click.prevent="scrollTo('beranda')"
+                       class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden decoration-0 cursor-pointer"
                        :class="activeSection === 'beranda' ? 'text-primary bg-white dark:bg-slate-700 shadow-md ring-1 ring-slate-100 dark:ring-slate-600' : 'text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-white/60'">
                         <span class="relative z-10">Beranda</span>
                     </a>
 
                     <a href="{{ route('alur-pelayanan.index') }}" 
-                       class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden decoration-0 text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-white/60">
+                       class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden decoration-0 text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-white/60 cursor-pointer">
                         <span class="relative z-10">Alur</span>
                     </a>
 
-                    <button @click="scrollTo('layanan')" 
-                       class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden"
-                       :class="activeSection === 'layanan' ? 'text-primary bg-white dark:bg-slate-700 shadow-md ring-1 ring-slate-100 dark:ring-slate-600' : 'text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-white/60'">
-                        <span class="relative z-10">Layanan</span>
-                    </button>
-
-                    <button @click="scrollTo('jadwal')" 
-                       class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden"
+                    <a href="#jadwal" 
+                       @click.prevent="scrollTo('jadwal')"
+                       class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden decoration-0 cursor-pointer"
                        :class="activeSection === 'jadwal' ? 'text-primary bg-white dark:bg-slate-700 shadow-md ring-1 ring-slate-100 dark:ring-slate-600' : 'text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-white/60'">
                         <span class="relative z-10">Jadwal</span>
-                    </button>
+                    </a>
 
-                    <button @click="scrollTo('berita')" 
-                       class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden"
+                    <a href="#layanan" 
+                       @click.prevent="scrollTo('layanan')"
+                       class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden decoration-0 cursor-pointer"
+                       :class="activeSection === 'layanan' ? 'text-primary bg-white dark:bg-slate-700 shadow-md ring-1 ring-slate-100 dark:ring-slate-600' : 'text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-white/60'">
+                        <span class="relative z-10">Layanan</span>
+                    </a>
+
+                    <a href="#berita" 
+                       @click.prevent="scrollTo('berita')"
+                       class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden decoration-0 cursor-pointer"
                        :class="activeSection === 'berita' ? 'text-primary bg-white dark:bg-slate-700 shadow-md ring-1 ring-slate-100 dark:ring-slate-600' : 'text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-white/60'">
                         <span class="relative z-10">Berita</span>
-                    </button>
+                    </a>
                 </div>
 
-                <!-- Smart Action Center -->
+                <!-- Simplified Action Center -->
                 <div class="flex items-center gap-3">
-                    <!-- Language Switcher -->
-                    <div class="relative" x-data="{ open: false }" @click.outside="open = false">
-                        <button @click="open = !open" class="w-9 h-9 rounded-full bg-white/60 dark:bg-slate-800/60 backdrop-blur-md flex items-center justify-center hover:bg-white dark:hover:bg-slate-700 transition-all border border-transparent dark:border-slate-700">
-                            <span class="text-[10px] font-black text-slate-600 dark:text-slate-300">ID</span>
-                        </button>
-                        <div x-show="open" 
-                             x-transition:enter="transition ease-out duration-200"
-                             x-transition:enter-start="opacity-0 translate-y-2"
-                             x-transition:enter-end="opacity-100 translate-y-0"
-                             x-transition:leave="transition ease-in duration-150"
-                             class="absolute top-full right-0 mt-2 w-32 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-100 dark:border-slate-700 p-1 z-50">
-                            <button class="flex items-center justify-between w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-700 text-xs font-bold text-slate-700 dark:text-white cursor-default">
-                                <span>Indonesia</span>
-                                <svg class="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                            </button>
-                            <button class="flex items-center justify-between w-full px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 text-xs font-bold text-slate-500 dark:text-slate-400 transition-colors">
-                                <span>English</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Dark Mode Toggle -->
-                    <button @click="toggleTheme()" class="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300"
-                            :class="darkMode ? 'bg-slate-800 text-yellow-400 hover:bg-slate-700 ring-1 ring-slate-700' : 'bg-white/60 text-slate-500 hover:text-slate-800 hover:bg-white'">
-                        <!-- Sun Icon -->
-                        <svg x-show="!darkMode" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                        <!-- Moon Icon -->
-                        <svg x-show="darkMode" style="display: none;" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
-                    </button>
-
-                    <!-- Expandable Search Bar -->
-                    <div x-data="{ expanded: false }" class="relative hidden lg:block">
-                        <div class="flex items-center bg-white/60 backdrop-blur-md border border-white/60 rounded-full transition-all duration-500 ease-out shadow-sm ring-1 ring-slate-100/50" 
-                             :class="expanded ? 'w-64 px-4 py-2 ring-emerald-100 border-emerald-200' : 'w-10 h-10 justify-center cursor-pointer hover:bg-white hover:shadow-md'">
-                            
-                            <svg @click="expanded = !expanded; $nextTick(() => $refs.searchInput.focus())" class="w-4 h-4 text-slate-500 shrink-0 transition-colors" :class="expanded ? 'text-emerald-500' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                            
-                            <input x-ref="searchInput" x-show="expanded" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-2" x-transition:enter-end="opacity-100 translate-x-0" 
-                                   type="text" placeholder="Cari layanan, dokter..." class="bg-transparent border-none outline-none text-xs font-bold text-slate-700 w-full ml-2 placeholder:text-slate-400"
-                                   @blur="expanded = false">
-                        </div>
-                    </div>
-
                     @auth
-                        <!-- Notification Bell -->
-                        <div class="relative hidden md:block" x-data="{ open: false }" @click.outside="open = false">
-                            <button @click="open = !open" class="w-10 h-10 rounded-full bg-white/60 backdrop-blur-md border border-white/60 flex items-center justify-center hover:bg-white hover:shadow-md transition-all group relative">
-                                <svg class="w-5 h-5 text-slate-500 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
-                                <!-- Notification Dot -->
-                                <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border border-white animate-pulse"></span>
-                            </button>
-                            
-                            <!-- Notification Dropdown -->
-                            <div x-show="open" 
-                                 x-transition:enter="transition ease-out duration-200"
-                                 x-transition:enter-start="opacity-0 translate-y-2 scale-95"
-                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-                                 x-transition:leave="transition ease-in duration-150"
-                                 class="absolute top-full right-0 mt-3 w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/50 p-2 z-50">
-                                <div class="px-4 py-2 border-b border-slate-100 flex justify-between items-center">
-                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Notifikasi</span>
-                                    <a href="{{ route('system.notification.index') }}" class="text-[10px] font-bold text-emerald-600 hover:underline">Lihat Semua</a>
-                                </div>
-                                <div class="p-2 space-y-1">
-                                    <!-- Dummy Notification Item -->
-                                    <div class="px-3 py-2 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer">
-                                        <p class="text-xs font-bold text-slate-700">Selamat Datang!</p>
-                                        <p class="text-[10px] text-slate-500 mt-0.5">Sistem siap digunakan. Cek dashboard Anda.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
 
                         <!-- User Dropdown -->
                         <div class="relative" x-data="{ open: false }" @click.outside="open = false">
