@@ -1,56 +1,56 @@
 <div class="space-y-8 animate-fade-in">
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row justify-between items-center bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+    <!-- Header Stats & Action -->
+    <div class="flex flex-col md:flex-row justify-between items-end gap-6">
         <div>
-            <h2 class="text-2xl font-black text-slate-800">Struktur Peran & Akses</h2>
-            <p class="text-sm text-slate-500 mt-1">
-                Panduan hak akses pengguna dalam sistem. Peran didefinisikan secara statis untuk keamanan arsitektur.
-            </p>
+            <h2 class="text-3xl font-black text-slate-800">Peran & Hak Akses</h2>
+            <p class="text-slate-500 font-medium mt-2">Kelola akses pengguna ke fitur sistem secara dinamis dan aman.</p>
         </div>
-        <div class="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-xl text-blue-700 text-sm font-bold">
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            Role-Based Access Control (RBAC)
-        </div>
+        <a href="{{ route('system.role.create') }}" class="px-6 py-3 bg-indigo-600 text-white rounded-2xl text-sm font-black uppercase tracking-wider hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/30 flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+            Buat Role Baru
+        </a>
     </div>
 
-    <!-- Roles Grid -->
+    <!-- Role Cards Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        @foreach($roles as $key => $role)
-        <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 hover:shadow-lg transition-all group relative overflow-hidden">
-            <!-- Decorative Background -->
-            <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                <svg class="w-32 h-32 text-{{ $role['color'] }}-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        @forelse($roles as $role)
+        <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm relative group hover:border-indigo-200 transition-all">
+            <div class="flex justify-between items-start mb-4">
+                <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg font-black uppercase">
+                    {{ substr($role->name, 0, 2) }}
+                </div>
+                
+                <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <a href="{{ route('system.role.edit', $role->id) }}" class="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-100 hover:text-indigo-600 transition-colors">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                    </a>
+                    <button wire:click="delete({{ $role->id }})" 
+                            onclick="return confirm('Hapus role ini? User yang memiliki role ini akan kehilangan akses.') || event.stopImmediatePropagation()"
+                            class="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-rose-100 hover:text-rose-600 transition-colors">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </button>
+                </div>
             </div>
 
-            <!-- Content -->
-            <div class="relative z-10">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 bg-{{ $role['color'] }}-50 text-{{ $role['color'] }}-600 rounded-2xl">
-                        @if($key == 'admin') <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                        @elseif($key == 'dokter') <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
-                        @elseif($key == 'apoteker') <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
-                        @else <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                        @endif
-                    </div>
-                    <span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-black">{{ $role['users_count'] }} User</span>
+            <h3 class="text-xl font-bold text-slate-800 mb-1">{{ $role->name }}</h3>
+            <p class="text-xs text-slate-400 font-medium mb-6">Guard: {{ $role->guard_name }}</p>
+
+            <div class="flex items-center gap-4 pt-4 border-t border-dashed border-slate-100">
+                <div>
+                    <span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest">Pengguna</span>
+                    <span class="text-lg font-bold text-slate-700">{{ $role->users_count }}</span>
                 </div>
-
-                <h3 class="text-xl font-black text-slate-800 mb-2 capitalize">{{ $role['name'] }}</h3>
-                <p class="text-sm text-slate-500 mb-6 min-h-[40px]">{{ $role['description'] }}</p>
-
-                <div class="space-y-3">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Kapabilitas Utama</p>
-                    <ul class="space-y-2">
-                        @foreach($role['permissions'] as $perm)
-                        <li class="flex items-start gap-2 text-sm text-slate-600">
-                            <svg class="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                            {{ $perm }}
-                        </li>
-                        @endforeach
-                    </ul>
+                <div class="w-px h-8 bg-slate-100"></div>
+                <div>
+                    <span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest">Hak Akses</span>
+                    <span class="text-lg font-bold text-indigo-600">{{ $role->permissions_count }}</span>
                 </div>
             </div>
         </div>
-        @endforeach
+        @empty
+        <div class="col-span-full py-12 text-center border-2 border-dashed border-slate-200 rounded-[2rem]">
+            <p class="text-slate-400 font-bold">Belum ada role yang dibuat.</p>
+        </div>
+        @endforelse
     </div>
 </div>

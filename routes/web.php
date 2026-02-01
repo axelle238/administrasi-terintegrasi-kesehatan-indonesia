@@ -138,6 +138,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/system/users', \App\Livewire\System\User\Index::class)->name('system.user.index');
         Route::get('/system/settings', \App\Livewire\System\Setting\Index::class)->name('system.setting.index');
         Route::get('/system/roles', \App\Livewire\System\Role\Index::class)->name('system.role.index');
+        Route::get('/system/roles/create', \App\Livewire\System\Role\Form::class)->name('system.role.create');
+        Route::get('/system/roles/{id}/edit', \App\Livewire\System\Role\Form::class)->name('system.role.edit');
         Route::get('/system/integrations', \App\Livewire\System\Integration\Index::class)->name('system.integration.index');
         Route::get('/system/surat-templates', \App\Livewire\Surat\Template\Index::class)->name('system.surat-template.index');
         Route::get('/system/tindakan', \App\Livewire\System\Tindakan\Index::class)->name('system.tindakan.index');

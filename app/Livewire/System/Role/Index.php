@@ -3,92 +3,37 @@
 namespace App\Livewire\System\Role;
 
 use Livewire\Component;
-use App\Models\User;
+use App\Models\Role;
+use App\Services\PermissionDiscoveryService;
 
 class Index extends Component
 {
+    public function mount()
+    {
+        // Auto-scan permission saat pertama kali admin masuk ke halaman ini agar tidak kosong
+        // (Optimistic check)
+        if (\App\Models\Permission::count() === 0) {
+            (new PermissionDiscoveryService())->discover();
+        }
+    }
+
+    public function delete($id)
+    {
+        $role = Role::findOrFail($id);
+        
+        // Prevent deleting super-admin if needed, but for now allow dynamic management
+        if ($role->name === 'admin' || $role->name === 'Super Admin') {
+            $this->dispatch('notify', 'error', 'Role Administrator Utama tidak dapat dihapus.');
+            return;
+        }
+
+        $role->delete();
+        $this->dispatch('notify', 'success', 'Role berhasil dihapus.');
+    }
+
     public function render()
     {
-        // Definisi Role dan Hak Akses Statis (Sesuai Konvensi Sistem)
-        $roles = [
-            'admin' => [
-                'name' => 'Administrator Sistem',
-                'description' => 'Memiliki akses penuh ke seluruh modul sistem, pengaturan, dan manajemen pengguna.',
-                'color' => 'purple',
-                'users_count' => User::where('role', 'admin')->count(),
-                'permissions' => [
-                    'Mengelola User & Role',
-                    'Mengakses Dashboard Keamanan',
-                    'Konfigurasi Sistem Global',
-                    'Melihat Semua Laporan',
-                    'Backup & Restore Database'
-                ]
-            ],
-            'dokter' => [
-                'name' => 'Dokter Medis',
-                'description' => 'Tenaga medis profesional yang menangani pemeriksaan pasien dan rekam medis.',
-                'color' => 'green',
-                'users_count' => User::where('role', 'dokter')->count(),
-                'permissions' => [
-                    'Akses Dashboard Medis',
-                    'Input Rekam Medis (SOAP)',
-                    'Resep Elektronik',
-                    'Melihat Riwayat Pasien',
-                    'Tindakan Medis'
-                ]
-            ],
-            'perawat' => [
-                'name' => 'Perawat',
-                'description' => 'Membantu dokter dalam pelayanan, tanda-tanda vital, dan administrasi bangsal.',
-                'color' => 'blue',
-                'users_count' => User::where('role', 'perawat')->count(),
-                'permissions' => [
-                    'Dashboard Medis (Terbatas)',
-                    'Input Tanda Vital (TTV)',
-                    'Manajemen Rawat Inap',
-                    'Asuhan Keperawatan',
-                    'Triase Awal'
-                ]
-            ],
-            'apoteker' => [
-                'name' => 'Apoteker / Farmasi',
-                'description' => 'Bertanggung jawab atas pengelolaan obat, stok farmasi, dan penyerahan resep.',
-                'color' => 'yellow',
-                'users_count' => User::where('role', 'apoteker')->count(),
-                'permissions' => [
-                    'Dashboard Farmasi',
-                    'Manajemen Stok Obat',
-                    'Proses Resep Dokter',
-                    'Laporan Narkotika/Psikotropika',
-                    'Stok Opname Farmasi'
-                ]
-            ],
-            'staf' => [
-                'name' => 'Staf Administrasi',
-                'description' => 'Menangani pendaftaran, kasir, dan administrasi umum.',
-                'color' => 'gray',
-                'users_count' => User::where('role', 'staf')->count(),
-                'permissions' => [
-                    'Dashboard Utama',
-                    'Pendaftaran Pasien',
-                    'Kasir & Pembayaran',
-                    'Manajemen Antrean',
-                    'Data Master Pasien'
-                ]
-            ],
-            'tata_usaha' => [
-                'name' => 'Tata Usaha (TU)',
-                'description' => 'Mengelola aset, surat menyurat, dan kepegawaian non-medis.',
-                'color' => 'orange',
-                'users_count' => User::where('role', 'tata_usaha')->count(),
-                'permissions' => [
-                    'Manajemen Aset & Barang',
-                    'Sistem Persuratan',
-                    'Kepegawaian Dasar',
-                    'Inventaris Umum'
-                ]
-            ]
-        ];
+        $roles = Role::withCount('users', 'permissions')->latest()->get();
 
         return view('livewire.system.role.index', [
             'roles' => $roles
