@@ -43,7 +43,10 @@ Route::get('/', function () {
     $pengaturan = array_merge($defaults, $dbSettings);
 
     // 4. Data Dinamis
-    $layanan = Poli::with(['jenisPelayanans' => function($q) {
+    // Eager Load untuk performa & kelengkapan data Alur
+    $layanan = Poli::whereHas('jenisPelayanans', function($q) {
+        $q->where('is_active', true);
+    })->with(['jenisPelayanans' => function($q) {
         $q->where('is_active', true)->with(['alurPelayanans' => function($sq) {
             $sq->where('is_active', true)->orderBy('urutan');
         }]);
