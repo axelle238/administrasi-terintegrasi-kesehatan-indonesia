@@ -65,22 +65,34 @@
         [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="antialiased" 
-      x-data="{ 
+<body class="antialiased transition-colors duration-300" 
+      :class="darkMode ? 'bg-slate-900 text-slate-200' : 'bg-[#f8fafc] text-slate-600'"
+      x-data="{
           scrolled: false, 
           activeSection: 'beranda',
+          darkMode: localStorage.getItem('theme') === 'dark',
+          toggleTheme() {
+              this.darkMode = !this.darkMode;
+              localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
+              if (this.darkMode) {
+                  document.documentElement.classList.add('dark');
+              } else {
+                  document.documentElement.classList.remove('dark');
+              }
+          },
           init() {
               this.onScroll();
               window.addEventListener('scroll', () => this.onScroll());
+              if (this.darkMode) document.documentElement.classList.add('dark');
           },
           onScroll() {
               this.scrolled = window.scrollY > 40;
-              const sections = ['beranda', 'keunggulan', 'alur', 'jadwal', 'berita', 'faq'];
+              const sections = ['beranda', 'alur', 'jadwal', 'layanan'];
               for (const id of sections) {
                   const el = document.getElementById(id);
                   if (el) {
                       const rect = el.getBoundingClientRect();
-                      if (rect.top <= 200 && rect.bottom >= 200) {
+                      if (rect.top <= 150 && rect.bottom >= 150) {
                           this.activeSection = id;
                       }
                   }
@@ -93,7 +105,6 @@
               }
           }
       }">
-
     <!-- Top Utility Bar -->
     <div class="bg-slate-900 text-slate-400 text-[10px] font-bold uppercase tracking-widest py-3 hidden md:block relative z-50 border-b border-white/5">
         <div class="max-w-7xl mx-auto px-6 lg:px-8 flex justify-between items-center">
@@ -119,8 +130,8 @@
     </div>
 
     <!-- Navbar -->
-    <nav :class="{ 'py-3 bg-white/80 backdrop-blur-xl shadow-lg shadow-slate-200/20 border-b border-white/50 top-0': scrolled, 'py-5 bg-transparent border-transparent top-10': !scrolled }" 
-         class="fixed left-0 right-0 z-40 transition-all duration-500 hidden md:block">
+    <nav :class="{ 'py-3 shadow-lg top-0': scrolled, 'py-5 bg-transparent border-transparent top-0 md:top-10': !scrolled, 'bg-white/80 border-slate-200/50': !darkMode && scrolled, 'bg-slate-900/80 border-slate-700/50': darkMode && scrolled }" 
+         class="fixed left-0 right-0 z-40 transition-all duration-500 hidden md:block backdrop-blur-xl border-b">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="flex items-center justify-between">
                 <!-- Logo -->
@@ -191,22 +202,116 @@
                     </button>
                 </div>
 
-                <!-- Action Buttons -->
+                <!-- Smart Action Center -->
                 <div class="flex items-center gap-3">
+                    <!-- Dark Mode Toggle -->
+                    <button @click="toggleTheme()" class="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300"
+                            :class="darkMode ? 'bg-slate-800 text-yellow-400 hover:bg-slate-700' : 'bg-white/60 text-slate-500 hover:text-slate-800 hover:bg-white'">
+                        <!-- Sun Icon -->
+                        <svg x-show="!darkMode" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                        <!-- Moon Icon -->
+                        <svg x-show="darkMode" style="display: none;" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    </button>
+
+                    <!-- Expandable Search Bar -->
+                    <div x-data="{ expanded: false }" class="relative hidden lg:block">
+                        <div class="flex items-center bg-white/60 backdrop-blur-md border border-white/60 rounded-full transition-all duration-500 ease-out shadow-sm ring-1 ring-slate-100/50" 
+                             :class="expanded ? 'w-64 px-4 py-2 ring-emerald-100 border-emerald-200' : 'w-10 h-10 justify-center cursor-pointer hover:bg-white hover:shadow-md'">
+                            
+                            <svg @click="expanded = !expanded; $nextTick(() => $refs.searchInput.focus())" class="w-4 h-4 text-slate-500 shrink-0 transition-colors" :class="expanded ? 'text-emerald-500' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                            
+                            <input x-ref="searchInput" x-show="expanded" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-2" x-transition:enter-end="opacity-100 translate-x-0" 
+                                   type="text" placeholder="Cari layanan, dokter..." class="bg-transparent border-none outline-none text-xs font-bold text-slate-700 w-full ml-2 placeholder:text-slate-400"
+                                   @blur="expanded = false">
+                        </div>
+                    </div>
+
                     @auth
-                        <a href="{{ url('/dashboard') }}" class="group px-6 py-2.5 rounded-full bg-slate-900 text-white text-xs font-bold uppercase tracking-wider hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/20 hover:shadow-slate-900/40 flex items-center gap-2">
-                            <span>Dashboard</span>
-                            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-                        </a>
+                        <!-- Notification Bell -->
+                        <div class="relative hidden md:block" x-data="{ open: false }" @click.outside="open = false">
+                            <button @click="open = !open" class="w-10 h-10 rounded-full bg-white/60 backdrop-blur-md border border-white/60 flex items-center justify-center hover:bg-white hover:shadow-md transition-all group relative">
+                                <svg class="w-5 h-5 text-slate-500 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                                <!-- Notification Dot -->
+                                <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border border-white animate-pulse"></span>
+                            </button>
+                            
+                            <!-- Notification Dropdown -->
+                            <div x-show="open" 
+                                 x-transition:enter="transition ease-out duration-200"
+                                 x-transition:enter-start="opacity-0 translate-y-2 scale-95"
+                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave="transition ease-in duration-150"
+                                 class="absolute top-full right-0 mt-3 w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/50 p-2 z-50">
+                                <div class="px-4 py-2 border-b border-slate-100 flex justify-between items-center">
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Notifikasi</span>
+                                    <a href="{{ route('system.notification.index') }}" class="text-[10px] font-bold text-emerald-600 hover:underline">Lihat Semua</a>
+                                </div>
+                                <div class="p-2 space-y-1">
+                                    <!-- Dummy Notification Item -->
+                                    <div class="px-3 py-2 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer">
+                                        <p class="text-xs font-bold text-slate-700">Selamat Datang!</p>
+                                        <p class="text-[10px] text-slate-500 mt-0.5">Sistem siap digunakan. Cek dashboard Anda.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- User Dropdown -->
+                        <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                            <button @click="open = !open" class="flex items-center gap-3 pl-1 pr-3 py-1 bg-white/60 hover:bg-white backdrop-blur-md border border-white/60 rounded-full transition-all duration-300 shadow-sm hover:shadow-md group">
+                                <div class="relative">
+                                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center text-white text-xs font-black ring-2 ring-white">
+                                        {{ substr(Auth::user()->name, 0, 1) }}
+                                    </div>
+                                    <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full"></div>
+                                </div>
+                                <span class="text-xs font-bold text-slate-700 group-hover:text-slate-900 hidden md:block max-w-[80px] truncate">{{ Auth::user()->name }}</span>
+                                <svg class="w-3 h-3 text-slate-400 group-hover:text-slate-600 transition-transform duration-300" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                            </button>
+
+                            <!-- Dropdown Menu -->
+                            <div x-show="open" 
+                                 x-transition:enter="transition ease-out duration-200"
+                                 x-transition:enter-start="opacity-0 translate-y-2 scale-95"
+                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave="transition ease-in duration-150"
+                                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave-end="opacity-0 translate-y-2 scale-95"
+                                 class="absolute top-full right-0 mt-3 w-64 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/50 p-2 z-50 transform origin-top-right"
+                                 style="display: none;">
+                                 
+                                <div class="px-4 py-3 border-b border-slate-100 mb-1">
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Akun Saya</p>
+                                    <p class="text-sm font-bold text-slate-800 truncate">{{ Auth::user()->name }}</p>
+                                    <p class="text-[10px] text-slate-500 truncate">{{ Auth::user()->email }}</p>
+                                </div>
+
+                                <a href="{{ url('/dashboard') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-colors text-xs font-bold text-slate-600 hover:text-primary">
+                                    <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                                    Dashboard Utama
+                                </a>
+                                
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-rose-50 transition-colors text-xs font-bold text-slate-600 hover:text-rose-600">
+                                        <svg class="w-4 h-4 text-slate-400 hover:text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4-4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                                        Keluar Aplikasi
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     @else
-                        <a href="{{ route('login') }}" class="text-sm font-bold text-slate-500 hover:text-slate-800 px-5 py-2.5 hover:bg-white hover:shadow-md rounded-full transition-all border border-transparent hover:border-slate-100">Staff Login</a>
-                        <a href="{{ route('antrean.monitor') }}" class="group relative px-6 py-2.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-0.5 transition-all overflow-hidden">
-                            <span class="relative z-10 flex items-center gap-2">
-                                Ambil Antrean
-                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                            </span>
-                            <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                        </a>
+                        <!-- Guest Actions -->
+                        <div class="flex items-center gap-2">
+                            <a href="{{ route('login') }}" class="px-5 py-2.5 rounded-full text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-white/60 transition-all">
+                                Masuk Staf
+                            </a>
+                            <a href="{{ route('antrean.monitor') }}" class="group relative px-6 py-2.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-0.5 transition-all overflow-hidden flex items-center gap-2">
+                                <span class="relative z-10">Ambil Antrean</span>
+                                <svg class="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                                <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                            </a>
+                        </div>
                     @endauth
                 </div>
             </div>
