@@ -69,7 +69,7 @@
 
     <!-- PHASE 5: PENGEMBANGAN KARIR -->
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Talent Management</div>
-    <x-nav.link-child :href="route('kinerja.assessment')" :active="request()->routeIs('kinerja.assessment')">Penilaian Kinerja (KPI)</x-nav.link-child>
+    <x-nav.link-child :href="route('kepegawaian.kinerja.assessment')" :active="request()->routeIs('kepegawaian.kinerja.assessment')">Penilaian Kinerja (KPI)</x-nav.link-child>
     <x-nav.link-child :href="route('mutasi.index')" :active="request()->routeIs('mutasi.index')">Mutasi & Promosi</x-nav.link-child>
     <x-nav.link-child :href="route('kepegawaian.diklat.index')" :active="request()->routeIs('kepegawaian.diklat.index')">Diklat & Pelatihan</x-nav.link-child>
     
