@@ -51,8 +51,8 @@ Route::get('/', function () {
     
     $hargaLayanan = \App\Models\Tindakan::where('is_active', true)->whereNotNull('harga')->inRandomOrder()->limit(6)->get();
     
-    // NEW: Load CMS Sections
-    $cmsSections = \App\Models\LandingComponent::all()->keyBy('section_key');
+    // NEW: Load CMS Sections (Ordered)
+    $sections = \App\Models\LandingComponent::where('is_active', true)->orderBy('order')->get();
 
     $jadwalHariIni = JadwalJaga::with(['pegawai.user', 'shift'])
         ->whereDate('tanggal', Carbon::today())
@@ -78,7 +78,7 @@ Route::get('/', function () {
         $view = 'themes.high-tech'; // Fallback
     }
 
-    return view($view, compact('pengaturan', 'layanan', 'jadwalHariIni', 'beritaTerbaru', 'fasilitas', 'stats', 'hargaLayanan', 'cmsSections'));
+    return view($view, compact('pengaturan', 'layanan', 'jadwalHariIni', 'beritaTerbaru', 'fasilitas', 'stats', 'hargaLayanan', 'sections'));
 });
 
 Route::get('/dashboard', \App\Livewire\Dashboard::class)->middleware(['auth', 'verified'])->name('dashboard');
