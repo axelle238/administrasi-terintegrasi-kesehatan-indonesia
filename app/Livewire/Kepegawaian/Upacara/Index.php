@@ -18,11 +18,10 @@ class Index extends Component
     // Form Properties
     public $jenis_upacara_id;
     public $tanggal;
-    public $bukti_foto; // Base64 (Hadir) atau File Upload (Izin/Sakit)
+    public $bukti_foto; // Base64 String dari kamera
     public $keterangan;
     public $latitude;
     public $longitude;
-    public $status_kehadiran = 'Hadir'; // Hadir, Izin, Sakit
     public $jarak_meter = 0;
     
     public $confirmingDelete = null;
@@ -34,30 +33,22 @@ class Index extends Component
 
     public function rules()
     {
-        $rules = [
+        return [
             'jenis_upacara_id' => 'required|exists:jenis_upacaras,id',
             'tanggal' => 'required|date',
-            'status_kehadiran' => 'required|in:Hadir,Izin,Sakit',
             'keterangan' => 'nullable|string|max:255',
+            'bukti_foto' => 'required|string', // Base64
+            'latitude' => 'required',
+            'longitude' => 'required',
         ];
-
-        if ($this->status_kehadiran === 'Hadir') {
-            $rules['bukti_foto'] = 'required|string'; // Base64
-            $rules['latitude'] = 'required';
-            $rules['longitude'] = 'required';
-        } else {
-            $rules['bukti_foto'] = 'required|image|max:2048'; // File Upload Surat
-        }
-
-        return $rules;
     }
 
     public function messages()
     {
         return [
             'jenis_upacara_id.required' => 'Pilih jenis upacara.',
-            'bukti_foto.required' => 'Bukti kehadiran/izin wajib dilampirkan.',
-            'latitude.required' => 'Lokasi GPS wajib aktif untuk presensi Hadir.',
+            'bukti_foto.required' => 'Foto kehadiran wajib diambil.',
+            'latitude.required' => 'Lokasi GPS wajib aktif.',
         ];
     }
 
@@ -85,39 +76,30 @@ class Index extends Component
             $user = Auth::user();
             $jenis = JenisUpacara::find($this->jenis_upacara_id);
             
+            // 1. Validasi Radius (Geofencing)
+            if ($jenis->target_latitude && $jenis->target_longitude) {
+                $distance = $this->calculateDistance(
+                    $this->latitude, 
+                    $this->longitude, 
+                    $jenis->target_latitude, 
+                    $jenis->target_longitude
+                );
+                
+                if ($distance > $jenis->radius_meter) {
+                    $this->addError('latitude', "Lokasi Anda terlalu jauh ($distance m). Max radius: {$jenis->radius_meter} m.");
+                    throw new \Illuminate\Validation\ValidationException($this->validator);
+                }
+            }
+
+            // 2. Simpan Foto Base64
             $imagePath = null;
-
-            if ($this->status_kehadiran === 'Hadir') {
-                // 1. Validasi Radius (Geofencing)
-                if ($jenis->target_latitude && $jenis->target_longitude) {
-                    $distance = $this->calculateDistance(
-                        $this->latitude, 
-                        $this->longitude, 
-                        $jenis->target_latitude, 
-                        $jenis->target_longitude
-                    );
-                    
-                    if ($distance > $jenis->radius_meter) {
-                        // Toleransi sedikit atau reject
-                        $this->addError('latitude', "Lokasi Anda terlalu jauh ($distance m). Max radius: {$jenis->radius_meter} m.");
-                        throw new \Illuminate\Validation\ValidationException($this->validator);
-                    }
-                }
-
-                // 2. Simpan Foto Base64
-                if ($this->bukti_foto) {
-                    $image_parts = explode(";base64,", $this->bukti_foto);
-                    $image_base64 = base64_decode($image_parts[1] ?? $this->bukti_foto);
-                    $fileName = 'upacara_hadir_' . uniqid() . '.png';
-                    $path = 'upacara/' . $fileName;
-                    \Illuminate\Support\Facades\Storage::disk('public')->put($path, $image_base64);
-                    $imagePath = $path;
-                }
-            } else {
-                // Simpan File Upload (Izin/Sakit)
-                if ($this->bukti_foto) {
-                    $imagePath = $this->bukti_foto->store('upacara_izin', 'public');
-                }
+            if ($this->bukti_foto) {
+                $image_parts = explode(";base64,", $this->bukti_foto);
+                $image_base64 = base64_decode($image_parts[1] ?? $this->bukti_foto);
+                $fileName = 'upacara_hadir_' . uniqid() . '.png';
+                $path = 'upacara/' . $fileName;
+                \Illuminate\Support\Facades\Storage::disk('public')->put($path, $image_base64);
+                $imagePath = $path;
             }
 
             // 3. Simpan Presensi Upacara
@@ -127,8 +109,8 @@ class Index extends Component
                 'tanggal' => $this->tanggal,
                 'bukti_foto' => $imagePath,
                 'keterangan' => $this->keterangan,
-                'status' => $this->status_kehadiran,
-                'is_integrated_lkh' => true, // Izin/Sakit juga tercatat tapi mungkin outputnya beda
+                'status' => 'Hadir',
+                'is_integrated_lkh' => true,
                 'latitude' => $this->latitude,
                 'longitude' => $this->longitude,
             ]);
@@ -139,22 +121,18 @@ class Index extends Component
                 ['status' => 'Draft']
             );
 
-            $kegiatanText = $this->status_kehadiran === 'Hadir' 
-                ? 'Mengikuti ' . $jenis->nama_upacara 
-                : "Tidak Hadir Upacara ({$this->status_kehadiran}): " . $jenis->nama_upacara;
-
             $lkh->details()->create([
                 'jam_mulai' => '07:00',
                 'jam_selesai' => '08:00',
-                'kegiatan' => $kegiatanText,
-                'output' => $this->status_kehadiran === 'Hadir' ? 'Terlaksana' : 'Surat Izin Terlampir',
+                'kegiatan' => 'Mengikuti ' . $jenis->nama_upacara,
+                'output' => 'Terlaksana',
                 'durasi' => 60,
             ]);
         });
 
-        $this->reset(['jenis_upacara_id', 'bukti_foto', 'keterangan', 'latitude', 'longitude', 'status_kehadiran']);
+        $this->reset(['jenis_upacara_id', 'bukti_foto', 'keterangan', 'latitude', 'longitude']);
         $this->dispatch('presensi-saved'); 
-        session()->flash('message', 'Data presensi upacara berhasil disimpan.');
+        session()->flash('message', 'Presensi upacara berhasil disimpan.');
     }
 
     public function delete($id)
