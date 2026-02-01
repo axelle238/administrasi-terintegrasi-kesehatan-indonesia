@@ -65,32 +65,66 @@
                     
                     <div class="flex gap-2 mt-auto">
                         @if($item->status === 'Draft' || $item->status === 'Ditolak')
-                            <a href="#" class="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 transition-colors">
+                            <a href="{{ route('kepegawaian.aktivitas.create', ['tanggal' => $item->tanggal->format('Y-m-d')]) }}" class="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 transition-colors">
                                 Edit
                             </a>
                         @endif
-                        <button class="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 transition-colors">
-                            Lihat Detail
+                        <button wire:click="toggleDetail({{ $item->id }})" class="px-4 py-2 {{ $selectedLaporanId === $item->id ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-white text-slate-600 border-slate-200' }} border rounded-xl text-xs font-bold hover:bg-slate-50 transition-colors flex items-center gap-2">
+                            {{ $selectedLaporanId === $item->id ? 'Tutup Detail' : 'Lihat Detail' }}
+                            <svg class="w-4 h-4 {{ $selectedLaporanId === $item->id ? 'rotate-180' : '' }} transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                         </button>
                     </div>
                 </div>
             </div>
             
-            <!-- Preview Items (Accordion-like logic could go here) -->
-            <div class="mt-6 pt-4 border-t border-dashed border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-4">
-                @foreach($item->details->take(4) as $detail)
-                <div class="flex items-start gap-3">
-                    <div class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0"></div>
-                    <div>
-                        <p class="text-xs font-bold text-slate-700 line-clamp-1">{{ $detail->kegiatan }}</p>
-                        <p class="text-[10px] text-slate-400 font-mono">{{ \Carbon\Carbon::parse($detail->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($detail->jam_selesai)->format('H:i') }}</p>
+            <!-- Detail Panel (Expandable) -->
+            @if($selectedLaporanId === $item->id)
+            <div class="mt-6 pt-6 border-t border-dashed border-slate-200 animate-fade-in-down">
+                <h4 class="text-sm font-black text-slate-800 uppercase tracking-wider mb-4">Rincian Kegiatan</h4>
+                
+                <div class="relative pl-6 border-l-2 border-slate-100 space-y-6">
+                    @foreach($item->details as $detail)
+                    <div class="relative group">
+                        <!-- Dot -->
+                        <div class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full border-2 border-white bg-blue-500 shadow-sm group-hover:scale-110 transition-transform"></div>
+                        
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 hover:border-blue-200 transition-colors">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="font-bold text-slate-800 text-sm">{{ $detail->kegiatan }}</span>
+                                <span class="text-xs font-mono font-bold text-slate-500 bg-white px-2 py-1 rounded border border-slate-200">
+                                    {{ \Carbon\Carbon::parse($detail->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($detail->jam_selesai)->format('H:i') }}
+                                </span>
+                            </div>
+                            <div class="text-xs text-slate-600">
+                                <span class="font-bold text-slate-400 uppercase text-[10px]">Output:</span> {{ $detail->output }}
+                            </div>
+                            @if($detail->durasi)
+                            <div class="mt-2 flex items-center gap-1 text-[10px] font-bold text-slate-400">
+                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                {{ $detail->durasi }} Menit
+                            </div>
+                            @endif
+                        </div>
                     </div>
+                    @endforeach
                 </div>
-                @endforeach
-                @if($item->details_count > 4)
-                    <p class="text-xs text-blue-500 font-bold italic pt-1">+{{ $item->details_count - 4 }} kegiatan lainnya...</p>
-                @endif
             </div>
+            @else
+                <!-- Preview Items (Collapsed State) -->
+                <div class="mt-6 pt-4 border-t border-dashed border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-4 opacity-70 hover:opacity-100 transition-opacity cursor-pointer" wire:click="toggleDetail({{ $item->id }})">
+                    @foreach($item->details->take(2) as $detail)
+                    <div class="flex items-start gap-3">
+                        <div class="w-1.5 h-1.5 rounded-full bg-slate-300 mt-1.5 shrink-0"></div>
+                        <div>
+                            <p class="text-xs font-bold text-slate-600 line-clamp-1">{{ $detail->kegiatan }}</p>
+                        </div>
+                    </div>
+                    @endforeach
+                    @if($item->details_count > 2)
+                        <p class="text-[10px] text-blue-500 font-bold italic pt-0.5">... dan {{ $item->details_count - 2 }} kegiatan lainnya</p>
+                    @endif
+                </div>
+            @endif
         </div>
         @empty
         <div class="text-center py-12">

@@ -14,11 +14,21 @@ class Index extends Component
 
     public $bulanFilter;
     public $tahunFilter;
+    public $selectedLaporanId = null;
 
     public function mount()
     {
         $this->bulanFilter = Carbon::now()->month;
         $this->tahunFilter = Carbon::now()->year;
+    }
+
+    public function toggleDetail($id)
+    {
+        if ($this->selectedLaporanId === $id) {
+            $this->selectedLaporanId = null;
+        } else {
+            $this->selectedLaporanId = $id;
+        }
     }
 
     public function render()
