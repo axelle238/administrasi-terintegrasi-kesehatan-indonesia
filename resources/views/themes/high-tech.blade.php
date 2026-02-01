@@ -103,7 +103,16 @@
           scrollTo(id) {
               const el = document.getElementById(id);
               if (el) {
-                  window.scrollTo({ top: el.offsetTop - 100, behavior: 'smooth' });
+                  const offset = 100;
+                  const bodyRect = document.body.getBoundingClientRect().top;
+                  const elementRect = el.getBoundingClientRect().top;
+                  const elementPosition = elementRect - bodyRect;
+                  const offsetPosition = elementPosition - offset;
+
+                  window.scrollTo({
+                      top: offsetPosition,
+                      behavior: 'smooth'
+                  });
               }
           }
       }">
@@ -158,7 +167,7 @@
 
     <!-- Navbar -->
     <nav :class="{ 'py-3 shadow-lg top-0': scrolled, 'py-5 bg-transparent border-transparent top-0 md:top-10': !scrolled, 'bg-white/80 border-slate-200/50': !darkMode && scrolled, 'bg-slate-900/80 border-slate-700/50': darkMode && scrolled }" 
-         class="fixed left-0 right-0 z-40 transition-all duration-500 hidden md:block backdrop-blur-xl border-b">
+         class="fixed left-0 right-0 z-[100] transition-all duration-500 hidden md:block backdrop-blur-xl border-b">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="flex items-center justify-between">
                 <!-- Logo Area -->
@@ -176,7 +185,7 @@
                 </a>
 
                 <!-- Navigation Links -->
-                <div class="flex items-center gap-1 bg-white/60 p-1.5 rounded-full border border-white/60 backdrop-blur-md shadow-sm ring-1 ring-slate-100">
+                <div class="flex items-center gap-1 bg-white/60 p-1.5 rounded-full border border-white/60 backdrop-blur-md shadow-sm ring-1 ring-slate-100 relative z-50">
                     <button @click="scrollTo('alur')" 
                            class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden"
                            :class="activeSection === 'alur' ? 'text-primary bg-white shadow-md ring-1 ring-slate-100' : 'text-slate-500 hover:text-primary hover:bg-white/60'">
@@ -184,12 +193,12 @@
                     </button>
 
                     <!-- Dropdown Jadwal -->
-                    <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                    <div class="relative z-50" x-data="{ open: false }" @click.outside="open = false">
                         <button @click="open = !open" 
-                                class="px-5 py-2 rounded-full text-sm font-bold hover:text-primary hover:bg-white/50 transition-all duration-300 flex items-center gap-1 group relative"
+                                class="px-5 py-2 rounded-full text-sm font-bold hover:text-primary hover:bg-white/50 transition-all duration-300 flex items-center gap-1 group relative z-10"
                                 :class="(activeSection === 'jadwal' || open) ? 'text-primary bg-white shadow-md ring-1 ring-slate-100' : 'text-slate-500'">
                             Jadwal <svg class="w-3 h-3 transition-transform duration-300" :class="open ? 'rotate-180 text-primary' : 'text-slate-400 group-hover:text-primary'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                            <span class="absolute top-0 right-0 -mt-1 -mr-1 px-1.5 py-0.5 rounded-full bg-rose-500 text-white text-[8px] font-black uppercase tracking-wider shadow-sm">Live</span>
+                            <span class="absolute top-0 right-0 -mt-1 -mr-1 px-1.5 py-0.5 rounded-full bg-rose-500 text-white text-[8px] font-black uppercase tracking-wider shadow-sm pointer-events-none">Live</span>
                         </button>
                         <div x-show="open" 
                              x-transition:enter="transition ease-out duration-200"
@@ -225,12 +234,12 @@
                     </div>
                     
                     <!-- Dropdown Layanan -->
-                    <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                    <div class="relative z-50" x-data="{ open: false }" @click.outside="open = false">
                         <button @click="open = !open" 
-                                class="px-5 py-2 rounded-full text-sm font-bold hover:text-primary hover:bg-white/50 transition-all duration-300 flex items-center gap-1 group relative"
+                                class="px-5 py-2 rounded-full text-sm font-bold hover:text-primary hover:bg-white/50 transition-all duration-300 flex items-center gap-1 group relative z-10"
                                 :class="(activeSection === 'layanan' || open) ? 'text-primary bg-white shadow-md ring-1 ring-slate-100' : 'text-slate-500'">
                             Layanan <svg class="w-3 h-3 transition-transform duration-300" :class="open ? 'rotate-180 text-primary' : 'text-slate-400 group-hover:text-primary'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                            <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                            <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5 pointer-events-none">
                               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                               <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
                             </span>
@@ -268,9 +277,9 @@
                     </div>
 
                     <!-- Dropdown Berita -->
-                    <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                    <div class="relative z-50" x-data="{ open: false }" @click.outside="open = false">
                         <button @click="open = !open" 
-                                class="px-5 py-2 rounded-full text-sm font-bold hover:text-primary hover:bg-white/50 transition-all duration-300 flex items-center gap-1 group"
+                                class="px-5 py-2 rounded-full text-sm font-bold hover:text-primary hover:bg-white/50 transition-all duration-300 flex items-center gap-1 group relative z-10"
                                 :class="(activeSection === 'berita' || open) ? 'text-primary bg-white shadow-md ring-1 ring-slate-100' : 'text-slate-500'">
                             Wawasan <svg class="w-3 h-3 transition-transform duration-300" :class="open ? 'rotate-180 text-primary' : 'text-slate-400 group-hover:text-primary'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                         </button>
@@ -436,8 +445,8 @@
                         <a href="{{ route('login') }}" class="text-sm font-bold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white px-5 py-2.5 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md rounded-full transition-all border border-transparent hover:border-slate-100 dark:hover:border-slate-700">Login Staf</a>
                         
                         <!-- Quick Access Dropdown -->
-                        <div class="relative" x-data="{ open: false }" @click.outside="open = false">
-                            <button @click="open = !open" class="group relative px-6 py-2.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-0.5 transition-all overflow-hidden flex items-center gap-2">
+                        <div class="relative z-50" x-data="{ open: false }" @click.outside="open = false">
+                            <button @click="open = !open" class="group relative z-10 px-6 py-2.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-0.5 transition-all overflow-hidden flex items-center gap-2">
                                 <span class="relative z-10">Layanan Pasien</span>
                                 <svg class="w-4 h-4 relative z-10 transition-transform duration-300" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                                 <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
@@ -662,8 +671,8 @@
     @if($cmsSections['hero']->is_active ?? false)
     <header id="beranda" class="relative pt-32 pb-24 md:pt-48 md:pb-32 overflow-hidden blob-bg">
         <!-- Animated Background Elements -->
-        <div class="absolute top-20 left-10 w-72 h-72 bg-purple-200/30 rounded-full blur-3xl animate-float" style="animation-delay: 0s;"></div>
-        <div class="absolute bottom-20 right-10 w-96 h-96 bg-emerald-200/30 rounded-full blur-3xl animate-float" style="animation-delay: 2s;"></div>
+        <div class="absolute top-20 left-10 w-72 h-72 bg-purple-200/30 rounded-full blur-3xl animate-float pointer-events-none" style="animation-delay: 0s;"></div>
+        <div class="absolute bottom-20 right-10 w-96 h-96 bg-emerald-200/30 rounded-full blur-3xl animate-float pointer-events-none" style="animation-delay: 2s;"></div>
 
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
             <div class="flex flex-col lg:flex-row items-center gap-16">
