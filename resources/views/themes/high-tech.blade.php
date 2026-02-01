@@ -177,13 +177,51 @@
 
                 <!-- Navigation Links -->
                 <div class="flex items-center gap-1 bg-white/60 p-1.5 rounded-full border border-white/60 backdrop-blur-md shadow-sm ring-1 ring-slate-100">
-                    @foreach(['beranda' => 'Beranda', 'keunggulan' => 'Keunggulan', 'alur' => 'Alur', 'jadwal' => 'Jadwal'] as $id => $label)
-                        <button @click="scrollTo('{{ $id }}')" 
-                           :class="activeSection === '{{ $id }}' ? 'text-primary bg-white shadow-md ring-1 ring-slate-100' : 'text-slate-500 hover:text-primary hover:bg-white/50'"
-                           class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group">
-                            {{ $label }}
+                    <button @click="scrollTo('alur')" 
+                           class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group overflow-hidden"
+                           :class="activeSection === 'alur' ? 'text-primary bg-white shadow-md ring-1 ring-slate-100' : 'text-slate-500 hover:text-primary hover:bg-white/60'">
+                            <span class="relative z-10">Alur</span>
+                    </button>
+
+                    <!-- Dropdown Jadwal -->
+                    <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                        <button @click="open = !open" 
+                                class="px-5 py-2 rounded-full text-sm font-bold hover:text-primary hover:bg-white/50 transition-all duration-300 flex items-center gap-1 group"
+                                :class="(activeSection === 'jadwal' || open) ? 'text-primary bg-white shadow-md ring-1 ring-slate-100' : 'text-slate-500'">
+                            Jadwal <svg class="w-3 h-3 transition-transform duration-300" :class="open ? 'rotate-180 text-primary' : 'text-slate-400 group-hover:text-primary'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                         </button>
-                    @endforeach
+                        <div x-show="open" 
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 translate-y-2"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="opacity-100 translate-y-0"
+                             x-transition:leave-end="opacity-0 translate-y-2"
+                             class="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-slate-100 p-3 grid gap-1 z-50"
+                             style="display: none;">
+                             
+                             <div class="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45 border-t border-l border-slate-100"></div>
+
+                             <div class="relative z-10">
+                                 <p class="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 mb-1">Praktik Hari Ini</p>
+                                 @foreach($jadwalHariIni->take(3) as $jadwal)
+                                    <div class="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group/item">
+                                        <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs shrink-0">
+                                            {{ substr($jadwal->pegawai->user->name ?? 'D', 0, 1) }}
+                                        </div>
+                                        <div class="min-w-0">
+                                            <p class="text-xs font-bold text-slate-800 truncate">{{ $jadwal->pegawai->user->name ?? 'Dokter' }}</p>
+                                            <p class="text-[9px] text-slate-500">{{ $jadwal->shift->jam_masuk }} - {{ $jadwal->shift->jam_keluar }}</p>
+                                        </div>
+                                    </div>
+                                 @endforeach
+                                 @if($jadwalHariIni->count() == 0)
+                                    <div class="px-4 py-3 text-center text-xs text-slate-400">Tidak ada jadwal hari ini.</div>
+                                 @endif
+                                 <button @click="open = false; scrollTo('jadwal')" class="mt-2 block w-full py-2 text-[10px] font-bold text-center text-slate-500 hover:text-primary hover:bg-slate-50 rounded-lg uppercase tracking-wider transition-colors">Lihat Semua Jadwal &rarr;</button>
+                             </div>
+                        </div>
+                    </div>
                     
                     <!-- Dropdown Layanan -->
                     <div class="relative" x-data="{ open: false }" @click.outside="open = false">
