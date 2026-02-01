@@ -32,14 +32,12 @@
         
         h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
         
-        /* Dynamic Text Colors based on Primary */
         .text-primary { color: var(--color-primary); }
         .bg-primary { background-color: var(--color-primary); }
         .border-primary { border-color: var(--color-primary); }
         .hover\:text-primary:hover { color: var(--color-primary); }
         .hover\:bg-primary:hover { background-color: var(--color-primary); }
 
-        /* ... (CSS lain tetap sama) ... */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); }
@@ -61,7 +59,7 @@
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="flex items-center justify-between">
                 <a href="#" class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                     </div>
                     <div>
@@ -101,7 +99,7 @@
         @endauth
     </div>
 
-    <!-- MAIN HERO SECTION (Dynamic) -->
+    <!-- MAIN HERO SECTION -->
     @if($cmsSections['hero']->is_active ?? false)
     <header id="beranda" class="relative pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden blob-bg">
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
@@ -170,64 +168,145 @@
     </header>
     @endif
 
-    <!-- ALUR PELAYANAN (Dynamic Tabs) -->
+    <!-- ALUR PELAYANAN (Improved UI) -->
     @if(isset($alurPelayanan) && count($alurPelayanan) > 0)
-    <section id="alur" class="py-16 bg-white relative" x-data="{ activeTab: 'all' }">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <section id="alur" class="py-20 bg-white relative" x-data="{ activeTab: 'all' }">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 opacity-30 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
             <div class="text-center mb-12">
                 <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Panduan Pasien</span>
-                <h2 class="text-3xl md:text-4xl font-black text-slate-900">Alur Pelayanan Mudah</h2>
+                <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-6">Alur Pelayanan</h2>
                 
-                <!-- Tabs -->
-                <div class="flex flex-wrap justify-center gap-2 mt-8">
+                <!-- Modern Tabs -->
+                <div class="inline-flex flex-wrap justify-center gap-2 bg-slate-50 p-1.5 rounded-full border border-slate-100 shadow-sm max-w-full overflow-x-auto no-scrollbar">
                     <button @click="activeTab = 'all'" 
-                            :class="activeTab === 'all' ? 'bg-primary text-white shadow-lg shadow-emerald-500/30' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'"
-                            class="px-5 py-2 rounded-full text-sm font-bold transition-all">
-                        Semua
+                            :class="activeTab === 'all' ? 'bg-white text-primary shadow-md ring-1 ring-slate-200' : 'text-slate-500 hover:text-slate-700'"
+                            class="px-6 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap">
+                        Semua Alur
                     </button>
                     @php 
                         $jenisList = $alurPelayanan->pluck('jenisPelayanan.nama_layanan')->unique()->filter();
                     @endphp
                     @foreach($jenisList as $jenis)
                     <button @click="activeTab = '{{ Str::slug($jenis) }}'" 
-                            :class="activeTab === '{{ Str::slug($jenis) }}' ? 'bg-primary text-white shadow-lg shadow-emerald-500/30' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'"
-                            class="px-5 py-2 rounded-full text-sm font-bold transition-all">
+                            :class="activeTab === '{{ Str::slug($jenis) }}' ? 'bg-white text-primary shadow-md ring-1 ring-slate-200' : 'text-slate-500 hover:text-slate-700'"
+                            class="px-6 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap">
                         {{ $jenis }}
                     </button>
                     @endforeach
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
                 @foreach($alurPelayanan as $index => $alur)
                 @php $slug = $alur->jenisPelayanan ? Str::slug($alur->jenisPelayanan->nama_layanan) : 'umum'; @endphp
                 
                 <div x-show="activeTab === 'all' || activeTab === '{{ $slug }}'" 
-                     class="group relative bg-white p-6 rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/50 hover:-translate-y-2 transition-all duration-300 h-full flex flex-col"
+                     class="group relative bg-white p-6 rounded-[2rem] border border-slate-100 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col overflow-hidden"
                      x-transition:enter="transition ease-out duration-300"
-                     x-transition:enter-start="opacity-0 transform scale-90"
+                     x-transition:enter-start="opacity-0 transform scale-95"
                      x-transition:enter-end="opacity-100 transform scale-100">
                     
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-xl font-black shadow-lg shadow-emerald-500/30">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-emerald-50 to-transparent rounded-bl-[3rem] -mr-4 -mt-4 opacity-50 group-hover:opacity-100 transition-opacity"></div>
+
+                    <div class="flex justify-between items-start mb-4 relative z-10">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-lg font-black shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform">
                             {{ $alur->urutan }}
                         </div>
                         @if($alur->jenisPelayanan)
-                        <span class="px-2 py-1 bg-slate-50 text-slate-500 text-[10px] font-bold uppercase rounded-lg border border-slate-100">
+                        <span class="px-2.5 py-1 bg-slate-50 text-slate-500 text-[10px] font-bold uppercase rounded-lg border border-slate-100">
                             {{ $alur->jenisPelayanan->nama_layanan }}
                         </span>
                         @endif
                     </div>
                     
-                    <h3 class="font-bold text-lg text-slate-800 mb-2 leading-tight">{{ $alur->judul }}</h3>
-                    <p class="text-sm text-slate-500 leading-relaxed flex-1">{{ $alur->deskripsi }}</p>
+                    <h3 class="font-bold text-lg text-slate-800 mb-2 leading-tight relative z-10">{{ $alur->judul }}</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed flex-1 relative z-10">{{ $alur->deskripsi }}</p>
                     
                     @if($alur->estimasi_waktu)
-                    <div class="mt-4 pt-4 border-t border-dashed border-slate-100 flex items-center gap-2 text-xs font-bold text-emerald-600">
+                    <div class="mt-4 pt-4 border-t border-dashed border-slate-100 flex items-center gap-2 text-xs font-bold text-emerald-600 relative z-10">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                        {{ $alur->estimasi_waktu }}
+                        Estimasi: {{ $alur->estimasi_waktu }}
                     </div>
                     @endif
+                </div>
+                @endforeach
+            </div>
+            
+            <!-- Empty State for Tab -->
+            <div x-show="$el.querySelectorAll('.grid > div[x-show]:not([style*=\'display: none\'])').length === 0" style="display: none;" class="text-center py-12">
+                <p class="text-slate-400 font-bold">Belum ada alur untuk kategori ini.</p>
+            </div>
+        </div>
+    </section>
+    @endif
+
+    <!-- QUICK MENU (COLORFUL GRID) -->
+    <section class="py-8 px-6 lg:px-8 -mt-8 relative z-20">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                <!-- Card 1 -->
+                <a href="#layanan" class="group bg-white p-6 rounded-3xl shadow-lg shadow-slate-200/50 border border-slate-100 hover:-translate-y-1 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-2xl bg-teal-50 text-teal-500 flex items-center justify-center text-2xl mb-4 group-hover:bg-teal-500 group-hover:text-white transition-colors">
+                        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-lg">Poliklinik</h3>
+                    <p class="text-xs text-slate-400 mt-1">Layanan Spesialis</p>
+                </a>
+                
+                <!-- Card 2 -->
+                <a href="{{ route('antrean.monitor') }}" class="group bg-white p-6 rounded-3xl shadow-lg shadow-slate-200/50 border border-slate-100 hover:-translate-y-1 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-2xl mb-4 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-lg">Daftar Online</h3>
+                    <p class="text-xs text-slate-400 mt-1">Tanpa Antre Lama</p>
+                </a>
+
+                <!-- Card 3 -->
+                <a href="#jadwal" class="group bg-white p-6 rounded-3xl shadow-lg shadow-slate-200/50 border border-slate-100 hover:-translate-y-1 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-2xl bg-lime-50 text-lime-600 flex items-center justify-center text-2xl mb-4 group-hover:bg-lime-500 group-hover:text-white transition-colors">
+                        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-lg">Jadwal Dokter</h3>
+                    <p class="text-xs text-slate-400 mt-1">Cek Ketersediaan</p>
+                </a>
+
+                <!-- Card 4 -->
+                <a href="#" class="group bg-white p-6 rounded-3xl shadow-lg shadow-slate-200/50 border border-slate-100 hover:-translate-y-1 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-2xl bg-cyan-50 text-cyan-600 flex items-center justify-center text-2xl mb-4 group-hover:bg-cyan-600 group-hover:text-white transition-colors">
+                        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-lg">Farmasi</h3>
+                    <p class="text-xs text-slate-400 mt-1">Info Obat</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- HARGA LAYANAN (Dynamic) -->
+    @if(isset($hargaLayanan) && count($hargaLayanan) > 0)
+    <section class="py-16 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex justify-between items-end mb-10">
+                <h2 class="text-2xl md:text-3xl font-black text-slate-900">Tarif Layanan</h2>
+                <a href="#" class="text-sm font-bold text-emerald-600 hover:underline">Lihat Katalog Lengkap</a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($hargaLayanan as $harga)
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-all">
+                    <div>
+                        <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-wider mb-3 inline-block">{{ $harga->kategori }}</span>
+                        <h4 class="font-bold text-lg text-slate-800 mb-2">{{ $harga->nama_tindakan }}</h4>
+                        <p class="text-sm text-slate-500 line-clamp-2">{{ $harga->deskripsi ?? 'Layanan medis standar.' }}</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-dashed border-slate-100 flex justify-between items-center">
+                        <span class="text-xs font-bold text-slate-400 uppercase">Mulai Dari</span>
+                        <span class="text-xl font-black text-emerald-600">Rp {{ number_format($harga->harga, 0, ',', '.') }}</span>
+                    </div>
                 </div>
                 @endforeach
             </div>
@@ -235,35 +314,42 @@
     </section>
     @endif
 
-    <!-- JADWAL & DOCTORS -->
+    <!-- JADWAL DOKTER -->
     @if(($pengaturan['show_jadwal_dokter'] ?? '1') == '1')
-    <section id="jadwal" class="py-16 md:py-24 relative bg-slate-50">
+    <section id="jadwal" class="py-16 md:py-24 relative bg-white">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="text-center mb-12">
-                <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Dokter Kami</span>
+                <span class="text-emerald-600 font-bold tracking-widest uppercase text-xs mb-2 block">Dokter Kami</span>
                 <h2 class="text-3xl md:text-4xl font-black text-slate-900">Jadwal Praktik Hari Ini</h2>
             </div>
+
             @if(isset($jadwalHariIni) && count($jadwalHariIni) > 0)
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach($jadwalHariIni as $jadwal)
-                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-4 hover:shadow-lg transition-all duration-300">
-                        <div class="w-16 h-16 rounded-2xl bg-slate-100 overflow-hidden shrink-0">
+                    <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-4 hover:shadow-lg transition-all duration-300">
+                        <div class="w-16 h-16 rounded-2xl bg-white overflow-hidden shrink-0 shadow-sm">
                             @if($jadwal->pegawai->foto_profil ?? false)
                                 <img src="{{ Storage::url($jadwal->pegawai->foto_profil) }}" class="w-full h-full object-cover">
                             @else
-                                <div class="w-full h-full flex items-center justify-center text-slate-400 font-bold text-xl">{{ substr($jadwal->pegawai->user->name ?? 'D', 0, 1) }}</div>
+                                <div class="w-full h-full flex items-center justify-center text-slate-400 font-bold text-xl">
+                                    {{ substr($jadwal->pegawai->user->name ?? 'D', 0, 1) }}
+                                </div>
                             @endif
                         </div>
                         <div class="min-w-0 flex-1">
                             <h4 class="font-bold text-slate-800 truncate">{{ $jadwal->pegawai->user->name ?? 'Dokter' }}</h4>
                             <p class="text-xs text-slate-500 uppercase tracking-wide font-bold mb-2">{{ $jadwal->pegawai->poli->nama_poli ?? 'Umum' }}</p>
-                            <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase">{{ $jadwal->shift->jam_masuk ?? '00:00' }} - {{ $jadwal->shift->jam_keluar ?? '00:00' }}</span>
+                            <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase">
+                                {{ $jadwal->shift->jam_masuk ?? '00:00' }} - {{ $jadwal->shift->jam_keluar ?? '00:00' }}
+                            </span>
                         </div>
                     </div>
                     @endforeach
                 </div>
             @else
-                <div class="text-center text-slate-400 font-bold">Tidak ada jadwal dokter untuk hari ini.</div>
+                <div class="bg-slate-50 p-12 text-center rounded-[2.5rem] border border-dashed border-slate-200">
+                    <p class="text-slate-400 font-bold">Tidak ada jadwal dokter untuk hari ini.</p>
+                </div>
             @endif
         </div>
     </section>
@@ -337,7 +423,7 @@
     <div class="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 pb-safe md:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
         <div class="grid grid-cols-4 h-16">
             <a href="#beranda" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary active:text-primary"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg><span class="text-[10px] font-bold">Beranda</span></a>
-            <a href="{{ route('antrean.monitor') }}" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary active:text-primary"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg><span class="text-[10px] font-bold">Daftar</span></a>
+            <a href="#alur" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary active:text-primary"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg><span class="text-[10px] font-bold">Alur</span></a>
             <a href="#jadwal" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary active:text-primary"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg><span class="text-[10px] font-bold">Jadwal</span></a>
             <a href="{{ url('/dashboard') }}" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary active:text-primary"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg><span class="text-[10px] font-bold">Akun</span></a>
         </div>
