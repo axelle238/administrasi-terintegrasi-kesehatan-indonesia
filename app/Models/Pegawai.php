@@ -38,6 +38,7 @@ class Pegawai extends Model
         'poli_id',          // Poli tempat bertugas (jika medis)
         'no_telepon',       // Kontak aktif
         'alamat',           // Alamat domisili
+        'tanggal_lahir',    // Tanggal Lahir
         'status_kepegawaian', // PNS, PPPK, Honor, dll
         'tanggal_masuk',    // TMT (Terhitung Mulai Tanggal)
         'no_str',           // Nomor Surat Tanda Registrasi (Medis)
