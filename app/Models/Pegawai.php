@@ -32,28 +32,45 @@ class Pegawai extends Model
     }
 
     protected $fillable = [
-        'user_id',          // ID User terkait
-        'nip',              // Nomor Induk Pegawai
-        'jabatan',          // Jabatan struktural/fungsional
-        'poli_id',          // Poli tempat bertugas (jika medis)
-        'no_telepon',       // Kontak aktif
-        'alamat',           // Alamat domisili
-        'tanggal_lahir',    // Tanggal Lahir
-        'status_kepegawaian', // PNS, PPPK, Honor, dll
-        'tanggal_masuk',    // TMT (Terhitung Mulai Tanggal)
-        'no_str',           // Nomor Surat Tanda Registrasi (Medis)
-        'masa_berlaku_str', // Expired date STR
-        'no_sip',           // Nomor Surat Izin Praktik (Medis)
-        'masa_berlaku_sip', // Expired date SIP
-        'file_str',         // Path file STR
-        'file_sip',         // Path file SIP
-        'file_ijazah',      // Path file Ijazah
-        'file_sertifikat_pelatihan', // Path file sertifikat (bisa multiple/zip)
+        'user_id',          
+        'nip',              
+        'nik',
+        'kk',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'jenis_kelamin',
+        'agama',
+        'golongan_darah',
+        'status_pernikahan',
+        'jabatan',          
+        'poli_id',          
+        'no_telepon',       
+        'alamat',           
+        'status_kepegawaian', 
+        'tanggal_masuk',
+        'tanggal_berhenti',
+        'alasan_berhenti',
+        'is_active',    
+        'no_str',           
+        'masa_berlaku_str', 
+        'no_sip',           
+        'masa_berlaku_sip',
+        'npwp',
+        'nama_bank',
+        'nomor_rekening',
+        'pemilik_rekening',
+        'no_bpjs_kesehatan',
+        'no_bpjs_ketenagakerjaan', 
+        'file_str',         
+        'file_sip',         
+        'file_ijazah',      
+        'file_sertifikat_pelatihan', 
         'kuota_cuti_tahunan',
         'sisa_cuti',
         'foto_profil',
         'kontak_darurat_nama',
-        'kontak_darurat_telp',
+        'kontak_darurat_relasi',
+        'kontak_darurat_telp', // Sesuai kolom database lama
     ];
 
     /**
@@ -76,13 +93,13 @@ class Pegawai extends Model
     /**
      * Relasi: Riwayat Karir / Jabatan.
      */
-    public function riwayatKarir()
+    public function riwayatJabatan()
     {
-        return $this->hasMany(RiwayatJabatan::class)->orderByDesc('tanggal_efektif');
+        return $this->hasMany(RiwayatJabatanPegawai::class)->orderByDesc('tanggal_mulai');
     }
 
     /**
-     * Relasi: Keluarga Pegawai (BPJS).
+     * Relasi: Keluarga Pegawai.
      */
     public function keluarga()
     {
@@ -94,7 +111,15 @@ class Pegawai extends Model
      */
     public function pendidikan()
     {
-        return $this->hasMany(RiwayatPendidikan::class)->orderByDesc('tahun_lulus');
+        return $this->hasMany(RiwayatPendidikanPegawai::class)->orderByDesc('tahun_lulus');
+    }
+
+    /**
+     * Relasi: Dokumen Digital / Arsip.
+     */
+    public function dokumen()
+    {
+        return $this->hasMany(DokumenPegawai::class);
     }
 
     /**
