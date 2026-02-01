@@ -43,18 +43,26 @@ Route::get('/', function () {
     $pengaturan = array_merge($defaults, $dbSettings);
 
     // 4. Data Dinamis
-    // NEW: Load CMS Sections (Ordered)
-    $sections = \App\Models\LandingComponent::where('is_active', true)->orderBy('order')->get();
+    $layanan = Poli::all();
+    // NEW: Load Alur & Harga
+    $alurPelayanan = \App\Models\AlurPelayanan::where('is_active', true)->orderBy('urutan')->get();
+    $hargaLayanan = \App\Models\Tindakan::where('is_active', true)->whereNotNull('harga')->inRandomOrder()->limit(6)->get();
+    
+    // NEW: Load CMS Sections
+    $cmsSections = \App\Models\LandingComponent::all()->keyBy('section_key');
 
-    // Data untuk Jadwal Pelayanan (Pengganti Jadwal Dokter)
-    $jadwalPelayanan = Poli::where('is_active', true)->get();
-
+    $jadwalHariIni = JadwalJaga::with(['pegawai.user', 'shift'])
+        ->whereDate('tanggal', Carbon::today())
+        ->get();
     $beritaTerbaru = Berita::with('penulis')
         ->where('status', 'published')
         ->latest()
         ->take(3)
         ->get();
-    
+    $fasilitas = Fasilitas::where('is_active', true)
+        ->latest()
+        ->take(6)
+        ->get();
     $stats = [
         'pasien_total' => \App\Models\Pasien::count(),
         'dokter_total' => \App\Models\Pegawai::where('jabatan', 'LIKE', '%Dokter%')->count(),
@@ -67,11 +75,14 @@ Route::get('/', function () {
         $view = 'themes.high-tech'; // Fallback
     }
 
-    // Variabel yang tidak lagi dipakai di view (seperti jadwalHariIni, hargaLayanan) dihapus dari compact
-    return view($view, compact('pengaturan', 'jadwalPelayanan', 'beritaTerbaru', 'stats', 'sections'));
+    return view($view, compact('pengaturan', 'layanan', 'jadwalHariIni', 'beritaTerbaru', 'fasilitas', 'stats', 'alurPelayanan', 'hargaLayanan', 'cmsSections'));
 });
 
-// Halaman Alur Pelayanan (Full Page)
+Route::get('/dashboard', \App\Livewire\Dashboard::class)->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/antrean/monitor', \App\Livewire\Antrean\Monitor::class)->name('antrean.monitor');
+Route::get('/kiosk', \App\Livewire\Antrean\Kiosk::class)->name('antrean.kiosk');
+Route::get('/survey', \App\Livewire\Survey\Create::class)->name('survey.create');
+Route::get('/pengaduan', \App\Livewire\Masyarakat\PengaduanPublic::class)->name('pengaduan.public');
 Route::get('/alur-pelayanan', \App\Livewire\Public\AlurPelayanan::class)->name('alur-pelayanan.index');
 
 Route::middleware('auth')->group(function () {

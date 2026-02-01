@@ -45,6 +45,6 @@ class AlurPelayanan extends Component
         return view('livewire.public.alur-pelayanan', [
             'jenisPelayanans' => $jenisPelayanans,
             'alurs' => $alurs
-        ])->layout('layouts.full-page'); // Using full-page layout
+        ])->layout('layouts.guest'); // Assuming guest layout for public pages
     }
 }
