@@ -78,7 +78,7 @@ Route::get('/', function () {
         $view = 'themes.high-tech'; // Fallback
     }
 
-    return view($view, compact('pengaturan', 'layanan', 'jadwalHariIni', 'beritaTerbaru', 'fasilitas', 'stats', 'alurPelayanan', 'hargaLayanan', 'cmsSections'));
+    return view($view, compact('pengaturan', 'layanan', 'jadwalHariIni', 'beritaTerbaru', 'fasilitas', 'stats', 'hargaLayanan', 'cmsSections'));
 });
 
 Route::get('/dashboard', \App\Livewire\Dashboard::class)->middleware(['auth', 'verified'])->name('dashboard');
