@@ -129,7 +129,7 @@
     </x-slot:icon>
     
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Monitoring</div>
-    <x-nav.link-child :href="route('system.info')" :active="request()->routeIs('system.info')">Dashboard Sistem</x-nav.link-child>
+    <x-nav.link-child :href="route('system.dashboard')" :active="request()->routeIs('system.dashboard')">Dashboard Sistem</x-nav.link-child>
     <x-nav.link-child :href="route('system.integration.index')" :active="request()->routeIs('system.integration.*')">Status Integrasi</x-nav.link-child>
 
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Konfigurasi</div>

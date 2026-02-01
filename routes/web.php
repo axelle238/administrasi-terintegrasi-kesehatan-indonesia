@@ -131,7 +131,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/security/dashboard', \App\Livewire\Security\Dashboard::class)->name('security.dashboard');
         Route::get('/activity-log', \App\Livewire\Admin\ActivityLog::class)->name('activity-log');
         Route::get('/activity-log/{id}', \App\Livewire\Admin\ActivityLogShow::class)->name('activity-log.show');
-        Route::get('/system/info', \App\Livewire\System\Information::class)->name('system.info');
+        Route::get('/system/dashboard', \App\Livewire\System\Dashboard::class)->name('system.dashboard');
         Route::get('/system/poli', \App\Livewire\System\Poli\Index::class)->name('system.poli.index');
         Route::get('/system/poli/create', \App\Livewire\System\Poli\Create::class)->name('system.poli.create');
         Route::get('/system/poli/{poli}/edit', \App\Livewire\System\Poli\Edit::class)->name('system.poli.edit');

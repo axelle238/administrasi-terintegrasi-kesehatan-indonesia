@@ -11,7 +11,7 @@ use App\Models\Obat;
 use App\Models\Pegawai;
 use Spatie\Activitylog\Models\Activity;
 
-class Information extends Component
+class Dashboard extends Component
 {
     public function render()
     {
@@ -121,13 +121,13 @@ class Information extends Component
         // Recent Logs
         $recentLogs = Activity::with('causer')->latest()->take(10)->get();
 
-        return view('livewire.system.information', [
+        return view('livewire.system.dashboard', [
             'serverInfo' => $serverInfo,
             'stats' => $stats,
             'capabilities' => $capabilities,
             'dbSizeMB' => $dbSizeMB,
             'tableCount' => $tableCount,
             'recentLogs' => $recentLogs,
-        ])->layout('layouts.app', ['header' => 'Informasi Sistem & Server']);
+        ])->layout('layouts.app', ['header' => 'Dashboard Manajemen Sistem Terpusat']);
     }
 }
