@@ -30,7 +30,11 @@
         [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="antialiased" x-data="{ scrolled: false }" @scroll.window="scrolled = (window.pageYOffset > 20)">
+<body class="antialiased transition-colors duration-300" 
+      :class="darkMode ? 'bg-slate-900 text-slate-200' : 'bg-[#f8fafc] text-slate-600'"
+      x-data="{
+          /* Updated: {{ now() }} */
+          scrolled: false,
 
     <!-- Navbar -->
     <nav :class="{ 'py-3 shadow-lg bg-white/90 backdrop-blur-xl': scrolled, 'py-6 bg-transparent': !scrolled }" 
@@ -222,6 +226,52 @@
             </div>
         </section>
         @endif
+
+    <!-- 5. STATS SECTION (NEW) -->
+    @if($section->section_key === 'stats')
+    <section id="stats" class="py-20 bg-indigo-900 relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/diagmonds-light.png')]"></div>
+        <div class="absolute top-0 right-0 w-96 h-96 bg-purple-600 rounded-full blur-3xl opacity-20 -mr-20 -mt-20"></div>
+        <div class="absolute bottom-0 left-0 w-96 h-96 bg-emerald-600 rounded-full blur-3xl opacity-20 -ml-20 -mb-20"></div>
+
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="text-center lg:text-left">
+                    <span class="text-emerald-400 font-black tracking-widest uppercase text-xs mb-2 block">{{ $section->subtitle }}</span>
+                    <h2 class="text-3xl md:text-5xl font-black text-white mb-6">{{ $section->title }}</h2>
+                    <p class="text-indigo-200 text-lg leading-relaxed">{{ $section->content }}</p>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <!-- Stat 1 -->
+                    <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/10 text-center hover:bg-white/20 transition-all group">
+                        <div class="text-4xl font-black text-white mb-2 group-hover:scale-110 transition-transform inline-block">
+                            {{ number_format($stats['pasien_total'] ?? 0) }}
+                        </div>
+                        <p class="text-xs font-bold text-indigo-200 uppercase tracking-wider">{{ $section->metadata['stat_1_label'] ?? 'Pasien Terdaftar' }}</p>
+                    </div>
+                    
+                    <!-- Stat 2 -->
+                    <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/10 text-center hover:bg-white/20 transition-all group">
+                        <div class="text-4xl font-black text-white mb-2 group-hover:scale-110 transition-transform inline-block">
+                            {{ number_format($stats['dokter_total'] ?? 0) }}
+                        </div>
+                        <p class="text-xs font-bold text-indigo-200 uppercase tracking-wider">{{ $section->metadata['stat_2_label'] ?? 'Dokter Ahli' }}</p>
+                    </div>
+
+                    <!-- Stat 3 -->
+                    <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/10 text-center hover:bg-white/20 transition-all group">
+                        <div class="text-4xl font-black text-white mb-2 group-hover:scale-110 transition-transform inline-block">
+                            {{ number_format($stats['layanan_total'] ?? 0) }}
+                        </div>
+                        <p class="text-xs font-bold text-indigo-200 uppercase tracking-wider">{{ $section->metadata['stat_3_label'] ?? 'Layanan Medis' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    @endif
 
         <!-- 5. FOOTER -->
         @if($section->section_key === 'footer')
