@@ -43,6 +43,52 @@
         </div>
     </div>
 
+    <!-- Indikator Mutu Nasional (INM) - NEW -->
+    <div class="bg-slate-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden">
+        <div class="absolute right-0 top-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl"></div>
+        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
+            <div class="max-w-md">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="px-2 py-1 rounded bg-blue-500 text-[10px] font-black uppercase tracking-wider">INM</span>
+                    <span class="text-xs font-bold text-blue-300 uppercase tracking-widest">Indikator Mutu Nasional</span>
+                </div>
+                <h3 class="text-2xl font-black mb-2">Kualitas Pelayanan Klinis</h3>
+                <p class="text-sm text-slate-400 font-medium leading-relaxed">Monitoring standar pelayanan berdasarkan parameter Keputusan Menteri Kesehatan RI.</p>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 w-full lg:w-auto">
+                <div class="text-center">
+                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Identifikasi</p>
+                    <div class="text-2xl font-black text-emerald-400">{{ $inm['identifikasi_pasien'] }}%</div>
+                    <div class="w-16 h-1 bg-slate-800 mx-auto mt-2 rounded-full overflow-hidden">
+                        <div class="bg-emerald-500 h-full" style="width: {{ $inm['identifikasi_pasien'] }}%"></div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Kebersihan</p>
+                    <div class="text-2xl font-black text-blue-400">{{ $inm['kebersihan_tangan'] }}%</div>
+                    <div class="w-16 h-1 bg-slate-800 mx-auto mt-2 rounded-full overflow-hidden">
+                        <div class="bg-blue-500 h-full" style="width: {{ $inm['kebersihan_tangan'] }}%"></div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Kepuasan</p>
+                    <div class="text-2xl font-black text-amber-400">{{ $inm['kepuasan_pasien'] }}%</div>
+                    <div class="w-16 h-1 bg-slate-800 mx-auto mt-2 rounded-full overflow-hidden">
+                        <div class="bg-amber-500 h-full" style="width: {{ $inm['kepuasan_pasien'] }}%"></div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Wkt Tunggu</p>
+                    <div class="text-2xl font-black text-rose-400">{{ $inm['waktu_tunggu_rawat_jalan'] }}<span class="text-xs">m</span></div>
+                    <div class="w-16 h-1 bg-slate-800 mx-auto mt-2 rounded-full overflow-hidden">
+                        <div class="bg-rose-500 h-full" style="width: {{ (45/60)*100 }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Navigation Tabs -->
     <div class="border-b border-slate-200">
         <nav class="-mb-px flex space-x-8" aria-label="Tabs">
@@ -118,14 +164,23 @@
 
                 <!-- Aktivitas Poli Summary (Small) -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                     <h4 class="font-bold text-slate-800 mb-4">Ringkasan Total Pasien</h4>
-                     <div class="space-y-2">
-                        @foreach($dataTab['poliActivity'] ?? [] as $poli)
-                        <div class="flex items-center justify-between text-sm">
-                            <span class="text-slate-600">{{ $poli->poli->nama_poli ?? 'N/A' }}</span>
-                            <span class="font-bold text-slate-800">{{ $poli->total }}</span>
+                     <div class="flex items-center justify-between mb-4">
+                        <h4 class="font-bold text-slate-800">Ringkasan Operasional</h4>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">Bulan Berjalan</span>
+                     </div>
+                     <div class="space-y-4">
+                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                            <span class="text-xs font-bold text-slate-600 uppercase">Total Rujukan</span>
+                            <span class="font-black text-rose-600">{{ $dataTab['statistikRujukan'] ?? 0 }}</span>
                         </div>
-                        @endforeach
+                        <div class="space-y-2">
+                            @foreach($dataTab['poliActivity'] ?? [] as $poli)
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-slate-600 font-medium">{{ $poli->poli->nama_poli ?? 'N/A' }}</span>
+                                <span class="font-black text-slate-800">{{ $poli->total }}</span>
+                            </div>
+                            @endforeach
+                        </div>
                      </div>
                 </div>
             </div>
@@ -191,32 +246,63 @@
 
         <!-- 3. KLINIS -->
         @if($tabAktif === 'klinis')
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 animate-fade-in-up">
-            <h4 class="font-bold text-slate-800 mb-6">Top 10 Diagnosa Penyakit (Bulan Ini)</h4>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left">
-                    <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
-                        <tr>
-                            <th class="px-6 py-4 rounded-l-lg">No</th>
-                            <th class="px-6 py-4">Kode ICD-10 / Diagnosa</th>
-                            <th class="px-6 py-4 text-right">Frekuensi Kasus</th>
-                            <th class="px-6 py-4 rounded-r-lg text-right">Persentase</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        @php $totalKasus = collect($dataTab['topDiagnosa'] ?? [])->sum('total'); @endphp
-                        @foreach($dataTab['topDiagnosa'] ?? [] as $index => $diag)
-                        <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-6 py-4 font-bold text-slate-400">#{{ $index + 1 }}</td>
-                            <td class="px-6 py-4 font-bold text-slate-700">{{ $diag->diagnosa }}</td>
-                            <td class="px-6 py-4 text-right font-black text-slate-800">{{ $diag->total }}</td>
-                            <td class="px-6 py-4 text-right text-slate-500">
-                                {{ $totalKasus > 0 ? round(($diag->total / $totalKasus) * 100, 1) : 0 }}%
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+        <div class="space-y-6 animate-fade-in-up">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Top 10 Diagnosa -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <h4 class="font-bold text-slate-800 mb-6 uppercase tracking-wider text-xs">Top 10 Diagnosa Penyakit (Bulan Ini)</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-slate-50 text-slate-500 uppercase text-[10px] font-black">
+                                <tr>
+                                    <th class="px-6 py-4 rounded-l-lg">No</th>
+                                    <th class="px-6 py-4">Diagnosa (ICD-10)</th>
+                                    <th class="px-6 py-4 text-right">Kasus</th>
+                                    <th class="px-6 py-4 rounded-r-lg text-right">%</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                @php $totalKasus = collect($dataTab['topDiagnosa'] ?? [])->sum('total'); @endphp
+                                @foreach($dataTab['topDiagnosa'] ?? [] as $index => $diag)
+                                <tr class="hover:bg-slate-50 transition-colors">
+                                    <td class="px-6 py-4 font-bold text-slate-400">#{{ $index + 1 }}</td>
+                                    <td class="px-6 py-4 font-bold text-slate-700">{{ $diag->diagnosa }}</td>
+                                    <td class="px-6 py-4 text-right font-black text-slate-800">{{ $diag->total }}</td>
+                                    <td class="px-6 py-4 text-right text-slate-500">
+                                        {{ $totalKasus > 0 ? round(($diag->total / $totalKasus) * 100, 1) : 0 }}%
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Surveilans P2P -->
+                <div class="bg-rose-900 rounded-[2rem] p-8 text-white relative overflow-hidden flex flex-col justify-between">
+                    <div class="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-16 -mt-16"></div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-6">
+                            <div class="p-2 bg-rose-500/20 rounded-lg text-rose-400">
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            </div>
+                            <span class="text-xs font-black uppercase tracking-[0.2em] text-rose-300">Surveilans P2P</span>
+                        </div>
+                        <h3 class="text-2xl font-black mb-2 leading-tight">Penyakit Menular</h3>
+                        <p class="text-xs text-rose-200 font-medium opacity-70">Pemantauan kasus penyakit berpotensi wabah di wilayah kerja.</p>
+                    </div>
+                    
+                    <div class="mt-8">
+                        <div class="text-5xl font-black text-white mb-2">{{ $dataTab['kasusMenular'] ?? 0 }}</div>
+                        <p class="text-[10px] font-bold text-rose-300 uppercase tracking-widest">Kasus Terdeteksi Bulan Ini</p>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-white/10">
+                        <a href="{{ route('medical.penyakit.index') }}" class="text-xs font-bold text-white flex items-center justify-between group">
+                            Analisis Lengkap <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
         @endif

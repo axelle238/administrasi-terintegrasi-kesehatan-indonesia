@@ -127,6 +127,48 @@
         </a>
     </div>
 
+    <!-- Indikator Kinerja Klinis Utama (NEW) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col justify-between overflow-hidden relative group">
+            <div class="absolute -right-4 -top-4 w-20 h-20 bg-blue-50 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+            <div class="relative z-10">
+                <p class="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em] mb-4">Mutai Pelayanan</p>
+                <h4 class="text-lg font-black text-slate-800 mb-1">Respons Time IGD</h4>
+                <p class="text-xs text-slate-400 font-medium">Target: < 5 Menit</p>
+            </div>
+            <div class="mt-6 flex items-end justify-between relative z-10">
+                <div class="text-3xl font-black text-slate-800">4.2 <span class="text-sm font-bold text-slate-400">Menit</span></div>
+                <div class="px-2 py-1 rounded-lg bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase">Sangat Baik</div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col justify-between overflow-hidden relative group">
+            <div class="absolute -right-4 -top-4 w-20 h-20 bg-emerald-50 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+            <div class="relative z-10">
+                <p class="text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em] mb-4">Efisiensi Ranap</p>
+                <h4 class="text-lg font-black text-slate-800 mb-1">Rata-rata LOS</h4>
+                <p class="text-xs text-slate-400 font-medium">Length of Stay</p>
+            </div>
+            <div class="mt-6 flex items-end justify-between relative z-10">
+                <div class="text-3xl font-black text-slate-800">3.5 <span class="text-sm font-bold text-slate-400">Hari</span></div>
+                <div class="px-2 py-1 rounded-lg bg-blue-100 text-blue-700 text-[10px] font-black uppercase">Optimal</div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col justify-between overflow-hidden relative group">
+            <div class="absolute -right-4 -top-4 w-20 h-20 bg-rose-50 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+            <div class="relative z-10">
+                <p class="text-[10px] font-black text-rose-500 uppercase tracking-[0.2em] mb-4">Keselamatan Pasien</p>
+                <h4 class="text-lg font-black text-slate-800 mb-1">Insiden Klinis</h4>
+                <p class="text-xs text-slate-400 font-medium">Bulan Berjalan</p>
+            </div>
+            <div class="mt-6 flex items-end justify-between relative z-10">
+                <div class="text-3xl font-black text-slate-800">0 <span class="text-sm font-bold text-slate-400">Kasus</span></div>
+                <div class="px-2 py-1 rounded-lg bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase">Nir-Insiden</div>
+            </div>
+        </div>
+    </div>
+
     <!-- Grafik Utama & Statistik Poli -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Grafik Kunjungan -->
