@@ -43,12 +43,9 @@ Route::get('/', function () {
     $pengaturan = array_merge($defaults, $dbSettings);
 
     // 4. Data Dinamis
-    $layanan = Poli::with(['jenisPelayanans' => function($q) {
-        $q->where('is_active', true)->with(['alurPelayanans' => function($sq) {
-            $sq->where('is_active', true)->orderBy('urutan');
-        }]);
-    }])->get();
-    
+    $layanan = Poli::all();
+    // NEW: Load Alur & Harga
+    $alurPelayanan = \App\Models\AlurPelayanan::where('is_active', true)->orderBy('urutan')->get();
     $hargaLayanan = \App\Models\Tindakan::where('is_active', true)->whereNotNull('harga')->inRandomOrder()->limit(6)->get();
     
     // NEW: Load CMS Sections
@@ -78,7 +75,7 @@ Route::get('/', function () {
         $view = 'themes.high-tech'; // Fallback
     }
 
-    return view($view, compact('pengaturan', 'layanan', 'jadwalHariIni', 'beritaTerbaru', 'fasilitas', 'stats', 'hargaLayanan', 'cmsSections'));
+    return view($view, compact('pengaturan', 'layanan', 'jadwalHariIni', 'beritaTerbaru', 'fasilitas', 'stats', 'alurPelayanan', 'hargaLayanan', 'cmsSections'));
 });
 
 Route::get('/dashboard', \App\Livewire\Dashboard::class)->middleware(['auth', 'verified'])->name('dashboard');
@@ -156,7 +153,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/system/surat-templates', \App\Livewire\Surat\Template\Index::class)->name('system.surat-template.index');
         Route::get('/system/tindakan', \App\Livewire\System\Tindakan\Index::class)->name('system.tindakan.index');
         Route::get('/system/alur-pelayanan', \App\Livewire\System\Alur\Index::class)->name('system.alur.index');
-        Route::get('/system/alur-pelayanan/{jenisPelayanan}/manage', \App\Livewire\System\Alur\Manage::class)->name('system.alur.manage');
         Route::get('/system/jenis-pelayanan', \App\Livewire\System\JenisPelayanan\Index::class)->name('system.jenis-pelayanan.index'); // New Route
         Route::get('/system/harga-layanan', \App\Livewire\System\Harga\Index::class)->name('system.harga.index');
         // Route::get('/hrd/dashboard', ...) -> Sudah dipindah ke group HRD
