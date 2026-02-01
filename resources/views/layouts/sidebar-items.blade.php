@@ -127,12 +127,14 @@
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
     </x-slot:icon>
     
+    <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">CMS & Tampilan</div>
+    <x-nav.link-child :href="route('system.cms.index')" :active="request()->routeIs('system.cms.*')">Manajemen Halaman Depan</x-nav.link-child>
+
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Monitoring</div>
     <x-nav.link-child :href="route('system.dashboard')" :active="request()->routeIs('system.dashboard')">Dashboard Sistem</x-nav.link-child>
     <x-nav.link-child :href="route('system.integration.index')" :active="request()->routeIs('system.integration.*')">Status Integrasi</x-nav.link-child>
 
     <div class="px-4 py-2 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-dashed border-slate-200 mb-1">Konfigurasi</div>
-    <x-nav.link-child :href="route('system.cms.index')" :active="request()->routeIs('system.cms.*')">Manajemen Halaman Depan</x-nav.link-child>
     <x-nav.link-child :href="route('system.setting.index')" :active="request()->routeIs('system.setting.index')">Pengaturan Global</x-nav.link-child>
     <x-nav.link-child :href="route('system.surat-template.index')" :active="request()->routeIs('system.surat-template.*')">Template Surat</x-nav.link-child>
 
