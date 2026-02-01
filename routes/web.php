@@ -43,10 +43,7 @@ Route::get('/', function () {
     $pengaturan = array_merge($defaults, $dbSettings);
 
     // 4. Data Dinamis
-    // Eager Load untuk performa & kelengkapan data Alur
-    $layanan = Poli::whereHas('jenisPelayanans', function($q) {
-        $q->where('is_active', true);
-    })->with(['jenisPelayanans' => function($q) {
+    $layanan = Poli::with(['jenisPelayanans' => function($q) {
         $q->where('is_active', true)->with(['alurPelayanans' => function($sq) {
             $sq->where('is_active', true)->orderBy('urutan');
         }]);
@@ -54,8 +51,8 @@ Route::get('/', function () {
     
     $hargaLayanan = \App\Models\Tindakan::where('is_active', true)->whereNotNull('harga')->inRandomOrder()->limit(6)->get();
     
-    // NEW: Load CMS Sections (Ordered)
-    $sections = \App\Models\LandingComponent::where('is_active', true)->orderBy('order')->get();
+    // NEW: Load CMS Sections
+    $cmsSections = \App\Models\LandingComponent::all()->keyBy('section_key');
 
     $jadwalHariIni = JadwalJaga::with(['pegawai.user', 'shift'])
         ->whereDate('tanggal', Carbon::today())
@@ -81,7 +78,7 @@ Route::get('/', function () {
         $view = 'themes.high-tech'; // Fallback
     }
 
-    return view($view, compact('pengaturan', 'layanan', 'jadwalHariIni', 'beritaTerbaru', 'fasilitas', 'stats', 'hargaLayanan', 'sections'));
+    return view($view, compact('pengaturan', 'layanan', 'jadwalHariIni', 'beritaTerbaru', 'fasilitas', 'stats', 'hargaLayanan', 'cmsSections'));
 });
 
 Route::get('/dashboard', \App\Livewire\Dashboard::class)->middleware(['auth', 'verified'])->name('dashboard');

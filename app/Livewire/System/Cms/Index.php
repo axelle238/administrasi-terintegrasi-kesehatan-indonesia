@@ -107,30 +107,6 @@ class Index extends Component
         $section->update(['is_active' => !$section->is_active]);
     }
 
-    public function moveUp($id)
-    {
-        $section = LandingComponent::find($id);
-        $previous = LandingComponent::where('order', '<', $section->order)->orderBy('order', 'desc')->first();
-        
-        if ($previous) {
-            $tempOrder = $section->order;
-            $section->update(['order' => $previous->order]);
-            $previous->update(['order' => $tempOrder]);
-        }
-    }
-
-    public function moveDown($id)
-    {
-        $section = LandingComponent::find($id);
-        $next = LandingComponent::where('order', '>', $section->order)->orderBy('order', 'asc')->first();
-        
-        if ($next) {
-            $tempOrder = $section->order;
-            $section->update(['order' => $next->order]);
-            $next->update(['order' => $tempOrder]);
-        }
-    }
-
     public function resetSectionEditor()
     {
         $this->reset(['editingSectionId', 'section_title', 'section_subtitle', 'section_content', 'section_image', 'current_section_image', 'section_metadata']);
