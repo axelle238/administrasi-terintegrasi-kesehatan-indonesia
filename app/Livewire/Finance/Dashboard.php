@@ -82,8 +82,8 @@ class Dashboard extends Component
             ->get();
             
         // 6b. Distribusi Sumber Pendapatan
-        $sumberPendapatan = Pembayaran::whereMonth('created_at', $bulanIni)
-            ->whereYear('created_at', $tahunIni)
+        $sumberPendapatan = Pembayaran::whereMonth('pembayarans.created_at', $bulanIni)
+            ->whereYear('pembayarans.created_at', $tahunIni)
             ->where('status', 'Lunas')
             ->select(
                 DB::raw('SUM(total_biaya_tindakan) as tindakan'),
@@ -100,6 +100,12 @@ class Dashboard extends Component
             ]
         ];
 
+        // 6c. Analisis Metode Pembayaran (NEW)
+        $metodePembayaran = Pembayaran::whereMonth('created_at', $bulanIni)
+            ->select('metode_pembayaran', DB::raw('count(*) as total'))
+            ->groupBy('metode_pembayaran')
+            ->get();
+
         // 7. Transaksi Terakhir (Live)
         $transaksiTerakhir = Pembayaran::with(['pasien'])
             ->latest()
@@ -109,6 +115,9 @@ class Dashboard extends Component
         // 8. Tunggakan / Pending (Piutang)
         $piutangPending = Pembayaran::where('status', 'Menunggu')->sum('jumlah_bayar');
         $piutangCount = Pembayaran::where('status', 'Menunggu')->count();
+
+        // 9. Cost Per Patient (NEW)
+        $costPerPatient = $totalPasienBulan > 0 ? $totalPengeluaranBulan / $totalPasienBulan : 0;
 
         return view('livewire.finance.dashboard', compact(
             'pendapatanHariIni',
@@ -121,12 +130,14 @@ class Dashboard extends Component
             'labaBersihBulan',
             'rasioMargin',
             'rataTransaksiPasien',
-            'dataGrafik',
-            'pendapatanPoli',
-            'distribusiPendapatan',
-            'transaksiTerakhir',
-            'piutangPending',
-            'piutangCount'
+            'dataGrafik' => $dataGrafik,
+            'pendapatanPoli' => $pendapatanPoli,
+            'distribusiPendapatan' => $distribusiPendapatan,
+            'metodePembayaran' => $metodePembayaran,
+            'transaksiTerakhir' => $transaksiTerakhir,
+            'piutangPending' => $piutangPending,
+            'piutangCount' => $piutangCount,
+            'costPerPatient' => $costPerPatient,
         ))->layout('layouts.app', ['header' => 'Pusat Analitik Keuangan & Aset']);
     }
 

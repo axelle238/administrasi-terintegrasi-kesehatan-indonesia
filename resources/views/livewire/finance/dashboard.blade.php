@@ -78,14 +78,11 @@
             </div>
         </div>
 
-        <!-- Piutang Card -->
-        <div class="bg-amber-50 p-6 rounded-3xl border border-amber-100 relative overflow-hidden group">
-            <p class="text-xs font-bold text-amber-600 uppercase tracking-widest mb-1">Tagihan Menunggu</p>
-            <h3 class="text-2xl font-black text-amber-700">Rp {{ number_format($piutangPending, 0, ',', '.') }}</h3>
-            <div class="mt-4 flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
-                <span class="text-[10px] text-amber-600 font-black">{{ $piutangCount }} Transaksi Pending</span>
-            </div>
+        <!-- Cost Per Patient Card -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 relative overflow-hidden">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Rata-rata Biaya Layanan</p>
+            <h3 class="text-2xl font-black text-slate-800">Rp {{ number_format($costPerPatient, 0, ',', '.') }}</h3>
+            <p class="text-[10px] text-slate-400 font-bold mt-4 uppercase">Beban per Pasien</p>
         </div>
     </div>
 
@@ -114,6 +111,19 @@
                     <div class="p-2 bg-slate-50 rounded-lg">
                         <p class="text-[9px] text-slate-400 font-bold uppercase">{{ $label }}</p>
                         <p class="text-[10px] font-black text-slate-800">Rp {{ number_format(($distribusiPendapatan['data'][$index] ?? 0)/1000000, 1) }}jt</p>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <!-- Payment Methods (NEW) -->
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                <h3 class="font-black text-slate-800 text-sm uppercase tracking-widest mb-4">Preferensi Pembayaran</h3>
+                <div class="space-y-3">
+                    @foreach($metodePembayaran as $mp)
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="font-bold text-slate-600">{{ $mp->metode_pembayaran }}</span>
+                        <span class="font-black text-slate-800">{{ $mp->total }} Transaksi</span>
                     </div>
                     @endforeach
                 </div>
