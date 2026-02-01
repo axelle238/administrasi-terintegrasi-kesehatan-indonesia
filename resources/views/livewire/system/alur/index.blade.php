@@ -22,6 +22,15 @@
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Jenis Pelayanan</label>
+                <select wire:model="jenis_pelayanan_id" class="w-full rounded-xl border-slate-200 text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500">
+                    <option value="">-- Umum / Tanpa Kategori --</option>
+                    @foreach($jenisPelayanans as $jenis)
+                        <option value="{{ $jenis->id }}">{{ $jenis->nama_layanan }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Judul Langkah</label>
                 <input wire:model="judul" type="text" class="w-full rounded-xl border-slate-200 text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500">
                 @error('judul') <span class="text-rose-500 text-xs">{{ $message }}</span> @enderror
@@ -91,6 +100,11 @@
                 <div class="flex flex-col md:flex-row justify-between gap-4">
                     <div class="flex-1">
                         <div class="flex items-center gap-3 mb-2">
+                            @if($alur->jenisPelayanan)
+                                <span class="px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-wider">{{ $alur->jenisPelayanan->nama_layanan }}</span>
+                            @else
+                                <span class="px-3 py-1 rounded-full bg-slate-50 text-slate-500 text-[10px] font-black uppercase tracking-wider">Umum</span>
+                            @endif
                             <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-wider">{{ $alur->target_pasien }}</span>
                             @if(!$alur->is_active)
                                 <span class="px-2 py-1 rounded-full bg-rose-100 text-rose-600 text-[10px] font-bold uppercase">Non-Aktif</span>

@@ -5,18 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AlurPelayanan extends Model
+class JenisPelayanan extends Model
 {
     use HasFactory;
 
     protected $guarded = ['id'];
 
-    protected $casts = [
-        'is_active' => 'boolean',
-    ];
-
-    public function jenisPelayanan()
+    public function alurs()
     {
-        return $this->belongsTo(JenisPelayanan::class);
+        return $this->hasMany(AlurPelayanan::class)->orderBy('urutan');
     }
 }

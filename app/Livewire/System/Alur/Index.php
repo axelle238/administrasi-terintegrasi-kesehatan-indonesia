@@ -4,6 +4,7 @@ namespace App\Livewire\System\Alur;
 
 use Livewire\Component;
 use App\Models\AlurPelayanan;
+use App\Models\JenisPelayanan;
 
 class Index extends Component
 {
@@ -12,6 +13,7 @@ class Index extends Component
     
     // New Fields
     public $target_pasien = 'Umum', $estimasi_waktu, $dokumen_syarat;
+    public $jenis_pelayanan_id; // Relasi Jenis Pelayanan
     
     public $isEditing = false;
 
@@ -24,7 +26,8 @@ class Index extends Component
     public function render()
     {
         return view('livewire.system.alur.index', [
-            'alurs' => AlurPelayanan::orderBy('urutan')->get()
+            'alurs' => AlurPelayanan::with('jenisPelayanan')->orderBy('jenis_pelayanan_id')->orderBy('urutan')->get(),
+            'jenisPelayanans' => JenisPelayanan::all()
         ])->layout('layouts.app', ['header' => 'Manajemen Alur Pelayanan']);
     }
 
@@ -47,6 +50,7 @@ class Index extends Component
         $this->target_pasien = $alur->target_pasien;
         $this->estimasi_waktu = $alur->estimasi_waktu;
         $this->dokumen_syarat = $alur->dokumen_syarat;
+        $this->jenis_pelayanan_id = $alur->jenis_pelayanan_id;
         
         $this->isEditing = true;
     }
@@ -64,6 +68,7 @@ class Index extends Component
             'target_pasien' => $this->target_pasien,
             'estimasi_waktu' => $this->estimasi_waktu,
             'dokumen_syarat' => $this->dokumen_syarat,
+            'jenis_pelayanan_id' => $this->jenis_pelayanan_id,
         ]);
 
         $this->isEditing = false;
@@ -85,6 +90,6 @@ class Index extends Component
 
     private function resetInput()
     {
-        $this->reset(['alurId', 'judul', 'deskripsi', 'icon', 'urutan', 'is_active', 'target_pasien', 'estimasi_waktu', 'dokumen_syarat']);
+        $this->reset(['alurId', 'judul', 'deskripsi', 'icon', 'urutan', 'is_active', 'target_pasien', 'estimasi_waktu', 'dokumen_syarat', 'jenis_pelayanan_id']);
     }
 }

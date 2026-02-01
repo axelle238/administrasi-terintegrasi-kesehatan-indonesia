@@ -170,23 +170,64 @@
     </header>
     @endif
 
-    <!-- ALUR PELAYANAN (Dynamic) -->
+    <!-- ALUR PELAYANAN (Dynamic Tabs) -->
     @if(isset($alurPelayanan) && count($alurPelayanan) > 0)
-    <section id="alur" class="py-16 bg-white relative">
+    <section id="alur" class="py-16 bg-white relative" x-data="{ activeTab: 'all' }">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Panduan</span>
+            <div class="text-center mb-12">
+                <span class="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Panduan Pasien</span>
                 <h2 class="text-3xl md:text-4xl font-black text-slate-900">Alur Pelayanan Mudah</h2>
+                
+                <!-- Tabs -->
+                <div class="flex flex-wrap justify-center gap-2 mt-8">
+                    <button @click="activeTab = 'all'" 
+                            :class="activeTab === 'all' ? 'bg-primary text-white shadow-lg shadow-emerald-500/30' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'"
+                            class="px-5 py-2 rounded-full text-sm font-bold transition-all">
+                        Semua
+                    </button>
+                    @php 
+                        $jenisList = $alurPelayanan->pluck('jenisPelayanan.nama_layanan')->unique()->filter();
+                    @endphp
+                    @foreach($jenisList as $jenis)
+                    <button @click="activeTab = '{{ Str::slug($jenis) }}'" 
+                            :class="activeTab === '{{ Str::slug($jenis) }}' ? 'bg-primary text-white shadow-lg shadow-emerald-500/30' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'"
+                            class="px-5 py-2 rounded-full text-sm font-bold transition-all">
+                        {{ $jenis }}
+                    </button>
+                    @endforeach
+                </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
-                <div class="hidden md:block absolute top-12 left-0 w-full h-1 bg-slate-100 -z-10"></div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
                 @foreach($alurPelayanan as $index => $alur)
-                <div class="group relative bg-white p-6 rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/50 hover:-translate-y-2 transition-all duration-300">
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-2xl font-black mb-6 shadow-lg shadow-emerald-500/30 mx-auto md:mx-0 relative z-10">
-                        {{ $index + 1 }}
+                @php $slug = $alur->jenisPelayanan ? Str::slug($alur->jenisPelayanan->nama_layanan) : 'umum'; @endphp
+                
+                <div x-show="activeTab === 'all' || activeTab === '{{ $slug }}'" 
+                     class="group relative bg-white p-6 rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/50 hover:-translate-y-2 transition-all duration-300 h-full flex flex-col"
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 transform scale-90"
+                     x-transition:enter-end="opacity-100 transform scale-100">
+                    
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-xl font-black shadow-lg shadow-emerald-500/30">
+                            {{ $alur->urutan }}
+                        </div>
+                        @if($alur->jenisPelayanan)
+                        <span class="px-2 py-1 bg-slate-50 text-slate-500 text-[10px] font-bold uppercase rounded-lg border border-slate-100">
+                            {{ $alur->jenisPelayanan->nama_layanan }}
+                        </span>
+                        @endif
                     </div>
-                    <h3 class="font-bold text-xl text-slate-800 mb-2 text-center md:text-left">{{ $alur->judul }}</h3>
-                    <p class="text-sm text-slate-500 text-center md:text-left leading-relaxed">{{ $alur->deskripsi }}</p>
+                    
+                    <h3 class="font-bold text-lg text-slate-800 mb-2 leading-tight">{{ $alur->judul }}</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed flex-1">{{ $alur->deskripsi }}</p>
+                    
+                    @if($alur->estimasi_waktu)
+                    <div class="mt-4 pt-4 border-t border-dashed border-slate-100 flex items-center gap-2 text-xs font-bold text-emerald-600">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        {{ $alur->estimasi_waktu }}
+                    </div>
+                    @endif
                 </div>
                 @endforeach
             </div>
